@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-11T12:44:29.684Z</updated>
+  <updated>2017-10-11T13:06:28.171Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://yoursite.com/2017/10/11/MySql%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
     <id>http://yoursite.com/2017/10/11/MySql基本操作/</id>
     <published>2017-10-11T09:02:11.000Z</published>
-    <updated>2017-10-11T12:44:29.684Z</updated>
+    <updated>2017-10-11T13:06:28.171Z</updated>
     
-    <content type="html"><![CDATA[<pre><code>#MySql基本操作</code></pre><ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li>创建数据库：  Create database [数据库名字]</li><li>使用数据库：  Use [数据库名];</li><li>查看数据库：  Show databases;</li><li><p>查看正在使用的数据库：select database();</p><p><img src="https://i.imgur.com/aPE9qWN.png" alt=""></p></li></ul></li><li><strong>第二部分：数据表的创建和使用</strong><ul><li>数据表的创建：  create table [表名]（列名 类型名，………）；<a id="more"></a></li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<pre><code>#MySql基本操作</code></pre><ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li>创建数据库：  Create database [数据库名字]</li><li>使用数据库：  Use [数据库名];</li><li>查看数据库：  Show databases;<a id="more"></a></li><li>查看正在使用的数据库：select database();<br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li><li><strong>第二部分：数据表的创建和使用</strong><ul><li>数据表的创建：  create table [表名]（列名 类型名，………）；</li></ul></li></ul>]]></content>
     
     <summary type="html">
     
@@ -33,14 +33,7 @@
 &lt;ul&gt;
 &lt;li&gt;创建数据库：  Create database [数据库名字]&lt;/li&gt;
 &lt;li&gt;使用数据库：  Use [数据库名];&lt;/li&gt;
-&lt;li&gt;查看数据库：  Show databases;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;查看正在使用的数据库：select database();&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/aPE9qWN.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;第二部分：数据表的创建和使用&lt;/strong&gt;&lt;ul&gt;
-&lt;li&gt;数据表的创建：  create table [表名]（列名 类型名，………）；
+&lt;li&gt;查看数据库：  Show databases;
     
     </summary>
     
