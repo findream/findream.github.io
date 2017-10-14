@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-11T13:06:28.171Z</updated>
+  <updated>2017-10-14T04:17:21.327Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,23 +17,44 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>安全杂项例题</title>
+    <link href="http://yoursite.com/2017/10/14/%E5%AE%89%E5%85%A8%E6%9D%82%E9%A1%B9%E4%BE%8B%E9%A2%98/"/>
+    <id>http://yoursite.com/2017/10/14/安全杂项例题/</id>
+    <published>2017-10-14T09:02:11.000Z</published>
+    <updated>2017-10-14T04:17:21.327Z</updated>
+    
+    <content type="html"><![CDATA[<p>##&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实验吧—CTF–安全杂项</p><p>###例子1：<br><strong>1.题目来源：<a href="http://http://www.shiyanbar.com/ctf/1887" target="_blank" rel="external">http://http://www.shiyanbar.com/ctf/1887</a></strong><br><br><strong>2.解题思路：</strong><br></p><ul><li>步骤：<ul><li>得到一个kungfu.rar的包</li><li>在Ubuntu下跑得到一个png的图片</li><li><img src="http://http://oxnvtxe03.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20171013215859.png" alt=""></li><li>把文件格式改为png</li><li>得到这样的图片，有hexedit打开，文件末尾出现字符<font color="#DC143C">“VF95c0s5XzVyaGtfX3VGTXR9M0Vse251QEUg”</font></li><li>发现这是一个基于base64编码的字符</li><li>通过解base64编码：得到<font color="#DC143C">“T_ysK9_5rhk__uFMt}3El{nu@E”</font>字符串</li><li>根据经验两个括号方向相反，得知这是栅栏密码</li><li>解栅栏密码得<font color="#DC143C">“Th3_kEy<em>ls</em>{Kun9Fu_M@5tEr}”</font></li><li>坑爹得是，提交括号里面的就行！</li></ul></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;##&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;实验吧—CTF–安全杂项&lt;/p&gt;
+&lt;p&gt;###例子1：&lt;br&gt;&lt;strong&gt;1.题目来源：&lt;a href=&quot;http://http://
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>MySql基本操作</title>
     <link href="http://yoursite.com/2017/10/11/MySql%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
     <id>http://yoursite.com/2017/10/11/MySql基本操作/</id>
     <published>2017-10-11T09:02:11.000Z</published>
-    <updated>2017-10-11T13:06:28.171Z</updated>
+    <updated>2017-10-11T14:03:06.918Z</updated>
     
-    <content type="html"><![CDATA[<pre><code>#MySql基本操作</code></pre><ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li>创建数据库：  Create database [数据库名字]</li><li>使用数据库：  Use [数据库名];</li><li>查看数据库：  Show databases;<a id="more"></a></li><li>查看正在使用的数据库：select database();<br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li><li><strong>第二部分：数据表的创建和使用</strong><ul><li>数据表的创建：  create table [表名]（列名 类型名，………）；</li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li><font color="#DC143C">创建数据库：  <strong>Create database [数据库名字]</strong></font></li><li><font color="#DC143C">使用数据库：  <strong>Use [数据库名]</strong></font>;</li><li><font color="#DC143C">查看数据库：  <strong>Show databases</strong></font>;<a id="more"></a></li><li><font color="#DC143C">查看正在使用的数据库：<strong>select database()</strong></font>;<br>*<br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li><li><p><strong>第二部分：数据表的创建和使用</strong></p><ul><li><font color="#DC143C">数据表的创建：<strong>create table [表名]（列名 类型名，………）</strong>；</font></li><li><p><img src="https://i.imgur.com/u6VhVYW.png" alt=""><br><img src="https://i.imgur.com/WXrp6DT.png" alt=""><br><img src="https://i.imgur.com/Z2E3xvd.png" alt=""></p></li><li><p>外键约束：<strong>foreign key【（属性）】 references 【字表名】【（属性名）】</strong></p></li><li><img src="http://oxnvtxe03.bkt.clouddn.com/4.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/5.png" alt=""></li><li>数据表的查看：<strong>show tables</strong>；</li><li>查看表中每一列的元素：  <strong>show columns from【数据表名】</strong>;</li><li><img src="http://oxnvtxe03.bkt.clouddn.com/6.png" alt=""></li></ul></li></ul>]]></content>
     
     <summary type="html">
     
-      &lt;pre&gt;&lt;code&gt;#MySql基本操作
-&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+      &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;第一部分：创建数据库及其使用&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;创建数据库：  Create database [数据库名字]&lt;/li&gt;
-&lt;li&gt;使用数据库：  Use [数据库名];&lt;/li&gt;
-&lt;li&gt;查看数据库：  Show databases;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;创建数据库：  &lt;strong&gt;Create database [数据库名字]&lt;/strong&gt;&lt;/font&gt;&lt;/li&gt;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;使用数据库：  &lt;strong&gt;Use [数据库名]&lt;/strong&gt;&lt;/font&gt;;&lt;/li&gt;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;查看数据库：  &lt;strong&gt;Show databases&lt;/strong&gt;&lt;/font&gt;;
     
     </summary>
     
