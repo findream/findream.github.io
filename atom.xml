@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-14T06:19:25.034Z</updated>
+  <updated>2017-10-14T12:50:22.134Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,24 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MySql基本操作</title>
+    <link href="http://yoursite.com/2017/10/14/MySql%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
+    <id>http://yoursite.com/2017/10/14/MySql基本操作/</id>
+    <published>2017-10-14T12:45:11.000Z</published>
+    <updated>2017-10-14T12:50:22.134Z</updated>
+    
+    <content type="html"><![CDATA[<p>#数据库简介：<br><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……</strong><br><a id="more"></a></p><ul><li><strong>第一部分：创建数据库及其使用</strong><ul><li><font color="#DC143C">1)创建数据库：  <strong>Create database [数据库名字];</strong></font></li><li><font color="#DC143C">2)使用数据库：  <strong>Use [数据库名];</strong></font></li><li><font color="#DC143C">3)查看数据库：  <strong>Show databases;</strong></font></li><li><font color="#DC143C">4)查看正在使用的数据库：<strong>select database();</strong></font><br><br><img src="https://i.imgur.com/aPE9qWN.png" alt=""><br><br></li></ul></li></ul><hr><ul><li><strong>第二部分：数据表的创建和使用</strong><ul><li><font color="#DC143C">1)数据表的创建：<strong>create table [表名]（列名 类型名，………）;</strong></font><br><img src="https://i.imgur.com/u6VhVYW.png" alt=""><br><img src="https://i.imgur.com/WXrp6DT.png" alt=""><br><img src="https://i.imgur.com/Z2E3xvd.png" alt=""></li><li><font color="#DC143C">2)外键约束：<strong>foreign key【（属性）】 references 【字表名】【（属性名）】;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/4.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/5.png" alt=""></li><li><font color="#DC143C">3)数据表的查看：<strong>show tables；</strong></font></li><li><font color="#DC143C">4)查看表中每一列的元素：  <strong>show columns from【数据表名】;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/6.png" alt=""></li><li><font color="#DC143C"> 5）建立索引: <strong>create unique/cluster index [索引名] on [表名][(列名，asc、desc)；</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/1.png" alt=""><br><br></li></ul></li></ul><hr><ul><li><strong>第三部分：数据表的修改：</strong><ul><li><font color="#DC143C"> 1）增加列: <strong>alter tabele [表名] add [属性/列名] 数据格式 【first/after+[列名]】</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/2.png" alt=""></li><li><font color="#DC143C"> 2) 修改列的属性:   <strong>alter table [表名] alter column [列名][数据类型]</strong></font></li><li><font color="#DC143C"> 给列添加主键约束:   <strong>alter table [表名] add  primary key/ unique key([列名]);</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/1111.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/1111.png" alt=""> </li><li><font color="#DC143C"> 3)删除默认约束：<strong>alter table [表名] alter [列名] drop default;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/7.png" alt=""></li><li><font color="#DC143C"> 4)删除主键约束：<strong>alter table [表名] drop primary key;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/8.png" alt=""></li><li><font color="#DC143C">5)删除唯一约束:<strong>alter table [表名] drop index [列名];</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/10.png" alt=""></li><li><font color="#DC143C">6)删除外键约束：<strong>alter table [表名] drop foreign key [约束名称，通过show create table [表名查看];</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/11.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/12.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/13.png" alt=""></li><li><font color="#DC143C">7)删除表:   <strong>drop table [表名];</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/14.png" alt=""><br><br></li></ul></li></ul><hr><ul><li><strong>第四部分：对数据的修改：</strong><ul><li><font color="#DC143C"> 1)插入全部数据：<strong>insert 【数据表名】values(数据1，数据2……)</strong></font><br>;<br><img src="http://oxnvtxe03.bkt.clouddn.com/15.png" alt=""></li><li><font color="#DC143C"> 2)插入部分数据：<strong>Insert [数据表名]（属性名1，属性名2……）values(数据1，数据2);</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/16.png" alt=""></li><li><font color="#DC143C"> 3)修改数据：<strong>Insert [数据表名] set (列名1)=（表达式1）………；</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/17.png" alt=""></li><li><font color="#DC143C"> 4)复制表的数据：</font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/23.png" alt=""></li><li><font color="#DC143C"> 5)更新数据表单的数据：<strong>update table [数据表名] set [表达式]  where [条件] (条件语句为可选语句)</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/19.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/18.png" alt=""></li><li><font color="#DC143C"> 6)删除元组：<strong>delete from [表名] where[条件]</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/22.png" alt=""><br><br></li></ul></li></ul><hr><ul><li><strong>第五部分：查询语句：</strong><ul><li><font color="#DC143C"> 1)查询记录： <strong> select * from 【数据表名】;</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/20.png" alt=""> </li></ul></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;#数据库简介：&lt;br&gt;&lt;br&gt;&lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……&lt;/strong&gt;&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>安全杂项例题</title>
@@ -28,24 +46,6 @@
     <summary type="html">
     
       &lt;p&gt;#安全杂项简介：&lt;br&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;strong&gt;ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。&lt;/strong&gt;
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>MySql基本操作</title>
-    <link href="http://yoursite.com/2017/10/11/MySql%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
-    <id>http://yoursite.com/2017/10/11/MySql基本操作/</id>
-    <published>2017-10-11T09:02:11.000Z</published>
-    <updated>2017-10-14T12:45:11.023Z</updated>
-    
-    <content type="html"><![CDATA[<p>#数据库简介：<br><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……</strong><br><a id="more"></a></p><ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li><font color="#DC143C">1)创建数据库：  <strong>Create database [数据库名字];</strong></font></li><li><font color="#DC143C">2)使用数据库：  <strong>Use [数据库名];</strong></font></li><li><font color="#DC143C">3)查看数据库：  <strong>Show databases;</strong></font></li><li><font color="#DC143C">4)查看正在使用的数据库：<strong>select database();</strong></font><br><br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li><li><p><strong>第二部分：数据表的创建和使用</strong></p><ul><li><font color="#DC143C">1)数据表的创建：<strong>create table [表名]（列名 类型名，………）;</strong></font><br><img src="https://i.imgur.com/u6VhVYW.png" alt=""><br><img src="https://i.imgur.com/WXrp6DT.png" alt=""><br><img src="https://i.imgur.com/Z2E3xvd.png" alt=""></li><li><font color="#DC143C">2)外键约束：<strong>foreign key【（属性）】 references 【字表名】【（属性名）】;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/4.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/5.png" alt=""></li><li><font color="#DC143C">3)数据表的查看：<strong>show tables；</strong></font></li><li><font color="#DC143C">4)查看表中每一列的元素：  <strong>show columns from【数据表名】;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/6.png" alt=""></li><li><font color="#DC143C"> 5）建立索引: <strong>create unique/cluster index [索引名] on [表名][(列名，asc、desc)；</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/1.png" alt=""></li></ul></li><li><strong>第三部分：数据表的修改：</strong><ul><li><font color="#DC143C"> 1）增加列: <strong>alter tabele [表名] add [属性/列名] 数据格式 【first/after+[列名]】</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/2.png" alt=""></li><li><font color="#DC143C"> 2) 修改列的属性:   <strong>alter table [表名] alter column [列名][数据类型]</strong></font></li><li><font color="#DC143C"> 给列添加主键约束:   <strong>alter table [表名] add  primary key/ unique key([列名]);</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/1111.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/1111.png" alt=""> </li><li><font color="#DC143C"> 3)删除默认约束：<strong>alter table [表名] alter [列名] drop default;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/7.png" alt=""></li><li><font color="#DC143C"> 4)删除主键约束：<strong>alter table [表名] drop primary key;</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/8.png" alt=""></li><li><font color="#DC143C">5)删除唯一约束:<strong>alter table [表名] drop index [列名];</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/10.png" alt=""></li><li><font color="#DC143C">6)删除外键约束：<strong>alter table [表名] drop foreign key [约束名称，通过show create table [表名查看];</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/11.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/12.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/13.png" alt=""></li><li><font color="#DC143C">7)删除表:   <strong>drop table [表名];</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/14.png" alt=""></li></ul></li><li><strong>第四部分：对数据的修改：</strong><ul><li><font color="#DC143C"> 1)插入全部数据：<strong>insert 【数据表名】values(数据1，数据2……)</strong></font><br>;<br><img src="http://oxnvtxe03.bkt.clouddn.com/15.png" alt=""></li><li><font color="#DC143C"> 2)插入部分数据：<strong>Insert [数据表名]（属性名1，属性名2……）values(数据1，数据2);</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/16.png" alt=""></li><li><font color="#DC143C"> 3)修改数据：<strong>Insert [数据表名] set (列名1)=（表达式1）………；</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/17.png" alt=""></li><li><font color="#DC143C"> 4)复制表的数据：</font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/23.png" alt=""></li><li><font color="#DC143C"> 5)更新数据表单的数据：<strong>update table [数据表名] set [表达式]  where [条件] (条件语句为可选语句)</strong></font><br><img src="http://oxnvtxe03.bkt.clouddn.com/19.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/18.png" alt=""></li><li><font color="#DC143C"> 6)删除元组：<strong>delete from [表名] where[条件]</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/22.png" alt=""></li></ul></li><li><strong>第五部分：查询语句：</strong><ul><li><font color="#DC143C"> 1)查询记录： <strong> select * from 【数据表名】;</strong></font><br><br><img src="http://oxnvtxe03.bkt.clouddn.com/20.png" alt=""> </li></ul></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;#数据库简介：&lt;br&gt;&lt;br&gt;&lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……&lt;/strong&gt;&lt;br&gt;
     
     </summary>
     
