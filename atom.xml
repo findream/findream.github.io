@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-14T04:56:37.243Z</updated>
+  <updated>2017-10-14T05:18:12.592Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://yoursite.com/2017/10/14/%E5%AE%89%E5%85%A8%E6%9D%82%E9%A1%B9%E4%BE%8B%E9%A2%98/"/>
     <id>http://yoursite.com/2017/10/14/安全杂项例题/</id>
     <published>2017-10-14T09:02:11.000Z</published>
-    <updated>2017-10-14T04:56:37.243Z</updated>
+    <updated>2017-10-14T05:18:12.592Z</updated>
     
-    <content type="html"><![CDATA[<p>#安全杂项简介：<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#DC143C">ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。</font><a id="more"></a></p><p>#例子1：<br><strong>1.题目来源：<a href="http://http://www.shiyanbar.com/ctf/1887" target="_blank" rel="external">http://http://www.shiyanbar.com/ctf/1887</a></strong><br><br><strong>2.解题思路：</strong><br></p><ul><li>步骤：<ul><li>得到一个kungfu.rar的包</li><li>在Ubuntu下跑得到一个png的图片</li><li> <img src="http://oxnvtxe03.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20171013215859.png" alt=""></li><li>把文件格式改为png</li><li>得到这样的图片，有hexedit打开，文件末尾出现字符<font color="#DC143C">“VF95c0s5XzVyaGtfX3VGTXR9M0Vse251QEUg”</font></li><li>发现这是一个基于base64编码的字符</li><li>通过解base64编码：得到<font color="#DC143C">“T_ysK9_5rhk__uFMt}3El{nu@E”</font>字符串</li><li>根据经验两个括号方向相反，得知这是栅栏密码</li><li>解栅栏密码得<font color="#DC143C">“Th3_kEy<em>ls</em>{Kun9Fu_M@5tEr}”</font></li><li>坑爹得是，提交括号里面的就行！</li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<p>#安全杂项简介：<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#DC143C">ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。</font><a id="more"></a></p><p>#例子1：<br><strong>1.题目来源：<a href="http://http://www.shiyanbar.com/ctf/1887" target="_blank" rel="external">http://http://www.shiyanbar.com/ctf/1887</a></strong><br><br><strong>2.解题思路：</strong><br></p><ul><li>步骤：<ul><li>得到一个kungfu.rar的包</li><li>在Ubuntu下跑得到一个png的图片<br> <img src="http://oxnvtxe03.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20171013215859.png" alt=""></li><li>把文件格式改为png</li><li>得到这样的图片，有hexedit打开，文件末尾出现字符<font color="#DC143C">“VF95c0s5XzVyaGtfX3VGTXR9M0Vse251QEUg”</font></li><li>发现这是一个基于base64编码的字符</li><li>通过解base64编码：得到<font color="#DC143C">“T_ysK9_5rhk__uFMt}3El{nu@E”</font>字符串</li><li>根据经验两个括号方向相反，得知这是栅栏密码</li><li>解栅栏密码得<font color="#DC143C">“Th3_kEy<em>ls</em>{Kun9Fu_M@5tEr}”</font></li><li>坑爹得是，提交括号里面的就行！</li></ul></li></ul>]]></content>
     
     <summary type="html">
     
