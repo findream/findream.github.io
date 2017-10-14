@@ -39,18 +39,17 @@
     <link href="http://yoursite.com/2017/10/11/MySql%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
     <id>http://yoursite.com/2017/10/11/MySql基本操作/</id>
     <published>2017-10-11T09:02:11.000Z</published>
-    <updated>2017-10-11T14:03:06.918Z</updated>
+    <updated>2017-10-14T05:02:59.727Z</updated>
     
-    <content type="html"><![CDATA[<ul><li><p><strong>第一部分：创建数据库及其使用</strong></p><ul><li><font color="#DC143C">创建数据库：  <strong>Create database [数据库名字]</strong></font></li><li><font color="#DC143C">使用数据库：  <strong>Use [数据库名]</strong></font>;</li><li><font color="#DC143C">查看数据库：  <strong>Show databases</strong></font>;<a id="more"></a></li><li><font color="#DC143C">查看正在使用的数据库：<strong>select database()</strong></font>;<br>*<br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li><li><p><strong>第二部分：数据表的创建和使用</strong></p><ul><li><font color="#DC143C">数据表的创建：<strong>create table [表名]（列名 类型名，………）</strong>；</font></li><li><p><img src="https://i.imgur.com/u6VhVYW.png" alt=""><br><img src="https://i.imgur.com/WXrp6DT.png" alt=""><br><img src="https://i.imgur.com/Z2E3xvd.png" alt=""></p></li><li><p>外键约束：<strong>foreign key【（属性）】 references 【字表名】【（属性名）】</strong></p></li><li><img src="http://oxnvtxe03.bkt.clouddn.com/4.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/5.png" alt=""></li><li>数据表的查看：<strong>show tables</strong>；</li><li>查看表中每一列的元素：  <strong>show columns from【数据表名】</strong>;</li><li><img src="http://oxnvtxe03.bkt.clouddn.com/6.png" alt=""></li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<ul><li><strong>第一部分：创建数据库及其使用</strong><ul><li><font color="#DC143C">1)创建数据库：  <strong>Create database [数据库名字]</strong></font></li><li><font color="#DC143C">2)使用数据库：  <strong>Use [数据库名]</strong></font>;</li><li><font color="#DC143C">3)查看数据库：  <strong>Show databases</strong></font>;<a id="more"></a></li><li><font color="#DC143C">4)查看正在使用的数据库：<strong>select database()</strong></font>;<br><img src="https://i.imgur.com/aPE9qWN.png" alt=""></li></ul></li></ul><hr><ul><li><p><strong>第二部分：数据表的创建和使用</strong></p><ul><li><p><font color="#DC143C">1)数据表的创建：<strong>create table [表名]（列名 类型名，………）</strong>；<br><img src="https://i.imgur.com/u6VhVYW.png" alt=""><br><img src="https://i.imgur.com/WXrp6DT.png" alt=""><br><img src="https://i.imgur.com/Z2E3xvd.png" alt=""></font></p></li><li><p>2)外键约束：<strong>foreign key【（属性）】 references 【字表名】【（属性名）】</strong><br><img src="http://oxnvtxe03.bkt.clouddn.com/4.png" alt=""><br><img src="http://oxnvtxe03.bkt.clouddn.com/5.png" alt=""></p></li><li>3)数据表的查看：<strong>show tables</strong>；</li><li>4)查看表中每一列的元素：  <strong>show columns from【数据表名】</strong>;<br><img src="http://oxnvtxe03.bkt.clouddn.com/6.png" alt=""></li></ul></li></ul>]]></content>
     
     <summary type="html">
     
       &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;第一部分：创建数据库及其使用&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;创建数据库：  &lt;strong&gt;Create database [数据库名字]&lt;/strong&gt;&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;使用数据库：  &lt;strong&gt;Use [数据库名]&lt;/strong&gt;&lt;/font&gt;;&lt;/li&gt;
-&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;查看数据库：  &lt;strong&gt;Show databases&lt;/strong&gt;&lt;/font&gt;;
+&lt;li&gt;&lt;strong&gt;第一部分：创建数据库及其使用&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;1)创建数据库：  &lt;strong&gt;Create database [数据库名字]&lt;/strong&gt;&lt;/font&gt;&lt;/li&gt;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;2)使用数据库：  &lt;strong&gt;Use [数据库名]&lt;/strong&gt;&lt;/font&gt;;&lt;/li&gt;
+&lt;li&gt;&lt;font color=&quot;#DC143C&quot;&gt;3)查看数据库：  &lt;strong&gt;Show databases&lt;/strong&gt;&lt;/font&gt;;
     
     </summary>
     
