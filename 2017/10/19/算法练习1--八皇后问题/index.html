@@ -89,7 +89,7 @@
 <meta property="og:description" content="问题概述：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;八皇后问题，是一个古老而著名的问题，是回溯算法的典型案例。该问题是国际西洋棋棋手马克斯·贝瑟尔于1848年提出：在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。 高斯认为有76种方案。1854年在柏林的象棋杂志上不同的作者发表了40种不同的解，后来有人用图">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/HraC2hB.png">
-<meta property="og:updated_time" content="2017-10-19T10:09:03.791Z">
+<meta property="og:updated_time" content="2017-10-19T12:32:10.191Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法练习1--八皇后问题">
 <meta name="twitter:description" content="问题概述：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;八皇后问题，是一个古老而著名的问题，是回溯算法的典型案例。该问题是国际西洋棋棋手马克斯·贝瑟尔于1848年提出：在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。 高斯认为有76种方案。1854年在柏林的象棋杂志上不同的作者发表了40种不同的解，后来有人用图">
@@ -366,7 +366,7 @@
         <p><strong>问题概述：</strong><br><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;八皇后问题，是一个古老而著名的问题，是回溯算法的典型案例。该问题是国际西洋棋棋手马克斯·贝瑟尔于1848年提出：在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法。 高斯认为有76种方案。1854年在柏林的象棋杂志上不同的作者发表了40种不同的解，后来有人用图论的方法解出92种结果。计算机发明后，有多种计算机语言可以解决此问题</strong>。<br><br><a id="more"></a><br><strong>算法思路：</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为每个皇后不能在同一行，同一列，以及主副斜对角线上，所以我们首先去掉行的这一限制，即：第一次放在第一行，第二次就不放在第一行了。每递归一次（即一行）考虑8列，即每个行，皇后有八个位置可以放置。利用循环，找个每行的不和以前的皇后相互攻击每个位置。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们利用一个一维数组表示每个皇后所在的位置，即：num[i]=j;表示皇后在第i行的第j列。因为出去了每行的因素，所以剩下的冲突的可能性是：每一列，主副对角线。同列：c[r]==c[j]; 同对角线有两种可能，即主对角线方向和副对角线方向。 主对角线方向满足:行之差等于列之差：r-j==c[r]-c[j]; 副对角线方向满足:行之差等于列之差的相反数：r-j==c[j]-c[r]。<br></p>
 <p><pre><code></code></pre></p>
 <p>#include <stdio.h><br>int n=8,count = 0,num[10];<br>void search(int n);   /<em>寻找八皇后的位置，递归算法</em>/<br>void print();     /<em>打印输出</em>/<br>int main(void)<br>{<br>    search(0);<br>    printf(“%d”, count);<br>    getchar();<br>    return 0;<br>}<br>void search(int r)<br>{<br>    int i,j;<br>    if (r == n)<br>    {<br>        print();<br>        count++;<br>        return;<br>    }<br>    for (i = 0; i &lt; 8; i++)<br>    {<br>        int ok = 1;     /<em>默认符合条件</em>/<br>        num[r] = i;     /<em>为num数组附上比较的初值</em>/<br>        for (j = 0; j &lt; r; j++)<br>        {<br>            if (num[j] == num[r] || num[r] - num[j] == r - j || num[r] - num[j] == j - r)<br>            {<br>                ok = 0;<br>                break;<br>            }<br>        }<br>        if (ok)<br>            search(r + 1);<br>    }<br>}</stdio.h></p>
-<p>void print()<br>{<br>    int i, j;<br>    for (i = 0; i &lt; n; i++)<br>    {<br>        for (j = 0; j &lt; n; j++)<br>        {<br>            if (j == num[i])<br>                printf(“1”);<br>            else<br>                printf(“0”);<br>        }<br>        printf(“\n”);<br>    }<br>    printf(“\n”);<br>}<br><br><img src="https://i.imgur.com/HraC2hB.png" alt=""></p>
+<p>void print()<br>{<br>    int i, j;<br>    for (i = 0; i &lt; n; i++)<br>    {<br>        for (j = 0; j &lt; n; j++)<br>        {<br>            if (j == num[i])<br>                printf(“1”);<br>            else<br>                printf(“0”);<br>        }<br>        printf(“\n”);<br>    }<br>    printf(“\n”);<br>}<br><br><br><img src="https://i.imgur.com/HraC2hB.png" alt=""></p>
 
       
     </div>
