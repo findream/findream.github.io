@@ -111,7 +111,8 @@
 <meta property="og:image" content="https://i.imgur.com/m3zndVw.png">
 <meta property="og:image" content="https://i.imgur.com/DZYnRa7.png">
 <meta property="og:image" content="https://i.imgur.com/s0AWbZG.png">
-<meta property="og:updated_time" content="2017-10-21T09:19:59.276Z">
+<meta property="og:image" content="https://i.imgur.com/t0eLACH.png">
+<meta property="og:updated_time" content="2017-10-22T05:35:48.062Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安全杂项例题">
 <meta name="twitter:description" content="#安全杂项简介：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。">
@@ -481,10 +482,27 @@
 <li>5.得到以下<br><img src="https://i.imgur.com/DZYnRa7.png" alt=""></li>
 <li>6.由此，我们知道每个文件对应的是一个字符。</li>
 <li>7.利用python，不断地去解压和读取十六进制字符可以得到flag。</li>
-<li>注：binwalk的具体用法如下：<br><img src="https://i.imgur.com/s0AWbZG.png" alt=""></li>
+<li>注：binwalk的具体用法如下：<br><img src="https://i.imgur.com/s0AWbZG.png" alt=""><br><br></li>
 </ul>
 </li>
 </ul>
+<hr>
+<p>#例10：<br><strong>题目来源：<a href="http://www.shiyanbar.com/ctf/1844" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1844</a></strong><br><br><strong>解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1.音频文件，试听发现双音轨，且存在一条音道是摩尔斯电码。</li>
+<li>2.上神器AU，打开发现：真的存在摩尔斯电码的脉冲形式。<br><img src="https://i.imgur.com/t0eLACH.png" alt=""></li>
+<li>3.根据摩尔斯密码表，长的为-，短的为·，得到电码为：<em> </em>            M<br>   . . <em>          U
+   </em> <em> . .        Z<br>   . .            I
+   </em> . <em>          K<br>   . .            I<br>   . . .          S
+   </em> <em> .          G
+   </em> <em> </em> <em>      0（是零）
+   </em> <em> </em> <em> </em>      0（是零）<br>   _ . .          D</li>
+<li>4.flag是：MUZIKISG00D<br></li>
+</ul>
+</li>
+</ul>
+<hr>
 
       
     </div>
