@@ -124,7 +124,17 @@
 <meta property="og:image" content="https://i.imgur.com/e48tUT2.png">
 <meta property="og:image" content="https://i.imgur.com/UzudAAh.png">
 <meta property="og:image" content="https://i.imgur.com/mchgJk2.png">
-<meta property="og:updated_time" content="2017-10-17T12:18:39.108Z">
+<meta property="og:image" content="https://i.imgur.com/1QiNhwo.png">
+<meta property="og:image" content="https://i.imgur.com/3afujFC.png">
+<meta property="og:image" content="https://i.imgur.com/fQQL2nH.jpg">
+<meta property="og:image" content="https://i.imgur.com/J98u6i6.jpg">
+<meta property="og:image" content="https://i.imgur.com/FdpTiEX.jpg">
+<meta property="og:image" content="https://i.imgur.com/80mFy02.jpg">
+<meta property="og:image" content="https://i.imgur.com/7LDi4uv.png">
+<meta property="og:image" content="https://i.imgur.com/mlqY7Jc.png">
+<meta property="og:image" content="https://i.imgur.com/PxuAVjI.png">
+<meta property="og:image" content="https://i.imgur.com/Tk4KWkz.png">
+<meta property="og:updated_time" content="2017-10-22T09:50:04.993Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySql基本操作">
 <meta name="twitter:description" content="#数据库简介：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在">
@@ -456,7 +466,48 @@
 <li><font color="#DC143C"> 5） 分组：<strong>select 【查询内容】from 【数据表名】group by [列名表达式]</strong><br><img src="https://i.imgur.com/BVBjrbh.png" alt=""></font></li>
 <li><font color="#DC143C"> 6）having语句：<strong>select 【查询内容】from 【数据表名】group by [列名表达式] having 【条件】</strong><br><img src="https://i.imgur.com/U3N8EHO.png" alt=""></font></li>
 <li><font color="#DC143C"> 6）order by语句：<strong>select 【查询内容】from 【数据表名】order by [列名表达式]</strong><br><img src="https://i.imgur.com/e48tUT2.png" alt=""></font></li>
-<li><font color="#DC143C"> 6）having语句：<strong>select 【查询内容】from 【数据表名】limit n(,m)</strong><br><img src="https://i.imgur.com/UzudAAh.png" alt=""><br><img src="https://i.imgur.com/mchgJk2.png" alt=""></font></li>
+<li><font color="#DC143C"> 6）having语句：<strong>select 【查询内容】from 【数据表名】limit n(,m)</strong><br><img src="https://i.imgur.com/UzudAAh.png" alt=""><br><img src="https://i.imgur.com/mchgJk2.png" alt=""><br><br></font></li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><strong>第六部分：高级查询语句</strong><ul>
+<li>子查询：<ul>
+<li>不相关子查询：<ul>
+<li>1.子查询语句不能使用order by。</li>
+<li>2.内层查询不依赖外部查询。</li>
+<li>3.子查询并不显示结果，只是返回给外部查询</li>
+<li>4.返回多个结果可以用any或者all来表示。</li>
+<li>5.也可以使用聚合函数（max，min等）。</li>
+<li>6.谓词表和谓词和聚集函数及in谓词的等价关系<br><img src="https://i.imgur.com/1QiNhwo.png" alt=""><br><img src="https://i.imgur.com/3afujFC.png" alt=""></li>
+<li>例子1：（in或者not in）<br><img src="https://i.imgur.com/fQQL2nH.jpg" alt=""></li>
+<li>例子2： （比较运算符）<br><img src="https://i.imgur.com/J98u6i6.jpg" alt=""></li>
+<li>例子3：  (谓词和聚集函数)<br><img src="https://i.imgur.com/FdpTiEX.jpg" alt=""></li>
+</ul>
+</li>
+<li>相关子查询：<ul>
+<li>依赖于外层查询</li>
+<li>执行时子查询需要不断引用父查询中的列值</li>
+</ul>
+</li>
+<li>Exists：<ul>
+<li>子查询不返回具体数值，只返回逻辑值 </li>
+<li>select 属性列表达式用*表示，因为exists不具有实际意义<br><img src="https://i.imgur.com/80mFy02.jpg" alt=""><br><br></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><strong>第七部分</strong><ul>
+<li>新建视图： <strong>create view [视图名]（属性列）[select 子查询] with check option</strong><br><img src="https://i.imgur.com/7LDi4uv.png" alt=""><br><img src="https://i.imgur.com/mlqY7Jc.png" alt=""></li>
+<li>删除视图：<strong>drop view [视图名]</strong><br><img src="https://i.imgur.com/PxuAVjI.png" alt=""></li>
+<li>查询视图信息： <strong>与表一致</strong><br><img src="https://i.imgur.com/Tk4KWkz.png" alt=""></li>
+<li>更新数据与表一致。</li>
 </ul>
 </li>
 </ul>
