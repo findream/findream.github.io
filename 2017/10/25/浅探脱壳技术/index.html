@@ -81,18 +81,18 @@
 
 
 
-<meta name="description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅探脱壳技术">
 <meta property="og:url" content="http://yoursite.com/2017/10/25/浅探脱壳技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/Knx04Lu.png">
-<meta property="og:updated_time" content="2017-10-27T04:43:53.388Z">
+<meta property="og:updated_time" content="2017-10-29T07:28:41.175Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅探脱壳技术">
-<meta name="twitter:description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作">
 <meta name="twitter:image" content="https://i.imgur.com/Knx04Lu.png">
 
 
@@ -385,7 +385,8 @@
       
 
       
-        <ul>
+        <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作者写完软件后，为了保护自己的代码或维护软件产权等利益所常用到的手段。目前有很多加壳工具，既然有盾，自然就有矛，脱壳即去掉软件所加的壳，软件脱壳 有手动脱和自动脱壳之分。</strong><br><a id="more"></a></p>
+<ul>
 <li>方法1：单步法<ul>
 <li>1.向上的跳转不让他实现，向下的跳转让他实现。</li>
 <li>2.经过跨段跳转后，直接跳到OEP</li>
