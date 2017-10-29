@@ -83,15 +83,17 @@
 
 <meta name="description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySql基本操作">
-<meta property="og:url" content="http://yoursite.com/2017/10/14/浅探脱壳技术/index.html">
+<meta property="og:title" content="浅探脱壳技术">
+<meta property="og:url" content="http://yoursite.com/2017/10/25/浅探脱壳技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-25T16:06:58.471Z">
+<meta property="og:image" content="https://i.imgur.com/Knx04Lu.png">
+<meta property="og:updated_time" content="2017-10-27T04:43:53.388Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MySql基本操作">
+<meta name="twitter:title" content="浅探脱壳技术">
 <meta name="twitter:description" content="方法1：单步法 1.向上的跳转不让他实现，向下的跳转让他实现。 2.经过跨段跳转后，直接跳到OEP      方法2：堆栈平衡法 1.查看寄存器窗口，一直按f8，只要esp变化（变红），右键转到内存地址窗口。 2.对该地址下硬件断点。 3.重新运行，发现od停在断点处，取消断点。 4.单步后经过很长的跳转，直达oep。      方法3：二次内存镜像法 1.寻找内存模块的rsrc段。 3.如果没">
+<meta name="twitter:image" content="https://i.imgur.com/Knx04Lu.png">
 
 
 
@@ -121,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/10/14/浅探脱壳技术/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/25/浅探脱壳技术/"/>
 
 
 
 
 
-  <title>MySql基本操作 | findream's blog</title>
+  <title>浅探脱壳技术 | findream's blog</title>
   
 
 
@@ -294,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/14/浅探脱壳技术/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/25/浅探脱壳技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -311,7 +313,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySql基本操作</h1>
+          <h1 class="post-title" itemprop="name headline">浅探脱壳技术</h1>
         
 
         <div class="post-meta">
@@ -323,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-14T20:45:11+08:00">
-                2017-10-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T20:45:11+08:00">
+                2017-10-25
               </time>
             
 
@@ -411,6 +413,20 @@
 </ul>
 </li>
 </ul>
+<hr>
+<ul>
+<li>方法4：一步直达法（针对UPX和ASPASK）<ul>
+<li><ol>
+<li>od 查找-查找命令找到popad（注意不勾选整个区段），然后跳转oep（如果不是可以多次查找）</li>
+</ol>
+</li>
+<li>2.注意跳转不一定是非条件跳转，也可以是条件跳转，而且不论长短<br><img src="https://i.imgur.com/Knx04Lu.png" alt=""></li>
+<li>之后利用ollydbgdump或者loadpe进行脱壳</li>
+<li>loadpe过程：在进程中右键修正镜像大小，然后点击完整转存。</li>
+<li>如果脱壳失败失败，先修改IAT，然后修改转存文件</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -435,8 +451,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/14/安全杂项例题/" rel="next" title="安全杂项例题">
-                <i class="fa fa-chevron-left"></i> 安全杂项例题
+              <a href="/2017/10/24/网协面试题/" rel="next" title="网络科技协会纳新面试题">
+                <i class="fa fa-chevron-left"></i> 网络科技协会纳新面试题
               </a>
             
           </div>
@@ -444,10 +460,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/10/14/MySql基本操作/" rel="prev" title="MySql基本操作">
-                MySql基本操作 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -515,7 +527,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
