@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://i.imgur.com/Knx04Lu.png">
 <meta property="og:image" content="https://i.imgur.com/KDEgAJk.png">
 <meta property="og:image" content="https://i.imgur.com/438oLhV.png">
-<meta property="og:updated_time" content="2017-11-02T14:32:00.239Z">
+<meta property="og:updated_time" content="2017-11-02T14:35:52.738Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅探脱壳技术">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作">
@@ -598,41 +598,41 @@
 <li>3.常见语言特点：<ul>
 <li>1.VB:</li>
 <li><pre><code>
-004012D4 >  68 54474000     push QQ个性网.00404754
-004012D9    E8 F0FFFFFF     call <jmp.&msvbvm60.#100>
-004012DE    0000            add byte ptr ds:[eax],al
-004012E0    0000            add byte ptr ds:[eax],al
-004012E2    0000            add byte ptr ds:[eax],al
-004012E4    3000            xor byte ptr ds:[eax],al
-004012E6    0000            add byte ptr ds:[eax],al
-004012E8    48              dec eax
+push QQ个性网.00404754
+call <jmp.&msvbvm60.#100>
+add byte ptr ds:[eax],al
+add byte ptr ds:[eax],al
+add byte ptr ds:[eax],al
+xor byte ptr ds:[eax],al
+add byte ptr ds:[eax],al
+dec eax
 </jmp.&msvbvm60.#100></code></pre>
 * 2.delphi:
 * <pre><code>
-004A5C54 >  55              push ebp
-004A5C55    8BEC            mov ebp,esp
-004A5C57    83C4 F0         add esp,-10
+push ebp
+mov ebp,esp
+add esp,-10
 </code></pre>
 * 3.BC++:
 * <pre><code>
-00401678 > /EB 10           jmp short btengine.0040168A
-0040167A   |66:623A         bound di,dword ptr ds:[edx]
-0040167D   |43              inc ebx
-0040167E   |2B2B            sub ebp,dword ptr ds:[ebx]
+jmp short btengine.0040168A
+bound di,dword ptr ds:[edx]
+inc ebx
+sub ebp,dword ptr ds:[ebx]
 </code></pre>
 * 4.VC++:
 * <pre><code>
-0040A41E >  55              push ebp
-0040A41F    8BEC            mov ebp,esp
-0040A421    6A FF           push -1
+push ebp
+mov ebp,esp
+push -1
 </code></pre>
 * 5.汇编（ASM）
 * <pre><code>
-004035C9 >  6A 00           push 0
-004035CB    E8 A20A0000     call <jmp.&kernel32.getmodulehandlea>
-004035D0    A3 5B704000     mov dword ptr ds:[40705B],eax
-004035D5    68 80000000     push 80
-004035DA    68 2C754000     push 11.0040752C
+push 0
+call <jmp.&kernel32.getmodulehandlea>
+mov dword ptr ds:[40705B],eax
+push 80
+push 11.0040752C
 </jmp.&kernel32.getmodulehandlea></code></pre>
 
 
