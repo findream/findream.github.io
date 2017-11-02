@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://i.imgur.com/Knx04Lu.png">
 <meta property="og:image" content="https://i.imgur.com/KDEgAJk.png">
 <meta property="og:image" content="https://i.imgur.com/438oLhV.png">
-<meta property="og:updated_time" content="2017-11-02T14:35:52.738Z">
+<meta property="og:updated_time" content="2017-11-02T14:38:46.488Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅探脱壳技术">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在一些计算机软件里有一段专门负责保护软件不被非法修改或反编译的程序。它们一般都是先于程序运行，拿到控制权，然后完成它们保护软件的任务。就像动植物的壳一般都是在身体外面一样理所当然（但后来也出现了所谓的“壳中带籽”的壳）。由于这段程序和自然界的壳在功能上有很多相同的地方，基于命名的规则，大家就把这样的程序称为“壳”。软件加壳是作">
@@ -596,8 +596,7 @@
 </ul>
 </li>
 <li>3.常见语言特点：<ul>
-<li>1.VB:</li>
-<li><pre><code>
+<li>1.VB:<pre><code>
 push QQ个性网.00404754
 call <jmp.&msvbvm60.#100>
 add byte ptr ds:[eax],al
@@ -608,26 +607,26 @@ add byte ptr ds:[eax],al
 dec eax
 </jmp.&msvbvm60.#100></code></pre>
 * 2.delphi:
-* <pre><code>
+<pre><code>
 push ebp
 mov ebp,esp
 add esp,-10
 </code></pre>
 * 3.BC++:
-* <pre><code>
+<pre><code>
 jmp short btengine.0040168A
 bound di,dword ptr ds:[edx]
 inc ebx
 sub ebp,dword ptr ds:[ebx]
 </code></pre>
 * 4.VC++:
-* <pre><code>
+<pre><code>
 push ebp
 mov ebp,esp
 push -1
 </code></pre>
 * 5.汇编（ASM）
-* <pre><code>
+<pre><code>
 push 0
 call <jmp.&kernel32.getmodulehandlea>
 mov dword ptr ds:[40705B],eax
