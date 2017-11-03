@@ -37,11 +37,11 @@
   </entry>
   
   <entry>
-    <title>网络科技协会纳新面试题</title>
+    <title>网络科技协会纳新免试题</title>
     <link href="http://yoursite.com/2017/10/24/%E7%BD%91%E5%8D%8F%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
     <id>http://yoursite.com/2017/10/24/网协面试题/</id>
     <published>2017-10-24T07:45:11.000Z</published>
-    <updated>2017-10-30T15:17:51.333Z</updated>
+    <updated>2017-11-03T14:21:34.776Z</updated>
     
     <content type="html"><![CDATA[<p><strong>网络科技协会纳新面试题:</strong><br></p><ul><li>第一关：<ul><li>查看官网页面，找到神秘代码,发现这是一个校验码。经过提醒，发现这个是百度云盘的校验码。输入pan.baidu.com/s/1crqIKI.<br><img src="https://i.imgur.com/AipNeGr.png" alt=""><a id="more"></a></li></ul></li><li>第二关：<ul><li>安卓逆向题，利用jeb2，右键反汇编代码，查看伪代码如下：<br><img src="https://i.imgur.com/O083lhj.png" alt=""></li><li>很显然这是base64编码，并且后面也提示了，利用base64解码就可以得到一个网站。<br><img src="https://i.imgur.com/FNO60ns.png" alt=""></li></ul></li><li>第三关：<ul><li>输入数据发现只能输入四位。</li><li>审查元素修改length<br><img src="https://i.imgur.com/TbgumkS.png" alt=""></li><li>随便输入比他大的数字就行！<br><img src="https://i.imgur.com/OeETamD.png" alt=""></li></ul></li><li>第四关：<ul><li>到图书馆听广播，频段为88.8</li><li>到图书馆寻找线索</li><li>得到线索为uggc://cna.onvqh.pbz/f/1rESIwrd，这是一个url，但是被编码了，url的格式为http：//………，可以知道这是凯撒密码，网上搜索凯撒密码在线解密即可解除<br><img src="https://i.imgur.com/QxubIIj.png" alt=""></li><li>得到游戏入口：<br><img src="https://i.imgur.com/6l7tnlN.png" alt=""></li></ul></li><li>第五关:<ul><li>逆向破解题。打开之后是一个打飞机的游戏<br><img src="https://i.imgur.com/Q49BzED.png" alt=""><br><img src="https://i.imgur.com/bhaZTnP.png" alt=""></li><li>而且下载了不止一个文件，所以文件之间存在彼此的依赖关系。<br><img src="https://i.imgur.com/CG3z2uy.png" alt=""></li><li>假设managed第一个文件就存在这种关系。（你也可以使用一些进程分析工具，通过查找对dll装载得到这个结论）对他进行分析，发现这个是一个c#编译的.net程序。</li><li>省去其中用IDA pro 分析的艰辛历程，得到的经验是存在一个score的变量。</li><li>利用ILSPY分析，直接找到关键语句<br><img src="https://i.imgur.com/vz2MRdi.png" alt=""></li><li><font color="#DC143C">1得知，当score大于500时，程序进行加密运算，拿字符串的第二位开始，到len-2结束，不断循环对字符串与10异或</font></li><li>写出注册机如下，得到一个ftp地址。<br><img src="https://i.imgur.com/RelW4vb.png" alt=""></li><li>下载之。</li></ul></li><li>第六关（暂定):<ul><li>数据挖掘题，有一个readme和压缩包文件，里面是一个2500万行的数据。一般的Excel无法全部加载（Excel只能加载104万行数据）</li><li>你可以吧文件拆分成100万行的….</li></ul></li><li>第七关：</li></ul>]]></content>
     
