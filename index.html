@@ -336,6 +336,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -364,125 +386,17 @@
 
       
         
-          
-            <h1 id="语言列表："><a href="#语言列表：" class="headerlink" title="语言列表："></a>语言列表：</h1><ul>
+          <h1 id="语言列表："><a href="#语言列表：" class="headerlink" title="语言列表："></a>语言列表：</h1><ul>
 <li>VB        MASM32   </li>
 <li>VC        BCB </li>
-<li>易语言     Delphi</li>
-</ul>
-<h1 id="破解思路："><a href="#破解思路：" class="headerlink" title="破解思路："></a>破解思路：</h1><ul>
-<li><font color="#DC143C">1.VB破解：</font><ul>
-<li>1）VBExplorer查找按钮事件</li>
-<li>2）有提示框则bp rtcMsgBox</li>
-<li>3）通过：<pre><code>* bp __vbaStrCmp/__vbaStrComp/__vbaVarTstEq
-* bp __vbaStrCmp  （比较字符串）
-* bp __vbaStrComp （同上）
-</code></pre></li>
-<li>4）万能断点法(816C24法)：<pre><code>* 注册验证程序可以用这个断点下断，一般离程序访问注册表很近：
-* bp __vbaStrToAnsi
-* 5F12堆栈调用
-</code></pre></li>
-<li>总结：<ul>
-<li>VB程序破解的关键跳转，一般与其它语言的不同,没有JPM XXXXXXX一般以 JE/JNE XXXXXXXXX 跳转记录一般不会很远(虽然是短距离跳转，但是关键就在这里，可以设置大量的信息) 。如果发现False/True 可能是关键点</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">2.易语言破解思路:</font><ul>
-<li>1）信息框法:<ul>
-<li>bp MessageBoxA(断对话框)</li>
-</ul>
-</li>
-<li>2）字符串法<ul>
-<li>查看易语言文本信息:bp GetProcessHeap F9运行4次，取消断点 执行ALT+F9 用户代码 F8单步走</li>
-<li>或者在区段为”.data”/“.ecode”下断，运行</li>
-</ul>
-</li>
-<li>3）窗口标题法 bp SetWindowTextA</li>
-<li>4）F12堆栈调用<ul>
-<li>0040C0CB=易语言.0040C0CB (ASCII “shaonanshaonvluntan”)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">3.DELPHI破解:</font><ul>
-<li>1）DEDE、PE Explorer ResScope作为强有力的辅助工具找按妞事件</li>
-<li>2）Point-H法</li>
-<li>3）bp GetDlgItem/GetDlgItemTextA(断输入框)</li>
-<li>4）bp MessageBoxA(W)(断对话框)—Ctrl+N</li>
-<li>5）字符串法—插件/搜索所有参考文本</li>
-<li>6）如果程序界面标题有[未注册/注册/VIP版/标准版/钻石版] 之类字样的<br>　　可以通过查找FormCreate/FormShow—-DEDE，找到关键标志位!<br>　　 来判断程序怎么样的判断是否注册或者用户类型</li>
-<li>7）窗口标题法 bp SetWindowTextA</li>
-<li>8）F12堆栈调用</li>
-<li>9) 注册表:</li>
-<li>10)特殊断点：<ul>
-<li>bpx RegCreateKeyExA 对于Delphi程序程序来说，用这个断点比较合适</li>
-<li>bp RegCreateKeyExA 对于加了壳的程序</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">4.C+破解.C类</font><ul>
-<li>1）Point-H法<br>　　bp GetDlgItem(断按下按钮)<br>　　bp MessageBoxA(断对话框)</li>
-<li>2）字符串法</li>
-<li>3）F12堆栈调用</li>
-<li>4）窗口标题法 bp SetWindowTextA</li>
-<li>5）★★C+程序专用断点★★<ul>
-<li>bp lstrcmpA (KERNEL32.lstrcmpA) 比较用法</li>
-<li>bp _mbscmp //比较</li>
-</ul>
-</li>
-<li>6）C类程序的经典断点:<ul>
-<li>bp GetWindowTextA(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetWindowTextLengthA(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetDlgItem(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetDlgItemTextA</li>
-<li>ds:[004021C8]=77C01881 (msvcrt._mbscmp)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">5.BC++破解</font><ul>
-<li>1）DEDE、PE Explorer作为强有力的辅助工具找按妞事件</li>
-<li>2）Point-H法</li>
-<li>3）bp GetDlgItem/GetDlgItemTextA(断输入框)</li>
-<li>4）bp MessageBoxA(W)(断对话框)—Ctrl+N</li>
-<li>5）字符串法—插件/搜索所有参考文本</li>
-<li>6）如果程序界面标题有[未注册/注册/VIP版/标准版/钻石版] 之类字样的可以通过查找FormCreate/FormShow—-DEDE，找到关键标志位!来判断程序怎么样的判断是否注册或者用户类型</li>
-<li>7）窗口标题法 bp SetWindowTextA</li>
-<li>8）F12堆栈调用</li>
-<li>9) bpx RegCreateKeyExA 对于Delphi程序程序来说，用这个断点比较合适<br>bp RegCreateKeyExA 对于加了壳的程序</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">6.MASM32 / TASM32破解</font><ul>
-<li>1）Point-H法<ul>
-<li>bp GetDlgItem(断按下按钮)</li>
-<li>bp MessageBoxA(断对话框)</li>
-</ul>
-</li>
-<li>2）字符串法</li>
-<li>3）F12堆栈调用</li>
-<li>4）窗口标题法 bp SetWindowTextA</li>
-</ul>
-</li>
-</ul>
-
-          
+<li>易语言     Delphi
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/11/02/六种常见语言的逆向思路/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
