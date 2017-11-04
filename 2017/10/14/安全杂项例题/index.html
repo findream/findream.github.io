@@ -118,7 +118,15 @@
 <meta property="og:image" content="https://i.imgur.com/Jj2bexE.jpg">
 <meta property="og:image" content="https://i.imgur.com/kh6TCmS.png">
 <meta property="og:image" content="https://i.imgur.com/QT70RTL.png">
-<meta property="og:updated_time" content="2017-10-29T08:12:28.843Z">
+<meta property="og:image" content="https://i.imgur.com/LjrY9Vk.png">
+<meta property="og:image" content="https://i.imgur.com/1nrfYz8.png">
+<meta property="og:image" content="https://i.imgur.com/TiK2eiP.png">
+<meta property="og:image" content="https://i.imgur.com/20rIcJz.png">
+<meta property="og:image" content="https://i.imgur.com/bOI8FtB.png">
+<meta property="og:image" content="https://i.imgur.com/xZubEIp.png">
+<meta property="og:image" content="https://i.imgur.com/j7b8Zgh.png">
+<meta property="og:image" content="https://i.imgur.com/1CF5QjC.png">
+<meta property="og:updated_time" content="2017-11-04T08:03:35.890Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安全杂项例题">
 <meta name="twitter:description" content="安全杂项简介：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。">
@@ -551,6 +559,20 @@
 </ul>
 </li>
 </ul>
+<h2 id=""><a href="#" class="headerlink" title=""></a><br></h2><h1 id="例13：Only-One-File"><a href="#例13：Only-One-File" class="headerlink" title="例13：Only One File"></a>例13：Only One File</h1><p><strong> 题目来源：<a href="http://www.shiyanbar.com/ctf/1783" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1783</a></strong><br><strong> 解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1.给了一个zip文件，通过题目的提示在linux下会更加高效，所以在linux利用binwalk跑一下，发现里面存在很多zip文件。<br><img src="https://i.imgur.com/LjrY9Vk.png" alt=""></li>
+<li>2.利用binwalk -e的命令解压文件，得到<br><img src="https://i.imgur.com/1nrfYz8.png" alt=""></li>
+<li>3.然后进入文件夹，发现一个名为xaa无格式文件，但是linux已经显示了这个文件的属性（图片），利用file跑一遍。发现这是一个png图片，但是打不开。<br><img src="https://i.imgur.com/TiK2eiP.png" alt=""></li>
+<li>4.根据题意只存在一个文件，说明要把得到的文件合并起来，利用cat命令合并文件<br><img src="https://i.imgur.com/20rIcJz.png" alt=""></li>
+<li>5.但是这个和一般的图片隐写不一样，利用常规工具无法得到结果，hex打开，发现这是firework弄得图片文件。<br><img src="https://i.imgur.com/bOI8FtB.png" alt=""></li>
+<li>6.利用firework打开发现如图的“二维码”<br><img src="https://i.imgur.com/xZubEIp.png" alt=""></li>
+<li>7.发现其色调和一般二维码色调相反，利用滤镜—调整颜色—颜色反转得到原图，扫描。<br><img src="https://i.imgur.com/j7b8Zgh.png" alt=""><br><img src="https://i.imgur.com/1CF5QjC.png" alt=""></li>
+<li>8.<strong>firework的介绍：</strong><a href="https://baike.baidu.com/item/fireworks/444403" target="_blank" rel="external">https://baike.baidu.com/item/fireworks/444403</a></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -715,7 +737,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">13.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例13：Only-One-File"><span class="nav-number">14.</span> <span class="nav-text">例13：Only One File</span></a></li></ol></div>
             
 
           </div>
