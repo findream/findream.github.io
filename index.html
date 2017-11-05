@@ -364,12 +364,14 @@
 
       
         
-          
-            <h1 id="树的定义："><a href="#树的定义：" class="headerlink" title="树的定义："></a>树的定义：<br></h1><p>树是n（n&gt;=0）个节点的有限集合。当n==0时，称为空树，当n&gt;=0时，树满足以下条件：<br><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。</strong><br><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集合称之为树，即根的子树</strong><br></p>
-<h1 id="二叉树的定义："><a href="#二叉树的定义：" class="headerlink" title="二叉树的定义："></a>二叉树的定义：<br></h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在计算机科学中，二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的每个结点至多只有二棵子树(不存在度大于2的结点)，二叉树的子树有左右之分，次序不能颠倒。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>二叉树的第i层至多有2^{i-1}个结点；深度为k的二叉树至多有2^k-1个结点；对任何一棵二叉树T，如果其终端结点数为n_0，度为2的结点数为n_2，则n_0=n_2+1。</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>一棵深度为k，且有2^k-1个节点称之为满二叉树；深度为k，有n个节点的二叉树，当且仅当其每一个节点都与深度为k的满二叉树中，序号为1至n的节点对应时，称之为完全二叉树。</strong><br></p>
-<h1 id="二叉树的存储结构："><a href="#二叉树的存储结构：" class="headerlink" title="二叉树的存储结构："></a>二叉树的存储结构：<br></h1><p><strong>1.顺序存储结构：</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于满二叉树和完全二叉树来说，按照满二叉树节点连续编号的次序，将各节点数据存放在一组连续的内存单元，即用一维数组作为存储结构。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;满足一下条件：<br><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1)左子树是双亲节点次序的2n倍</strong><br><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2)右子树是双亲节点次序的2n+1倍</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如图所示，将二叉树按顺序结构存储：<br><br>     <img src="https://i.imgur.com/N43CGuq.jpg" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将这个二叉树按顺序结构存储：<br><br>     <img src="https://i.imgur.com/SjnBCZt.jpg" alt=""></p>
-
-          
+          <h1 id="树的定义："><a href="#树的定义：" class="headerlink" title="树的定义："></a>树的定义：</h1><p>树是n（n&gt;=0）个节点的有限集合。当n==0时，称为空树，当n&gt;=0时，树满足以下条件：<br><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。</strong><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集合称之为树，即根的子树</strong><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/11/05/浅谈数据结构之二叉树/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
