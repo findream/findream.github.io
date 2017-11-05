@@ -90,7 +90,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/N43CGuq.jpg">
 <meta property="og:image" content="https://i.imgur.com/SjnBCZt.jpg">
-<meta property="og:updated_time" content="2017-11-05T12:16:06.440Z">
+<meta property="og:updated_time" content="2017-11-05T12:51:58.714Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈数据结构之二叉树">
 <meta name="twitter:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
@@ -408,7 +408,6 @@
     }
 </code></pre>
 # 二叉树的遍历：
-**递归的遍历方法：**
 <pre><code> 1）先序递归遍历：
      void PreOrder(BiTree root)
      {
@@ -462,6 +461,24 @@
                 Pop(s,&p);
                 p=p->RChild;      //进入右子树，开始下一次循环
             }    
+        }
+    }
+</code></pre>
+<pre><code>二叉树的层次遍历
+    void LevelOrder(BiTree root)
+    {
+        SeqQueue *q;
+        BiTree p;
+        InitQueue(q);
+        EnterQueue(q,root);        //人队列
+        while(!IsEmpty(q))
+        {
+            DeleteQueue(q,&p);   //出队列
+            visit(p);
+            if(p->Lchild)
+                EnterQueue(q,p);
+            if(p->Rchild)
+                EnterQueue(q,p);
         }
     }
 </code></pre>
