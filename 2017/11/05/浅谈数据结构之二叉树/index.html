@@ -90,7 +90,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/N43CGuq.jpg">
 <meta property="og:image" content="https://i.imgur.com/SjnBCZt.jpg">
-<meta property="og:updated_time" content="2017-11-05T11:54:24.415Z">
+<meta property="og:updated_time" content="2017-11-05T12:16:06.440Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈数据结构之二叉树">
 <meta name="twitter:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
@@ -390,6 +390,81 @@
           struct node *Rchild;
     }
 </code></pre> 
+# 二叉树的建立：
+<pre><code>
+    void CreateBiTree(BiTree &root)     //创建二叉树
+    {                                   //这里加上&意思是传递的参数为指针的引用，括号里面等价于 BiTreeNode* &T
+        char ch;
+        ch = getchar();
+        if ('#' == ch)
+            root = NULL;
+        else
+        {
+            root = (BiTree)malloc(sizeof(BiTree));
+            root->data = ch;
+            CreateBiTree(root->Lchild);
+            CreateBiTree(root->Rchild);
+        }
+    }
+</code></pre>
+# 二叉树的遍历：
+**递归的遍历方法：**
+<pre><code> 1）先序递归遍历：
+     void PreOrder(BiTree root)
+     {
+       if (root)
+       {
+          visit(root->data);
+          PreOrder(root->Lchild);
+          PreOrder(root->Rchild);
+       }
+     }
+</code></pre>
+<pre><code> 2)中序递归遍历：
+    void InOrder(BiTree root)
+    {
+        if(root)
+        {    
+            InOrder(root->LChild);
+            visit(root->data);
+            InOrder(root->RChild);
+        }
+    }
+</code></pre>
+<pre><code> 2)后序递归遍历：
+    void PostOrder(BiTree root)
+    {
+        if(root)
+        {
+            PostOrder(root->Lchild);
+            PostOrder(root->RChild);
+            visit(root->data);
+        }
+    }
+
+</code></pre>
+<pre><code> 2)先序非递归遍历：
+    void PreOrder(BiTree root)]
+    {
+        SeqStack *s;
+        InitStack(s);
+        BiTree p=root;
+        while(p!=NULL||s!=NULL)
+        {
+            while(p!=NULL)
+            {
+                visit(p->data);
+                Push(s,p);          //保存上一步节点信息，以便下次返回使用
+                p=p->LChild;
+            }
+            if(IsEmpty(s))
+            {
+                Pop(s,&p);
+                p=p->RChild;      //进入右子树，开始下一次循环
+            }    
+        }
+    }
+</code></pre>
 
       
     </div>
