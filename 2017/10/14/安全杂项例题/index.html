@@ -126,7 +126,14 @@
 <meta property="og:image" content="https://i.imgur.com/xZubEIp.png">
 <meta property="og:image" content="https://i.imgur.com/j7b8Zgh.png">
 <meta property="og:image" content="https://i.imgur.com/1CF5QjC.png">
-<meta property="og:updated_time" content="2017-11-04T08:03:35.890Z">
+<meta property="og:image" content="https://i.imgur.com/pu9bP0O.png">
+<meta property="og:image" content="https://i.imgur.com/kK5XPxs.png">
+<meta property="og:image" content="https://i.imgur.com/7EnGJCE.png">
+<meta property="og:image" content="https://i.imgur.com/q8UmzRY.png">
+<meta property="og:image" content="https://i.imgur.com/y2sEfXM.png">
+<meta property="og:image" content="https://i.imgur.com/RtFuMqm.png">
+<meta property="og:image" content="https://i.imgur.com/pmLvKv1.png">
+<meta property="og:updated_time" content="2017-11-06T12:04:55.996Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安全杂项例题">
 <meta name="twitter:description" content="安全杂项简介：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。">
@@ -573,6 +580,19 @@
 </ul>
 </li>
 </ul>
+<h2 id="-1"><a href="#-1" class="headerlink" title=""></a><br></h2><h1 id="例14：NSCTF-misc250"><a href="#例14：NSCTF-misc250" class="headerlink" title="例14：NSCTF misc250"></a>例14：NSCTF misc250</h1><p><strong> 题目来源：<a href="http://www.shiyanbar.com/ctf/1767" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1767</a></strong><br><strong> 解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1.拖到wireshark分析，根据题意，这是室友在局域网下载文件时，所截获的数据包，所以筛选出http协会的数据出来分析。<br><img src="https://i.imgur.com/pu9bP0O.png" alt=""></li>
+<li>2.根据wireshark给出的描述，发现第129个分组是html文件，我们尝试打开分组。<br><img src="https://i.imgur.com/kK5XPxs.png" alt=""></li>
+<li>3.找到了关键词，把这个文件保存成html文件（右键到处分组字节流）。</li>
+<li>4.打开第150个分组，发现这是一个rar。保存该分组<br><img src="https://i.imgur.com/7EnGJCE.png" alt=""></li>
+<li>5.发现rar文件需要密码，打开html文件。<br><img src="https://i.imgur.com/q8UmzRY.png" alt=""></li>
+<li>6.开始想的是用掩码爆破的方式爆破掉，但是不知道为什么会失败，看了别人的wp后，我们先构造字典，然后字典爆破。<br><img src="https://i.imgur.com/y2sEfXM.png" alt=""></li>
+<li>7.然后跑字典得到密码，解压，得到flag<br><img src="https://i.imgur.com/RtFuMqm.png" alt=""><br><img src="https://i.imgur.com/pmLvKv1.png" alt=""></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -737,7 +757,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">13.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例13：Only-One-File"><span class="nav-number">14.</span> <span class="nav-text">例13：Only One File</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">13.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例13：Only-One-File"><span class="nav-number">14.</span> <span class="nav-text">例13：Only One File</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#-1"><span class="nav-number">14.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例14：NSCTF-misc250"><span class="nav-number">15.</span> <span class="nav-text">例14：NSCTF misc250</span></a></li></ol></div>
             
 
           </div>
