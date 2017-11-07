@@ -100,7 +100,10 @@
 <meta property="og:image" content="https://i.imgur.com/CG3z2uy.png">
 <meta property="og:image" content="https://i.imgur.com/vz2MRdi.png">
 <meta property="og:image" content="https://i.imgur.com/RelW4vb.png">
-<meta property="og:updated_time" content="2017-11-03T14:21:34.776Z">
+<meta property="og:image" content="https://i.imgur.com/R9HcxLx.png">
+<meta property="og:image" content="https://i.imgur.com/rulTmbo.png">
+<meta property="og:image" content="https://i.imgur.com/V4pzXnC.png">
+<meta property="og:updated_time" content="2017-11-07T13:55:36.291Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络科技协会纳新免试题">
 <meta name="twitter:description" content="网络科技协会纳新面试题:  第一关： 查看官网页面，找到神秘代码,发现这是一个校验码。经过提醒，发现这个是百度云盘的校验码。输入pan.baidu.com/s/1crqIKI.">
@@ -409,12 +412,25 @@
 <li>下载之。</li>
 </ul>
 </li>
-<li>第六关（暂定):<ul>
-<li>数据挖掘题，有一个readme和压缩包文件，里面是一个2500万行的数据。一般的Excel无法全部加载（Excel只能加载104万行数据）</li>
-<li>你可以吧文件拆分成100万行的….</li>
+<li>第六关<strong><font color="#DC143C">(付世琦学姐给的wp)</font></strong>:<ul>
+<li>数据挖掘题，有一个readme和压缩包文件，里面是一个2500多万行的数据。一般的Excel无法全部加载（Excel只能加载104万行数据）</li>
+<li>你可以把文件拆分成100万行的….</li>
 </ul>
 </li>
-<li>第七关：</li>
+<li>第七关<strong><font color="#DC143C">(刘锁镇学长给的wp)</font></strong>：<ul>
+<li>第一题：<ul>
+<li>例如我的输入是”0123456789123456”.</li>
+<li><img src="https://i.imgur.com/R9HcxLx.png" alt=""></li>
+<li>我们观察一下Process函数:</li>
+<li><img src="https://i.imgur.com/rulTmbo.png" alt=""></li>
+<li>可以看到,  流程并不复杂, 只是简单的将密钥流与text的每一位的ansi编码做异或处理.<br>最后提取处理后组成的字符串的前4位. 作为返回结果.</li>
+<li>解密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加密:<br><img src="https://i.imgur.com/V4pzXnC.png" alt=""></li>
+<li>为什么会存在多解?</li>
+<li>在process函数中, 我们异或后的位数为8位, 为了是位数和传入的text位数相等(等于 4 位), 我把8位截断, 取了前4 位.<br>导致解密的时候, 只能恢复目标md5的一半.即我们只需要一半位数的md5就能够推出最后的密文. 而另一半md5可任意.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
       
