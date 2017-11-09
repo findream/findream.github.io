@@ -93,7 +93,11 @@
 <meta property="og:image" content="https://i.imgur.com/EWEajcb.png">
 <meta property="og:image" content="https://i.imgur.com/9tMLKKV.png">
 <meta property="og:image" content="https://i.imgur.com/s6wouQW.png">
-<meta property="og:updated_time" content="2017-11-09T06:30:24.112Z">
+<meta property="og:image" content="https://i.imgur.com/BPjANEv.png">
+<meta property="og:image" content="https://i.imgur.com/NuuD0FS.png">
+<meta property="og:image" content="https://i.imgur.com/T7M4S7F.png">
+<meta property="og:image" content="https://i.imgur.com/ViSkkB0.png">
+<meta property="og:updated_time" content="2017-11-09T07:55:58.927Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="switch结构逆向分析">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;暑假看了看雪的知识库，偶然间看到这篇besterChen写的switch结构分析一文，甚喜之，原封不动的抄了下来，在此表示非常感谢。这是在暑假的word版经过复核及重新测试，发现原文许多反汇编代码与原先语句有出入，可能是现在编译器更加高级了。为了保证原文的统一和完整性，在此没有对原文代码进行修改，只是在后面进行了补充，形式为图">
@@ -408,14 +412,43 @@
 </ul>
 </li>
 </ul>
-<h1 id="3-多于三项部分有规律的情况"><a href="#3-多于三项部分有规律的情况" class="headerlink" title="3.多于三项部分有规律的情况:"></a>3.多于三项部分有规律的情况:</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上个我们发现，它会给缺省的case表项中填补default分支的首地址，那我们将这个间隔调大，观察一下编译器会怎么处理，代码段如下：</strong></p>
+<h1 id="3-多于三项部分有规律的情况"><a href="#3-多于三项部分有规律的情况" class="headerlink" title="3.多于三项部分有规律的情况:"></a>3.多于三项部分有规律的情况:</h1><p><strong>（1）上个我们发现，它会给缺省的case表项中填补default分支的首地址，那我们将这个间隔调大，观察一下编译器会怎么处理，代码段如下：</strong></p>
 <p><pre><code><br>    scanf(“%d”, &amp;nscore);<br>    switch (nscore)<br>    {<br>        case 1:<br>            ntmpNum = 1;<br>            break;<br>        case 2:<br>            ntmpNum = 2;<br>            break;<br>        case 3:<br>            ntmpNum = 3;<br>            break;<br>    //这里丢失20多个case<br>        case 26:<br>            ntmpNum = 26;<br>            break;<br>        case 27:<br>            ntmpNum = 27;<br>            break;<br>        case 28:<br>            ntmpNum = 28;<br>            break;<br>        default:<br>            ntmpNum = 10;<br>    }<br>    printf(“%d”, ntmpNum); // 要调用一下ntmpNum，否则上面的switch会被优化掉<br></code></pre><br>反汇编观察一下：</p>
 <p><pre><code><br>    0040100E    68 38904000     push    00409038                      ; ASCII “%d”<br>    00401013    E8 6F010000     call    00401187                      ; scanf<br>    00401018    8B4C24 08       mov     ecx, dword ptr [esp+8]        ; 得到输入的内容<br>    0040101C    83C4 08         add     esp, 8<br>    0040101F    8D41 FF         lea     eax, dword ptr [ecx-1]        ; 输入的内容-1<br>    00401022    83F8 1B         cmp     eax, 1B<br>    00401025    77 39           ja      short 00401060<br>    00401027    33D2            xor     edx, edx<br>    00401029    8A90 9C104000   mov     dl, byte ptr [eax+40109C]     ; 检索case的下标索引值表<br>    ;它参与运算从地址表中找到对应的case地址<br>    0040102F    FF2495 80104000 jmp     dword ptr [edx*4+401080]<br>    ; 通过值表填充的CASE索引值，查地址表<br>    00401036    B8 01000000     mov     eax, 1<br>    0040103B    EB 28           jmp     short 00401065                  ; break<br>    0040103D    B8 02000000     mov     eax, 2<br>    00401042    EB 21           jmp     short 00401065<br>    00401044    B8 03000000     mov     eax, 3<br>    00401049    EB 1A           jmp     short 00401065<br>    0040104B    B8 1A000000     mov     eax, 1A<br>    00401050    EB 13           jmp     short 00401065<br>    00401052    B8 1B000000     mov     eax, 1B<br>    00401057    EB 0C           jmp     short 00401065<br>    00401059    B8 1C000000     mov     eax, 1C<br>    0040105E    EB 05           jmp     short 00401065<br>    00401060    B8 0A000000     mov     eax, 0A<br>    00401065    50              push    eax<br>    00401066    68 38904000     push    00409038                         ; ASCII “%d”<br></code></pre><br>下标索引表：</p>
 <p><pre><code><br>    0040109C    00          DB 00    case 1的索引值<br>    0040109D    01          DB 01    case 2的索引值<br>    0040109E    02          DB 02    case 3的索引值<br>    0040109F    06          DB 06    下面全部填充default的索引值<br>    004010A0    06          DB 06<br>    …<br>    004010B4    06          DB 06<br>    004010B5    03          DB 03    case 4的索引值<br>    004010B6    04          DB 04    case 5的索引值<br>    004010B7    05          DB 05    case 6的索引值<br></code></pre><br>这样查两个表，缺省的case项在索引表中插入 default 的索引值，这样每个case项就节省了3个字节的空间。</p>
 <p><pre><code><br>    mov     dl, byte ptr [eax+40109C]   // 40109C是索引表首地址<br>    jmp     dword ptr [edx*4+401080]    // 401080是跳转地址表的首地址。<br></code></pre></p>
 <ul>
-<li>补充：<ul>
-<li>根据OD和IDA的联合调试，发现这个和上面的方法是一样的。直接使用的是地址值，并没有经过索引表来中介传输。<br><img src="https://i.imgur.com/9tMLKKV.png" alt=""><br><img src="https://i.imgur.com/s6wouQW.png" alt=""></li>
+<li><p>补充：</p>
+<ul>
+<li>根据OD和IDA的联合调试，发现这个和上面的方法是一样的。直接使用的是地址值，并没有经过索引表来中介传输。<br><img src="https://i.imgur.com/9tMLKKV.png" alt=""><br><img src="https://i.imgur.com/s6wouQW.png" alt=""><br><strong>（2）我们继续增大这个case之间的差距，让它超过255，代码段如下：</strong><br><pre><code><br>scanf(“%d”, &amp;nscore)；<br>switch (nscore)<br>{<br>  case 1:<pre><code>ntmpNum = 1;
+break;
+</code></pre>  case 2:<pre><code>ntmpNum = 2;
+break;
+</code></pre>  case 3:<pre><code>ntmpNum = 3;
+break;
+</code></pre>  //这里丢失几个case<br>  case 326:<pre><code>ntmpNum = 26;
+break;
+</code></pre>  case 327:<pre><code>ntmpNum = 27;
+break;
+</code></pre>  case 328:<pre><code>ntmpNum = 28;
+break;
+</code></pre>  default:<pre><code>ntmpNum = 10;
+</code></pre>}<br>printf(“%d”, ntmpNum); // 要调用一下ntmpNum，否则上面的switch会被优化掉<br></code></pre><br>反汇编看一下效果：<br><pre><code><br>00401018    8B4424 08       mov     eax, dword ptr [esp+8]  ; 得到输入的内容<br>0040101C    83C4 08         add     esp, 8<br>0040101F    3D 46010000     cmp     eax, 146            ; 判断是不是大case中最小的<br>00401024    7F 27           jg      short 0040104D    ; 如果大于，就进入大case中比较<br>00401026    74 1E           je      short 00401046    ; 如果相等就直接进入0x146的case代码段<br>00401028    48              dec     eax            ; 否则就到小的case段中比较。<br>00401029    74 14           je      short 0040103F<br>0040102B    48              dec     eax<br>0040102C    74 0A           je      short 00401038<br>0040102E    48              dec     eax<br>0040102F    75 26           jnz     short 00401057    ; default了。<br>00401031    B8 03000000     mov     eax, 3<br>00401036    EB 32           jmp     short 0040106A<br>00401038    B8 02000000     mov     eax, 2<br>0040103D    EB 2B           jmp     short 0040106A<br>0040103F    B8 01000000     mov     eax, 1<br>00401044    EB 24           jmp     short 0040106A<br>00401046    B8 1A000000     mov     eax, 1A<br>0040104B    EB 1D           jmp     short 0040106A<br>0040104D    2D 47010000     sub     eax, 147<br>; 减去一个case项值，得到一个差值，这样就可以判断大case了。<br>00401052    74 11           je      short 00401065<br>00401054    48              dec     eax<br>00401055    74 07           je      short 0040105E<br>00401057    B8 0A000000     mov     eax, 0A<br>0040105C    EB 0C           jmp     short 0040106A<br>0040105E    B8 1C000000     mov     eax, 1C<br>00401063    EB 05           jmp     short 0040106A<br>00401065    B8 1B000000     mov     eax, 1B<br>0040106A    50              push    eax<br>0040106B    68 38904000     push    00409038            ; ASCII “%d”<br>00401070    E8 B1000000     call    00401126<br></code></pre><br>看到了么？这里就分成了两段，每段当做if来处理的，我想应该是我们每段的case数量太少，我们让上面的case 数量大于3个试试，看看会不会是只要大于三项的有规律case就查表，少于等于3项的就当成if来处理。</li>
+</ul>
+</li>
+<li><p>补充：</p>
+<ul>
+<li>我也不清楚为什么编译器会和146.147.148这三个数比较，然后跳入第二次default。<br><img src="https://i.imgur.com/BPjANEv.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<p>代码如下：</p>
+<p><pre><code><br>    scanf(“%d”, &amp;nscore);<br>    switch (nscore)<br>    {<br>        case 1:<br>            ntmpNum = 1;<br>            break;<br>        case 2:<br>            ntmpNum = 2;<br>            break;<br>        case 3:<br>            ntmpNum = 3;<br>            break;<br>        case 4:<br>            ntmpNum = 4;<br>            break;<br>        case 5:<br>            ntmpNum = 5;<br>            break;<br>        //这里丢失几个case<br>        case 326:<br>            ntmpNum = 326;<br>            break;<br>        case 327:<br>            ntmpNum = 327;<br>            break;<br>        case 328:<br>            ntmpNum = 328;<br>            break;<br>        default:<br>            ntmpNum = 10;<br>    }<br>    printf(“%d”, ntmpNum); // 要调用一下ntmpNum，否则上面的switch会被优化掉<br></code></pre><br>反汇编看下效果：</p>
+<p><pre><code><br>    0040100E    68 38904000     push    00409038                         ; ASCII “%d”<br>    00401013    E8 5F010000     call    00401177                         ; scanf<br>    00401018    8B4424 08       mov     eax, dword ptr [esp+8]           ; 得到输入的内容<br>    0040101C    83C4 08         add     esp, 8<br>    0040101F    3D 46010000     cmp     eax, 146<br>    00401024    7F 39           jg      short 0040105F<br>    00401026    74 30           je      short 00401058<br>    00401028    48              dec     eax<br>    00401029    83F8 04         cmp     eax, 4<br>    0040102C    77 3B           ja      short 00401069<br>    0040102E    FF2485 98104000 jmp     dword ptr [eax*4+401098]<br>    00401035    B8 01000000     mov     eax, 1<br>    0040103A    EB 40           jmp     short 0040107C<br>    0040103C    B8 02000000     mov     eax, 2<br>    00401041    EB 39           jmp     short 0040107C<br>    00401043    B8 03000000     mov     eax, 3<br>    00401048    EB 32           jmp     short 0040107C<br>    0040104A    B8 04000000     mov     eax, 4<br>    0040104F    EB 2B           jmp     short 0040107C<br>    00401051    B8 05000000     mov     eax, 5<br>    00401056    EB 24           jmp     short 0040107C<br>    00401058    B8 46010000     mov     eax, 146<br>    0040105D    EB 1D           jmp     short 0040107C<br>    0040105F    2D 47010000     sub     eax, 147<br>    00401064    74 11           je      short 00401077<br>    00401066    48              dec     eax<br>    00401067    74 07           je      short 00401070<br>    00401069    B8 0A000000     mov     eax, 0A<br>    0040106E    EB 0C           jmp     short 0040107C<br>    00401070    B8 48010000     mov     eax, 148<br>    00401075    EB 05           jmp     short 0040107C<br>    00401077    B8 47010000     mov     eax, 147<br>    0040107C    50              push    eax<br>    0040107D    68 38904000     push    00409038                         ; ASCII “%d”<br>    00401082    E8 BF000000     call    00401146<br></code></pre><br>跳转表如下：</p>
+<p><pre><code><br>    00401098  00401035  switch.00401035<br>    0040109C  0040103C  switch.0040103C<br>    004010A0  00401043  switch.00401043<br>    004010A4  0040104A  switch.0040104A<br>    004010A8  00401051  switch.00401051<br></code></pre><br>哈哈，不多说了，我们看下无规律的情况。</p>
+<ul>
+<li>补充（原文的反汇编代码和这次实验不一样，原文存在地址表，这个不存在）<ul>
+<li>可能是利用最优二叉树算法得到的中间的146.147.148的值。<br><img src="https://i.imgur.com/NuuD0FS.png" alt=""><br><img src="https://i.imgur.com/T7M4S7F.png" alt=""><br><img src="https://i.imgur.com/ViSkkB0.png" alt=""></li>
 </ul>
 </li>
 </ul>
