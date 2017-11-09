@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="队列的定义：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：入队的时候是队尾入队，出队的时候是队头出队">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-09T05:01:19.034Z">
+<meta property="og:updated_time" content="2017-11-09T05:18:25.264Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据结构之队列基础">
 <meta name="twitter:description" content="队列的定义：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：入队的时候是队尾入队，出队的时候是队头出队">
@@ -384,9 +384,9 @@
 
       
         <h1 id="队列的定义："><a href="#队列的定义：" class="headerlink" title="队列的定义："></a>队列的定义：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：<font color="#DC143C">入队的时候是队尾入队，出队的时候是队头出队</font></strong><br><a id="more"></a></p>
-<h1 id="队列的存储形式："><a href="#队列的存储形式：" class="headerlink" title="队列的存储形式："></a>队列的存储形式：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;与线性表和栈类似，队列也有顺序存储和链式存储两种存储结构。</p>
+<h1 id="队列的存储形式："><a href="#队列的存储形式：" class="headerlink" title="队列的存储形式："></a>队列的存储形式：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;与线性表和栈类似，队列也有<font color="#DC143C">顺序存储和链式存储</font>两种存储结构。</p>
 <ul>
-<li>顺序存储(循环队列)：即有一组地址连续的存储单元依次存放队列中的数据元素，一般情况下使用以为数组来作为队列的顺序存储空间。为了避免尾巴在头的前面我们采取的循环队列的处理方式。首尾相接的循环表构建方法我们采用的是求模的方法。 <pre><code>类型定义：
+<li><font color="#DC143C">顺序存储(循环队列)</font>：即有一组地址连续的存储单元依次存放队列中的数据元素，一般情况下使用以为数组来作为队列的顺序存储空间。为了避免尾巴在头的前面我们采取的循环队列的处理方式。首尾相接的循环表构建方法我们采用的是求模的方法。 <pre><code>类型定义：
   typedef struct
   {
       datatype data[MAX];
@@ -450,6 +450,72 @@
       int i;
       for (i = p->front; i != p->rear; i=(i+1)%MAX)
           printf("%c ", p->data[i]);
+  }
+</code></pre></li>
+<li><p><font color="#DC143C">链式存储：</font>如果用户不知道需要的内存大小，可以采用链式存储结构，和链栈一样，使用单链表实现链队列，为了操作方便，可以使用带头结点的单链表表示队列，并设置头指针和尾指针，头指针指向队头结点，尾指针指向队尾节点。</p>
+<pre><code>
+  typedef struct node
+  {
+      datatype data;
+      struct node *next;
+  }Qnode;     //链式队列的节点
+
+  typedef struct
+  {
+      Qnode *front;
+      Qnode *rear;
+  }LQueue;   //链式队列的头指针节点
+
+  LQueue *InitQueue()
+  {
+      LQueue *q = (LQueue*)malloc(sizeof(LQueue));
+      Qnode *p = (Qnode*)malloc(sizeof(Qnode));
+      p->next = NULL;
+      q->front = q->rear = p;   //头指向建立好的节点
+  }
+
+  /*----------------------------
+  注意：front指针永远指向第一个节点
+  --------------------------------*/
+  void InQueue(LQueue *q, datatype x)   //入队列
+  {
+      Qnode *p = (Qnode*)malloc(sizeof(Qnode));
+      p->data = x;
+      p->next = NULL;
+      q->front->next = p;     //目的是使队列和新加入的节点链接起来
+      q->front = p;           //母的是使头指针的rear指针指向队尾
+  }
+
+  /*----------------------------------
+  注意：队首出队列
+  -----------------------------------*/
+  int OutQueue(LQueue *q, datatype *x)
+  {
+      Qnode *p;
+      if (EmptyQueue(q))  //队列为空
+          return FALSE;
+      else
+      {
+          *x = q->front->data;
+          p = q->front->next;
+          q ->front->next= p->next;
+          free(p);
+      }
+      if (q->front->next==NULL)
+      {    
+          q->front = q->rear;
+          return TRUE;
+      }
+  }
+  int EmptyQueue(LQueue *q)      //判队空
+  {
+      if (q->front == q->rear)
+      {
+          printf("队列为空\n");
+          return 1;
+      }
+      else
+          return 0;
   }
 </code></pre></li>
 </ul>
