@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;暑假看了看雪的知识库，偶然间看到这篇besterChen写的switch结构分析一文，甚喜之，原封不动的抄了下来，在此表示非常感谢。这是在暑假的word版经过复核及重新测试，发现原文许多反汇编代码与原先语句有出入，可能是现在编译器更加高级了。为了保证原文的统一和完整性，在此没有对原文代码进行修改，只是在后面进行了补充，形式为图">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-07T03:01:48.228Z">
+<meta property="og:updated_time" content="2017-11-09T05:51:37.487Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="switch结构逆向分析">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;暑假看了看雪的知识库，偶然间看到这篇besterChen写的switch结构分析一文，甚喜之，原封不动的抄了下来，在此表示非常感谢。这是在暑假的word版经过复核及重新测试，发现原文许多反汇编代码与原先语句有出入，可能是现在编译器更加高级了。为了保证原文的统一和完整性，在此没有对原文代码进行修改，只是在后面进行了补充，形式为图">
@@ -490,7 +490,16 @@ OD中查看反汇编形式：
     0040108C  0040103C  switch.0040103C
 </code></pre>
 <font color="#DC143C">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;认真对比一下这个表，发现，它先是对case后的常量排序，然后再将对应的处理代码的首地址写成一个表，通过jmp   dword ptr [eax*4+401064] 查表直接进入到对应的case中。
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于缺省的case（我们是间隔2递增的case）在表中填充的是default分支的首地址。</font>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于缺省的case（我们是间隔2递增的case）在表中填充的是default分支的首地址。</font><br>
+补充：如图，我输入的是3，也就是case语句的第一个语句（1.3.5....）
+利用IDA pro查看分支表如图!
+    ![](https://i.imgur.com/fGlHnLG.png)
+然后查看od跳转的地方（401341）：
+    ![](https://i.imgur.com/bdTKhlv.png)
+对比od可以知道：401377是默认分支，其他是有效的的case分支。也就是IDA pro显示的分支表中的2.4.6.8....
+如图：
+    ![](https://i.imgur.com/EWEajcb.png)
+可以知道：在分支表存在的顺序按照nscore排列。
 # 3.多于三项部分有规律的情况:
 **&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上个我们发现，它会给缺省的case表项中填补default分支的首地址，那我们将这个间隔调大，观察一下编译器会怎么处理，代码段如下：**
 <pre><code>
