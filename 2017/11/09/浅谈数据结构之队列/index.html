@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="队列的定义：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：入队的时候是队尾入队，出队的时候是队头出队">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-09T05:18:25.264Z">
+<meta property="og:updated_time" content="2017-11-09T05:22:37.338Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据结构之队列基础">
 <meta name="twitter:description" content="队列的定义：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：入队的时候是队尾入队，出队的时候是队头出队">
@@ -492,16 +492,16 @@
   int OutQueue(LQueue *q, datatype *x)
   {
       Qnode *p;
-      if (EmptyQueue(q))  //队列为空
+      if (!EmptyQueue(q))  //队列为空
           return FALSE;
       else
       {
           *x = q->front->data;
-          p = q->front->next;
-          q ->front->next= p->next;
+          p = q->front->next;     //p指向第一个节点
+          q ->front->next= p->next;    //头指针指向第一个节点的下一个节点
           free(p);
       }
-      if (q->front->next==NULL)
+      if (q->front->next==NULL)    //队列中只有最后一个数据了
       {    
           q->front = q->rear;
           return TRUE;
