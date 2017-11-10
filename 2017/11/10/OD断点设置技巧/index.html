@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://i.imgur.com/8sq9suE.png">
 <meta property="og:image" content="https://i.imgur.com/TRcA3SG.png">
 <meta property="og:image" content="https://i.imgur.com/KuaDdHq.png">
-<meta property="og:updated_time" content="2017-11-10T09:02:12.390Z">
+<meta property="og:updated_time" content="2017-11-10T09:04:29.429Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OD断点设置技巧">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;断点是一个信号，它通知调试器，在某个特定点上暂时将程序执行挂起。当执行在某个断点处挂起时，我们称程序处于中断模式。进入中断模式并不会终止或结束程序的执行。执行可以在任何时候继续。断点的本质还是一种中断。">
@@ -388,10 +388,9 @@
 
       
         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>断点是一个信号，它通知调试器，在某个特定点上暂时将程序执行挂起。当执行在某个断点处挂起时，我们称程序处于中断模式。进入中断模式并不会终止或结束程序的执行。执行可以在任何时候继续。断点的本质还是一种中断。</strong><a id="more"></a></p>
-<h1 id="主要的四种断点设置方式："><a href="#主要的四种断点设置方式：" class="headerlink" title="主要的四种断点设置方式："></a>主要的四种断点设置方式：</h1><p>1.字符串断点<br><br>2.API断点<br><br>3.条件断点<br><br>4.run跟踪断点</p>
+<h1 id="主要的四种断点设置方式："><a href="#主要的四种断点设置方式：" class="headerlink" title="主要的四种断点设置方式："></a>主要的四种断点设置方式：</h1><p>1.字符串断点<br>2.API断点<br>3.条件断点<br>4.run跟踪断点</p>
 <ul>
-<li><p>断点设置：</p>
-<ul>
+<li>断点设置：<ul>
 <li>API断点：<ul>
 <li>1.可以在菜单栏—API断点处下断</li>
 <li>2.在命令行输入 bp+API函数名字，然后执行到返回（alt+F9）</li>
@@ -412,15 +411,14 @@
 <li>补充内容：<ul>
 <li>在反汇编窗口的快捷菜单中选择“Run跟踪［Run trace］|添加到所有函数入口处［Add entries of all procedures］”，<font color="#DC143C">这样能够检查每个可识别的函数被调用的次数。</font></li>
 <li>另一个命令“Run跟踪［Run trace］|添加到函数中所有的分支［Add branches in procedure］”<font color="#DC143C">会强行跟踪此函数中所有识别的跳转目的地址的内容。</font>在这种情况下，统计功能能够找到最频繁执行的分支，您可以优化这部分的代码，以提高速度。</li>
-<li>在反汇编窗口中的某条命令上使用快捷菜单中选择“搜索［Search for］|Run跟踪的最新记录［Last record in run trace］”用于查找该命令是否被执行过，如果执行过，最后一次执行在哪里。</li>
+<li>在反汇编窗口中的某条命令上使用快捷菜单中选择“搜索［Search for］|Run跟踪的最新记录［Last record in run trace］”用于查找该命令是否被执行过，如果执行过，最后一次执行在哪里。  </li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>其他断点设置：</p>
-<ul>
+<li>其他断点设置：<ul>
 <li>1.万能断点:ebp hmemcpy<ul>
 <li>ebp 在调用函数处下断（bp是指在调用函数内部下断）</li>
 <li>hmemcpy—16位函数，截获大部分的字符串输入</li>
