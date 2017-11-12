@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="栈的概念：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;栈是一种只允许在一端进行插入或者删除的线性表，他是一种操作受限的线性表，在表中只允许进行插入或者删除的一端叫做栈顶另一端叫做栈底。栈具有先进后出（Last in first out）的性质。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-12T09:16:30.777Z">
+<meta property="og:updated_time" content="2017-11-12T09:22:34.822Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈数据结构之栈">
 <meta name="twitter:description" content="栈的概念：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;栈是一种只允许在一端进行插入或者删除的线性表，他是一种操作受限的线性表，在表中只允许进行插入或者删除的一端叫做栈顶另一端叫做栈底。栈具有先进后出（Last in first out）的性质。">
@@ -386,15 +386,10 @@
         <h2 id="栈的概念："><a href="#栈的概念：" class="headerlink" title="栈的概念："></a>栈的概念：</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>栈是一种只允许在一端进行插入或者删除的线性表，他是一种操作受限的线性表，在表中只允许进行插入或者删除的一端叫做栈顶另一端叫做栈底。栈具有先进后出（Last in first out）的性质。</strong><a id="more"></a></p>
 <h2 id="栈的存储结构："><a href="#栈的存储结构：" class="headerlink" title="栈的存储结构："></a>栈的存储结构：</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>顺序存储和链式存储。</strong></p>
 <h2 id="顺序存储："><a href="#顺序存储：" class="headerlink" title="顺序存储："></a>顺序存储：</h2><ul>
-<li>利用顺序存储方式实现的栈称为顺序栈，通常0下标称之为栈底，这样空栈时栈顶指针top==-1，压栈top++，出栈 top–。<ul>
-<li><pre><code>DAT:
-typedef int datatype;
-typedef struct 
-{
-  datatype data[MAX];
-  int top;
-}SeqStack;
-</code></pre></li>
+<li><p>利用顺序存储方式实现的栈称为顺序栈，通常0下标称之为栈底，这样空栈时栈顶指针top==-1，压栈top++，出栈 top–。</p>
+<ul>
+<li><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">   <span class="keyword">typedef</span> <span class="keyword">int</span> datatype;</div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> </span></div><div class="line"><span class="class">&#123;</span></div><div class="line">	datatype data[MAX];</div><div class="line">	<span class="keyword">int</span> top;</div><div class="line">&#125;SeqStack;</div></pre></td></tr></table></figure>
+</li>
 <li><pre><code>初始化：
 SeqStack *InitStack()   //初始化
 {
