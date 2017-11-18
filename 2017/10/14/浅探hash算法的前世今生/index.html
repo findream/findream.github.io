@@ -81,16 +81,17 @@
 
 
 
-<meta name="description" content="Apes--change the world&apos;s animals">
-<meta property="og:type" content="website">
-<meta property="og:title" content="findream&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta name="description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅探hash算法的前世今生[转]">
+<meta property="og:url" content="http://yoursite.com/2017/10/14/浅探hash算法的前世今生/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="Apes--change the world&apos;s animals">
+<meta property="og:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-18T14:46:48.958Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="findream&#39;s blog">
-<meta name="twitter:description" content="Apes--change the world&apos;s animals">
+<meta name="twitter:title" content="浅探hash算法的前世今生[转]">
+<meta name="twitter:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不">
 
 
 
@@ -120,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/page/2/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/14/浅探hash算法的前世今生/"/>
 
 
 
 
 
-  <title>findream's blog</title>
+  <title>浅探hash算法的前世今生[转] | findream's blog</title>
   
 
 
@@ -145,8 +146,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -279,133 +279,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/14/MySql基本操作/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/14/MySql基本操作/" itemprop="url">MySql基本操作</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-14T20:45:11+08:00">
-                2017-10-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="数据库简介："><a href="#数据库简介：" class="headerlink" title="数据库简介："></a>数据库简介：<br></h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……</strong><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/10/14/MySql基本操作/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
 
   
 
@@ -435,9 +311,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/14/浅探hash算法的前世今生/" itemprop="url">浅探hash算法的前世今生[转]</a></h1>
+          <h1 class="post-title" itemprop="name headline">浅探hash算法的前世今生[转]</h1>
         
 
         <div class="post-meta">
@@ -509,13 +383,9 @@
       
 
       
-        
-          
-            <h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q:我为什么要写这篇文章？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:你没发现我很久没有跟新文章了么？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：为什么跟新这个内容？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：你了解hash算法嘛？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜</p>
+        <h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q:我为什么要写这篇文章？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:你没发现我很久没有跟新文章了么？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：为什么跟新这个内容？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：你了解hash算法嘛？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜</p>
 <h1 id="hash算法"><a href="#hash算法" class="headerlink" title="hash算法"></a>hash算法</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Hash，一般翻译做“散列”，也有直接音译为”哈希”的，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值。这种转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，而不可能从散列值来唯一的确定输入值。同时，只有改变里面些许的内容，hash值可能出现很大的不同。 密码学上的 Hash 又被称为”消息摘要(message digest)。</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color="#DC143C">MD5 和 SHA1 可以说是目前应用最广泛的Hash算法。</font>而它们都是以 MD4 为基础设计的。参考相应RFC文档可以得到MD4(RFC 1320)、MD5(RFC 1321)算法的详细描述和算法的C源代码</strong></p>
 
-          
-        
       
     </div>
     
@@ -532,158 +402,32 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/14/安全杂项例题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/14/安全杂项例题/" itemprop="url">安全杂项例题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-14T17:02:11+08:00">
-                2017-10-14
-              </time>
+              <a href="/2017/10/14/安全杂项例题/" rel="next" title="安全杂项例题">
+                <i class="fa fa-chevron-left"></i> 安全杂项例题
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
+              <a href="/2017/10/14/MySql基本操作/" rel="prev" title="MySql基本操作">
+                MySql基本操作 <i class="fa fa-chevron-right"></i>
+              </a>
             
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <h1 id="安全杂项简介："><a href="#安全杂项简介：" class="headerlink" title="安全杂项简介："></a>安全杂项简介：<br></h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。</strong>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/10/14/安全杂项例题/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -693,14 +437,11 @@
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -708,6 +449,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -728,8 +473,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -789,6 +543,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hash算法"><span class="nav-number">2.</span> <span class="nav-text">hash算法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -922,6 +692,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
