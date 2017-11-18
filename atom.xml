@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-11-12T09:30:17.833Z</updated>
+  <updated>2017-11-18T14:50:57.229Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>浅探hash算法的前世今生[转]</title>
+    <link href="http://yoursite.com/2017/11/18/%E6%B5%85%E6%8E%A2hash%E7%AE%97%E6%B3%95%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/"/>
+    <id>http://yoursite.com/2017/11/18/浅探hash算法的前世今生/</id>
+    <published>2017-11-18T14:50:11.000Z</published>
+    <updated>2017-11-18T14:50:57.229Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q:我为什么要写这篇文章？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:你没发现我很久没有跟新文章了么？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：为什么跟新这个内容？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：你了解hash算法嘛？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜<br><a id="more"></a></p><h1 id="hash算法"><a href="#hash算法" class="headerlink" title="hash算法"></a>hash算法</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Hash，一般翻译做“散列”，也有直接音译为”哈希”的，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值。这种转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，而不可能从散列值来唯一的确定输入值。同时，只有改变里面些许的内容，hash值可能出现很大的不同。 密码学上的 Hash 又被称为”消息摘要(message digest)。</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color="#DC143C">MD5 和 SHA1 可以说是目前应用最广泛的Hash算法。</font>而它们都是以 MD4 为基础设计的。参考相应RFC文档可以得到MD4(RFC 1320)、MD5(RFC 1321)算法的详细描述和算法的C源代码</strong></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言：&quot;&gt;&lt;a href=&quot;#前言：&quot; class=&quot;headerlink&quot; title=&quot;前言：&quot;&gt;&lt;/a&gt;前言：&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：你了解hash算法嘛？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜&lt;br&gt;
+    
+    </summary>
+    
+      <category term="密码学" scheme="http://yoursite.com/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>浅谈数据结构之栈</title>
@@ -232,29 +252,6 @@
       &lt;h1 id=&quot;数据库简介：&quot;&gt;&lt;a href=&quot;#数据库简介：&quot; class=&quot;headerlink&quot; title=&quot;数据库简介：&quot;&gt;&lt;/a&gt;数据库简介：&lt;br&gt;&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……&lt;/strong&gt;&lt;br&gt;
     
     </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>浅探hash算法的前世今生[转]</title>
-    <link href="http://yoursite.com/2017/10/14/%E6%B5%85%E6%8E%A2hash%E7%AE%97%E6%B3%95%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/"/>
-    <id>http://yoursite.com/2017/10/14/浅探hash算法的前世今生/</id>
-    <published>2017-10-14T09:02:11.000Z</published>
-    <updated>2017-11-18T14:46:48.958Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q:我为什么要写这篇文章？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:你没发现我很久没有跟新文章了么？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：为什么跟新这个内容？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：你了解hash算法嘛？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜</p><h1 id="hash算法"><a href="#hash算法" class="headerlink" title="hash算法"></a>hash算法</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Hash，一般翻译做“散列”，也有直接音译为”哈希”的，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值。这种转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，而不可能从散列值来唯一的确定输入值。同时，只有改变里面些许的内容，hash值可能出现很大的不同。 密码学上的 Hash 又被称为”消息摘要(message digest)。</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color="#DC143C">MD5 和 SHA1 可以说是目前应用最广泛的Hash算法。</font>而它们都是以 MD4 为基础设计的。参考相应RFC文档可以得到MD4(RFC 1320)、MD5(RFC 1321)算法的详细描述和算法的C源代码</strong></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;前言：&quot;&gt;&lt;a href=&quot;#前言：&quot; class=&quot;headerlink&quot; title=&quot;前言：&quot;&gt;&lt;/a&gt;前言：&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;
-      
-    
-    </summary>
-    
-      <category term="密码学" scheme="http://yoursite.com/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
     
     
   </entry>
