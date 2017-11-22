@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-18T14:50:57.229Z">
+<meta property="og:updated_time" content="2017-11-21T05:35:23.138Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅探hash算法的前世今生[转]">
 <meta name="twitter:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q:我为什么要写这篇文章？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A:你没发现我很久没有跟新文章了么？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Q：为什么跟新这个内容？&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;A：你一个搞安全的不">
@@ -385,6 +385,24 @@
       
         <h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q:我为什么要写这篇文章？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A:你没发现我很久没有跟新文章了么？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：为什么跟新这个内容？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：你一个搞安全的不研究加密算法，你还能干什么？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q：你了解hash算法嘛？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A：不了解，那还不能学啊，安全组的，你不会百度，你还学什么安全？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，这篇文章，我参考了网上诸多关于hash算法的文章，在此表示深深的谢意，愿我们在这知识的海洋里能继续遨游。2017.11.18夜<br><a id="more"></a></p>
 <h1 id="hash算法"><a href="#hash算法" class="headerlink" title="hash算法"></a>hash算法</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Hash，一般翻译做“散列”，也有直接音译为”哈希”的，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值。这种转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，而不可能从散列值来唯一的确定输入值。同时，只有改变里面些许的内容，hash值可能出现很大的不同。 密码学上的 Hash 又被称为”消息摘要(message digest)。</strong><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color="#DC143C">MD5 和 SHA1 可以说是目前应用最广泛的Hash算法。</font>而它们都是以 MD4 为基础设计的。参考相应RFC文档可以得到MD4(RFC 1320)、MD5(RFC 1321)算法的详细描述和算法的C源代码</strong></p>
+<h1 id="MD5："><a href="#MD5：" class="headerlink" title="MD5："></a>MD5：</h1><ul>
+<li>MD5介绍：<ul>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1990年R.L.Rivest提出哈希函数MD4,特别适合32位计算机软件实现，对于长的信息签名很实用。MD5是MD4的改进版，它比MD4更复杂，但是设计思想相似并且也产生了128位摘要。</li>
+</ul>
+</li>
+<li>MD5哈希算法流程：<br>对于任意长度的明文，MD5首先对其进行分组，使得每一组的长度为512位，然后对这些明文分组反复重复处理。对于每个明文分组的摘要生成过程如下：<ul>
+<li>(1) 将512位的明文分组划分为16个子明文分组，每个子明文分组为32位。</li>
+<li>(2) 申请4个32位的链接变量，记为A、B、C、D。</li>
+<li>(3) 子明文分组与链接变量进行第1轮运算。</li>
+<li>(4) 子明文分组与链接变量进行第2轮运算。</li>
+<li>(5) 子明文分组与链接变量进行第3轮运算。</li>
+<li>(6) 子明文分组与链接变量进行第4轮运算。</li>
+<li>(7) 链接变量与初始链接变量进行求和运算。</li>
+<li>(8) 链接变量作为下一个明文分组的输入重复进行以上操作。</li>
+<li>(9) 最后，4个链接变量里面的数据就是MD5摘要。</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -418,6 +436,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/22/逆向工程例题/" rel="prev" title="逆向工程例题">
+                逆向工程例题 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -494,7 +516,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -549,7 +571,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hash算法"><span class="nav-number">2.</span> <span class="nav-text">hash算法</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hash算法"><span class="nav-number">2.</span> <span class="nav-text">hash算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5："><span class="nav-number">3.</span> <span class="nav-text">MD5：</span></a></li></ol></div>
             
 
           </div>
