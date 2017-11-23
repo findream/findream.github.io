@@ -90,7 +90,16 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/a7iMaJf.png">
 <meta property="og:image" content="https://i.imgur.com/jkrQkpb.png">
-<meta property="og:updated_time" content="2017-11-22T13:55:59.121Z">
+<meta property="og:image" content="https://i.imgur.com/iO7IxSO.png">
+<meta property="og:image" content="https://i.imgur.com/LPvYhk6.png">
+<meta property="og:image" content="https://i.imgur.com/baBOH8U.png">
+<meta property="og:image" content="https://i.imgur.com/U4L8AmB.png">
+<meta property="og:image" content="https://i.imgur.com/ekzxUpJ.png">
+<meta property="og:image" content="https://i.imgur.com/wPN4hft.png">
+<meta property="og:image" content="https://i.imgur.com/27TdHOk.png">
+<meta property="og:image" content="https://i.imgur.com/tzt4EL5.png">
+<meta property="og:image" content="https://i.imgur.com/ihtChjz.png">
+<meta property="og:updated_time" content="2017-11-23T04:48:52.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逆向工程例题">
 <meta name="twitter:description" content="逆向分析：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;软件逆向工程（Software Reverse Engineering）又称软件反向工程，是指从可运行的程序系统出发，运用解密、反汇编、系统分析、程序理解等多种计算机技术,对软件的结构、流程、算法、代码等进行逆向拆解和分析，推导出软件产品的源代码、设计原理、结构、算法、处理过程、运行方法及相关文档等。通常，人们把对软">
@@ -397,8 +406,22 @@
 </li>
 <li><p>2)如图：找到比较的另一个字符串，因为要加128，但是又要保证输入为字符类型。所以：待比较值是一个负数。<br><img src="https://i.imgur.com/a7iMaJf.png" alt=""></p>
 </li>
-<li>根据伪代码逆向得到：<br><img src="https://i.imgur.com/jkrQkpb.png" alt=""></li>
-<li>没想到这个是错的吧，哈哈哈~~~~</li>
+<li>3)根据伪代码逆向得到：<br><img src="https://i.imgur.com/jkrQkpb.png" alt=""></li>
+<li>4)没想到这个是错的吧，哈哈哈~~~~<br><img src="https://i.imgur.com/iO7IxSO.png" alt=""></li>
+<li>注意：以下是思路：</li>
+<li>1）OD或者IDA搜索字符串，如图：<br><img src="https://i.imgur.com/LPvYhk6.png" alt=""></li>
+<li>2) 迷宫问题，首先我们要知道四个方向对应的字符，起始位置，终点就行。根据地址迅速画出图像：<br><img src="https://i.imgur.com/baBOH8U.png" alt=""></li>
+<li>3）根据题目我们很清楚知道#就是终点了</li>
+<li>4）拖入IDA 看看，我们容易得到：<ul>
+<li>1）输入字符串长度为22</li>
+<li>2）四个方向字符为h,j,k,l<br><img src="https://i.imgur.com/U4L8AmB.png" alt=""><br><img src="https://i.imgur.com/ekzxUpJ.png" alt=""></li>
+</ul>
+</li>
+<li>5)继续用IDA 分析，发现以下伪代码决定字符与方向的对应关系。<br><img src="https://i.imgur.com/wPN4hft.png" alt=""><br><img src="https://i.imgur.com/27TdHOk.png" alt=""><br><img src="https://i.imgur.com/tzt4EL5.png" alt=""><br><img src="https://i.imgur.com/ihtChjz.png" alt=""></li>
+<li>6）如上图所示，当V14==’h’时，如果v6在v7和v9之间就会报错，我们结合迷宫是一个8X8的矩阵，可以得到，h是控制左右的，又由于–v6，我们得到h是控制向左的。同理：l是向右</li>
+<li>7）由于k和j是v6+=8，v6-=8.我们知道k是控制向上的，j是控制向下的的！</li>
+<li>8）现在就差迷宫的入口了，进过调试我们知道入口在迷宫第10个地址处。</li>
+<li>9）其实只有一条路：<strong>jjjjjlllllkkkkhhhjjjl</strong></li>
 </ul>
 </li>
 </ul>
