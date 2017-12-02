@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="语言列表： VB        MASM32    VC        BCB  易语言     Delphi">
+<meta name="description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="六类语言的逆向思路">
-<meta property="og:url" content="http://yoursite.com/2017/11/02/六种常见语言的逆向思路/index.html">
+<meta property="og:title" content="线程局部存储技术">
+<meta property="og:url" content="http://yoursite.com/2017/12/02/线程局部存储技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="语言列表： VB        MASM32    VC        BCB  易语言     Delphi">
+<meta property="og:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-21T05:35:23.134Z">
+<meta property="og:updated_time" content="2017-12-02T06:29:24.854Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="六类语言的逆向思路">
-<meta name="twitter:description" content="语言列表： VB        MASM32    VC        BCB  易语言     Delphi">
+<meta name="twitter:title" content="线程局部存储技术">
+<meta name="twitter:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的。">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/11/02/六种常见语言的逆向思路/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/02/线程局部存储技术/"/>
 
 
 
 
 
-  <title>六类语言的逆向思路 | findream's blog</title>
+  <title>线程局部存储技术 | findream's blog</title>
   
 
 
@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/02/六种常见语言的逆向思路/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/02/线程局部存储技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -311,7 +311,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">六类语言的逆向思路</h1>
+          <h1 class="post-title" itemprop="name headline">线程局部存储技术</h1>
         
 
         <div class="post-meta">
@@ -323,8 +323,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-02T20:45:11+08:00">
-                2017-11-02
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-02T13:45:11+08:00">
+                2017-12-02
               </time>
             
 
@@ -383,123 +383,8 @@
       
 
       
-        <h1 id="语言列表："><a href="#语言列表：" class="headerlink" title="语言列表："></a>语言列表：</h1><ul>
-<li>VB        MASM32   </li>
-<li>VC        BCB </li>
-<li>易语言     Delphi<a id="more"></a>
-</li>
-</ul>
-<h1 id="破解思路："><a href="#破解思路：" class="headerlink" title="破解思路："></a>破解思路：</h1><ul>
-<li><font color="#DC143C">1.VB破解：</font><ul>
-<li>1）VBExplorer查找按钮事件</li>
-<li>2）有提示框则bp rtcMsgBox</li>
-<li>3）通过：<pre><code>* bp __vbaStrCmp/__vbaStrComp/__vbaVarTstEq
-* bp __vbaStrCmp  （比较字符串）
-* bp __vbaStrComp （同上）
-</code></pre></li>
-<li>4）万能断点法(816C24法)：<pre><code>* 注册验证程序可以用这个断点下断，一般离程序访问注册表很近：
-* bp __vbaStrToAnsi
-* 5F12堆栈调用
-</code></pre></li>
-<li>总结：<ul>
-<li>VB程序破解的关键跳转，一般与其它语言的不同,没有JPM XXXXXXX一般以 JE/JNE XXXXXXXXX 跳转记录一般不会很远(虽然是短距离跳转，但是关键就在这里，可以设置大量的信息) 。如果发现False/True 可能是关键点</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">2.易语言破解思路:</font><ul>
-<li>1）信息框法:<ul>
-<li>bp MessageBoxA(断对话框)</li>
-</ul>
-</li>
-<li>2）字符串法<ul>
-<li>查看易语言文本信息:bp GetProcessHeap F9运行4次，取消断点 执行ALT+F9 用户代码 F8单步走</li>
-<li>或者在区段为”.data”/“.ecode”下断，运行</li>
-</ul>
-</li>
-<li>3）窗口标题法 bp SetWindowTextA</li>
-<li>4）F12堆栈调用<ul>
-<li>0040C0CB=易语言.0040C0CB (ASCII “shaonanshaonvluntan”)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">3.DELPHI破解:</font><ul>
-<li>1）DEDE、PE Explorer ResScope作为强有力的辅助工具找按妞事件</li>
-<li>2）Point-H法</li>
-<li>3）bp GetDlgItem/GetDlgItemTextA(断输入框)</li>
-<li>4）bp MessageBoxA(W)(断对话框)—Ctrl+N</li>
-<li>5）字符串法—插件/搜索所有参考文本</li>
-<li>6）如果程序界面标题有[未注册/注册/VIP版/标准版/钻石版] 之类字样的<br>　　可以通过查找FormCreate/FormShow—-DEDE，找到关键标志位!<br>　　 来判断程序怎么样的判断是否注册或者用户类型</li>
-<li>7）窗口标题法 bp SetWindowTextA</li>
-<li>8）F12堆栈调用</li>
-<li>9) 注册表:</li>
-<li>10)特殊断点：<ul>
-<li>bpx RegCreateKeyExA 对于Delphi程序程序来说，用这个断点比较合适</li>
-<li>bp RegCreateKeyExA 对于加了壳的程序</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">4.C+破解.C类</font><ul>
-<li>1）Point-H法<br>　　bp GetDlgItem(断按下按钮)<br>　　bp MessageBoxA(断对话框)</li>
-<li>2）字符串法</li>
-<li>3）F12堆栈调用</li>
-<li>4）窗口标题法 bp SetWindowTextA</li>
-<li>5）★★C+程序专用断点★★<ul>
-<li>bp lstrcmpA (KERNEL32.lstrcmpA) 比较用法</li>
-<li>bp _mbscmp //比较</li>
-</ul>
-</li>
-<li>6）C类程序的经典断点:<ul>
-<li>bp GetWindowTextA(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetWindowTextLengthA(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetDlgItem(断按下按钮) //也是适用于其它语言</li>
-<li>bp GetDlgItemTextA</li>
-<li>ds:[004021C8]=77C01881 (msvcrt._mbscmp)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">5.BC++破解</font><ul>
-<li>1）DEDE、PE Explorer作为强有力的辅助工具找按妞事件</li>
-<li>2）Point-H法</li>
-<li>3）bp GetDlgItem/GetDlgItemTextA(断输入框)</li>
-<li>4）bp MessageBoxA(W)(断对话框)—Ctrl+N</li>
-<li>5）字符串法—插件/搜索所有参考文本</li>
-<li>6）如果程序界面标题有[未注册/注册/VIP版/标准版/钻石版] 之类字样的可以通过查找FormCreate/FormShow—-DEDE，找到关键标志位!来判断程序怎么样的判断是否注册或者用户类型</li>
-<li>7）窗口标题法 bp SetWindowTextA</li>
-<li>8）F12堆栈调用</li>
-<li>9) bpx RegCreateKeyExA 对于Delphi程序程序来说，用这个断点比较合适<br>bp RegCreateKeyExA 对于加了壳的程序</li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><font color="#DC143C">6.MASM32 / TASM32破解</font><ul>
-<li>1）Point-H法<ul>
-<li>bp GetDlgItem(断按下按钮)</li>
-<li>bp MessageBoxA(断对话框)</li>
-</ul>
-</li>
-<li>2）字符串法</li>
-<li>3）F12堆栈调用</li>
-<li>4）窗口标题法 bp SetWindowTextA</li>
-</ul>
-</li>
-</ul>
+        <h1 id="线程局部存储技术："><a href="#线程局部存储技术：" class="headerlink" title="线程局部存储技术："></a>线程局部存储技术：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。</strong><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的。</strong><a id="more"></a></p>
+<h1 id="两个前提知识："><a href="#两个前提知识：" class="headerlink" title="两个前提知识："></a>两个前提知识：</h1><h2 id="1-进程环境块："><a href="#1-进程环境块：" class="headerlink" title="1.进程环境块："></a>1.进程环境块：</h2><p>**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作系统会为每个进程设置一个数据结构，用来记录进程的相关信息，在NT中，该结构可以从进程空间的FS:[0x30]处找到，PEB描述的信息主要有：进程的状态，进程堆，映像等信息。该结构的信息如下：<br><figure class="highlight plain"><figcaption><span>_PEB结构：</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">		typedef struct _PEB </div><div class="line">		&#123; </div><div class="line">/*000*/ 	UCHAR InheritedAddressSpace;</div><div class="line">/*001*/ 	UCHAR ReadImageFileExecOptions;</div><div class="line">/*002*/ 	UCHAR BeingDebugged;        //程序是否处于调试状态</div><div class="line">/*003*/ 	UCHAR SpareBool; // Allocation size</div><div class="line">/*004*/ 	HANDLE Mutant;</div><div class="line">/*008*/ 	HINSTANCE ImageBaseAddress; //进程映像基地址 </div><div class="line">/*00C*/ 	VOID *DllList;              //加载的其他模块信息</div><div class="line">/*010*/ 	PPROCESS_PARAMETERS *ProcessParameters;</div><div class="line">/*014*/ 	ULONG SubSystemData;</div><div class="line">/*018*/ 	HANDLE DefaultHeap;</div><div class="line">/*01C*/ 	KSPIN_LOCK FastPebLock;</div><div class="line">/*020*/ 	ULONG FastPebLockRoutine;</div><div class="line">/*024*/ 	ULONG FastPebUnlockRoutine;</div><div class="line">/*028*/ 	ULONG EnvironmentUpdateCount;</div><div class="line">/*02C*/ 	ULONG KernelCallbackTable;</div><div class="line">/*030*/ 	LARGE_INTEGER SystemReserved;</div><div class="line">/*038*/ 	ULONG FreeList;</div><div class="line">/*03C*/ 	ULONG TlsExpansionCounter;  //TSL索引计数</div><div class="line">/*040*/ 	ULONG TlsBitmap;            //TSL位图指针</div><div class="line">/*044*/ 	LARGE_INTEGER TlsBitmapBits;//TSL进程标志位</div><div class="line">/*04C*/ 	ULONG ReadOnlySharedMemoryBase;</div><div class="line">/*050*/ 	ULONG ReadOnlySharedMemoryHeap;</div><div class="line">/*054*/ 	ULONG ReadOnlyStaticServerData;</div><div class="line">/*058*/ 	ULONG AnsiCodePageData;</div><div class="line">/*05C*/ 	ULONG OemCodePageData;</div><div class="line">/*060*/ 	ULONG UnicodeCaseTableData;</div><div class="line">/*064*/ 	ULONG NumberOfProcessors;</div><div class="line">/*068*/ 	LARGE_INTEGER NtGlobalFlag; // Address of a local copy</div><div class="line">/*070*/ 	LARGE_INTEGER CriticalSectionTimeout;</div><div class="line">/*078*/ 	ULONG HeapSegmentReserve;</div><div class="line">/*07C*/ 	ULONG HeapSegmentCommit;</div><div class="line">/*080*/ 	ULONG HeapDeCommitTotalFreeThreshold;</div><div class="line">/*084*/ 	ULONG HeapDeCommitFreeBlockThreshold;</div><div class="line">/*088*/ 	ULONG NumberOfHeaps;</div><div class="line">/*08C*/ 	ULONG MaximumNumberOfHeaps;</div><div class="line">/*090*/ 	ULONG ProcessHeaps;</div><div class="line">/*094*/ 	ULONG GdiSharedHandleTable;</div><div class="line">/*098*/ 	ULONG ProcessStarterHelper;</div><div class="line">/*09C*/ 	ULONG GdiDCAttributeList;</div><div class="line">/*0A0*/ 	KSPIN_LOCK LoaderLock;</div><div class="line">/*0A4*/ 	ULONG OSMajorVersion;</div><div class="line">/*0A8*/ 	ULONG OSMinorVersion;</div><div class="line">/*0AC*/ 	USHORT OSBuildNumber;</div><div class="line">/*0AE*/ 	USHORT OSCSDVersion;</div><div class="line">/*0B0*/ 	ULONG OSPlatformId;</div><div class="line">/*0B4*/ 	ULONG ImageSubsystem;</div><div class="line">/*0B8*/ 	ULONG ImageSubsystemMajorVersion;</div><div class="line">/*0BC*/ 	ULONG ImageSubsystemMinorVersion;</div><div class="line">/*0C0*/ 	ULONG ImageProcessAffinityMask;</div><div class="line">/*0C4*/ 	ULONG GdiHandleBuffer[0x22];</div><div class="line">/*14C*/ 	ULONG PostProcessInitRoutine;</div><div class="line">/*150*/ 	ULONG TlsExpansionBitmap;</div><div class="line">/*154*/ 	UCHAR TlsExpansionBitmapBits[0x80];</div><div class="line">/*1D4*/ 	ULONG SessionId;</div><div class="line">		&#125; PEB, *PPEB;</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -524,8 +409,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/25/浅探脱壳技术/" rel="next" title="浅探脱壳技术">
-                <i class="fa fa-chevron-left"></i> 浅探脱壳技术
+              <a href="/2017/11/27/VB程序逆向练习/" rel="next" title="VB程序调试练习">
+                <i class="fa fa-chevron-left"></i> VB程序调试练习
               </a>
             
           </div>
@@ -533,10 +418,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/05/浅谈数据结构之二叉树/" rel="prev" title="浅谈数据结构之二叉树">
-                浅谈数据结构之二叉树 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -668,7 +549,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#语言列表："><span class="nav-number">1.</span> <span class="nav-text">语言列表：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#破解思路："><span class="nav-number">2.</span> <span class="nav-text">破解思路：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程局部存储技术："><span class="nav-number">1.</span> <span class="nav-text">线程局部存储技术：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#两个前提知识："><span class="nav-number">2.</span> <span class="nav-text">两个前提知识：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-进程环境块："><span class="nav-number">2.1.</span> <span class="nav-text">1.进程环境块：</span></a></li></ol></li></ol></div>
             
 
           </div>
