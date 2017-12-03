@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://i.imgur.com/FSwCzEu.png">
 <meta property="og:image" content="https://i.imgur.com/6VonLyw.png">
 <meta property="og:image" content="https://i.imgur.com/7bDTcmj.png">
-<meta property="og:updated_time" content="2017-12-03T03:54:33.547Z">
+<meta property="og:updated_time" content="2017-12-03T04:24:35.234Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程局部存储技术">
 <meta name="twitter:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于反调试技术。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的">
@@ -418,14 +418,10 @@
 <li>先获得TEB的地址，在偏移0x30得到PEB</li>
 </ul>
 <hr>
-<h1 id="TLS技术"><a href="#TLS技术" class="headerlink" title="TLS技术"></a>TLS技术</h1><h2 id="动态TLS技术"><a href="#动态TLS技术" class="headerlink" title="动态TLS技术"></a>动态TLS技术</h2><ul>
-<li>四个API函数：<ul>
-<li>TLsAlloc     //获取索引</li>
-<li>TlsGetValue  //获取索引值</li>
-<li>TlsSetVaule  //设置索引值</li>
-<li>TisFree      //释放索引<br><br><h2 id="静态TLS技术"><a href="#静态TLS技术" class="headerlink" title="静态TLS技术"></a>静态TLS技术</h2><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预先将变量定义在PE文件内部，一般实验.tls节即可。通过查看TLS节区，而已看到程序是否使用TLS反调试技术</strong><br><img src="https://i.imgur.com/FSwCzEu.png" alt=""><h2 id="TSL回调函数—-反调试技术的基石"><a href="#TSL回调函数—-反调试技术的基石" class="headerlink" title="TSL回调函数—-反调试技术的基石"></a>TSL回调函数—-反调试技术的基石</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>TSL函数是指，每当创建或者终止进程的线程的时候，就会自动调用的函数，一共调用2次。有意思的是，进程创建主线程的时候也会自动的调用TSL回调函数，并且调用函数优先执行于EP代码（应该是主线程调用后，但是线程函数的尚未执行之前）。<font color="#DC143C">一点扩展利用TLS回调函数在调试器加载前执行Anti-Debug函数保护软件不被恶意修改，关键部分依旧是具体实现反调试部分的代码编写。比如传统的检测断点，检测进程，检测调试器等等。反调试技术就是利用这一特征。</font></strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果使用单纯的调试器（VS），就容易被TSL回调函数检测到，由于od的工具自动免疫了TSL的反调试机制，所以只会出现正常的状态（假的）。<br><img src="https://i.imgur.com/6VonLyw.png" alt=""><br><img src="https://i.imgur.com/7bDTcmj.png" alt=""></li>
-</ul>
-</li>
+<h1 id="TLS技术"><a href="#TLS技术" class="headerlink" title="TLS技术"></a>TLS技术</h1><h2 id="动态TLS技术"><a href="#动态TLS技术" class="headerlink" title="动态TLS技术"></a>动态TLS技术</h2><p>四个API函数：<br>  TLsAlloc     //获取索引<br>  TlsGetValue  //获取索引值<br>  TlsSetVaule  //设置索引值<br>  TisFree      //释放索引 </p>
+<h2 id="静态TLS技术"><a href="#静态TLS技术" class="headerlink" title="静态TLS技术"></a>静态TLS技术</h2><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预先将变量定义在PE文件内部，一般实验.tls节即可。通过查看TLS节区，而已看到程序是否使用TLS反调试技术</strong><br>    <img src="https://i.imgur.com/FSwCzEu.png" alt=""></p>
+<h2 id="TSL回调函数—-反调试技术的基石"><a href="#TSL回调函数—-反调试技术的基石" class="headerlink" title="TSL回调函数—-反调试技术的基石"></a>TSL回调函数—-反调试技术的基石</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>TSL函数是指，每当创建或者终止进程的线程的时候，就会自动调用的函数，一共调用2次。有意思的是，进程创建主线程的时候也会自动的调用TSL回调函数，并且调用函数优先执行于EP代码（应该是主线程调用后，但是线程函数的尚未执行之前）。<font color="#DC143C">一点扩展利用TLS回调函数在调试器加载前执行Anti-Debug函数保护软件不被恶意修改，关键部分依旧是具体实现反调试部分的代码编写。比如传统的检测断点，检测进程，检测调试器等等。反调试技术就是利用这一特征。</font></strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果使用单纯的调试器（VS），就容易被TSL回调函数检测到，由于od的工具自动免疫了TSL的反调试机制，所以只会出现正常的状态（假的）。<br>     <img src="https://i.imgur.com/6VonLyw.png" alt=""><br>     <img src="https://i.imgur.com/7bDTcmj.png" alt=""></p>
+<ul>
 <li>解决反调试的方法：<ul>
 <li>1）OD插件</li>
 <li>2）PE或者IDA查找TSL的回调函数的入口地址和大小，然后转换成文件偏移，最后用工具00填充掉就行。</li>
