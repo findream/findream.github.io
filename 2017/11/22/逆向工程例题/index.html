@@ -106,7 +106,11 @@
 <meta property="og:image" content="https://i.imgur.com/BnAOjUi.png">
 <meta property="og:image" content="https://i.imgur.com/GN4eZWu.png">
 <meta property="og:image" content="https://i.imgur.com/qH1RAB5.png">
-<meta property="og:updated_time" content="2017-11-30T09:36:34.937Z">
+<meta property="og:image" content="https://i.imgur.com/FO6E9p0.png">
+<meta property="og:image" content="https://i.imgur.com/SHjFn24.png">
+<meta property="og:image" content="https://i.imgur.com/s8dxoI7.png">
+<meta property="og:image" content="https://i.imgur.com/GXDenQW.png">
+<meta property="og:updated_time" content="2017-12-07T15:02:06.246Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逆向工程例题">
 <meta name="twitter:description" content="逆向分析：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;软件逆向工程（Software Reverse Engineering）又称软件反向工程，是指从可运行的程序系统出发，运用解密、反汇编、系统分析、程序理解等多种计算机技术,对软件的结构、流程、算法、代码等进行逆向拆解和分析，推导出软件产品的源代码、设计原理、结构、算法、处理过程、运行方法及相关文档等。通常，人们把对软">
@@ -492,6 +496,20 @@
 </code></pre>
 </li>
 <li>7)因为，最后一个字母是p，所以：有4种可能结果bump,cqmp,gtmp,gpmp.试一下其中一个就行。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>#例3：NSCTF Reverse 400<br><strong>1.题目来源：<a href="http://www.shiyanbar.com/ctf/1759" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1759</a></strong><br><strong>2.解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1）刚开始用IDA 和 OD打开发现这可能和PY有点关系，但是没想到这是py打包成的exe文件【画个重点】</li>
+<li>2）利用网上的教程，找到一个工具【pyinstxtractor】可以反编译py生成的exe文件。</li>
+<li>3）如图所示：在终端输入python pyinstxtractor.py Reverse400<br><img src="https://i.imgur.com/FO6E9p0.png" alt=""></li>
+<li>4）进入生成的文件夹中，如图，输入:cat Revesre3<br><img src="https://i.imgur.com/SHjFn24.png" alt=""></li>
+<li>5）输入明文flag，有错</li>
+<li>6）查看_tmain()函数，发现这个函数用将字符串的前一个字符和后一个字符异或的，然后最上面有一个data变量，想到这个变量可以就是加密函数的参数，写个py脚本试试。</li>
+<li>7）如图：<br><img src="https://i.imgur.com/s8dxoI7.png" alt=""><br><img src="https://i.imgur.com/GXDenQW.png" alt=""></li>
 </ul>
 </li>
 </ul>

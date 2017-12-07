@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://i.imgur.com/FSwCzEu.png">
 <meta property="og:image" content="https://i.imgur.com/6VonLyw.png">
 <meta property="og:image" content="https://i.imgur.com/7bDTcmj.png">
-<meta property="og:updated_time" content="2017-12-03T04:24:35.234Z">
+<meta property="og:updated_time" content="2017-12-03T04:28:54.757Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程局部存储技术">
 <meta name="twitter:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于反调试技术。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的">
@@ -400,9 +400,10 @@
 </li>
 <li><p>ExceptionList用于指向EXCEPTION_REGISTRATION_RECORD结构体链表（指向SEH）</p>
 </li>
-<li>self成员是TIB的自用指针，指向TIB的第一个成员，也是TEB的第一个成员。<h3 id="TEB的访问方法："><a href="#TEB的访问方法：" class="headerlink" title="TEB的访问方法："></a>TEB的访问方法：</h3></li>
+<li>self成员是TIB的自用指针，指向TIB的第一个成员，也是TEB的第一个成员。</li>
 </ul>
 </li>
+<li><h3 id="TEB的访问方法："><a href="#TEB的访问方法：" class="headerlink" title="TEB的访问方法："></a>TEB的访问方法：</h3></li>
 <li>FS:[0X00]=SEH的起始地址</li>
 <li>FS:[0x18]=TEB的起始地址</li>
 <li>FS:[0x30]=PEB的起始地址</li>
