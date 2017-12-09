@@ -110,7 +110,13 @@
 <meta property="og:image" content="https://i.imgur.com/SHjFn24.png">
 <meta property="og:image" content="https://i.imgur.com/s8dxoI7.png">
 <meta property="og:image" content="https://i.imgur.com/GXDenQW.png">
-<meta property="og:updated_time" content="2017-12-07T15:02:06.246Z">
+<meta property="og:image" content="https://i.imgur.com/gthujH2.png">
+<meta property="og:image" content="https://i.imgur.com/t9ZltsP.png">
+<meta property="og:image" content="https://i.imgur.com/iyGdink.png">
+<meta property="og:image" content="https://i.imgur.com/lXdl3w3.png">
+<meta property="og:image" content="https://i.imgur.com/2AfGmuB.png">
+<meta property="og:image" content="https://i.imgur.com/NXyu1DO.png">
+<meta property="og:updated_time" content="2017-12-09T09:40:57.719Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逆向工程例题">
 <meta name="twitter:description" content="逆向分析：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;软件逆向工程（Software Reverse Engineering）又称软件反向工程，是指从可运行的程序系统出发，运用解密、反汇编、系统分析、程序理解等多种计算机技术,对软件的结构、流程、算法、代码等进行逆向拆解和分析，推导出软件产品的源代码、设计原理、结构、算法、处理过程、运行方法及相关文档等。通常，人们把对软">
@@ -500,7 +506,7 @@
 </li>
 </ul>
 <hr>
-<p>#例3：NSCTF Reverse 400<br><strong>1.题目来源：<a href="http://www.shiyanbar.com/ctf/1759" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1759</a></strong><br><strong>2.解题思路：</strong></p>
+<h1 id="例3：NSCTF-Reverse-400"><a href="#例3：NSCTF-Reverse-400" class="headerlink" title="例3：NSCTF Reverse 400"></a>例3：NSCTF Reverse 400</h1><p><strong>1.题目来源：<a href="http://www.shiyanbar.com/ctf/1759" target="_blank" rel="external">http://www.shiyanbar.com/ctf/1759</a></strong><br><strong>2.解题思路：</strong></p>
 <ul>
 <li>步骤：<ul>
 <li>1）刚开始用IDA 和 OD打开发现这可能和PY有点关系，但是没想到这是py打包成的exe文件【画个重点】</li>
@@ -510,6 +516,20 @@
 <li>5）输入明文flag，有错</li>
 <li>6）查看_tmain()函数，发现这个函数用将字符串的前一个字符和后一个字符异或的，然后最上面有一个data变量，想到这个变量可以就是加密函数的参数，写个py脚本试试。</li>
 <li>7）如图：<br><img src="https://i.imgur.com/s8dxoI7.png" alt=""><br><img src="https://i.imgur.com/GXDenQW.png" alt=""></li>
+<li>8）立个flag，有空看看py逆向的东西！</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="例4：证明自己吧"><a href="#例4：证明自己吧" class="headerlink" title="例4：证明自己吧"></a>例4：证明自己吧</h1><p><strong>1.题目来源：<a href="http://www.shiyanbar.com/ctf/28" target="_blank" rel="external">http://www.shiyanbar.com/ctf/28</a></strong><br><strong>2.解题思路</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1）利用od打开，搜索字符串。<br><img src="https://i.imgur.com/gthujH2.png" alt=""></li>
+<li>2）进入401060函数分析，得到两条有效信息：1.xor 20h，2.add 251<br><img src="https://i.imgur.com/t9ZltsP.png" alt=""></li>
+<li>3）上面的伪代码太多了，太多了，主要抓取主要信息。如第二歩。</li>
+<li>4）和一个字符串进行比较。首先你在跟进的时候看可以查看比较的每一个字符，当跳出循环你会发现在12F794处有十六进制的值。<br><img src="https://i.imgur.com/iyGdink.png" alt=""><br><img src="https://i.imgur.com/lXdl3w3.png" alt=""></li>
+<li>5）加密函数的加密过程复现：<br><img src="https://i.imgur.com/2AfGmuB.png" alt=""></li>
+<li>5）写出注册机：<br><img src="https://i.imgur.com/NXyu1DO.png" alt=""><br><strong>3.感悟：不要太依赖反编译器，尤其是F5选项，要注意适当截取F5选项中的有效代码</strong></li>
 </ul>
 </li>
 </ul>
@@ -626,7 +646,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -681,7 +701,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#逆向分析："><span class="nav-number">1.</span> <span class="nav-text">逆向分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：分道扬镳"><span class="nav-number">2.</span> <span class="nav-text">例1：分道扬镳</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2：Position"><span class="nav-number">3.</span> <span class="nav-text">例2：Position</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#逆向分析："><span class="nav-number">1.</span> <span class="nav-text">逆向分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：分道扬镳"><span class="nav-number">2.</span> <span class="nav-text">例1：分道扬镳</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2：Position"><span class="nav-number">3.</span> <span class="nav-text">例2：Position</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3：NSCTF-Reverse-400"><span class="nav-number">4.</span> <span class="nav-text">例3：NSCTF Reverse 400</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4：证明自己吧"><span class="nav-number">5.</span> <span class="nav-text">例4：证明自己吧</span></a></li></ol></div>
             
 
           </div>
