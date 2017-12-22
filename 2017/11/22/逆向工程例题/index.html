@@ -116,7 +116,17 @@
 <meta property="og:image" content="https://i.imgur.com/lXdl3w3.png">
 <meta property="og:image" content="https://i.imgur.com/2AfGmuB.png">
 <meta property="og:image" content="https://i.imgur.com/NXyu1DO.png">
-<meta property="og:updated_time" content="2017-12-09T09:40:57.719Z">
+<meta property="og:image" content="https://i.imgur.com/DEtGHLJ.png">
+<meta property="og:image" content="https://i.imgur.com/VVGU8xQ.png">
+<meta property="og:image" content="https://i.imgur.com/diR40JJ.png">
+<meta property="og:image" content="https://i.imgur.com/lR05VvG.png">
+<meta property="og:image" content="https://i.imgur.com/MTONN5d.png">
+<meta property="og:image" content="https://i.imgur.com/YAjr0ft.png">
+<meta property="og:image" content="https://i.imgur.com/So3VtbI.png">
+<meta property="og:image" content="https://i.imgur.com/6HseeQ6.png">
+<meta property="og:image" content="https://i.imgur.com/SvB2Pfk.png">
+<meta property="og:image" content="https://i.imgur.com/bfDFGYS.png">
+<meta property="og:updated_time" content="2017-12-22T05:28:18.817Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逆向工程例题">
 <meta name="twitter:description" content="逆向分析：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;软件逆向工程（Software Reverse Engineering）又称软件反向工程，是指从可运行的程序系统出发，运用解密、反汇编、系统分析、程序理解等多种计算机技术,对软件的结构、流程、算法、代码等进行逆向拆解和分析，推导出软件产品的源代码、设计原理、结构、算法、处理过程、运行方法及相关文档等。通常，人们把对软">
@@ -530,6 +540,24 @@
 <li>4）和一个字符串进行比较。首先你在跟进的时候看可以查看比较的每一个字符，当跳出循环你会发现在12F794处有十六进制的值。<br><img src="https://i.imgur.com/iyGdink.png" alt=""><br><img src="https://i.imgur.com/lXdl3w3.png" alt=""></li>
 <li>5）加密函数的加密过程复现：<br><img src="https://i.imgur.com/2AfGmuB.png" alt=""></li>
 <li>5）写出注册机：<br><img src="https://i.imgur.com/NXyu1DO.png" alt=""><br><strong>3.感悟：不要太依赖反编译器，尤其是F5选项，要注意适当截取F5选项中的有效代码</strong></li>
+</ul>
+</li>
+</ul>
+<p>#例：看雪CTF2017冬季赛第2题：<br><strong>1.题目来源：<a href="https://ctf.pediy.com/game-fight-47.htm" target="_blank" rel="external">https://ctf.pediy.com/game-fight-47.htm</a></strong><br><strong>解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1）利用IDA打开，发现如下特征，查看伪代码，发现这一对方程组，但是这组方程式无效解<br><img src="https://i.imgur.com/DEtGHLJ.png" alt=""><br><img src="https://i.imgur.com/VVGU8xQ.png" alt=""></li>
+<li>2）我们又发现一个scanf函数，知道scanf会造成溢出，跟进scanf函数里面查看，发现函数分配了大小为12个字节的空间。<br><img src="https://i.imgur.com/diR40JJ.png" alt=""></li>
+<li>4）根据缓冲区溢出的特点，已知缓冲区的大小是12，如果超过该值的话，就会把后面的数据当做函数返回的下一个地址。<ul>
+<li>4.1）如图，没有出现缓冲区溢出，输入数据按小端压栈，<strong>入口地址在栈底</strong>。<br><img src="https://i.imgur.com/lR05VvG.png" alt=""></li>
+<li>4.2）如图，如果发生缓冲区溢出，入口地址被最后输入的数据覆盖。<br><img src="https://i.imgur.com/MTONN5d.png" alt=""></li>
+</ul>
+</li>
+<li>5）满足条件之一，<strong>溢出地址</strong>，根据IDA可以看出，413131是溢出的地址，小端显示就是11A<br><img src="https://i.imgur.com/YAjr0ft.png" alt=""></li>
+<li>6）输入12个字符（任意）+11A就可以到达溢出地址。</li>
+<li>7）删除模块分析，发现花指令，<strong>单步跟入</strong>，得到三个方程。需要注意的是每个方程最后会有一个验证，我们需要跳过该验证。<br><img src="https://i.imgur.com/So3VtbI.png" alt=""></li>
+<li>8）除了单步以外还可以利用run追踪了跟加密过程<br><img src="https://i.imgur.com/6HseeQ6.png" alt=""><br><img src="https://i.imgur.com/SvB2Pfk.png" alt=""></li>
+<li>9）化简得到：<br><img src="https://i.imgur.com/bfDFGYS.png" alt=""></li>
 </ul>
 </li>
 </ul>
