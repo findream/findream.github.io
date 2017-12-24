@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="总括：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本篇文章主要介绍关于Base64的加密原理，加密函数，及其应用。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Base64编码，是我们程序开发中经常使用到的编码方法。它是一种基于用64个可打印字符来表示二进制数据的表示方法。它其实只是定义用可打印字符传输内容一种方法，并不会产生新的字符集。&amp;nb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈Base64的加密原理及其应用">
+<meta property="og:url" content="http://yoursite.com/2017/12/24/浅谈Base64的加密与解密/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="总括：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本篇文章主要介绍关于Base64的加密原理，加密函数，及其应用。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Base64编码，是我们程序开发中经常使用到的编码方法。它是一种基于用64个可打印字符来表示二进制数据的表示方法。它其实只是定义用可打印字符传输内容一种方法，并不会产生新的字符集。&amp;nb">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/1iUqXjk.png">
+<meta property="og:image" content="https://i.imgur.com/3nDyh9t.png">
+<meta property="og:image" content="https://i.imgur.com/0bVoKk2.png">
+<meta property="og:updated_time" content="2017-12-24T07:50:01.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈Base64的加密原理及其应用">
+<meta name="twitter:description" content="总括：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本篇文章主要介绍关于Base64的加密原理，加密函数，及其应用。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Base64编码，是我们程序开发中经常使用到的编码方法。它是一种基于用64个可打印字符来表示二进制数据的表示方法。它其实只是定义用可打印字符传输内容一种方法，并不会产生新的字符集。&amp;nb">
+<meta name="twitter:image" content="https://i.imgur.com/1iUqXjk.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/24/浅谈Base64的加密与解密/"/>
+
+
+
+
+
+  <title>浅谈Base64的加密原理及其应用 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/24/浅谈Base64的加密与解密/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅谈Base64的加密原理及其应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-24T14:02:11+08:00">
+                2017-12-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/密码学/" itemprop="url" rel="index">
+                    <span itemprop="name">密码学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="总括："><a href="#总括：" class="headerlink" title="总括："></a>总括：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>本篇文章主要介绍关于Base64的加密原理，加密函数，及其应用。</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Base64编码，是我们程序开发中经常使用到的编码方法。它是一种基于用64个可打印字符来表示二进制数据的表示方法。它其实只是定义用可打印字符传输内容一种方法，并不会产生新的字符集。</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考博客主要有:<br><a href="http://blog.csdn.net/aozeahj/article/details/52507352" target="_blank" rel="external">http://blog.csdn.net/aozeahj/article/details/52507352</a><br><a href="https://www.cnblogs.com/yejianfei/archive/2013/04/06/3002838.html" target="_blank" rel="external">https://www.cnblogs.com/yejianfei/archive/2013/04/06/3002838.html</a></p>
+<h1 id="Base64的加密原理："><a href="#Base64的加密原理：" class="headerlink" title="Base64的加密原理："></a>Base64的加密原理：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，我们取字符0-9，A-Z,a-z，以及”+”和”/“组成一个63个不同的字符集。分别对这62个字符做好编号，对应的索引如下：<br>    <img src="https://i.imgur.com/1iUqXjk.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们按照如上的编号，写出一个8位二进制的数据，然后把它分成一个6位二进制的分组。再按照编号组成一个新的字符。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以上是一个一般情况。我们找出一个编码和译码的最优情况：首先，一个字符进行编码成一个8位二进制的数据。然后进行译码要把这8位二进制组成6位二进制，但是这势必会造成2位二进制数据的丢失，我们取8和6的最小公倍数即24的整数倍就不会造成数据位的丢失情况。如下图：<br>    <img src="https://i.imgur.com/3nDyh9t.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是我们无法保证每个字符串都能保证24的整数倍的<strong>位长度</strong>，在编码的时候很有可能无法凑够6位数字，但是Base64已经替我们想到了解决方案，即使用凑0的方案，不够6的整数倍的数据补0。但是不够24的数据使用“=”即可。这就是我们进行编码的时候，有时候在结尾出现1个”=”或者2个”=”的情况。<br>    <img src="https://i.imgur.com/0bVoKk2.png" alt=""></p>
+<h1 id="Base64的加密函数："><a href="#Base64的加密函数：" class="headerlink" title="Base64的加密函数："></a>Base64的加密函数：</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">char</span> *<span class="title">base64_encode</span><span class="params">(<span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> * bindata, <span class="keyword">char</span> * base64, <span class="keyword">int</span> binlength )</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="keyword">int</span> i, j;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> current;</div><div class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>, j = <span class="number">0</span> ; i &lt; binlength ; i += <span class="number">3</span> )</div><div class="line">    &#123;</div><div class="line">        current = (bindata[i] &gt;&gt; <span class="number">2</span>) ;</div><div class="line">        current &amp;= (<span class="keyword">unsigned</span> <span class="keyword">char</span>)<span class="number">0x3F</span>;</div><div class="line">        base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">        current = ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)(bindata[i] &lt;&lt; <span class="number">4</span> ) ) &amp; ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)<span class="number">0x30</span> ) ;   <span class="comment">//特征：左移4位</span></div><div class="line">        <span class="keyword">if</span> ( i + <span class="number">1</span> &gt;= binlength )</div><div class="line">        &#123;</div><div class="line">            base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">            base64[j++] = <span class="string">'='</span>;</div><div class="line">            base64[j++] = <span class="string">'='</span>;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        current |= ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)(bindata[i+<span class="number">1</span>] &gt;&gt; <span class="number">4</span>) ) &amp; ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>) <span class="number">0x0F</span> );  <span class="comment">//特征：右移4位</span></div><div class="line">        base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">        current = ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)(bindata[i+<span class="number">1</span>] &lt;&lt; <span class="number">2</span>) ) &amp; ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>) <span class="number">0x3C</span> ) ;   <span class="comment">//特征：左移2位</span></div><div class="line">        <span class="keyword">if</span> ( i + <span class="number">2</span> &gt;= binlength )</div><div class="line">        &#123;</div><div class="line">            base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">            base64[j++] = <span class="string">'='</span>;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        current |= ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)(bindata[i+<span class="number">2</span>] &gt;&gt; <span class="number">6</span>) ) &amp; ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>) <span class="number">0x03</span> );    <span class="comment">//特征：左移6位</span></div><div class="line">        base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">        current = ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)bindata[i+<span class="number">2</span>] ) &amp; ( (<span class="keyword">unsigned</span> <span class="keyword">char</span>)<span class="number">0x3F</span> ) ;</div><div class="line">        base64[j++] = base64char[(<span class="keyword">int</span>)current];</div><div class="line">    &#125;</div><div class="line">    base64[j] = <span class="string">'\0'</span>;</div><div class="line">    <span class="keyword">return</span> base64;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="Base64的识别："><a href="#Base64的识别：" class="headerlink" title="Base64的识别："></a>Base64的识别：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#DC143C"><strong>根据加密算法，他的特征是出现左/右移2位，4位，6位.</strong></font><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在逆向中，我们逆向处一个Base64的加密函数如下：<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">int</span> __cdecl <span class="keyword">sub_434990(int </span><span class="built_in">a1</span>, unsigned int <span class="built_in">a2</span>, int <span class="built_in">a3</span>)</div><div class="line">&#123;</div><div class="line">  int <span class="built_in">v3</span><span class="comment">; // eax@5</span></div><div class="line">  unsigned int <span class="built_in">v5</span><span class="comment">; // [sp+Ch] [bp-100h]@1</span></div><div class="line">  unsigned int <span class="built_in">v6</span><span class="comment">; // [sp+D4h] [bp-38h]@4</span></div><div class="line">  unsigned int <span class="built_in">v7</span><span class="comment">; // [sp+E0h] [bp-2Ch]@8</span></div><div class="line">  int <span class="built_in">v8</span><span class="comment">; // [sp+ECh] [bp-20h]@1</span></div><div class="line">  int v9<span class="comment">; // [sp+F8h] [bp-14h]@1</span></div><div class="line">  unsigned int i<span class="comment">; // [sp+104h] [bp-8h]@1</span></div><div class="line">  memset(&amp;<span class="built_in">v5</span>, <span class="number">0xCC</span>u, <span class="number">0x100</span>u)<span class="comment">;</span></div><div class="line">  <span class="built_in">v8</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">  v9 = <span class="number">0</span><span class="comment">;</span></div><div class="line">  for ( i = <span class="number">0</span><span class="comment">; i &lt; a2; ++i )</span></div><div class="line">  &#123;</div><div class="line">    <span class="built_in">v6</span> = i % <span class="number">4</span><span class="comment">;</span></div><div class="line">    <span class="meta">if</span> ( *(_BYTE *)(i + <span class="built_in">a1</span>) == <span class="number">61</span> )</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">v3</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">      return fun_ResultIsV2(<span class="number">1</span>, <span class="built_in">v3</span>)<span class="comment">;</span></div><div class="line">    &#125;</div><div class="line">    <span class="meta">if</span> ( (signed int)*(_BYTE *)(i + <span class="built_in">a1</span>) &lt; <span class="number">43</span></div><div class="line">      <span class="title">||</span> (signed int)*(_BYTE *)(i + <span class="built_in">a1</span>) &gt; <span class="number">122</span></div><div class="line">      <span class="title">||</span> (<span class="built_in">v7</span> = <span class="keyword">byte_48B0FD[*(_BYTE </span>*)(i + <span class="built_in">a1</span>)], <span class="built_in">v7</span> == -<span class="number">1</span>) )</div><div class="line">    &#123;</div><div class="line">      <span class="built_in">v3</span> = <span class="number">1</span><span class="comment">;</span></div><div class="line">      return fun_ResultIsV2(<span class="number">1</span>, <span class="built_in">v3</span>)<span class="comment">;</span></div><div class="line">    &#125;</div><div class="line">    <span class="built_in">v5</span> = <span class="built_in">v6</span><span class="comment">;</span></div><div class="line">    <span class="keyword">switch </span>( <span class="built_in">v6</span> )</div><div class="line">    &#123;</div><div class="line">      case <span class="number">0</span>u:</div><div class="line">        *(_BYTE *)(v9 + <span class="built_in">a3</span>) = <span class="number">4</span> * <span class="built_in">v7</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="keyword">sub_42D681();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( <span class="built_in">v8</span> == <span class="number">1</span> )</div><div class="line">          <span class="keyword">sub_42E086();</span></div><div class="line"><span class="keyword"> </span>       <span class="built_in">v8</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="keyword">sub_42E26B();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( <span class="built_in">v8</span> == <span class="number">1</span> )</div><div class="line">          <span class="keyword">sub_42E086();</span></div><div class="line"><span class="keyword"> </span>       <span class="built_in">v8</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="keyword">sub_42D7F8();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( <span class="built_in">v8</span> == <span class="number">1</span> )</div><div class="line">          <span class="keyword">sub_42E086();</span></div><div class="line"><span class="keyword"> </span>       <span class="keyword">break;</span></div><div class="line"><span class="keyword"> </span>     case <span class="number">1</span>u:</div><div class="line">        *(_BYTE *)(v9++ + <span class="built_in">a3</span>) += (<span class="built_in">v7</span> &gt;&gt; <span class="number">4</span>) &amp; <span class="number">3</span><span class="comment">;</span></div><div class="line">        <span class="meta">if</span> ( i &lt; <span class="built_in">a2</span> - <span class="number">3</span> <span class="title">||</span> *(_BYTE *)(<span class="built_in">a2</span> + <span class="built_in">a1</span> - <span class="number">2</span>) != <span class="number">61</span> )</div><div class="line">          *(_BYTE *)(v9 + <span class="built_in">a3</span>) = <span class="number">16</span> * (<span class="built_in">v7</span> &amp; <span class="number">0xF</span>)<span class="comment">;</span></div><div class="line">        <span class="keyword">break;</span></div><div class="line"><span class="keyword"> </span>     case <span class="number">2</span>u:</div><div class="line">        *(_BYTE *)(v9++ + <span class="built_in">a3</span>) += (<span class="built_in">v7</span> &gt;&gt; <span class="number">2</span>) &amp; <span class="number">0xF</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="keyword">sub_42E26B();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( <span class="built_in">v8</span> == <span class="number">1</span> )</div><div class="line">          <span class="keyword">sub_42E086();</span></div><div class="line"><span class="keyword"> </span>       <span class="built_in">v8</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">        <span class="built_in">v8</span> = <span class="keyword">sub_42D7F8();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( <span class="built_in">v8</span> == <span class="number">1</span> )</div><div class="line">          <span class="keyword">sub_42E086();</span></div><div class="line"><span class="keyword"> </span>       <span class="meta">if</span> ( i &lt; <span class="built_in">a2</span> - <span class="number">2</span> <span class="title">||</span> *(_BYTE *)(<span class="built_in">a2</span> + <span class="built_in">a1</span> - <span class="number">1</span>) != <span class="number">61</span> )</div><div class="line">          *(_BYTE *)(v9 + <span class="built_in">a3</span>) = (<span class="built_in">v7</span> &amp; <span class="number">3</span>) &lt;&lt; <span class="number">6</span><span class="comment">;</span></div><div class="line">        <span class="keyword">break;</span></div><div class="line"><span class="keyword"> </span>     case <span class="number">3</span>u:</div><div class="line">        *(_BYTE *)(v9++ + <span class="built_in">a3</span>) += <span class="built_in">v7</span><span class="comment">;</span></div><div class="line">        <span class="keyword">break;</span></div><div class="line"><span class="keyword"> </span>     default:</div><div class="line">        continue<span class="comment">;</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="built_in">v3</span> = <span class="number">0</span><span class="comment">;</span></div><div class="line">  return fun_ResultIsV2(<span class="number">1</span>, <span class="built_in">v3</span>)<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<pre><code>![](https://i.imgur.com/UKAgFfp.png)
+![](https://i.imgur.com/cqSI9u4.png)
+![](https://i.imgur.com/KHIWLiQ.png)
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/09/给逆向分析人员的忠告/" rel="next" title="给逆向工作者的忠告">
+                <i class="fa fa-chevron-left"></i> 给逆向工作者的忠告
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#总括："><span class="nav-number">1.</span> <span class="nav-text">总括：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Base64的加密原理："><span class="nav-number">2.</span> <span class="nav-text">Base64的加密原理：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Base64的加密函数："><span class="nav-number">3.</span> <span class="nav-text">Base64的加密函数：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Base64的识别："><span class="nav-number">4.</span> <span class="nav-text">Base64的识别：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
