@@ -386,31 +386,14 @@
 
       
         
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;越到考试我越浪，今天就正式更新第一篇关于病毒分析技术的文章，第一次分析，关于病毒的了解不够深入。有些分析不到位，尽请谅解。病毒样本来自卡饭社区。</p>
-<h1 id="病毒行为分析："><a href="#病毒行为分析：" class="headerlink" title="病毒行为分析："></a>病毒行为分析：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先是对病毒的行为分析，分析过程在win7的虚拟机下进行。打开火绒剑，开启行为监测。运行病毒程序，发现样本的特殊行为如下</p>
-<ul>
-<li>1）在系统Temp目录创建文件，达到隐藏自身的目的：<br>  <img src="https://i.imgur.com/QdsGxRf.png" alt=""></li>
-<li>2）执行创建的文件，病毒开始发挥作用。<br>  <img src="https://i.imgur.com/V7bWqUA.png" alt=""></li>
-<li>3）打开explorer，目标路径是我的文档，显示文件无法访问，可能是病毒把代码注入explorer文件，并且启动进程。第二点：调用cmd，以进行下一步操作，同时达到隐藏自身的作用。<br>  <img src="https://i.imgur.com/X6xNFSH.png" alt=""><br>  <img src="https://i.imgur.com/KBe5Lhs.png" alt=""></li>
-</ul>
-<h1 id="病毒静态分析："><a href="#病毒静态分析：" class="headerlink" title="病毒静态分析："></a>病毒静态分析：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查壳，没有加壳。发现使用VB写的老病毒了，上神器VB_Decompiler。</p>
-<ul>
-<li>0）检测杀毒软件，通过检测进程名称识别，然后调用cmd命令关闭防护进程。<br>  <img src="https://i.imgur.com/X4W9SER.png" alt=""></li>
-<li>1）此处利用shell函数，以脚本的形式调用资源管理器。<br>  <img src="https://i.imgur.com/utdS11I.png" alt=""></li>
-<li>2）在前一个时间检测本地系统环境，获取时间，精确到毫秒级。修改注册表项，实现病毒的自启动。<br>  <img src="https://i.imgur.com/SGsy7Wf.png" alt=""></li>
-<li>3）检测本地的用户是否是管理员，然后检测防火墙的状态，如果防火墙处于打开状态，关闭它，然后下载FTP服务器下的内容。<ul>
-<li>3.1）通过写入注册表项，关闭防火墙!<br><img src="https://i.imgur.com/w0Rs61K.png" alt=""></li>
-<li>3.2)远程从FTP服务器中下载指定的内容<br><img src="https://i.imgur.com/bsFXWwO.png" alt=""></li>
-</ul>
-</li>
-<li>4）黑客远程FTP服务器地址如下：此时已经无法访问这个FTP了。<br>  <img src="https://i.imgur.com/PAGfm2J.png" alt=""></li>
-<li>5）网上爬取xml框架内容，构建一个全新的xml框架【猜测】<br>  <img src="https://i.imgur.com/WAGvzIb.png" alt=""></li>
-<li>6）设置特殊文件的属性，目标文件是winservice和winsystem</li>
-</ul>
-<h1 id="专业分析系统的分析："><a href="#专业分析系统的分析：" class="headerlink" title="专业分析系统的分析："></a>专业分析系统的分析：</h1><p> <a href="https://habo.qq.com/file/showdetail?md5=bf5366660d7629f1fdf5b94921c824e6&amp;pk=ADMGYl1lB2EIMFs8" target="_blank" rel="external">https://habo.qq.com/file/showdetail?md5=bf5366660d7629f1fdf5b94921c824e6&amp;pk=ADMGYl1lB2EIMFs8</a></p>
-
-          
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;越到考试我越浪，今天就正式更新第一篇关于病毒分析技术的文章，第一次分析，关于病毒的了解不够深入。有些分析不到位，尽请谅解。病毒样本来自卡饭社区。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/12/病毒分析技术(1)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
