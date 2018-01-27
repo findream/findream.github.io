@@ -137,7 +137,13 @@
 <meta property="og:image" content="https://i.imgur.com/PwGOhQf.png">
 <meta property="og:image" content="https://i.imgur.com/zqcReNd.png">
 <meta property="og:image" content="https://i.imgur.com/zGwTt4I.png">
-<meta property="og:updated_time" content="2018-01-15T16:46:12.411Z">
+<meta property="og:image" content="https://i.imgur.com/CG2qCnZ.png">
+<meta property="og:image" content="https://i.imgur.com/Whcc333.png">
+<meta property="og:image" content="https://i.imgur.com/jwe5W7Y.png">
+<meta property="og:image" content="https://i.imgur.com/Z7TmNiV.png">
+<meta property="og:image" content="https://i.imgur.com/XGBw3a1.png">
+<meta property="og:image" content="https://i.imgur.com/Pbwqp3n.png">
+<meta property="og:updated_time" content="2018-01-18T15:19:23.070Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="安全杂项例题">
 <meta name="twitter:description" content="安全杂项简介：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ISC即安全杂项，题目涉及流量分析、电子取证、人肉搜索、数据分析、大数据统计等等，覆盖面比较广，主要考查参赛选手的各种基础综合知识。本系列课程中你可以学到各种编码解码，社会工程学，流量分析，日志分析等知识。">
@@ -615,6 +621,33 @@
 </ul>
 </li>
 </ul>
+<h1 id="例17：错误的Base64"><a href="#例17：错误的Base64" class="headerlink" title="例17：错误的Base64"></a>例17：错误的Base64</h1><p><strong> 题目来源：<a href="http://oj.xctf.org.cn/web/practice/defensetrain/4f73081f369645678d808f953455f159/" target="_blank" rel="external">http://oj.xctf.org.cn/web/practice/defensetrain/4f73081f369645678d808f953455f159/</a></strong><br><strong> 解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>看似是个Base64，但是出来有部分乱码。</li>
+<li>base64的特点不可能全是大写字母，可能有部分字母是小写的。一个一个去尝试，得到正确的答案。<br><img src="https://i.imgur.com/CG2qCnZ.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="例18：莫斯电码隐写"><a href="#例18：莫斯电码隐写" class="headerlink" title="例18：莫斯电码隐写"></a>例18：莫斯电码隐写</h1><p><strong> 题目来源：<a href="http://oj.xctf.org.cn/web/practice/defensetrain/43aa41a412e849f88477bdf073d6d32e/" target="_blank" rel="external">http://oj.xctf.org.cn/web/practice/defensetrain/43aa41a412e849f88477bdf073d6d32e/</a></strong><br><strong> 解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1）WAV文件，肯定是一个摩尔斯电码，利用AU查看波形图，经过处理得到如下图：<br><img src="https://i.imgur.com/Whcc333.png" alt=""></li>
+<li>2）长波代表“-”，短波代表“.”，组成一个摩尔斯电码，</li>
+<li>3）放到网站去解码。得到：<br><img src="https://i.imgur.com/jwe5W7Y.png" alt="">   </li>
+<li>4）提交有问题，但是答案是对的，格式有问题！<br><img src="https://i.imgur.com/Z7TmNiV.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="例19：杂项和密码学"><a href="#例19：杂项和密码学" class="headerlink" title="例19：杂项和密码学"></a>例19：杂项和密码学</h1><p><strong> 题目来源：<a href="http://ctf.194nb.com/challenges.php" target="_blank" rel="external">http://ctf.194nb.com/challenges.php</a></strong><br><strong> 解题思路：</strong></p>
+<ul>
+<li>步骤：<ul>
+<li>1）根据提示：前3个字母是cra+6个数字，利用该条件自己构建字典。<br><img src="https://i.imgur.com/XGBw3a1.png" alt=""></li>
+<li>2）利用工具去跑该字典【推荐RAR Password Unlocker】</li>
+<li>3）看到如下的密码,开始想复杂了，经过学长点拨，这只是普通的移位密码-栅栏密码。栅栏密码是分组密码，所以我们给他分组，根据提示3是作者幸运数字，所以.<br><img src="https://i.imgur.com/Pbwqp3n.png" alt=""></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -724,7 +757,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -779,7 +812,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">13.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例13：Only-One-File"><span class="nav-number">14.</span> <span class="nav-text">例13：Only One File</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#-1"><span class="nav-number">14.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例14：NSCTF-misc250"><span class="nav-number">15.</span> <span class="nav-text">例14：NSCTF misc250</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例15：XDCTF-misc200"><span class="nav-number">16.</span> <span class="nav-text">例15：XDCTF misc200</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例16：OpenCTF"><span class="nav-number">17.</span> <span class="nav-text">例16：OpenCTF</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安全杂项简介："><span class="nav-number">1.</span> <span class="nav-text">安全杂项简介：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：功夫"><span class="nav-number">2.</span> <span class="nav-text">例1：功夫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2："><span class="nav-number">3.</span> <span class="nav-text">例2：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3"><span class="nav-number">4.</span> <span class="nav-text">例3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4"><span class="nav-number">5.</span> <span class="nav-text">例4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5"><span class="nav-number">6.</span> <span class="nav-text">例5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6："><span class="nav-number">7.</span> <span class="nav-text">例6：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7："><span class="nav-number">8.</span> <span class="nav-text">例7：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8："><span class="nav-number">9.</span> <span class="nav-text">例8：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9："><span class="nav-number">10.</span> <span class="nav-text">例9：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例10：保险箱"><span class="nav-number">11.</span> <span class="nav-text">例10：保险箱</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例11：社工岛的历练"><span class="nav-number">12.</span> <span class="nav-text">例11：社工岛的历练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例12：抓到你了"><span class="nav-number">13.</span> <span class="nav-text">例12：抓到你了</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">13.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例13：Only-One-File"><span class="nav-number">14.</span> <span class="nav-text">例13：Only One File</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#-1"><span class="nav-number">14.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例14：NSCTF-misc250"><span class="nav-number">15.</span> <span class="nav-text">例14：NSCTF misc250</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例15：XDCTF-misc200"><span class="nav-number">16.</span> <span class="nav-text">例15：XDCTF misc200</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例16：OpenCTF"><span class="nav-number">17.</span> <span class="nav-text">例16：OpenCTF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例17：错误的Base64"><span class="nav-number">18.</span> <span class="nav-text">例17：错误的Base64</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例18：莫斯电码隐写"><span class="nav-number">19.</span> <span class="nav-text">例18：莫斯电码隐写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例19：杂项和密码学"><span class="nav-number">20.</span> <span class="nav-text">例19：杂项和密码学</span></a></li></ol></div>
             
 
           </div>
