@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-01-27T13:39:58.899Z</updated>
+  <updated>2018-01-29T10:11:17.708Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,19 +17,20 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>MySql基本操作</title>
-    <link href="http://yoursite.com/2018/01/27/%E6%B5%85%E8%B0%88%E5%8F%8D%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/"/>
-    <id>http://yoursite.com/2018/01/27/浅谈反调试技术/</id>
-    <published>2018-01-27T12:45:11.000Z</published>
-    <updated>2018-01-27T13:39:58.899Z</updated>
+    <title>重新配置hexo博客</title>
+    <link href="http://yoursite.com/2018/01/29/%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AEhexo%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://yoursite.com/2018/01/29/重新配置hexo博客/</id>
+    <published>2018-01-29T12:45:11.000Z</published>
+    <updated>2018-01-29T10:11:17.708Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="数据库简介："><a href="#数据库简介：" class="headerlink" title="数据库简介："></a>数据库简介：<br></h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库(Database)是按照数据结构来组织、存储和管理数据的仓库，它产生于距今六十多年前，随着信息技术和市场的发展，特别是二十世纪九十年代以后，数据管理不再仅仅是存储和管理数据，而转变成用户所需要的各种数据管理的方式。数据库有很多种类型，从最简单的存储有各种数据的表格到能够进行海量数据存储的大型数据库系统都在各个方面得到了广泛的应用……</strong></p>]]></content>
+    <content type="html"><![CDATA[<p><strong>第一步：下载Git和Node</strong></p><p><strong>第二歩：在桌面右键启动git 然后安装hexo:<br></strong><br><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g hexo-<span class="keyword">cli</span></div></pre></td></tr></table></figure></p><p><strong>第三步：接着在文件夹里右键git，输入以下命令，然后在浏览器中输入localhost：4000看是否能本地预览</strong><br><br><figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo -s(或者hexo <span class="keyword">server</span>)</div></pre></td></tr></table></figure></p><p><strong>第四步：在Git下输入以下命令:(邮箱改成你的)</strong><br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">ssh-keygen</span> <span class="selector-tag">-t</span> <span class="selector-tag">rsa</span> <span class="selector-tag">-C</span> "1434905079@<span class="keyword">qq</span>.<span class="keyword">com</span>"</div></pre></td></tr></table></figure></p><p><strong>第五步：打开 C:\Users\bxm09.ssh\id_rsa.pub，此文件里面内容为刚才生成的密钥，准确的复制这个文件的内容，粘贴到 <a href="https://github.com/settings/ssh" target="_blank" rel="external">https://github.com/settings/ssh</a> 的 new SSH key 中</strong></p><p><strong>第六步：测试，输入以下命令：不要修改<br></strong><br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ssh -T git@github.com</div><div class="line">```&lt;/br&gt;</div><div class="line">得到以下反馈：</div></pre></td></tr></table></figure></p><p>The authenticity of host ‘github.com (207.97.227.239)’ can’t be established.<br>RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.<br>Are you sure you want to continue connecting (yes/no)?<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">输入yes</div><div class="line"></div><div class="line">**第七步：现在你已经可以通过 SSH 链接到 GitHub 了，还有一些个人信息需要完善的。Git 会根据用户的名字和邮箱来记录提交。GitHub 也是用这些信息来做权限的处理，输入下面的代码进行个人信息的设置，把名称和邮箱替换成你自己的。**</div></pre></td></tr></table></figure></p><p>git config –global user.name “findream”<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">```</div><div class="line">git<span class="built_in"> config </span>--global user.email <span class="string">"1434905079@qq.com"</span></div></pre></td></tr></table></figure></p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;h1 id=&quot;数据库简介：&quot;&gt;&lt;a href=&quot;#数据库简介：&quot; class=&quot;headerlink&quot; title=&quot;数据库简介：&quot;&gt;&lt;/a&gt;数据库简介：&lt;br&gt;&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;数据库(Da
+        &lt;p&gt;&lt;strong&gt;第一步：下载Git和Node&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二歩：在桌面右键启动git 然后安装hexo:&lt;br&gt;&lt;/strong&gt;&lt;br&gt;&lt;figure class=&quot;highlight avrasm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td c
       
     
     </summary>
