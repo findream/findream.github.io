@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://i.imgur.com/8GlJtRr.png">
 <meta property="og:image" content="https://i.imgur.com/EPMGJsa.png">
 <meta property="og:image" content="https://i.imgur.com/wuFfm7I.png">
-<meta property="og:updated_time" content="2018-01-25T09:57:06.339Z">
+<meta property="og:updated_time" content="2018-02-20T07:26:20.833Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈SEH反调试技术">
 <meta name="twitter:description" content="前言：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SEH(“Structured Exception Handling”),即结构化异常处理·是(windows)操作系统提供给程序设计者的强有力的处理程序错误或异常的武器。它不依托于设计语言，只依托于操作系统，这些并不是编译程序本身所固有的,本质上只不过是对windows内在提供的结构化异常处理的包装。参看资料：1.逆向">
@@ -449,6 +449,7 @@
 <li>5.如果程序未处于被调试状态或者debugger没有能够处理,并且你调用SetUnhandledExceptionFilter安装了最后异 常处理例程的话,系统转向对它的调用. </li>
 <li>6.如果你没有安装最后异常处理例程或者他没有处理这个异常,系统会调用默认的系统处理程序,通常显示一个对话框, 你可以选择关闭或者最后将其附加到调试器上的调试按钮.如果没有调试器能被附加于其上或者调试器也处理不了,系统 就调用ExitProcess终结程序. </li>
 <li>7.不过在终结之前,系统仍然对发生异常的线程异常处理句柄来一次展开,这是线程异常处理例程最后清理的机会.</li>
+<li>8.UnhandledExceptionFileter是系统最好一个异常 处理器(就是程序崩溃时候，出现的windows的提示框)。</li>
 </ul>
 </li>
 </ul>
@@ -570,7 +571,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
