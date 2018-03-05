@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-03-02T13:55:37.772Z</updated>
+  <updated>2018-03-05T11:55:30.838Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>病毒分析技术(3)---小型硬盘加密病毒</title>
+    <link href="http://yoursite.com/2018/03/05/%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF(3)/"/>
+    <id>http://yoursite.com/2018/03/05/病毒分析技术(3)/</id>
+    <published>2018-03-05T08:45:11.000Z</published>
+    <updated>2018-03-05T11:55:30.838Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul><li>1.样本信息</li><li>2.行为分析</li><li>3.样本分析<a id="more"></a><h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1></li><li>1.样本名称：病毒.exe(来自52pojie)</li><li>2.md5:e7e125ca74aef69d3ffc423ce3aa97d7</li><li>3.加壳：无壳</li><li>4.编写语言：Microsoft Visual C++ ver 5.0/6.0<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1></li><li>1.将病毒文件复制到系统目录，实现隐藏，但是程序未删除本体。</li><li>2.在注册表Software\Microsoft\Windows\CurrentVersion\Run，传入数据，实现自启动。</li><li>3.利用time（）和rand（）做随机数，显示数据为rand()+0C1Eh,加密数据为rand()+0C1E+D4h,然后分别利用itoa()来转化为对应的ACSII码。<br>  <img src="https://i.imgur.com/LA6bg85.png" alt=""></li><li>4.调用system()来执行net user administrator 123，修改管理员账户密码为123.</li><li>5.调用sub_401000（）read硬盘主引导扇区文件。如图，算的结果是0，说明读取的文件为0柱面0磁头1扇区。<br>  <img src="https://i.imgur.com/OBmqzLC.png" alt=""></li><li>6.调用sub_401480来向0柱面0磁头3扇区写入刚刚所读取的信息，如图计算的结果是十进制的1024也就是16进制的400H，也就是0柱面0磁头3扇区所在地。<br>  <img src="https://i.imgur.com/KUM6f4W.png" alt=""><br>  <img src="https://i.imgur.com/35BHOXp.png" alt=""></li><li>7.调用sub_401480来想0柱面0磁头1扇区写入生成的密码</li><li>8.调用system执行shutdown -r。重启计算机。<h1 id="四：值得商榷的地方"><a href="#四：值得商榷的地方" class="headerlink" title="四：值得商榷的地方"></a>四：值得商榷的地方</h1></li><li>1.在第二个sub_401480处引用了一个硬编码作为传入的参数写入MBR，但是原作者给出的是参考书+212的结论。</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;一：目录&quot;&gt;&lt;a href=&quot;#一：目录&quot; class=&quot;headerlink&quot; title=&quot;一：目录&quot;&gt;&lt;/a&gt;一：目录&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;1.样本信息&lt;/li&gt;
+&lt;li&gt;2.行为分析&lt;/li&gt;
+&lt;li&gt;3.样本分析
+    
+    </summary>
+    
+      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>病毒分析技术(2)</title>
@@ -409,26 +432,6 @@
     </summary>
     
       <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>浅谈数据结构之队列</title>
-    <link href="http://yoursite.com/2017/11/09/%E6%B5%85%E8%B0%88%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E9%98%9F%E5%88%97/"/>
-    <id>http://yoursite.com/2017/11/09/浅谈数据结构之队列/</id>
-    <published>2017-11-09T03:00:11.000Z</published>
-    <updated>2017-11-21T05:35:23.142Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="队列的定义："><a href="#队列的定义：" class="headerlink" title="队列的定义："></a>队列的定义：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：<font color="#DC143C">入队的时候是队尾入队，出队的时候是队头出队</font></strong><br><a id="more"></a></p><h1 id="队列的存储形式："><a href="#队列的存储形式：" class="headerlink" title="队列的存储形式："></a>队列的存储形式：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;与线性表和栈类似，队列也有<font color="#DC143C">顺序存储和链式存储</font>两种存储结构。</p><ul><li><font color="#DC143C">顺序存储(循环队列)</font>：即有一组地址连续的存储单元依次存放队列中的数据元素，一般情况下使用以为数组来作为队列的顺序存储空间。为了避免尾巴在头的前面我们采取的循环队列的处理方式。首尾相接的循环表构建方法我们采用的是求模的方法。 <pre><code>类型定义：  typedef struct  {      datatype data[MAX];      int rear,front;  }SeQueue;</code></pre>    <pre><code>置空队列：  SeQueue *InitQueue()   //置空队列  {      SeQueue *p = (SeQueue*)malloc(sizeof(SeQueue));      p->front = p->rear = MAX-1;   //首尾指针指向相同的地方，MAX-1，输入时正好对头在第一个位置。      return p;  }</code></pre>   <pre><code>入队列：  int InQueue(SeQueue *p, datatype x)  //入队列  {      if ((p->rear + 1) % MAX == (p->front))  //首先看是否已满      {          printf("队满");          return FALSE;      }      else      {    p->data[p->rear] = x;             //先入队列在指针加1，和先指针+1在入队列不一样          p->rear = (p->rear + 1) % MAX;          return TRUE;      }  }</code></pre><pre><code>出队列:  int OutQueue(SeQueue *p, datatype *x)  //出队列  {      if (p->front == p->rear)      {          printf("队列已满");          return FALSE;      }      else      {          *x = p->data[p->front];          p->front=(p->front+1)%MAX;          return 0;      }  }</code></pre><pre><code>判队空:  int EmptyQueue(SeQueue *p)     //判队空  {      if (p->front == p->rear)   //空      {          printf("队列为空\n");          return 1;      }          else          return 0;  }</code></pre><pre><code>显示:  void ShowQueue(SeQueue *p)  {      int i;      for (i = p->front; i != p->rear; i=(i+1)%MAX)          printf("%c ", p->data[i]);  }</code></pre></li><li><p><font color="#DC143C">链式存储：</font>如果用户不知道需要的内存大小，可以采用链式存储结构，和链栈一样，使用单链表实现链队列，为了操作方便，可以使用带头结点的单链表表示队列，并设置头指针和尾指针，头指针指向队头结点，尾指针指向队尾节点。</p><pre><code>  typedef struct node  {      datatype data;      struct node *next;  }Qnode;     //链式队列的节点  typedef struct  {      Qnode *front;      Qnode *rear;  }LQueue;   //链式队列的头指针节点  LQueue *InitQueue()  {      LQueue *q = (LQueue*)malloc(sizeof(LQueue));      Qnode *p = (Qnode*)malloc(sizeof(Qnode));      p->next = NULL;      q->front = q->rear = p;   //头指向建立好的节点  }  /*----------------------------  注意：front指针永远指向第一个节点  --------------------------------*/  void InQueue(LQueue *q, datatype x)   //入队列  {      Qnode *p = (Qnode*)malloc(sizeof(Qnode));      p->data = x;      p->next = NULL;      q->front->next = p;     //目的是使队列和新加入的节点链接起来      q->front = p;           //母的是使头指针的rear指针指向队尾  }  /*----------------------------------  注意：队首出队列  -----------------------------------*/  int OutQueue(LQueue *q, datatype *x)  {      Qnode *p;      if (!EmptyQueue(q))  //队列为空          return FALSE;      else      {          *x = q->front->data;          p = q->front->next;     //p指向第一个节点          q ->front->next= p->next;    //头指针指向第一个节点的下一个节点          free(p);      }      if (q->front->next==NULL)    //队列中只有最后一个数据了      {              q->front = q->rear;          return TRUE;      }  }  int EmptyQueue(LQueue *q)      //判队空  {      if (q->front == q->rear)      {          printf("队列为空\n");          return 1;      }      else          return 0;  }</code></pre></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;队列的定义：&quot;&gt;&lt;a href=&quot;#队列的定义：&quot; class=&quot;headerlink&quot; title=&quot;队列的定义：&quot;&gt;&lt;/a&gt;队列的定义：&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。需要注意的是：&lt;font color=&quot;#DC143C&quot;&gt;入队的时候是队尾入队，出队的时候是队头出队&lt;/font&gt;&lt;/strong&gt;&lt;br&gt;
-    
-    </summary>
-    
-      <category term="数据结构" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
     
     
   </entry>
