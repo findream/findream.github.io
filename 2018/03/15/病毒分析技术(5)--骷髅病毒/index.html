@@ -81,20 +81,54 @@
 
 
 
-<meta name="description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
+<meta name="description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析 5.博客数据：https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈数据结构之二叉树">
-<meta property="og:url" content="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/index.html">
+<meta property="og:title" content="病毒分析技术(5)----骷髅病毒分析">
+<meta property="og:url" content="http://yoursite.com/2018/03/15/病毒分析技术(5)--骷髅病毒/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
+<meta property="og:description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析 5.博客数据：https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://i.imgur.com/N43CGuq.jpg">
-<meta property="og:image" content="https://i.imgur.com/SjnBCZt.jpg">
-<meta property="og:updated_time" content="2017-11-21T05:35:23.140Z">
+<meta property="og:image" content="https://i.imgur.com/CyMYcoK.png">
+<meta property="og:image" content="https://i.imgur.com/TDe2PVo.png">
+<meta property="og:image" content="https://i.imgur.com/nmYnFHu.png">
+<meta property="og:image" content="https://i.imgur.com/1HaXven.png">
+<meta property="og:image" content="https://i.imgur.com/vrJSZph.png">
+<meta property="og:image" content="https://i.imgur.com/Xbdu0Ib.png">
+<meta property="og:image" content="https://i.imgur.com/i3Pfono.png">
+<meta property="og:image" content="https://i.imgur.com/jZeBk3i.png">
+<meta property="og:image" content="https://i.imgur.com/0biAe66.png">
+<meta property="og:image" content="https://i.imgur.com/lxmX9bn.png">
+<meta property="og:image" content="https://i.imgur.com/M9HE1vi.png">
+<meta property="og:image" content="https://i.imgur.com/5qOMwiI.png">
+<meta property="og:image" content="https://i.imgur.com/mhuZm92.png">
+<meta property="og:image" content="https://i.imgur.com/CKVSX3r.png">
+<meta property="og:image" content="https://i.imgur.com/6yBC2VV.png">
+<meta property="og:image" content="https://i.imgur.com/UHPVd37.png">
+<meta property="og:image" content="https://i.imgur.com/4hGTtzJ.png">
+<meta property="og:image" content="https://i.imgur.com/8Hm1wsC.png">
+<meta property="og:image" content="https://i.imgur.com/1IxCgKT.png">
+<meta property="og:image" content="https://i.imgur.com/ZEporSq.png">
+<meta property="og:image" content="https://i.imgur.com/jXHcdAV.png">
+<meta property="og:image" content="https://i.imgur.com/Ew2IpIo.png">
+<meta property="og:image" content="https://i.imgur.com/WbH7Eu2.png">
+<meta property="og:image" content="https://i.imgur.com/bFVxqfx.png">
+<meta property="og:image" content="https://i.imgur.com/MM0CzNY.png">
+<meta property="og:image" content="https://i.imgur.com/qYCbhJ4.png">
+<meta property="og:image" content="https://i.imgur.com/DTmZFvN.png">
+<meta property="og:image" content="https://i.imgur.com/WZbXEtG.png">
+<meta property="og:image" content="https://i.imgur.com/U6ZDQ7V.png">
+<meta property="og:image" content="https://i.imgur.com/qCpQebj.png">
+<meta property="og:image" content="https://i.imgur.com/LtwjhDq.png">
+<meta property="og:image" content="https://i.imgur.com/vcQOwqt.png">
+<meta property="og:image" content="https://i.imgur.com/sFUKHsD.png">
+<meta property="og:image" content="https://i.imgur.com/kKsDusN.png">
+<meta property="og:image" content="https://i.imgur.com/AdRzUDw.png">
+<meta property="og:image" content="https://i.imgur.com/648N38P.png">
+<meta property="og:updated_time" content="2018-03-15T10:50:28.529Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈数据结构之二叉树">
-<meta name="twitter:description" content="树的定义：树是n（n&amp;gt;=0）个节点的有限集合。当n==0时，称为空树，当n&amp;gt;=0时，树满足以下条件：    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集">
-<meta name="twitter:image" content="https://i.imgur.com/N43CGuq.jpg">
+<meta name="twitter:title" content="病毒分析技术(5)----骷髅病毒分析">
+<meta name="twitter:description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析 5.博客数据：https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg">
+<meta name="twitter:image" content="https://i.imgur.com/CyMYcoK.png">
 
 
 
@@ -124,13 +158,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/15/病毒分析技术(5)--骷髅病毒/"/>
 
 
 
 
 
-  <title>浅谈数据结构之二叉树 | findream's blog</title>
+  <title>病毒分析技术(5)----骷髅病毒分析 | findream's blog</title>
   
 
 
@@ -297,7 +331,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/05/浅谈数据结构之二叉树/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/15/病毒分析技术(5)--骷髅病毒/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -314,7 +348,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">浅谈数据结构之二叉树</h1>
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(5)----骷髅病毒分析</h1>
         
 
         <div class="post-meta">
@@ -326,8 +360,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-05T18:45:11+08:00">
-                2017-11-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T15:02:11+08:00">
+                2018-03-15
               </time>
             
 
@@ -336,6 +370,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -364,124 +420,66 @@
       
 
       
-        <h1 id="树的定义："><a href="#树的定义：" class="headerlink" title="树的定义："></a>树的定义：</h1><p>树是n（n&gt;=0）个节点的有限集合。当n==0时，称为空树，当n&gt;=0时，树满足以下条件：<br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（1）有且仅有一个称为根的特定节点，该节点没有前驱节点，有一个或者多个后继节点。</strong><br>    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（2） 除根节点以外的n-1个节点可以划分为m个互不相交的有限集合，该集合称之为树，即根的子树</strong><br><a id="more"></a></p>
-<h1 id="二叉树的定义："><a href="#二叉树的定义：" class="headerlink" title="二叉树的定义："></a>二叉树的定义：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在计算机科学中，二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的每个结点至多只有二棵子树(不存在度大于2的结点)，二叉树的子树有左右之分，次序不能颠倒。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>二叉树的第i层至多有2^{i-1}个结点；深度为k的二叉树至多有2^k-1个结点；对任何一棵二叉树T，如果其终端结点数为n_0，度为2的结点数为n_2，则n_0=n_2+1。</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>一棵深度为k，且有2^k-1个节点称之为满二叉树；深度为k，有n个节点的二叉树，当且仅当其每一个节点都与深度为k的满二叉树中，序号为1至n的节点对应时，称之为完全二叉树。</strong></p>
-<h1 id="二叉树的存储结构："><a href="#二叉树的存储结构：" class="headerlink" title="二叉树的存储结构："></a>二叉树的存储结构：</h1><p><strong>1.顺序存储结构：</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于满二叉树和完全二叉树来说，按照满二叉树节点连续编号的次序，将各节点数据存放在一组连续的内存单元，即用一维数组作为存储结构。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;满足一下条件：<br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1)左子树是双亲节点次序的2n倍</strong><br><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2)右子树是双亲节点次序的2n+1倍</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如图所示，将二叉树按顺序结构存储：<br>     <img src="https://i.imgur.com/N43CGuq.jpg" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将这个二叉树按顺序结构存储：<br>     <img src="https://i.imgur.com/SjnBCZt.jpg" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的顺序存储模型的DAT描述如下：</p>
-<pre><code>
-     typedef char datatype 
-     typedef struct 
-     {
-         datatype SqBiTree[MAXSIZE+1];
-         int nodemax;
-     }BiTree;
-</code></pre>
-**2.链式存储结构：**
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的链式存储结构是指用链表来表示一棵二叉树，即用链来指示元素的逻辑关系。
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的每个结点最多有两个孩子，因此，每个结点除了存储自身的数据外，还应设置两个指针分别指向左、右孩子结点。
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如图所示，将二叉树链式结构存储：
-    ![](https://i.imgur.com/EnR6Mhx.png)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二叉树的链式存储模式的DAT描述：
-<pre><code>
-     typedef char datatype
-     typedef struct node
-     {
-          datatype data;
-          struct node *Lchild; 
-          struct node *Rchild;
-    }
-</code></pre> 
-# 二叉树的建立：
-<pre><code>
-    void CreateBiTree(BiTree &root)     //创建二叉树
-    {                                   //这里加上&意思是传递的参数为指针的引用，括号里面等价于 BiTreeNode* &T
-        char ch;
-        ch = getchar();
-        if ('#' == ch)
-            root = NULL;
-        else
-        {
-            root = (BiTree)malloc(sizeof(BiTree));
-            root->data = ch;
-            CreateBiTree(root->Lchild);
-            CreateBiTree(root->Rchild);
-        }
-    }
-</code></pre>
-# 二叉树的遍历：
-<pre><code> 1）先序递归遍历：
-     void PreOrder(BiTree root)
-     {
-       if (root)
-       {
-          visit(root->data);
-          PreOrder(root->Lchild);
-          PreOrder(root->Rchild);
-       }
-     }
-</code></pre>
-<pre><code> 2)中序递归遍历：
-    void InOrder(BiTree root)
-    {
-        if(root)
-        {    
-            InOrder(root->LChild);
-            visit(root->data);
-            InOrder(root->RChild);
-        }
-    }
-</code></pre>
-<pre><code> 2)后序递归遍历：
-    void PostOrder(BiTree root)
-    {
-        if(root)
-        {
-            PostOrder(root->Lchild);
-            PostOrder(root->RChild);
-            visit(root->data);
-        }
-    }
-
-</code></pre>
-<pre><code> 2)先序非递归遍历：
-    void PreOrder(BiTree root)]
-    {
-        SeqStack *s;
-        InitStack(s);
-        BiTree p=root;
-        while(p!=NULL||s!=NULL)
-        {
-            while(p!=NULL)
-            {
-                visit(p->data);
-                Push(s,p);          //保存上一步节点信息，以便下次返回使用
-                p=p->LChild;
-            }
-            if(IsEmpty(s))
-            {
-                Pop(s,&p);
-                p=p->RChild;      //进入右子树，开始下一次循环
-            }    
-        }
-    }
-</code></pre>
-<pre><code>二叉树的层次遍历
-    void LevelOrder(BiTree root)
-    {
-        SeqQueue *q;
-        BiTree p;
-        InitQueue(q);
-        EnterQueue(q,root);        //人队列
-        while(!IsEmpty(q))
-        {
-            DeleteQueue(q,&p);   //出队列
-            visit(p);
-            if(p->Lchild)
-                EnterQueue(q,p);
-            if(p->Rchild)
-                EnterQueue(q,p);
-        }
-    }
-</code></pre>
+        <h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
+<li>1.样本信息</li>
+<li>2.行为分析</li>
+<li>3.样本分析</li>
+<li>4.详细分析</li>
+<li>5.博客数据：<a href="https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg" target="_blank" rel="external">https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg</a><a id="more"></a>
+<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1></li>
+<li>1.样本名称：样本.exe（脱壳后为样本dump.exe）</li>
+<li>2.md5：5b8bc92296c2fa60fecc6316ad73f1e2</li>
+<li>3.是否加壳：加壳UPX</li>
+<li>4.编译语言：visual C++<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1></li>
+<li>1）通过注册表判断系统是否被感染</li>
+<li>2）获取windows目录，利用计时器实现随机命名，把病毒copy到windows目录实现隐藏</li>
+<li>3）删除样本文件</li>
+<li>4）创建服务，实现自启<br>  <img src="https://i.imgur.com/CyMYcoK.png" alt=""></li>
+<li>5）链接指定url，执行后门行为。<h1 id="四：详细分析"><a href="#四：详细分析" class="headerlink" title="四：详细分析"></a>四：详细分析</h1></li>
+<li>1.PEID查壳，发现是UPX加壳，ESP定律法脱去</li>
+<li>2.病毒先将currentcontrol\services\和15654656链接起来，并且利用RegOpenKey来打开这个注册表。<strong>目的是：判断这个服务是否被创建，换句话说看病毒是否在系统内存在</strong><br>  <img src="https://i.imgur.com/TDe2PVo.png" alt=""><br>  <img src="https://i.imgur.com/nmYnFHu.png" alt=""></li>
+<li>3.如果这个服务不存在，病毒执行405A25，打开服务管理器。然后获取windows目录，比较c://windows，接着通过GetTick来获取计数器，复制那个exe文件到windows目录。<strong>目的是实现自身的隐藏</strong>接着调用CreateService来创建病毒服务。判断服务是否开启，然后开启服务，最后，先获取获取目录信息，接着获取当前进程信息，<strong>目的是获取样本文件的信息，以便为删除做准备</strong>然后调用shellEx利用cmd执行/c del &gt;nul删除样本文件，设置进程的优先级。<strong>以便后续为破坏做准备</strong><br>  <img src="https://i.imgur.com/1HaXven.png" alt=""><br>  <img src="https://i.imgur.com/vrJSZph.png" alt=""><br>  <img src="https://i.imgur.com/Xbdu0Ib.png" alt=""><br>  <img src="https://i.imgur.com/i3Pfono.png" alt=""><br>  <img src="https://i.imgur.com/jZeBk3i.png" alt=""><br>  <img src="https://i.imgur.com/0biAe66.png" alt=""><br>  <img src="https://i.imgur.com/lxmX9bn.png" alt=""><br>  <img src="https://i.imgur.com/M9HE1vi.png" alt=""><br>  <img src="https://i.imgur.com/5qOMwiI.png" alt=""><br>  <img src="https://i.imgur.com/mhuZm92.png" alt=""></li>
+<li>4。如果这个服务存在的话，执行后续操作。</li>
+<li>5.通过调用StartServiceCtrlDispatcher函数，执行线程<br>  <img src="https://i.imgur.com/CKVSX3r.png" alt=""></li>
+<li>6.分析该服务线程<ul>
+<li>1）先获取例如closesocket和SDetServiceStatus等函数的地址<br><img src="https://i.imgur.com/6yBC2VV.png" alt=""></li>
+<li>2）创建一个互斥体，<strong>目的是使系统中只有一个病毒实例在运行</strong></li>
+<li>3）创建一个线程，然后枚举资源列表，更新文件。<ul>
+<li>a)先和”2”一样，打开15654656注册表，判断病毒是否运行成功。<br><img src="https://i.imgur.com/UHPVd37.png" alt=""></li>
+<li>b)获取文件属性，并创建一个文件，读取文件，替换文件资源<br><img src="https://i.imgur.com/4hGTtzJ.png" alt=""><br><img src="https://i.imgur.com/8Hm1wsC.png" alt=""></li>
+<li>c)加载刚刚替换的资源文件hra%u.dll<br><img src="https://i.imgur.com/1IxCgKT.png" alt=""></li>
+</ul>
+</li>
+<li>4）<strong>分析第一个线程：</strong><br><img src="https://i.imgur.com/ZEporSq.png" alt="">   <ul>
+<li>a）获取网络主机名和地址<br><img src="https://i.imgur.com/jXHcdAV.png" alt=""></li>
+<li>b) 比较用户名和密码：<br><img src="https://i.imgur.com/Ew2IpIo.png" alt=""></li>
+<li>c) 获取当前文件路径，并把文件分别复制到C,D,E盘中（E:\g1fd.exe）【调用copyfile函数执行】<br><img src="https://i.imgur.com/WbH7Eu2.png" alt=""></li>
+<li>d) 如果在C,D,E中则会获取当前时间，然后执行程序，否则把文件复制到F盘，然后休眠500ms后创建下个线程.<br><img src="https://i.imgur.com/bFVxqfx.png" alt=""></li>
+</ul>
+</li>
+<li>5）<strong>分析第二个线程：</strong><ul>
+<li>a）初始化网络配置，休眠100ms，获取本地时间，转化为int类型，和20030221比较，如果小于的话，则一直执行，然后创建CreateStartFun线程（本质是调用StartAddress函数）。<br><img src="https://i.imgur.com/MM0CzNY.png" alt=""><br><img src="https://i.imgur.com/qYCbhJ4.png" alt=""></li>
+<li>b)在StartAddress内部先访问一个短地址aa.re67das.com,然后获取IP地址利用socket链接。</li>
+<li>c) 获取机器的基本配置，然后load hra%u.dll<br><img src="https://i.imgur.com/DTmZFvN.png" alt=""></li>
+<li>d) 利用send（）发送刚刚获取的机器信息。<br><img src="https://i.imgur.com/WZbXEtG.png" alt=""></li>
+<li>e) 利用SelectAndRev3这个函数去不断的从服务器端接收控制信息，<br><img src="https://i.imgur.com/U6ZDQ7V.png" alt=""></li>
+<li>f）输入16号控制码：<br><img src="https://i.imgur.com/qCpQebj.png" alt=""></li>
+<li>g）输入18号控制码（行为见脑图）：<br><img src="https://i.imgur.com/LtwjhDq.png" alt=""></li>
+</ul>
+</li>
+<li>6）<strong>分析第三个线程：</strong><ul>
+<li>a)获取本地时间，如果小于2013.02.21则线程不断执行<br><img src="https://i.imgur.com/vcQOwqt.png" alt=""></li>
+<li>b)否则执行线程如c：</li>
+<li>c)如上,分析线程2所示一致。只是比2多了一个文件写入的函数<br><img src="https://i.imgur.com/sFUKHsD.png" alt=""></li>
+</ul>
+</li>
+<li>7）<strong>分析第四个线程：</strong><br><img src="https://i.imgur.com/kKsDusN.png" alt=""><ul>
+<li>a) MainFun4只是比MainFun3多了一个连接特定url的函数，但是这个解密过程没分析出来，但是你可以通过apadns来获取相关信息。<br><img src="https://i.imgur.com/AdRzUDw.png" alt=""><br><img src="https://i.imgur.com/648N38P.png" alt=""></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -506,8 +504,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/02/六种常见语言的逆向思路/" rel="next" title="六类语言的逆向思路">
-                <i class="fa fa-chevron-left"></i> 六类语言的逆向思路
+              <a href="/2018/03/08/病毒分析技术(4)--U盘病毒/" rel="next" title="病毒分析技术(4)--U盘病毒">
+                <i class="fa fa-chevron-left"></i> 病毒分析技术(4)--U盘病毒
               </a>
             
           </div>
@@ -515,10 +513,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/06/switch结构逆向分析/" rel="prev" title="switch结构逆向分析">
-                switch结构逆向分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -650,7 +644,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#树的定义："><span class="nav-number">1.</span> <span class="nav-text">树的定义：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉树的定义："><span class="nav-number">2.</span> <span class="nav-text">二叉树的定义：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉树的存储结构："><span class="nav-number">3.</span> <span class="nav-text">二叉树的存储结构：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一：目录"><span class="nav-number">1.</span> <span class="nav-text">一：目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二：样本信息"><span class="nav-number">2.</span> <span class="nav-text">二：样本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三：行为分析"><span class="nav-number">3.</span> <span class="nav-text">三：行为分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四：详细分析"><span class="nav-number">4.</span> <span class="nav-text">四：详细分析</span></a></li></ol></div>
             
 
           </div>
