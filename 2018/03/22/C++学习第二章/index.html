@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="3.3：标准库类型 vector定义和初始化vector&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;标准库类型vector表示对象的集合，其中所有对象的类型都相同，vector中容纳着其他对象，所以被称为容器。类似于c语言中的动态数组。  1）引用不能成为vector的元素，因为引用不是对象（引用只是对象的别名） 2）可以使用花括号初">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-22T12:30:55.700Z">
+<meta property="og:updated_time" content="2018-03-22T12:35:08.179Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++Primer 第三章：字符串，向量，数组">
 <meta name="twitter:description" content="3.3：标准库类型 vector定义和初始化vector&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;标准库类型vector表示对象的集合，其中所有对象的类型都相同，vector中容纳着其他对象，所以被称为容器。类似于c语言中的动态数组。  1）引用不能成为vector的元素，因为引用不是对象（引用只是对象的别名） 2）可以使用花括号初">
@@ -389,7 +389,8 @@
 <li>2）可以使用花括号初始化每个值</li>
 <li>3）使用括号指定元素个数或者相同元素值</li>
 <li>4）根据类型编译器会决断括号内部含有的信息：vector <string> v7{10}   //V7有10个默认值</string></li>
-<li>5) 初始化不准用赋值表达式<h3 id="向vector里面添加元素"><a href="#向vector里面添加元素" class="headerlink" title="向vector里面添加元素"></a>向vector里面添加元素</h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用vector.push_back()向里面添加对象。</li>
+<li>5) 初始化不准用赋值表达式<a id="more"></a>
+<h3 id="向vector里面添加元素"><a href="#向vector里面添加元素" class="headerlink" title="向vector里面添加元素"></a>向vector里面添加元素</h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用vector.push_back()向里面添加对象。</li>
 <li><p>练习3.14：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> num;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vector_num;</div><div class="line">	<span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; num)</div><div class="line">	&#123;</div><div class="line">		vector_num.push_back(num);</div><div class="line">	&#125;</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
