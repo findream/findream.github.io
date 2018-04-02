@@ -88,10 +88,12 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="3.1：陷阱分发第三部分：系统服务分发系统服务分发&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows用于系统服务分发的指令取决于其执行时所在的处理器。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-31T08:50:40.722Z">
+<meta property="og:image" content="https://i.imgur.com/53Yv1LF.png">
+<meta property="og:updated_time" content="2018-03-31T09:42:54.013Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Windows Internals》第三章：系统机制">
 <meta name="twitter:description" content="3.1：陷阱分发第三部分：系统服务分发系统服务分发&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows用于系统服务分发的指令取决于其执行时所在的处理器。">
+<meta name="twitter:image" content="https://i.imgur.com/53Yv1LF.png">
 
 
 
@@ -386,11 +388,11 @@
         <h1 id="3-1：陷阱分发"><a href="#3-1：陷阱分发" class="headerlink" title="3.1：陷阱分发"></a>3.1：陷阱分发</h1><h3 id="第三部分：系统服务分发"><a href="#第三部分：系统服务分发" class="headerlink" title="第三部分：系统服务分发"></a>第三部分：系统服务分发</h3><h4 id="系统服务分发"><a href="#系统服务分发" class="headerlink" title="系统服务分发"></a>系统服务分发</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows用于系统服务分发的指令取决于其执行时所在的处理器。<br><a id="more"></a></p>
 <ul>
 <li>在PentiumII之前的处理器，windows使用int 0x2E陷阱指令，使windows填充IDT（中断描述符表Interrupt Descriptor Table）中的2E表项，使其指向系统服务分发器。<strong>该陷阱导致线程由用户模式转换到内核模式，并且进入系统服务分发器。</strong>EAX指明了所请求的系统服务号，EDX指向的是调用者传递给系统服务的参数表</li>
-<li>在PentiumII以后的处理器，使用的是sysenter指令，windows在引导的时候将<strong>内核服务分发器例程的地址保存在MSR（64位CPU寄存器，可以利用rdmsr或者wdmsr来读写）中</strong>，执行该指令后续操作和上面一致。最后利用sysexit返回用户模式。</li>
+<li>在PentiumII以后的处理器，使用的是sysenter指令，windows在引导的时候将<strong>内核服务分发器例程的地址保存在MSR（64位CPU寄存器，可以利用rdmsr或者wdmsr来读写）中</strong>，执行该指令后续操作和上面一致。最后利用sysexit返回用户模式。<br>  <img src="https://i.imgur.com/53Yv1LF.png" alt=""></li>
 <li>X64使用syscall指令，将系统调用号保存在eax中，前四个参数放在寄存器（rcx/rdx/r8/r9）中，剩下的参数在栈中</li>
 <li>IA64使用epc指令</li>
 </ul>
-<h4 id="内核模式下的系统分发"><a href="#内核模式下的系统分发" class="headerlink" title="内核模式下的系统分发"></a>内核模式下的系统分发</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在windows内核模式下，CPU不需要进行中断或者syscall了，因为此时CPU已经运行在特权模式下了，只需要像普通的例程调用一样就好，问题是对于NT的函数大多数没有被导出，无法直接调用。<strong>必须使用ZT函数</strong>因为他们已经被文档化了。请见博客：<a href="https://findream.github.io/2018/01/23/%E5%86%85%E6%A0%B8Nt%E5%92%8CZw%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB/" target="_blank" rel="external">https://findream.github.io/2018/01/23/%E5%86%85%E6%A0%B8Nt%E5%92%8CZw%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB/</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;子系统DLL<strong>调用Ntdll.dll中函数（系统调用根本执行的函数）</strong>来实现已经文档化的函数，但是windows USER和GDI函数例外，因为这些函数根本不涉及Ntdll.dll，系统分发指令在user32.dll或者GDI.dll中实现。</p>
+<h4 id="内核模式下的系统分发"><a href="#内核模式下的系统分发" class="headerlink" title="内核模式下的系统分发"></a>内核模式下的系统分发</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在windows内核模式下，CPU不需要进行中断或者syscall了，因为此时CPU已经运行在特权模式下了，只需要像普通的例程调用一样就好，问题是对于NT的函数大多数没有被导出，无法直接调用。但如果直接像调用API一般直接调用NtOpenProcess之类的系统服务函数时，内核保存的原先模式值仍然是用户模式（进内核之前当然是用户模式咯~），但又检测到传递来的地址是一个内核模式地址（因为在当前内核模式下调用），于是会导致调用失败（STATUS_ACCESS_VIOLATION）。<strong>必须使用ZT函数</strong>因为他们已经被文档化了。请见博客：<a href="https://findream.github.io/2018/01/23/%E5%86%85%E6%A0%B8Nt%E5%92%8CZw%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB/" target="_blank" rel="external">https://findream.github.io/2018/01/23/%E5%86%85%E6%A0%B8Nt%E5%92%8CZw%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB/</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;子系统DLL<strong>调用Ntdll.dll中函数（系统调用根本执行的函数）</strong>来实现已经文档化的函数，但是windows USER和GDI函数例外，因为这些函数根本不涉及Ntdll.dll，系统分发指令在user32.dll或者GDI.dll中实现。</p>
 <ul>
 <li>windows内核API调用<ul>
 <li>1）windows应用程序调用Fun()</li>
@@ -403,10 +405,11 @@
 <li>1）应用程序中调用USER或者GDI函数</li>
 <li>2）调用User32.dll或者GDI.dll的Fun(),通过systementer进入内核模式，</li>
 <li>3）调用Ntoskrnl.exe的KiSystemService指向Win32k.sys中的服务入口点。</li>
-<li>4）执行服务，并返回<br>Ring3 —&gt; Ring0 的系统调用：<br>Kernel32.dll（API）—&gt;ntdll.dll（Nt/Zw）—&gt;用户模式转内核模式—&gt;Ntoskrnl.exe(NT)—&gt;完成I/O请求（原路返回）<br>Ring0 —&gt; Ring0 的系统调用：<br>Ntoskrnl.exe（Zw）—&gt;Ntoskrnl.exe（Nt）<br>参考文献：<br>windows internals<br><a href="https://www.cnblogs.com/uAreKongqi/p/6597701.html" target="_blank" rel="external">https://www.cnblogs.com/uAreKongqi/p/6597701.html</a></li>
+<li>4）执行服务，并返回</li>
 </ul>
 </li>
 </ul>
+<p>Ring3 —&gt; Ring0 的系统调用：<br>   Kernel32.dll（API）—&gt;ntdll.dll（Nt/Zw）—&gt;用户模式转内核模式—&gt;Ntoskrnl.exe(NT)—&gt;完成I/O请求（原路返回）<br>Ring0 —&gt; Ring0 的系统调用：<br>   Ntoskrnl.exe（Zw）—&gt;Ntoskrnl.exe（Nt）<br>参考文献：<br>windows internals<br><a href="https://www.cnblogs.com/uAreKongqi/p/6597701.html" target="_blank" rel="external">https://www.cnblogs.com/uAreKongqi/p/6597701.html</a></p>
 
       
     </div>
