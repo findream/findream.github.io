@@ -294,6 +294,194 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/05/windbg使用简明教程（1）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/05/windbg使用简明教程（1）/" itemprop="url">windbg内核调试（1）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-05T15:02:11+08:00">
+                2018-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="配置篇："><a href="#配置篇：" class="headerlink" title="配置篇："></a>配置篇：</h2><ul>
+<li>1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：<ul>
+<li>1）修改虚拟机C盘根目录下配置文件boot.ini</li>
+<li>2）修改虚拟机设置，添加一个串行串口</li>
+<li>3）在宿主主机启动winbdg，进入内核调试，配置如下<br><img src="https://i.imgur.com/A4wPzBq.png" alt=""></li>
+<li>PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加<strong>“windbg -b -k com:pipe,port=\.\pipe\com_1,resets=0”</strong>即可<br><img src="https://i.imgur.com/8aGsnQY.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="进程篇"><a href="#进程篇" class="headerlink" title="进程篇"></a>进程篇</h2><h3 id="1-查看进程列表"><a href="#1-查看进程列表" class="headerlink" title="1.查看进程列表"></a>1.查看进程列表</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有多个命令可以显示进程列表，他们主要是：“|”，“.tlist”,“!process”,“!dml_proc”。  </p>
+<ul>
+<li>| [进程号]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户态下，这个命令显示当前被调试进程的状态信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;被调试进程列表。大多数情况下，调试器中只有一个被调试进程，但可以通过.attach或者.create命令同时挂载或创建多个调试对象。当同时对多个进程调试时，进程号是从0开始的整数。</li>
+<li>tlist [选项] [模块名]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户模式</strong>下显示系统当前的进程列表，存在两个参数选项：-v:显示进程的详细信息，-c显示当前进程信息。默认是-v<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以通过“.attach”或者“.create”来创建或者附件多个调试对象<br>   <img src="https://i.imgur.com/7UqOBCF.png" alt=""></li>
+<li>!process:<strong>显示调试器当前运行的进程信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是这个命令只能在内核调试中使用，如果在用户态中调试，则会出现如下的错误提示。No export prcoess found<br>   <img src="https://i.imgur.com/CgfwHrG.png" alt=""></li>
+<li><strong>显示当前进程列表（内核态)</strong><br>   <img src="https://i.imgur.com/MetSOw4.png" alt=""></li>
+<li><strong>!process PID:显示PID的详细信息（内核态）</strong><br>   <img src="https://i.imgur.com/sAiYXqY.png" alt=""></li>
+<li><p><strong>!process 0 0 XXX,exe：查找指定进程（用户态中）</strong><br>   <img src="https://i.imgur.com/IFDvyGu.png" alt=""><br>   <img src="https://i.imgur.com/Jp3ajSL.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是根据上述命令查看到的信息包含的主要内容。</p>
+</li>
+<li><p>Cid : 进程id</p>
+</li>
+<li>Peb : 进程环境块的地址</li>
+<li>ParentCid : 父进程id</li>
+<li>DirBase : 页目录表 (用于转换虚拟地址和物理地址PDT)</li>
+<li>ObjectTable : 进程的句柄表</li>
+</ul>
+<h3 id="2-进程信息"><a href="#2-进程信息" class="headerlink" title="2.进程信息"></a>2.进程信息</h3><ul>
+<li>!peb[address]:查看指定PEB信息，在内核模式下，address可以通过!process 0 0:来查看。如果!peb不带参数，则指的是当前进程的PEB，在用户模式下，只能查看当前进程的PEB，所以不需要带参数。<br>  <img src="https://i.imgur.com/oFRU1Nj.png" alt=""></li>
+<li>dt nt!_PEB[address]:此命令显示系统nt模块中所定义的内核结构体PEB详细内容.<br>  <img src="https://i.imgur.com/G81Rqs4.png" alt=""><br>  <img src="https://i.imgur.com/Xbj48Tu.png" alt=""></li>
+</ul>
+<h3 id="3-切换进程"><a href="#3-切换进程" class="headerlink" title="3.切换进程"></a>3.切换进程</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>因为进程的地址空间都是相互独立的，所以我们使用dd 0x400000之类的指令是没有意义的。因为我们不确定当前用户地址空间就是我们的目标进程地址空间。因此我们首先要切换到我们想查看的进程上下文。之后才能查看它私有的地址空间。如果不按这个规定的话，有可能得出的结果是很多?????</strong></p>
+<ul>
+<li>.process [process address]:切换当前的进程空间。<br>  <img src="https://i.imgur.com/uT5OoeD.png" alt=""></li>
+<li>.context [页目录地址]：如果不使用任何参数，.context命令将显示当前页目录地址。页目录地址就是!process命令中显示的DirBase值。<strong>进程切换后，为了检测是否正确切换，可再用!peb命令检查当前进程的环境信息。</strong><h3 id="4-加载dll"><a href="#4-加载dll" class="headerlink" title="4.加载dll"></a>4.加载dll</h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.peb能显示当前进程所加载的dll，但是.dll能显示当前系统所在加载的dll。<br>  <img src="https://i.imgur.com/aBBULUI.png" alt=""></li>
+</ul>
+<h2 id="线程篇"><a href="#线程篇" class="headerlink" title="线程篇"></a>线程篇</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;命令”~”能够进行线程相关的操作。不带任何参数的情况下，它列出当前调试进程的线程。<br>    <img src="https://i.imgur.com/QLRZoqm.png" alt=""> </p>
+<h3 id="1-线程冰封"><a href="#1-线程冰封" class="headerlink" title="1.线程冰封"></a>1.线程冰封</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参数f与u分别代表freeze和unfress，前者是指冻住指定线程，后者将被冰冻线程解冻。</p>
+<ul>
+<li>~2f：暂停该进程的2号线程</li>
+<li>~2u：启动该进程的2号线程<h3 id="2-线程切换"><a href="#2-线程切换" class="headerlink" title="2.线程切换"></a>2.线程切换</h3></li>
+<li>~线程编号（不是TID）：切换线程</li>
+<li>!TEB:查看线程信息块</li>
+<li>~ 线程号 s：在多线程间作切换，需使用~命令的s参数</li>
+<li><del>【线程ID】 s：　注意这个命令中的[]并非可选符，而是命令的一部分。例如命令：</del>[11a0] s，它将当前线程切换到线程ID为0x11a0的线程。线程ID是系统维护的系统唯一的ID值。<h3 id="3-线程线程"><a href="#3-线程线程" class="headerlink" title="3.线程线程"></a>3.线程线程</h3></li>
+<li>~*k:显示所有线程的栈信息<br>  <img src="https://i.imgur.com/PLIW1aN.png" alt=""></li>
+<li>~*r:显示线程的寄存器信息</li>
+<li>~<em>e -cmd：对线程执行操作：例如：~</em>e k;r就是对线程执行k和r操作。</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/31/《Windows Internals》第三章：系统机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1620,155 +1808,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/05/病毒分析技术(3)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/05/病毒分析技术(3)/" itemprop="url">病毒分析技术(3)---小型硬盘加密病毒</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-05T16:45:11+08:00">
-                2018-03-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
-<li>1.样本信息</li>
-<li>2.行为分析</li>
-<li>3.样本分析
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/03/05/病毒分析技术(3)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1819,7 +1858,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1830,7 +1869,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>

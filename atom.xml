@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-03-31T09:42:54.013Z</updated>
+  <updated>2018-04-05T15:58:21.530Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>windbg内核调试（1）</title>
+    <link href="http://yoursite.com/2018/04/05/windbg%E4%BD%BF%E7%94%A8%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B%EF%BC%881%EF%BC%89/"/>
+    <id>http://yoursite.com/2018/04/05/windbg使用简明教程（1）/</id>
+    <published>2018-04-05T07:02:11.000Z</published>
+    <updated>2018-04-05T15:58:21.530Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="配置篇："><a href="#配置篇：" class="headerlink" title="配置篇："></a>配置篇：</h2><ul><li>1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：<ul><li>1）修改虚拟机C盘根目录下配置文件boot.ini</li><li>2）修改虚拟机设置，添加一个串行串口</li><li>3）在宿主主机启动winbdg，进入内核调试，配置如下<br><img src="https://i.imgur.com/A4wPzBq.png" alt=""></li><li>PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加<strong>“windbg -b -k com:pipe,port=\.\pipe\com_1,resets=0”</strong>即可<br><img src="https://i.imgur.com/8aGsnQY.png" alt=""></li></ul></li></ul><h2 id="进程篇"><a href="#进程篇" class="headerlink" title="进程篇"></a>进程篇</h2><h3 id="1-查看进程列表"><a href="#1-查看进程列表" class="headerlink" title="1.查看进程列表"></a>1.查看进程列表</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有多个命令可以显示进程列表，他们主要是：“|”，“.tlist”,“!process”,“!dml_proc”。  </p><ul><li>| [进程号]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户态下，这个命令显示当前被调试进程的状态信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;被调试进程列表。大多数情况下，调试器中只有一个被调试进程，但可以通过.attach或者.create命令同时挂载或创建多个调试对象。当同时对多个进程调试时，进程号是从0开始的整数。</li><li>tlist [选项] [模块名]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户模式</strong>下显示系统当前的进程列表，存在两个参数选项：-v:显示进程的详细信息，-c显示当前进程信息。默认是-v<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以通过“.attach”或者“.create”来创建或者附件多个调试对象<br>   <img src="https://i.imgur.com/7UqOBCF.png" alt=""></li><li>!process:<strong>显示调试器当前运行的进程信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是这个命令只能在内核调试中使用，如果在用户态中调试，则会出现如下的错误提示。No export prcoess found<br>   <img src="https://i.imgur.com/CgfwHrG.png" alt=""></li><li><strong>显示当前进程列表（内核态)</strong><br>   <img src="https://i.imgur.com/MetSOw4.png" alt=""></li><li><strong>!process PID:显示PID的详细信息（内核态）</strong><br>   <img src="https://i.imgur.com/sAiYXqY.png" alt=""></li><li><p><strong>!process 0 0 XXX,exe：查找指定进程（用户态中）</strong><br>   <img src="https://i.imgur.com/IFDvyGu.png" alt=""><br>   <img src="https://i.imgur.com/Jp3ajSL.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是根据上述命令查看到的信息包含的主要内容。</p></li><li><p>Cid : 进程id</p></li><li>Peb : 进程环境块的地址</li><li>ParentCid : 父进程id</li><li>DirBase : 页目录表 (用于转换虚拟地址和物理地址PDT)</li><li>ObjectTable : 进程的句柄表</li></ul><h3 id="2-进程信息"><a href="#2-进程信息" class="headerlink" title="2.进程信息"></a>2.进程信息</h3><ul><li>!peb[address]:查看指定PEB信息，在内核模式下，address可以通过!process 0 0:来查看。如果!peb不带参数，则指的是当前进程的PEB，在用户模式下，只能查看当前进程的PEB，所以不需要带参数。<br>  <img src="https://i.imgur.com/oFRU1Nj.png" alt=""></li><li>dt nt!_PEB[address]:此命令显示系统nt模块中所定义的内核结构体PEB详细内容.<br>  <img src="https://i.imgur.com/G81Rqs4.png" alt=""><br>  <img src="https://i.imgur.com/Xbj48Tu.png" alt=""></li></ul><h3 id="3-切换进程"><a href="#3-切换进程" class="headerlink" title="3.切换进程"></a>3.切换进程</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>因为进程的地址空间都是相互独立的，所以我们使用dd 0x400000之类的指令是没有意义的。因为我们不确定当前用户地址空间就是我们的目标进程地址空间。因此我们首先要切换到我们想查看的进程上下文。之后才能查看它私有的地址空间。如果不按这个规定的话，有可能得出的结果是很多?????</strong></p><ul><li>.process [process address]:切换当前的进程空间。<br>  <img src="https://i.imgur.com/uT5OoeD.png" alt=""></li><li>.context [页目录地址]：如果不使用任何参数，.context命令将显示当前页目录地址。页目录地址就是!process命令中显示的DirBase值。<strong>进程切换后，为了检测是否正确切换，可再用!peb命令检查当前进程的环境信息。</strong><h3 id="4-加载dll"><a href="#4-加载dll" class="headerlink" title="4.加载dll"></a>4.加载dll</h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.peb能显示当前进程所加载的dll，但是.dll能显示当前系统所在加载的dll。<br>  <img src="https://i.imgur.com/aBBULUI.png" alt=""></li></ul><h2 id="线程篇"><a href="#线程篇" class="headerlink" title="线程篇"></a>线程篇</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;命令”~”能够进行线程相关的操作。不带任何参数的情况下，它列出当前调试进程的线程。<br>    <img src="https://i.imgur.com/QLRZoqm.png" alt=""> </p><h3 id="1-线程冰封"><a href="#1-线程冰封" class="headerlink" title="1.线程冰封"></a>1.线程冰封</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参数f与u分别代表freeze和unfress，前者是指冻住指定线程，后者将被冰冻线程解冻。</p><ul><li>~2f：暂停该进程的2号线程</li><li>~2u：启动该进程的2号线程<h3 id="2-线程切换"><a href="#2-线程切换" class="headerlink" title="2.线程切换"></a>2.线程切换</h3></li><li>~线程编号（不是TID）：切换线程</li><li>!TEB:查看线程信息块</li><li>~ 线程号 s：在多线程间作切换，需使用~命令的s参数</li><li><del>【线程ID】 s：　注意这个命令中的[]并非可选符，而是命令的一部分。例如命令：</del>[11a0] s，它将当前线程切换到线程ID为0x11a0的线程。线程ID是系统维护的系统唯一的ID值。<h3 id="3-线程线程"><a href="#3-线程线程" class="headerlink" title="3.线程线程"></a>3.线程线程</h3></li><li>~*k:显示所有线程的栈信息<br>  <img src="https://i.imgur.com/PLIW1aN.png" alt=""></li><li>~*r:显示线程的寄存器信息</li><li>~<em>e -cmd：对线程执行操作：例如：~</em>e k;r就是对线程执行k和r操作。</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;配置篇：&quot;&gt;&lt;a href=&quot;#配置篇：&quot; class=&quot;headerlink&quot; title=&quot;配置篇：&quot;&gt;&lt;/a&gt;配置篇：&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：&lt;ul&gt;
+&lt;li&gt;1）修改虚拟机C盘根目录下配
+      
+    
+    </summary>
+    
+      <category term="windows内核" scheme="http://yoursite.com/categories/windows%E5%86%85%E6%A0%B8/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>《Windows Internals》第三章：系统机制</title>
@@ -423,28 +448,6 @@
     <summary type="html">
     
       &lt;h1 id=&quot;前言：&quot;&gt;&lt;a href=&quot;#前言：&quot; class=&quot;headerlink&quot; title=&quot;前言：&quot;&gt;&lt;/a&gt;前言：&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;strong&gt;SEH(“Structured Exception Handling”),即结构化异常处理·是(windows)操作系统提供给程序设计者的强有力的处理程序错误或异常的武器。它不依托于设计语言，只依托于操作系统，这些并不是编译程序本身所固有的,本质上只不过是对windows内在提供的结构化异常处理的包装。&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;参看资料：&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;1.逆向工程核心原理&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;2.&lt;a href=&quot;https://www.52pojie.cn/thread-16609-1-1.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.52pojie.cn/thread-16609-1-1.html&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;3.&lt;a href=&quot;https://bbs.pediy.com/thread-27224.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://bbs.pediy.com/thread-27224.html&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;4.&lt;a href=&quot;https://bbs.pediy.com/thread-12449.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://bbs.pediy.com/thread-12449.htm&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;5.&lt;a href=&quot;https://bbs.pediy.com/thread-189193.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://bbs.pediy.com/thread-189193.htm&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;
-    
-    </summary>
-    
-      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Zw*与Nt*的区别</title>
-    <link href="http://yoursite.com/2018/01/23/%E5%86%85%E6%A0%B8Nt%E5%92%8CZw%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB/"/>
-    <id>http://yoursite.com/2018/01/23/内核Nt和Zw函数区别/</id>
-    <published>2018-01-23T07:02:11.000Z</published>
-    <updated>2018-01-23T11:01:19.366Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="1-在用户态"><a href="#1-在用户态" class="headerlink" title="1:在用户态"></a>1:在用户态</h1><p>1：以ReadFile为例：ntdll.dll导出了ZwReadFile和NtReadFile </p><p><strong>2.不管你调用ZwReadFile还是NtReadFile都是一样的</strong></p><p>3.因为他们是同一个函数的两个不同名称而已…. 而且他们最终都会调用到ntoskrnl中的NtReadFile中去。<br><a id="more"></a></p><h1 id="2-在内核态"><a href="#2-在内核态" class="headerlink" title="2:在内核态"></a>2:在内核态</h1><p>1：ntoskrnl.exe导出了ZwReadFile和NtReadFile<br><strong>2：Ntoskrnl导出的NtReadFile是真正的执行函数，ZwReadFile是一个stub函数</strong><br>3：区别：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核态调用ZwReadFile，会将Previous Mode设置为Kernel Mode，然后再调用NtReadFile。而在内核态直接调用NtReadFile，不会改变Previous Mode。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NtReadFile中会检测当前调用来自用户态还是内核态。如果是来自内核态，不会检测参数；而如果是来自用户态，就会做一系列的参数检测。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道，内核组件可能运行在任意进程的上下文中，当它调用NtReadFile时，因为Previous Mode很可能是User Mode，而我们的参数请求的内核态的地址，这时通常就会产 STATUS_ACCESS_VIOLATION 错误 。</p><p><strong>所以内核态一般用Zw*系列的函数</strong></p><p><a href="http://www.osronline.com/article.cfm?id=257" title="关于Nt*与Zw*的更为详细的介绍" target="_blank" rel="external">http://www.osronline.com/article.cfm?id=257</a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;1-在用户态&quot;&gt;&lt;a href=&quot;#1-在用户态&quot; class=&quot;headerlink&quot; title=&quot;1:在用户态&quot;&gt;&lt;/a&gt;1:在用户态&lt;/h1&gt;&lt;p&gt;1：以ReadFile为例：ntdll.dll导出了ZwReadFile和NtReadFile &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;2.不管你调用ZwReadFile还是NtReadFile都是一样的&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;3.因为他们是同一个函数的两个不同名称而已…. 而且他们最终都会调用到ntoskrnl中的NtReadFile中去。&lt;br&gt;
     
     </summary>
     
