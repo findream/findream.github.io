@@ -534,8 +534,7 @@
 
       
         
-          <h2 id="2-4：const限定符"><a href="#2-4：const限定符" class="headerlink" title="2.4：const限定符"></a>2.4：const限定符</h2><h3 id="2-4-0：初始化Const"><a href="#2-4-0：初始化Const" class="headerlink" title="2.4.0：初始化Const"></a>2.4.0：初始化Const</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果需要限制某个变量的值不能被修改，我们应该使用const限定符，const限定符必须要初始化，如下的定义是错误的。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> n;    <span class="comment">//错误，因为没有被初始化</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const限定符只能在同一个文件使用有效。在编译过程中，编译器会在任何使用const变量的地方，使用常量代替。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;只在一个文件中定义const变量，但是需要在多个文件中使用的，需要关键字extern。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">extern</span> <span class="keyword">const</span> <span class="keyword">int</span> num=<span class="number">1</span>;</div></pre></td></tr></table></figure></p>
+          <h2 id="2-4：const限定符"><a href="#2-4：const限定符" class="headerlink" title="2.4：const限定符"></a>2.4：const限定符</h2><h3 id="2-4-0：初始化Const"><a href="#2-4-0：初始化Const" class="headerlink" title="2.4.0：初始化Const"></a>2.4.0：初始化Const</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果需要限制某个变量的值不能被修改，我们应该使用const限定符，const限定符必须要初始化，如下的定义是错误的。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/04/11/C++第二章_变量和基本类型/#more" rel="contents">
