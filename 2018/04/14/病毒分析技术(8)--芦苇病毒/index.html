@@ -81,17 +81,40 @@
 
 
 
-<meta name="description" content="1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。2.使用静态和动态结合的分析思路。3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta name="description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
 <meta property="og:type" content="article">
-<meta property="og:title" content="给逆向工作者的忠告">
-<meta property="og:url" content="http://yoursite.com/2017/12/09/给逆向分析人员的忠告/index.html">
+<meta property="og:title" content="病毒分析技术(8) ---芦苇冰毒">
+<meta property="og:url" content="http://yoursite.com/2018/04/14/病毒分析技术(8)--芦苇病毒/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。2.使用静态和动态结合的分析思路。3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta property="og:description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-09T09:50:30.586Z">
+<meta property="og:image" content="https://i.imgur.com/FY1YLu0.png">
+<meta property="og:image" content="https://i.imgur.com/l4KcSze.png">
+<meta property="og:image" content="https://i.imgur.com/0nJRrMd.png">
+<meta property="og:image" content="https://i.imgur.com/3gZWzZa.png">
+<meta property="og:image" content="https://i.imgur.com/VgKYU9B.png">
+<meta property="og:image" content="https://i.imgur.com/alHyrbp.png">
+<meta property="og:image" content="https://i.imgur.com/9v6U9LX.png">
+<meta property="og:image" content="https://i.imgur.com/FHryWgf.png">
+<meta property="og:image" content="https://i.imgur.com/eW9ZlR6.png">
+<meta property="og:image" content="https://i.imgur.com/cWqIOsV.png">
+<meta property="og:image" content="https://i.imgur.com/NtqcLOk.png">
+<meta property="og:image" content="https://i.imgur.com/53Ck3uI.png">
+<meta property="og:image" content="https://i.imgur.com/hxk47VA.png">
+<meta property="og:image" content="https://i.imgur.com/X5SIkSb.png">
+<meta property="og:image" content="https://i.imgur.com/5d778EX.png">
+<meta property="og:image" content="https://i.imgur.com/SmAtU9l.png">
+<meta property="og:image" content="https://i.imgur.com/TIjRv1g.png">
+<meta property="og:image" content="https://i.imgur.com/sdqxBTG.png">
+<meta property="og:image" content="https://i.imgur.com/P8RN0yn.png">
+<meta property="og:image" content="https://i.imgur.com/6pWui9r.png">
+<meta property="og:image" content="https://i.imgur.com/H8L5nUn.png">
+<meta property="og:image" content="https://i.imgur.com/KYbGkF9.png">
+<meta property="og:updated_time" content="2018-04-16T07:44:11.423Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="给逆向工作者的忠告">
-<meta name="twitter:description" content="1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。2.使用静态和动态结合的分析思路。3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta name="twitter:title" content="病毒分析技术(8) ---芦苇冰毒">
+<meta name="twitter:description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
+<meta name="twitter:image" content="https://i.imgur.com/FY1YLu0.png">
 
 
 
@@ -121,13 +144,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/12/09/给逆向分析人员的忠告/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/04/14/病毒分析技术(8)--芦苇病毒/"/>
 
 
 
 
 
-  <title>给逆向工作者的忠告 | findream's blog</title>
+  <title>病毒分析技术(8) ---芦苇冰毒 | findream's blog</title>
   
 
 
@@ -294,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/给逆向分析人员的忠告/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/病毒分析技术(8)--芦苇病毒/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -311,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">给逆向工作者的忠告</h1>
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(8) ---芦苇冰毒</h1>
         
 
         <div class="post-meta">
@@ -323,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T17:02:11+08:00">
-                2017-12-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T14:02:11+08:00">
+                2018-04-14
               </time>
             
 
@@ -383,7 +406,79 @@
       
 
       
-        <h1 id="1-首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。"><a href="#1-首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。" class="headerlink" title="1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。"></a>1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。</h1><h1 id="2-使用静态和动态结合的分析思路。"><a href="#2-使用静态和动态结合的分析思路。" class="headerlink" title="2.使用静态和动态结合的分析思路。"></a>2.使用静态和动态结合的分析思路。</h1><h1 id="3-不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。"><a href="#3-不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。" class="headerlink" title="3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。"></a>3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。</h1><h1 id="4-合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。"><a href="#4-合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。" class="headerlink" title="4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。"></a>4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2017年12月9日</p>
+        <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术上的总结<a id="more"></a>
+<h1 id="二-样本信息"><a href="#二-样本信息" class="headerlink" title="二 样本信息"></a>二 样本信息</h1></li>
+<li>1.样本名称：芦苇病毒.exe</li>
+<li>2.MD5:c71091507f731c203b6c93bc91adedb6</li>
+<li>3.是否加壳：否</li>
+<li>4.编写语言：Microsoft Visual C++ ver 5.0/6.0</li>
+<li>5.样本来源：卡饭社区病毒样本专栏</li>
+</ul>
+<h1 id="三-行为分析"><a href="#三-行为分析" class="headerlink" title="三 行为分析"></a>三 行为分析</h1><ul>
+<li>1.病毒将自身写入/run注册表项，实现自启</li>
+<li>2.向c盘根目录写入三个文件</li>
+<li>3.向样本同一目录下写入bmp文件，并设置隐藏</li>
+<li>4.执行根目录下文件，error图标，随着鼠标移动而移动</li>
+<li>5.加载windows音频驱动，播放音乐。</li>
+<li>6.调用cmd，执行各种批处理</li>
+<li>7.禁用系统安全选项</li>
+<li>8.小结：这个病毒属于恶作剧病毒，没有采用常见的隐藏自身的行为，而是很大方的告诉用户本机已经中病毒了，也许是作者对自身病毒很有自信，执行大量批处理。</li>
+</ul>
+<h1 id="四-样本分析"><a href="#四-样本分析" class="headerlink" title="四 样本分析"></a>四 样本分析</h1><ul>
+<li>1.省略前面的初始化工作，经过程序od跟踪，进入第一个可以用于病毒执行的函数<br>  <img src="https://i.imgur.com/FY1YLu0.png" alt=""><br>  <img src="https://i.imgur.com/l4KcSze.png" alt=""><br>  <img src="https://i.imgur.com/0nJRrMd.png" alt=""></li>
+<li>2.先把1.bmp传入函数，调用004062F0函数，利用Cfile库来创建文件，其实这个库底层也是调用createfile函数实现的。<br>  <img src="https://i.imgur.com/3gZWzZa.png" alt=""></li>
+<li>3.然后利用DistributeFun函数(自定义)进行函数的分发，原理是根据函数入口表，利用jmp去跳转到对应的函数入口。关于这部分内容文章后期介绍。<br>  <img src="https://i.imgur.com/VgKYU9B.png" alt=""></li>
+<li>4.设置文件安全属性(主要是隐藏)，但是不明白的是为什么要把bmp文件设置隐藏。<br>  <img src="https://i.imgur.com/alHyrbp.png" alt=""></li>
+<li>5.调用sub_463F60利用修改注册表的键值来修改桌面配置信息<br>  <img src="https://i.imgur.com/9v6U9LX.png" alt=""><br>  <img src="https://i.imgur.com/FHryWgf.png" alt=""><br>  <img src="https://i.imgur.com/eW9ZlR6.png" alt=""></li>
+<li>6.加载wdmaud.drv等windows音频驱动文件<br>   <img src="https://i.imgur.com/cWqIOsV.png" alt=""><br>   <img src="https://i.imgur.com/NtqcLOk.png" alt=""></li>
+<li>7.播放音乐<br>   <img src="https://i.imgur.com/53Ck3uI.png" alt=""></li>
+<li>8.在c盘根目录下释放三个文件，分别是drawerror.exe。ghost.exe。main.cpp，<br>   <img src="https://i.imgur.com/hxk47VA.png" alt=""></li>
+<li>9.执行前两个文件。drawerror.exe产生error图标，随着鼠标移动而移动。ghost文件没有实际的操作。<br>   <img src="https://i.imgur.com/X5SIkSb.png" alt=""></li>
+<li>10.关闭windows的安全选项，这些函数都是通过删除注册表子项(如SYSTEM\CurrentControlSet\Control\SafeBoot\Minimal)的方法，阻止用户使用安全选项。<br>  <img src="https://i.imgur.com/5d778EX.png" alt=""></li>
+<li>11.修改注册表，实现开机自启<br>  <img src="https://i.imgur.com/SmAtU9l.png" alt=""><br>  <img src="https://i.imgur.com/TIjRv1g.png" alt=""><br>  <img src="https://i.imgur.com/sdqxBTG.png" alt=""></li>
+<li>12.通过消息分发函数调用cmd.exe 执行批处理（关于DispatchMessage函数的溯源放到本次分析的后续介绍）<ul>
+<li>1）创建C:\cc.ico和1.bat</li>
+<li>2）这是比较有意思的一步，程序通过向注册表HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\中写入1.bat，同时释放了一个名为ascaris.dll的文件，这是一个关于过UAC的一个方法。原文来自：安全客<a href="http://bobao.360.cn/learning/detail/420.html" target="_blank" rel="external">http://bobao.360.cn/learning/detail/420.html</a></li>
+<li>3）通过注册表HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\AppCertDlls实现隐藏。</li>
+<li>调用cmd.exe执行操作</li>
+<li>把所有exe格式的文件的图标全部替换成释放的cc.ico  </li>
+</ul>
+</li>
+<li>13.关于1.bat功能的介绍<ul>
+<li>assoc .exe=exefile 关联exe文件，使其可以运行。</li>
+</ul>
+</li>
+<li>14.关于ascaris.bat的介绍<ul>
+<li>根据上文，我们知道使用ascaris.bat和ascaris.dll来避开UAC机制，其中ascaris.bat是主要的执行部分//前面有注释。</li>
+<li>1.复制自身</li>
+<li>2.隐藏文件</li>
+<li>3.制造大文件，破坏行为</li>
+<li>4.监视U盘</li>
+<li>5.隐藏文件等</li>
+</ul>
+</li>
+<li>15.关于兵团.bat的介绍<ul>
+<li>遍历磁盘</li>
+<li>创建随机文件<br><img src="https://i.imgur.com/P8RN0yn.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="5-技术总结"><a href="#5-技术总结" class="headerlink" title="5 技术总结"></a>5 技术总结</h1><ul>
+<li>1.关于DistributeFun分发函数的介绍<ul>
+<li>首先函数先将目标函数的地址出传入ebx，然后利用跳转表跳入分发函数的入口地址<br><img src="https://i.imgur.com/6pWui9r.png" alt=""></li>
+<li>继续跟入分发函数可以发现，函数内部，进行了一次调用call ebx，这样就把目标函数的实际调用隐藏起来了。<br><img src="https://i.imgur.com/H8L5nUn.png" alt=""></li>
+</ul>
+</li>
+<li>2.关于DispatchMessage消息分发函数的介绍<ul>
+<li>DispatchMessage函数是将消息派发给窗口函数，我们可以利用SPY++来查看消息对应的窗口处理函数，然后在目标的窗口进程下断点，然后就可以开始调试了。<br><img src="https://i.imgur.com/KYbGkF9.png" alt=""></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -408,8 +503,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/02/线程局部存储技术/" rel="next" title="线程局部存储技术">
-                <i class="fa fa-chevron-left"></i> 线程局部存储技术
+              <a href="/2018/04/11/C++第六章_函数/" rel="next" title="C++Primer 第六章：函数">
+                <i class="fa fa-chevron-left"></i> C++Primer 第六章：函数
               </a>
             
           </div>
@@ -418,8 +513,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/12/24/浅谈Base64的加密与解密/" rel="prev" title="浅谈Base64的加密原理及其应用">
-                浅谈Base64的加密原理及其应用 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/14/linux常见命令(1)文件相关/" rel="prev" title="Linux常见命令(1)文件相关">
+                Linux常见命令(1)文件相关 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -552,7 +647,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。"><span class="nav-number">1.</span> <span class="nav-text">1.首先使用行为分析工具，对需要逆向的程序进行行为分析，这个能把握程序的总体运行特征。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-使用静态和动态结合的分析思路。"><span class="nav-number">2.</span> <span class="nav-text">2.使用静态和动态结合的分析思路。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。"><span class="nav-number">3.</span> <span class="nav-text">3.不要完全依赖于反编译器，因为程序很可能采用反调试和混淆技术，干扰其判断。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。"><span class="nav-number">4.</span> <span class="nav-text">4.合理使用F5大法，因为他会把一个简单的问题复杂化，简单点。</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-目录："><span class="nav-number">1.</span> <span class="nav-text">一 目录：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-样本信息"><span class="nav-number">2.</span> <span class="nav-text">二 样本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-行为分析"><span class="nav-number">3.</span> <span class="nav-text">三 行为分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-样本分析"><span class="nav-number">4.</span> <span class="nav-text">四 样本分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-技术总结"><span class="nav-number">5.</span> <span class="nav-text">5 技术总结</span></a></li></ol></div>
             
 
           </div>
