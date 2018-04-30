@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="第一部分：文件操作 查看文件  ls [选项]  -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id   创建目录  mkdir [目录名]  -p:递归创建   切换目录  cd [目录]  .. ：回到上级目录   删除目录  rmdir [目录]    -p： 递归删除空目录   查看当前目录 pwd  复制">
+<meta name="description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux常见命令(1)文件相关">
 <meta property="og:url" content="http://yoursite.com/2018/04/14/linux常见命令(1)文件相关/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="第一部分：文件操作 查看文件  ls [选项]  -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id   创建目录  mkdir [目录名]  -p:递归创建   切换目录  cd [目录]  .. ：回到上级目录   删除目录  rmdir [目录]    -p： 递归删除空目录   查看当前目录 pwd  复制">
+<meta property="og:description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/kXUvm5N.png">
 <meta property="og:image" content="https://i.imgur.com/y6Nk6KF.png">
@@ -97,6 +97,7 @@
 <meta property="og:image" content="https://i.imgur.com/WCbgKOg.png">
 <meta property="og:image" content="https://i.imgur.com/IdQAxZw.png">
 <meta property="og:image" content="https://i.imgur.com/VYj8Fww.png">
+<meta property="og:image" content="https://i.imgur.com/gGbO2yy.png">
 <meta property="og:image" content="https://i.imgur.com/vtqOU5b.png">
 <meta property="og:image" content="https://i.imgur.com/Mf7UhJ9.png">
 <meta property="og:image" content="https://i.imgur.com/poHs1KY.png">
@@ -104,10 +105,18 @@
 <meta property="og:image" content="https://i.imgur.com/Bldk7hu.png">
 <meta property="og:image" content="https://i.imgur.com/aWJP0MQ.png">
 <meta property="og:image" content="https://i.imgur.com/PLL9v4O.png">
-<meta property="og:updated_time" content="2018-04-25T10:50:55.808Z">
+<meta property="og:image" content="https://i.imgur.com/ee3VxCC.png">
+<meta property="og:image" content="https://i.imgur.com/Cuei40d.png">
+<meta property="og:image" content="https://i.imgur.com/5aASlFG.png">
+<meta property="og:image" content="https://i.imgur.com/N9l3WS3.png">
+<meta property="og:image" content="https://i.imgur.com/mQKqGiF.png">
+<meta property="og:image" content="https://i.imgur.com/fKGDysQ.png">
+<meta property="og:image" content="https://i.imgur.com/gUlksFp.png">
+<meta property="og:image" content="https://i.imgur.com/rwBOdI1.png">
+<meta property="og:updated_time" content="2018-04-28T05:42:54.331Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux常见命令(1)文件相关">
-<meta name="twitter:description" content="第一部分：文件操作 查看文件  ls [选项]  -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id   创建目录  mkdir [目录名]  -p:递归创建   切换目录  cd [目录]  .. ：回到上级目录   删除目录  rmdir [目录]    -p： 递归删除空目录   查看当前目录 pwd  复制">
+<meta name="twitter:description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
 <meta name="twitter:image" content="https://i.imgur.com/kXUvm5N.png">
 
 
@@ -363,8 +372,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/密码学/" itemprop="url" rel="index">
-                    <span itemprop="name">密码学</span>
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
                   </a>
                 </span>
 
@@ -400,15 +409,13 @@
       
 
       
-        <a id="more"></a>
-<h2 id="第一部分：文件操作"><a href="#第一部分：文件操作" class="headerlink" title="第一部分：文件操作"></a>第一部分：文件操作</h2><ul>
-<li><p>查看文件  <strong>ls [选项]</strong></p>
-<ul>
+        <h2 id="第一部分：文件操作"><a href="#第一部分：文件操作" class="headerlink" title="第一部分：文件操作"></a>第一部分：文件操作</h2><ul>
+<li>查看文件  <strong>ls [选项]</strong><ul>
 <li>-a:查看隐藏文件<br><img src="https://i.imgur.com/kXUvm5N.png" alt=""></li>
 <li>-l:查看详细信息<br><img src="https://i.imgur.com/y6Nk6KF.png" alt=""></li>
 <li>-d:查看指定路径<br><img src="https://i.imgur.com/4ssnuiF.png" alt=""></li>
 <li>-h:查看文件大小（非字节显示）[要和-l参数合用]<br><img src="https://i.imgur.com/OD734Dk.png" alt=""></li>
-<li>-i:查看文件id<br><img src="https://i.imgur.com/WQa7g2f.png" alt=""></li>
+<li>-i:查看文件id<br><img src="https://i.imgur.com/WQa7g2f.png" alt=""><a id="more"></a></li>
 </ul>
 </li>
 <li><p>创建目录  <strong>mkdir [目录名]</strong></p>
@@ -492,8 +499,14 @@
 <li>-f 实时显示[查看日志文件]</li>
 </ul>
 </li>
+<li><p>创建文件链接 **ln [选项] [链接目录文件] [链接名]</p>
+<ul>
+<li>-s:创建的是软连接（快捷方式）<br><img src="https://i.imgur.com/gGbO2yy.png" alt=""></li>
+<li>默认：硬链接（读写操作和源文件一样） </li>
 </ul>
-<h1 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h1><ul>
+</li>
+</ul>
+<h1 id="第二部分-文件权限"><a href="#第二部分-文件权限" class="headerlink" title="第二部分 文件权限"></a>第二部分 文件权限</h1><ul>
 <li><p>chmod 修改文件或者目录权限</p>
 <ul>
 <li>chmod [{ugoa}{+-=}{rwx}] [目录]<br><img src="https://i.imgur.com/vtqOU5b.png" alt=""></li>
@@ -518,6 +531,8 @@
 <li>umask [权限掩码] ：修改默认的权限数值</li>
 </ul>
 </li>
+</ul>
+<h1 id="第三部分-文件查询"><a href="#第三部分-文件查询" class="headerlink" title="第三部分 文件查询"></a>第三部分 文件查询</h1><ul>
 <li><p>find [范围] [搜索条件] 搜索文件</p>
 <ul>
 <li>-name <ul>
@@ -533,6 +548,38 @@
 </ul>
 </li>
 <li>-cmin -时间   根据修改时间<br><img src="https://i.imgur.com/PLL9v4O.png" alt=""></li>
+<li>-amin -时间    根据访问时间</li>
+<li>-mmin -时间    根据文件内容</li>
+<li>-a ： 表示两个条件都符合</li>
+<li>-o ： 表示多个条件只需要符合一个<br><img src="https://i.imgur.com/ee3VxCC.png" alt=""></li>
+<li>-type  按照文件类型查找<ul>
+<li>-f 文件<br><img src="https://i.imgur.com/Cuei40d.png" alt=""></li>
+<li>-d 目录<br><img src="https://i.imgur.com/5aASlFG.png" alt=""></li>
+<li>-l 链接<br><img src="https://i.imgur.com/N9l3WS3.png" alt=""></li>
+</ul>
+</li>
+<li>-inum  根据i节点来查找</li>
+<li>-exec/-ok   {}\;   调用其他命令。</li>
+</ul>
+</li>
+<li><p>locate [目录/文件] 搜索（需要更新文件数据库）<br>  <img src="https://i.imgur.com/mQKqGiF.png" alt=""></p>
+<ul>
+<li>-i：不区分大小写</li>
+<li>updatedb ：更新数据库</li>
+</ul>
+</li>
+<li><p>which [文件/目录]  ：用于查找系统命令</p>
+<ul>
+<li>查看命令是否带有别名<br><img src="https://i.imgur.com/fKGDysQ.png" alt=""></li>
+</ul>
+</li>
+<li>grep [关键词] [搜索路径]  ：搜索文件内容<ul>
+<li>-i 不区分不大小写<br><img src="https://i.imgur.com/gUlksFp.png" alt=""></li>
+<li>-v 排除指定字符<br><img src="https://i.imgur.com/rwBOdI1.png" alt=""></li>
+</ul>
+</li>
+<li>whereis [命令]<ul>
+<li>查看命令的所在位置，查看配置文件的位置，和帮助文件的文职。一般的文件名是1的是命令的帮助文件，文件名是5的是配置文件的帮助</li>
 </ul>
 </li>
 </ul>
@@ -649,7 +696,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-count">50</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +707,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -704,7 +751,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：文件操作"><span class="nav-number">1.</span> <span class="nav-text">第一部分：文件操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件权限"><span class="nav-number"></span> <span class="nav-text">文件权限</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：文件操作"><span class="nav-number">1.</span> <span class="nav-text">第一部分：文件操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-文件权限"><span class="nav-number"></span> <span class="nav-text">第二部分 文件权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-文件查询"><span class="nav-number"></span> <span class="nav-text">第三部分 文件查询</span></a></div>
             
 
           </div>
