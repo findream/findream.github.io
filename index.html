@@ -294,6 +294,375 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/07/《windows PE》PE文件头/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/07/《windows PE》PE文件头/" itemprop="url">《windows PE》PE文件头</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-07T14:02:11+08:00">
+                2018-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><h2 id="四类地址"><a href="#四类地址" class="headerlink" title="四类地址"></a>四类地址</h2><ul>
+<li>虚拟地址（VA）</li>
+<li>相对虚拟内存地址（RVA）</li>
+<li>文件偏移地址（FOA）</li>
+<li>特殊地址<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;虚拟地址：PE文件被加载到内存，PE对应的进程拥有了4GB的空间，这个空间存在的地址就是虚拟地址。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;相对虚拟地址：相对与基地址的偏移量，RVA的存在是由于dll（模块）的基地址的不同而产生的。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件偏移地址：文件中某个位置距离文件头的偏移量。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;特殊位置，不细考究。<h2 id="数据目录"><a href="#数据目录" class="headerlink" title="数据目录"></a>数据目录</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据目录记录的是整个PE结构中存在的数据类型。<h2 id="节"><a href="#节" class="headerlink" title="节"></a>节</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;节就是存放不同的类型的数据，不同的节区有不同的访问权限。<h2 id="对齐"><a href="#对齐" class="headerlink" title="对齐"></a>对齐</h2></li>
+<li>内存对齐</li>
+<li>文件对齐</li>
+<li>资源数据对齐<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内存对齐：windows中，内存属性的基本单位是页，在32位系统是4KB(1000h)，在64位系统中是8kb。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件对齐：为了提高磁盘利用率，把一个物理扇区作为一个对齐粒度的大小，也就是12字节（200H）,这是每个数据段都是200H的整数倍的原因。<br><img src="/home/findream/桌面/QQ截图20180507125335.png" alt=""> </li>
+</ul>
+<h1 id="第二部分-32位windows系统的PE结构"><a href="#第二部分-32位windows系统的PE结构" class="headerlink" title="第二部分 32位windows系统的PE结构"></a>第二部分 32位windows系统的PE结构</h1><h2 id="定位标准的PE头"><a href="#定位标准的PE头" class="headerlink" title="定位标准的PE头"></a>定位标准的PE头</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于DOS stub是一个不确定的长度，所以导致DOS头也是一个不确定的长度，这时候，<strong>我们采用e_lfanew字段来定位后续的PE结构位置。该字段是一个偏移量。</strong>PE头的定位遵循一下公式：PE_Start=DOS_MZ+IMAGE_HANDER.e_lfanew.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE文件结构:<br><img src="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-09-51%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png" alt=""> </p>
+<h1 id="第三部分-PE文件头部解析"><a href="#第三部分-PE文件头部解析" class="headerlink" title="第三部分 PE文件头部解析"></a>第三部分 PE文件头部解析</h1><h2 id="DOS-MZ头"><a href="#DOS-MZ头" class="headerlink" title="DOS MZ头"></a>DOS MZ头</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MZ头下有两个需要知道的成员。一个是<strong>e_magic</strong> ,一个是<strong>e_lfanew</strong></p>
+<h2 id="PE头标志-Signature"><a href="#PE头标志-Signature" class="headerlink" title="PE头标志 Signature"></a>PE头标志 Signature</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature标志位于DOS_STUB之后，该标志位于e_lfanew所指向的位置。内容固定，对应的ASCII是”PE\0\0”。<br><img src="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-33-18%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png" alt=""> </p>
+<h2 id="标准PE头-IMAGE-FILE-HEADER"><a href="#标准PE头-IMAGE-FILE-HEADER" class="headerlink" title="标准PE头 IMAGE_FILE_HEADER"></a>标准PE头 IMAGE_FILE_HEADER</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位置：在PE文件头标志的后面，位于e_lfanew+4的位置。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大小：占据了20个字节。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作用：他记录了PE文件的全局属性（运行的平台，PE文件的类型，文件中存在的节区总数）<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是FILE_HEADER的成员信息：<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_FILE_HEADER</span> </span></div><div class="line"><span class="class"></span>&#123;  </div><div class="line">        WORD    Machine;     <span class="comment">//运行平台</span></div><div class="line">        WORD    NumberOfSections;     <span class="comment">//节区数量</span></div><div class="line">        DWORD   TimeDateStamp;        <span class="comment">//创建时间</span></div><div class="line">        DWORD   PointerToSymbolTable;    <span class="comment">//指向符号表</span></div><div class="line">        DWORD   NumberOfSymbols;     <span class="comment">//符号表符号数</span></div><div class="line">        WORD    SizeOfOptionalHeader;    <span class="comment">//拓展头长度</span></div><div class="line">        WORD    Characteristics;        <span class="comment">//文件属性</span></div><div class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>Machime:该文件的运行平台，是x86、x64还是I64等等，可以是下面值里的某一个。</li>
+<li>TimeDateStamp：PE文件的创建时间，一般有连接器填写</li>
+<li>NumberOfSections：该PE文件中有多少个节，也就是节表中的项数</li>
+<li>SizeOfOptionalHeader：紧随其后的可选头的大小。<h2 id="拓展PE头IMAGE-OPTIONAL-HEADER32"><a href="#拓展PE头IMAGE-OPTIONAL-HEADER32" class="headerlink" title="拓展PE头IMAGE_OPTIONAL_HEADER32"></a>拓展PE头IMAGE_OPTIONAL_HEADER32</h2><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_OPTIONAL_HEADER</span> </span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">        <span class="comment">// Standard fields.        </span></div><div class="line">        WORD    Magic;              <span class="comment">// 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）   </span></div><div class="line">        BYTE    MajorLinkerVersion;     <span class="comment">// 链接程序的主版本号   </span></div><div class="line">        BYTE    MinorLinkerVersion;     <span class="comment">// 链接程序的次版本号   </span></div><div class="line">        DWORD   SizeOfCode;         <span class="comment">// 所有含代码的节的总大小   </span></div><div class="line">        DWORD   SizeOfInitializedData;          <span class="comment">// 所有含已初始化数据的节的总大小   </span></div><div class="line">        DWORD   SizeOfUninitializedData;        <span class="comment">// 所有含未初始化数据的节的大小   </span></div><div class="line">        DWORD   AddressOfEntryPoint;        <span class="comment">// 程序执行入口RVA   </span></div><div class="line">        DWORD   BaseOfCode;         <span class="comment">// 代码的区块的起始RVA   </span></div><div class="line">        DWORD   BaseOfData;         <span class="comment">// 数据的区块的起始RVA   </span></div><div class="line">        <span class="comment">// NT additional fields.    以下是属于NT结构增加的领域。   </span></div><div class="line">        DWORD   ImageBase;          <span class="comment">// 程序的首选装载地址   </span></div><div class="line">        DWORD   SectionAlignment;       <span class="comment">// 内存中的区块的对齐大小   </span></div><div class="line">        DWORD   FileAlignment;          <span class="comment">// 文件中的区块的对齐大小   </span></div><div class="line">        WORD    MajorOperatingSystemVersion;    <span class="comment">// 要求操作系统最低版本号的主版本号   </span></div><div class="line">        WORD    MinorOperatingSystemVersion;    <span class="comment">// 要求操作系统最低版本号的副版本号   </span></div><div class="line">        WORD    MajorImageVersion;      <span class="comment">// 可运行于操作系统的主版本号   </span></div><div class="line">        WORD    MinorImageVersion;      <span class="comment">// 可运行于操作系统的次版本号   </span></div><div class="line">        WORD    MajorSubsystemVersion;      <span class="comment">// 要求最低子系统版本的主版本号   </span></div><div class="line">        WORD    MinorSubsystemVersion;      <span class="comment">// 要求最低子系统版本的次版本号   </span></div><div class="line">        DWORD   Win32VersionValue;      <span class="comment">// 莫须有字段，不被病毒利用的话一般为0   </span></div><div class="line">        DWORD   SizeOfImage;            <span class="comment">// 映像装入内存后的总尺寸   </span></div><div class="line">        DWORD   SizeOfHeaders;          <span class="comment">// 所有头+ 区块表的尺寸大小   </span></div><div class="line">        DWORD   CheckSum;           <span class="comment">// 映像的校检和   </span></div><div class="line">        WORD    Subsystem;          <span class="comment">// 可执行文件期望的子系统   </span></div><div class="line">        WORD    DllCharacteristics;     <span class="comment">// DllMain()函数何时被调用，默认为0   </span></div><div class="line">        DWORD   SizeOfStackReserve;     <span class="comment">// 初始化时的栈大小   </span></div><div class="line">        DWORD   SizeOfStackCommit;      <span class="comment">// 初始化时实际提交的栈大小   </span></div><div class="line">        DWORD   SizeOfHeapReserve;      <span class="comment">// 初始化时保留的堆大小   </span></div><div class="line">        DWORD   SizeOfHeapCommit;       <span class="comment">// 初始化时实际提交的堆大小   </span></div><div class="line">        DWORD   LoaderFlags;            <span class="comment">// 与调试有关，默认为0    </span></div><div class="line">        DWORD   NumberOfRvaAndSizes;        <span class="comment">// 下边数据目录的项数，这个字段自Windows NT 发布以来 一直是16   </span></div><div class="line">        IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];   <span class="comment">// 数据目录表   </span></div><div class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;需要我们熟悉的是以下几个成员。</p>
+<ul>
+<li>AddressOfEntryPoint;        // 程序执行入口RVA</li>
+<li>BaseOfCode;         // 代码的区块的起始RVA </li>
+<li>DWORD   ImageBase;          // 程序的首选装载地址</li>
+<li>SectionAlignment;       // 内存中的区块的对齐大小</li>
+<li>FileAlignment;          // 文件中的区块的对齐大小</li>
+<li>SizeOfImage;            // 映像装入内存后的总尺寸</li>
+<li>DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];   // 数据目录表</li>
+</ul>
+<h2 id="IMAGE-NT-HEADERS"><a href="#IMAGE-NT-HEADERS" class="headerlink" title="IMAGE_NT_HEADERS"></a>IMAGE_NT_HEADERS</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包括三个部分组成：PE头标志，IMAGE_FILE_HEADER,IMAGE_OPTIOANAL_HEADER.</p>
+<h2 id="数据目录项-IMAGE-DATA-DIRECTORY"><a href="#数据目录项-IMAGE-DATA-DIRECTORY" class="headerlink" title="数据目录项 IMAGE_DATA_DIRECTORY"></a>数据目录项 IMAGE_DATA_DIRECTORY</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NT3.1开始，数据目录一共有16种，使用IMAGE_DATA_DIRECTORY来定义每种数据。<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_DATA_DIRECTORY &#123;</div><div class="line">        <span class="type">DWORD</span>　<span class="type">VirtualAddress</span>; //相对虚拟地址  </div><div class="line">        <span class="type">DWORD</span>　<span class="type">Size</span>;　　　　　 //大小  </div><div class="line">&#125; <span class="type">IMAGE_DATA_DIRECTORY</span>, *<span class="type">PIMAGE_DATA_DIRECTORY</span>;</div></pre></td></tr></table></figure></p>
+<p>##节表项IMAGE_SECTION_HEADER<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_SECTION_HEADER </div><div class="line">&#123;</div><div class="line">  	<span class="keyword">BYTE </span> Name[IMAGE_SIZEOF_SHORT_NAME]<span class="comment">;//节区名称</span></div><div class="line">  	union &#123;</div><div class="line">    		DWORD PhysicalAddress<span class="comment">;</span></div><div class="line">    		DWORD VirtualSize<span class="comment">;    //节区大小</span></div><div class="line">  	&#125; Misc<span class="comment">;</span></div><div class="line">  	DWORD VirtualAddress<span class="comment">;       //节区的RVA</span></div><div class="line">  	DWORD SizeOfRawData<span class="comment">;      //在文件中对齐的尺寸</span></div><div class="line">  	DWORD PointerToRawData<span class="comment">;   //在文件中的偏移</span></div><div class="line">  	DWORD PointerToRelocations<span class="comment">;    //指向重定位表的指针</span></div><div class="line"> 	DWORD PointerToLinenumbers<span class="comment">;</span></div><div class="line">  	WORD  NumberOfRelocations<span class="comment">;     //重定位表的数目</span></div><div class="line">  	WORD  NumberOfLinenumbers<span class="comment">;</span></div><div class="line">  	DWORD Characteristics<span class="comment">;       //节区表的属性</span></div><div class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<h1 id="第三部分-详细解析PE文件头字段"><a href="#第三部分-详细解析PE文件头字段" class="headerlink" title="第三部分 详细解析PE文件头字段"></a>第三部分 详细解析PE文件头字段</h1><h2 id="IMAGE-FILE-HEADER字段"><a href="#IMAGE-FILE-HEADER字段" class="headerlink" title="IMAGE_FILE_HEADER字段"></a>IMAGE_FILE_HEADER字段</h2><ul>
+<li>Machine:<ul>
+<li>位置：+0004H,</li>
+<li>大小：单字</li>
+<li>作用：查看文件可以在那种机器上运行。</li>
+</ul>
+</li>
+<li>NumberOfSection：<ul>
+<li>位置：+0006h</li>
+<li>大小：单字</li>
+<li>作用：文件中存在的节区的数目，数值不能小于1，但是节区数可以为0.</li>
+</ul>
+</li>
+<li>TimeDateStamp <ul>
+<li>位置：+0008h</li>
+<li>大小：双字</li>
+<li>作用：编译时间，压缩时被修改。</li>
+</ul>
+</li>
+<li>SizeofOptionalHeader<ul>
+<li>位置：+0014h</li>
+<li>大小：单字</li>
+<li>作用：指向的是OptionalHeader的大小。默认是00e0H，在64位是00f0H</li>
+</ul>
+</li>
+<li>Character<ul>
+<li>位置：+0016h</li>
+<li>大小：单字</li>
+<li>作用：标志这PE文件的类型，如果这个值是010fh的话，表示这是一个EXE文件，如果值是210eh，表示这个值是DLL文件。</li>
+</ul>
+</li>
+</ul>
+<h2 id="IMAGE-OPTIONAL-HEADER字段"><a href="#IMAGE-OPTIONAL-HEADER字段" class="headerlink" title="IMAGE_OPTIONAL_HEADER字段"></a>IMAGE_OPTIONAL_HEADER字段</h2><ul>
+<li>Magic：表示该文件的类型：如果是010Bh，表示文件是32位，如果是0107H，表示文件是ROM，如果是020BH，表示文件是64位PE</li>
+<li>AddressOfEntryPoint ：表示启动代码距离PE加载后的初始位置的偏移量，如果病毒需要在程序中启动恶意代码，则需要修改这一成员的数值。但是对于DLL文件，这一成员你的数值为0，因为不存在入口点。</li>
+<li>BaseOfCode：代码段的起始RVA，但是不一定是程序的入口点。</li>
+<li>ImageBase：PE文件的加载基地址。exe文件通常是00400000.</li>
+<li>SizeOfImade：表示内存中整个PE文件的映射尺寸。</li>
+<li>DllCharacteristics：DLL文件属性，但是不单纯是针对DLL文件，对于所有PE文件同样有效。</li>
+<li>DataDirectory：目录数据，表示不同的节区的基本属性（RVA和size）。</li>
+</ul>
+<h2 id="IMAGE-SECTION-HEADER"><a href="#IMAGE-SECTION-HEADER" class="headerlink" title="IMAGE_SECTION_HEADER"></a>IMAGE_SECTION_HEADER</h2><ul>
+<li>Name[IMAGE_SIZEOF_SHORT_NAME]： 八个字节的节去名称。</li>
+<li>VirtualAddress：节区的RVA</li>
+<li>SizeOfRAWDATA：节区对齐后的尺寸</li>
+<li>PointOfRAWDATA：节区数据在文件中的偏移量。</li>
+<li>PointerToRelocations：重定位表的指针</li>
+<li>NumberOfRelocations：重定位表的数目</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/05/看雪CTF2017/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/05/看雪CTF2017/" itemprop="url">看雪2017CTF</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T11:00:11+08:00">
+                2018-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>这是看雪2017的CTF的题目，这套题目当时只做出了一题，现在继续做，同样还是根据WP，不断的学习，不断的进步，在现在安全圈子里面浮躁的大背景下，感谢看雪论坛仍然不忘初心，为我们保留了这一块儿净土。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/05/看雪CTF2017/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/Linux常见命令(2)其他命令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -451,6 +820,152 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/" itemprop="url">第三章：系统机制-全局标志和内核事件跟踪</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T15:02:11+08:00">
+                2018-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="3-5-Windows全局标志"><a href="#3-5-Windows全局标志" class="headerlink" title="3.5 Windows全局标志"></a>3.5 Windows全局标志</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows全局标志用于打开windows系统的内部调试，跟踪和验证，保存在HKLM\SYSTEM\CurrentControlSet\Control\Session Manage中的GlobalFlag中，默认值为0。如下是利用windbg查看的GlobalFlag情况<br>      <img src="https://i.imgur.com/pg5gK68.png" alt=""><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/《Windows Internals》第三章_映像加载器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -552,152 +1067,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/04/26/《Windows Internals》第三章_映像加载器/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/" itemprop="url">第三章：系统机制-全局标志和内核事件跟踪</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T15:02:11+08:00">
-                2018-04-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows系统/" itemprop="url" rel="index">
-                    <span itemprop="name">windows系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="3-5-Windows全局标志"><a href="#3-5-Windows全局标志" class="headerlink" title="3.5 Windows全局标志"></a>3.5 Windows全局标志</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows全局标志用于打开windows系统的内部调试，跟踪和验证，保存在HKLM\SYSTEM\CurrentControlSet\Control\Session Manage中的GlobalFlag中，默认值为0。如下是利用windbg查看的GlobalFlag情况<br>      <img src="https://i.imgur.com/pg5gK68.png" alt=""><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1478,310 +1847,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/C++第五章_语句/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/08/C++第五章_语句/" itemprop="url">C++Primer 第五章：语句</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T15:02:11+08:00">
-                2018-04-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C++</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ul>
-<li><p>例5.16：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; VectNum1 = &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> &#125;;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; VectNum2 = &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;;</div><div class="line">	<span class="keyword">int</span> flag = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> SmallSize = (VectNum1.size() &gt; VectNum2.size() ? VectNum2.size() : VectNum1.size());</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i != SmallSize; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (VectNum1[i] != VectNum2[i])</div><div class="line">			flag = <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (flag == <span class="number">0</span>)</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"YES"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-<li><p>例5.19：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">	<span class="built_in">string</span> MyString1, MyString2;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"输入两个字符串"</span>;</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cin</span> &gt;&gt; MyString1 &gt;&gt; MyString2;</div><div class="line">		MyString1.size() &gt; MyString2.size() ? <span class="built_in">cout</span> &lt;&lt; MyString2 &lt;&lt;<span class="built_in">endl</span>: <span class="built_in">cout</span> &lt;&lt; MyString1&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"输入两个字符串"</span>;</div><div class="line">		i++;</div><div class="line">	&#125; <span class="keyword">while</span> (i != <span class="number">10</span>);</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-<li><p>例5.20</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="built_in">string</span> MyString1, MyString2;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"连续输入两个字符串"</span>;</div><div class="line">	<span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; MyString1 &gt;&gt; MyString2)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> ((MyString1 == MyString2) &amp;&amp; MyString1[<span class="number">0</span>] &gt;= <span class="string">'A'</span>&amp;&amp;MyString1[<span class="number">0</span>] &lt;= <span class="string">'Z'</span>&amp;&amp;MyString2[<span class="number">0</span>] &gt;= <span class="string">'A'</span>&amp;&amp;MyString2[<span class="number">0</span>] &lt;= <span class="string">'Z'</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">cout</span> &lt;&lt; MyString1;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"NO"</span>;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"连续输入两个字符串"</span>;</div><div class="line">	&#125;</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-<li><p>例5.24</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span>  </span></div><div class="line"><span class="function"></span>&#123;     </div><div class="line">    <span class="keyword">int</span> a,b;  </div><div class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"请输入相除的两个整数："</span>;  </div><div class="line">    <span class="keyword">while</span>(<span class="built_in">cin</span>&gt;&gt;a&gt;&gt;b)  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">try</span>  </div><div class="line">        &#123;  </div><div class="line">            <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">throw</span> <span class="built_in">std</span>::runtime_error(<span class="string">"被除数不能为0"</span>);<span class="comment">//runtime_error异常类:只有在运行时才能检测出的问题  </span></div><div class="line">            <span class="built_in">cout</span>&lt;&lt;<span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(a)/b&lt;&lt;<span class="built_in">endl</span>;<span class="comment">//考虑到不可以整除产生小数的情况,先将a强制转化为double类型  </span></div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">catch</span> (runtime_error err)<span class="comment">//err是runtime_error类的一个实例  </span></div><div class="line">        &#123;  </div><div class="line">            <span class="built_in">cout</span> &lt;&lt; err.what() ;实例的成员函数，返回内容由编译其决定  </div><div class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">"\n是否需要重新输入? Enter y or n:"</span> &lt;&lt; <span class="built_in">endl</span>;  </div><div class="line">            <span class="keyword">char</span> c;  </div><div class="line">            <span class="built_in">cin</span> &gt;&gt; c;  </div><div class="line">            <span class="keyword">if</span> (!<span class="built_in">cin</span> || c == <span class="string">'n'</span>)  </div><div class="line">                <span class="keyword">break</span>;<span class="comment">//break只能用在开关体或者循环体中  </span></div><div class="line">        &#125;<span class="comment">//简单来说try是检测异常的，如果产生了异常，就throw(抛出)一个异常，然后被catch到，进行异常的处理  </span></div><div class="line">        <span class="comment">//如果没有catch部分，仅有try，仍然会报错  </span></div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/《Windows Internals》第三章_同步/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/08/《Windows Internals》第三章_同步/" itemprop="url">第三章：系统机制-同步</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T15:02:11+08:00">
-                2018-04-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows系统/" itemprop="url" rel="index">
-                    <span itemprop="name">windows系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p>
-<h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p>
-<h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p>
-<h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1827,7 +1897,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">52</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1838,7 +1908,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
