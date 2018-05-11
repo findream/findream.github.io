@@ -294,6 +294,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/09/《windows PE》导出表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/09/《windows PE》导出表/" itemprop="url">《windows PE》导出表</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-09T14:02:11+08:00">
+                2018-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。</p>
+<h1 id="第二部分-导出表数据结构"><a href="#第二部分-导出表数据结构" class="headerlink" title="第二部分 导出表数据结构"></a>第二部分 导出表数据结构</h1><h2 id="1-定位导出表"><a href="#1-定位导出表" class="headerlink" title="1.定位导出表"></a>1.定位导出表</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导出表数据在数据目录的第一个目录中，定位方法和获取导入表的一样。<br>    <img src="https://i.imgur.com/oF80lie.png" alt=""></p>
+<h2 id="2-导出目录IMAGE-EXPORT-DIRECTORY"><a href="#2-导出目录IMAGE-EXPORT-DIRECTORY" class="headerlink" title="2.导出目录IMAGE_EXPORT_DIRECTORY"></a>2.导出目录IMAGE_EXPORT_DIRECTORY</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一个结构是导出表描述符，导入表的IMAGE_EXPORT_DIRECTORY只有一个。下面是其详细定义：<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_EXPORT_DIRECTORY</span> </span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    DWORD   Characteristics;    <span class="comment">// 未使用，总为0     DWORD   TimeDateStamp;              // 文件创建时间戳</span></div><div class="line">    WORD    MajorVersion;       <span class="comment">// 未使用，总为0     WORD    MinorVersion;               // 未使用，总为0</span></div><div class="line">    DWORD   Name;               <span class="comment">// 指向一个代表此 DLL名字的 ASCII字符串的 RVA</span></div><div class="line">    DWORD   Base;               <span class="comment">// 函数的起始序号</span></div><div class="line">    DWORD   NumberOfFunctions;  <span class="comment">// 导出函数的总数    </span></div><div class="line">    DWORD   NumberOfNames;           <span class="comment">// 以名称方式导出的函数的总数    </span></div><div class="line">    DWORD   AddressOfFunctions;      <span class="comment">// 指向输出函数地址的RVA</span></div><div class="line">    DWORD   AddressOfNames;         <span class="comment">// 指向输出函数名字的RVA</span></div><div class="line">    DWORD   AddressOfNameOrdinals;  <span class="comment">// 指向输出函数序号的RVA</span></div><div class="line">&#125;IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>Name:文件最初的文件名</li>
+<li>NumberOfFunctions：导出函数的个数</li>
+<li>NumberOfNmaes：导出函数其中有名字的个数，NumberOfNames的值小于NumberOfFunctions</li>
+<li>AddressOfFunctions：该指针指向的是所有导出函数的入口地址的起始。函数地址顺序按照函数的编号排序。</li>
+<li>Base：导出函数编号得起始值，第一个导出函数的编号不是从0开始的，某个导出函数的编号等于base+AddressOfFunctions的所在编号。</li>
+<li>AddressOfName：该值是一个指针，指向的位置是连续的双字节，这些双字节指向的是函数名字符串的地址。</li>
+<li>AddressOfNameOrdinals：指向的是函数数字编号得地址。</li>
+</ul>
+<h2 id="3-导出表的应用"><a href="#3-导出表的应用" class="headerlink" title="3.导出表的应用"></a>3.导出表的应用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导出表常见的主要应用是<strong>对导出表函数的覆盖</strong>和对<strong>dll文件内部函数的导出</strong>。</p>
+<h3 id="3-1-导出函数覆盖"><a href="#3-1-导出函数覆盖" class="headerlink" title="3.1.导出函数覆盖"></a>3.1.导出函数覆盖</h3><ul>
+<li>修改导出表里面函数的地址。</li>
+<li>覆盖函数地址部分函数代码。</li>
+</ul>
+<h3 id="3-2-导出私有函数"><a href="#3-2-导出私有函数" class="headerlink" title="3.2.导出私有函数"></a>3.2.导出私有函数</h3>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/09/《windows PE》导入表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1628,152 +1786,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/11/C++第二章_变量和基本类型/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/11/C++第二章_变量和基本类型/" itemprop="url">C++Primer 第二章:变量和基本类型</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-11T15:02:11+08:00">
-                2018-04-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C++</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="2-4：const限定符"><a href="#2-4：const限定符" class="headerlink" title="2.4：const限定符"></a>2.4：const限定符</h2><h3 id="2-4-0：初始化Const"><a href="#2-4-0：初始化Const" class="headerlink" title="2.4.0：初始化Const"></a>2.4.0：初始化Const</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果需要限制某个变量的值不能被修改，我们应该使用const限定符，const限定符必须要初始化，如下的定义是错误的。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/11/C++第二章_变量和基本类型/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1824,7 +1836,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

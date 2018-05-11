@@ -81,43 +81,19 @@
 
 
 
-<meta name="description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
+<meta name="description" content="第一部分 预备知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。 第二部分 导出表数据结构1.定位导出表&amp;nbsp">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux常见命令(1)-文件相关">
-<meta property="og:url" content="http://yoursite.com/2018/04/14/Linux常见命令(1)文件相关/index.html">
+<meta property="og:title" content="《windows PE》导出表">
+<meta property="og:url" content="http://yoursite.com/2018/05/09/《windows PE》导出表/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
+<meta property="og:description" content="第一部分 预备知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。 第二部分 导出表数据结构1.定位导出表&amp;nbsp">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://i.imgur.com/kXUvm5N.png">
-<meta property="og:image" content="https://i.imgur.com/y6Nk6KF.png">
-<meta property="og:image" content="https://i.imgur.com/4ssnuiF.png">
-<meta property="og:image" content="https://i.imgur.com/OD734Dk.png">
-<meta property="og:image" content="https://i.imgur.com/WQa7g2f.png">
-<meta property="og:image" content="https://i.imgur.com/KLZNntK.png">
-<meta property="og:image" content="https://i.imgur.com/WCbgKOg.png">
-<meta property="og:image" content="https://i.imgur.com/IdQAxZw.png">
-<meta property="og:image" content="https://i.imgur.com/VYj8Fww.png">
-<meta property="og:image" content="https://i.imgur.com/gGbO2yy.png">
-<meta property="og:image" content="https://i.imgur.com/vtqOU5b.png">
-<meta property="og:image" content="https://i.imgur.com/Mf7UhJ9.png">
-<meta property="og:image" content="https://i.imgur.com/poHs1KY.png">
-<meta property="og:image" content="https://i.imgur.com/WfSX6U3.png">
-<meta property="og:image" content="https://i.imgur.com/Bldk7hu.png">
-<meta property="og:image" content="https://i.imgur.com/aWJP0MQ.png">
-<meta property="og:image" content="https://i.imgur.com/PLL9v4O.png">
-<meta property="og:image" content="https://i.imgur.com/ee3VxCC.png">
-<meta property="og:image" content="https://i.imgur.com/Cuei40d.png">
-<meta property="og:image" content="https://i.imgur.com/5aASlFG.png">
-<meta property="og:image" content="https://i.imgur.com/N9l3WS3.png">
-<meta property="og:image" content="https://i.imgur.com/mQKqGiF.png">
-<meta property="og:image" content="https://i.imgur.com/fKGDysQ.png">
-<meta property="og:image" content="https://i.imgur.com/gUlksFp.png">
-<meta property="og:image" content="https://i.imgur.com/rwBOdI1.png">
-<meta property="og:updated_time" content="2018-05-11T00:16:30.563Z">
+<meta property="og:image" content="https://i.imgur.com/oF80lie.png">
+<meta property="og:updated_time" content="2018-05-11T05:56:24.655Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux常见命令(1)-文件相关">
-<meta name="twitter:description" content="第一部分：文件操作 查看文件  ls [选项] -a:查看隐藏文件 -l:查看详细信息 -d:查看指定路径 -h:查看文件大小（非字节显示）[要和-l参数合用] -i:查看文件id">
-<meta name="twitter:image" content="https://i.imgur.com/kXUvm5N.png">
+<meta name="twitter:title" content="《windows PE》导出表">
+<meta name="twitter:description" content="第一部分 预备知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。 第二部分 导出表数据结构1.定位导出表&amp;nbsp">
+<meta name="twitter:image" content="https://i.imgur.com/oF80lie.png">
 
 
 
@@ -147,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/04/14/Linux常见命令(1)文件相关/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/09/《windows PE》导出表/"/>
 
 
 
 
 
-  <title>Linux常见命令(1)-文件相关 | findream's blog</title>
+  <title>《windows PE》导出表 | findream's blog</title>
   
 
 
@@ -320,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/Linux常见命令(1)文件相关/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/09/《windows PE》导出表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -337,7 +313,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Linux常见命令(1)-文件相关</h1>
+          <h1 class="post-title" itemprop="name headline">《windows PE》导出表</h1>
         
 
         <div class="post-meta">
@@ -349,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T15:02:11+08:00">
-                2018-04-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-09T14:02:11+08:00">
+                2018-05-09
               </time>
             
 
@@ -372,8 +348,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
                   </a>
                 </span>
 
@@ -409,181 +385,24 @@
       
 
       
-        <h2 id="第一部分：文件操作"><a href="#第一部分：文件操作" class="headerlink" title="第一部分：文件操作"></a>第一部分：文件操作</h2><ul>
-<li>查看文件  <strong>ls [选项]</strong><ul>
-<li>-a:查看隐藏文件<br><img src="https://i.imgur.com/kXUvm5N.png" alt=""></li>
-<li>-l:查看详细信息<br><img src="https://i.imgur.com/y6Nk6KF.png" alt=""></li>
-<li>-d:查看指定路径<br><img src="https://i.imgur.com/4ssnuiF.png" alt=""></li>
-<li>-h:查看文件大小（非字节显示）[要和-l参数合用]<br><img src="https://i.imgur.com/OD734Dk.png" alt=""></li>
-<li>-i:查看文件id<br><img src="https://i.imgur.com/WQa7g2f.png" alt=""><a id="more"></a></li>
-</ul>
-</li>
-<li><p>创建目录  <strong>mkdir [目录名]</strong></p>
+        <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。</p>
+<h1 id="第二部分-导出表数据结构"><a href="#第二部分-导出表数据结构" class="headerlink" title="第二部分 导出表数据结构"></a>第二部分 导出表数据结构</h1><h2 id="1-定位导出表"><a href="#1-定位导出表" class="headerlink" title="1.定位导出表"></a>1.定位导出表</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导出表数据在数据目录的第一个目录中，定位方法和获取导入表的一样。<br>    <img src="https://i.imgur.com/oF80lie.png" alt=""></p>
+<h2 id="2-导出目录IMAGE-EXPORT-DIRECTORY"><a href="#2-导出目录IMAGE-EXPORT-DIRECTORY" class="headerlink" title="2.导出目录IMAGE_EXPORT_DIRECTORY"></a>2.导出目录IMAGE_EXPORT_DIRECTORY</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一个结构是导出表描述符，导入表的IMAGE_EXPORT_DIRECTORY只有一个。下面是其详细定义：<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_EXPORT_DIRECTORY</span> </span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    DWORD   Characteristics;    <span class="comment">// 未使用，总为0     DWORD   TimeDateStamp;              // 文件创建时间戳</span></div><div class="line">    WORD    MajorVersion;       <span class="comment">// 未使用，总为0     WORD    MinorVersion;               // 未使用，总为0</span></div><div class="line">    DWORD   Name;               <span class="comment">// 指向一个代表此 DLL名字的 ASCII字符串的 RVA</span></div><div class="line">    DWORD   Base;               <span class="comment">// 函数的起始序号</span></div><div class="line">    DWORD   NumberOfFunctions;  <span class="comment">// 导出函数的总数    </span></div><div class="line">    DWORD   NumberOfNames;           <span class="comment">// 以名称方式导出的函数的总数    </span></div><div class="line">    DWORD   AddressOfFunctions;      <span class="comment">// 指向输出函数地址的RVA</span></div><div class="line">    DWORD   AddressOfNames;         <span class="comment">// 指向输出函数名字的RVA</span></div><div class="line">    DWORD   AddressOfNameOrdinals;  <span class="comment">// 指向输出函数序号的RVA</span></div><div class="line">&#125;IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;</div></pre></td></tr></table></figure></p>
 <ul>
-<li>-p:递归创建<br><img src="https://i.imgur.com/KLZNntK.png" alt=""><br><img src="https://i.imgur.com/WCbgKOg.png" alt=""></li>
+<li>Name:文件最初的文件名</li>
+<li>NumberOfFunctions：导出函数的个数</li>
+<li>NumberOfNmaes：导出函数其中有名字的个数，NumberOfNames的值小于NumberOfFunctions</li>
+<li>AddressOfFunctions：该指针指向的是所有导出函数的入口地址的起始。函数地址顺序按照函数的编号排序。</li>
+<li>Base：导出函数编号得起始值，第一个导出函数的编号不是从0开始的，某个导出函数的编号等于base+AddressOfFunctions的所在编号。</li>
+<li>AddressOfName：该值是一个指针，指向的位置是连续的双字节，这些双字节指向的是函数名字符串的地址。</li>
+<li>AddressOfNameOrdinals：指向的是函数数字编号得地址。</li>
 </ul>
-</li>
-<li><p>切换目录  <strong>cd [目录]</strong></p>
-<ul>
-<li>.. ：回到上级目录</li>
+<h2 id="3-导出表的应用"><a href="#3-导出表的应用" class="headerlink" title="3.导出表的应用"></a>3.导出表的应用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导出表常见的主要应用是<strong>对导出表函数的覆盖</strong>和对<strong>dll文件内部函数的导出</strong>。</p>
+<h3 id="3-1-导出函数覆盖"><a href="#3-1-导出函数覆盖" class="headerlink" title="3.1.导出函数覆盖"></a>3.1.导出函数覆盖</h3><ul>
+<li>修改导出表里面函数的地址。</li>
+<li>覆盖函数地址部分函数代码。</li>
 </ul>
-</li>
-<li><p>删除目录  <strong>rmdir [目录]</strong><br>  <img src="https://i.imgur.com/IdQAxZw.png" alt=""></p>
-<ul>
-<li>-p： 递归删除空目录<br><img src="https://i.imgur.com/VYj8Fww.png" alt=""></li>
-</ul>
-</li>
-<li><p>查看当前目录 <strong>pwd</strong></p>
-</li>
-<li><p>复制文件  <strong>cp [源文件/目录] [目标文件/目录]</strong></p>
-<ul>
-<li>-r:复制目录</li>
-<li>-p:保存被复制文件的属性</li>
-<li>可以改名，在目标文件中修改</li>
-</ul>
-</li>
-<li><p>剪切或者改名   <strong>mv [源文件/目录] [目标文件/目录]</strong></p>
-<ul>
-<li>可以改名</li>
-</ul>
-</li>
-<li><p>删除文件    <strong>rm [文件名称]</strong></p>
-<ul>
-<li>-r 删除目录</li>
-<li>-f 强制执行</li>
-</ul>
-</li>
-<li><p>创建文件   <strong>touch [文件]</strong></p>
-<ul>
-<li>创建带有空格的文件，可以使用“”把文件名引起来</li>
-</ul>
-</li>
-<li><p>查看文件内容  <strong>cat [文件名]</strong></p>
-<ul>
-<li>-n :显示行数</li>
-</ul>
-</li>
-<li><p>查看文件内容 wc [] [文件名]</p>
-<ul>
-<li>-l ：显示行数</li>
-<li>-m ：显示字符数</li>
-<li>-c : 显示字节数</li>
-<li>-L ：显示最长行的长度</li>
-</ul>
-</li>
-<li><p>反向查看文件 <strong>tac [文件名]</strong></p>
-</li>
-<li><p>分页查看文件 <strong> more [文件名]</strong></p>
-<ul>
-<li>空格/f 翻页</li>
-<li>Enter 换行</li>
-<li>Q/q   退出</li>
-</ul>
-</li>
-<li><p>可向上翻页查看文件  <strong> less [文件名]</strong></p>
-<ul>
-<li>PageUp 向上翻页</li>
-<li>上方向键 向上换行</li>
-<li>/ 搜索</li>
-<li>n 搜索下一个</li>
-</ul>
-</li>
-<li><p>查看文件前几行  <strong>head [文件]</strong></p>
-<ul>
-<li>-n 规定行数（默认是10行）</li>
-</ul>
-</li>
-<li><p>查看文件末尾几行 <strong>tail [文件]</strong></p>
-<ul>
-<li>-n 规定行数</li>
-<li>-f 实时显示[查看日志文件]</li>
-</ul>
-</li>
-<li><p>创建文件链接 **ln [选项] [链接目录文件] [链接名]</p>
-<ul>
-<li>-s:创建的是软连接（快捷方式）<br><img src="https://i.imgur.com/gGbO2yy.png" alt=""></li>
-<li>默认：硬链接（读写操作和源文件一样） </li>
-</ul>
-</li>
-</ul>
-<h1 id="第二部分-文件权限"><a href="#第二部分-文件权限" class="headerlink" title="第二部分 文件权限"></a>第二部分 文件权限</h1><ul>
-<li><p>chmod 修改文件或者目录权限</p>
-<ul>
-<li>chmod [{ugoa}{+-=}{rwx}] [目录]<br><img src="https://i.imgur.com/vtqOU5b.png" alt=""></li>
-<li>-R 递归修改</li>
-<li>chmod [{4(r)2(w)1(x)}] [目录/文件]<br><img src="https://i.imgur.com/Mf7UhJ9.png" alt=""></li>
-<li>普通用户即使没有w权限也可以删除root用户创建的文件（对文件的删除的必要条件是对文件所处在目录具有写入权限）</li>
-</ul>
-</li>
-<li><p>chown 修改文件所有者</p>
-<ul>
-<li><p>chown [用户名] [文件/目录]<br><img src="https://i.imgur.com/poHs1KY.png" alt=""></p>
-</li>
-<li><p>useradd [用户名] 创建用户</p>
-</li>
-<li>chgrp [组名] [文件/目录]</li>
-</ul>
-</li>
-<li><p>umask 显示默认权限</p>
-<ul>
-<li>显示的数值是权限的掩码，真实权限是777-该数值，例如数值为022，权限则为755<br><img src="https://i.imgur.com/WfSX6U3.png" alt=""></li>
-<li>-S ：显示具体的权限（rwx）</li>
-<li>umask [权限掩码] ：修改默认的权限数值</li>
-</ul>
-</li>
-</ul>
-<h1 id="第三部分-文件查询"><a href="#第三部分-文件查询" class="headerlink" title="第三部分 文件查询"></a>第三部分 文件查询</h1><ul>
-<li><p>find [范围] [搜索条件] 搜索文件</p>
-<ul>
-<li>-name <ul>
-<li>-name “<em>init</em>”  :文件名中存在init<br><img src="https://i.imgur.com/Bldk7hu.png" alt=""></li>
-<li>-name “inti??”  :文件名前四个为init，后面两个任意<br><img src="https://i.imgur.com/aWJP0MQ.png" alt=""></li>
-<li>-iname：不分大小写</li>
-</ul>
-</li>
-<li>-size 根据文件大小<ul>
-<li>+n 大于n</li>
-<li>-n 小于n</li>
-<li>n 等于n</li>
-</ul>
-</li>
-<li>-cmin -时间   根据修改时间<br><img src="https://i.imgur.com/PLL9v4O.png" alt=""></li>
-<li>-amin -时间    根据访问时间</li>
-<li>-mmin -时间    根据文件内容</li>
-<li>-a ： 表示两个条件都符合</li>
-<li>-o ： 表示多个条件只需要符合一个<br><img src="https://i.imgur.com/ee3VxCC.png" alt=""></li>
-<li>-type  按照文件类型查找<ul>
-<li>-f 文件<br><img src="https://i.imgur.com/Cuei40d.png" alt=""></li>
-<li>-d 目录<br><img src="https://i.imgur.com/5aASlFG.png" alt=""></li>
-<li>-l 链接<br><img src="https://i.imgur.com/N9l3WS3.png" alt=""></li>
-</ul>
-</li>
-<li>-inum  根据i节点来查找</li>
-<li>-exec/-ok   {}\;   调用其他命令。</li>
-</ul>
-</li>
-<li><p>locate [目录/文件] 搜索（需要更新文件数据库）<br>  <img src="https://i.imgur.com/mQKqGiF.png" alt=""></p>
-<ul>
-<li>-i：不区分大小写</li>
-<li>updatedb ：更新数据库</li>
-</ul>
-</li>
-<li><p>which [文件/目录]  ：用于查找系统命令</p>
-<ul>
-<li>查看命令是否带有别名<br><img src="https://i.imgur.com/fKGDysQ.png" alt=""></li>
-</ul>
-</li>
-<li>grep [关键词] [搜索路径]  ：搜索文件内容<ul>
-<li>-i 不区分不大小写<br><img src="https://i.imgur.com/gUlksFp.png" alt=""></li>
-<li>-v 排除指定字符<br><img src="https://i.imgur.com/rwBOdI1.png" alt=""></li>
-</ul>
-</li>
-<li>whereis [命令]<ul>
-<li>查看命令的所在位置，查看配置文件的位置，和帮助文件的文职。一般的文件名是1的是命令的帮助文件，文件名是5的是配置文件的帮助</li>
-</ul>
-</li>
-</ul>
-
+<h3 id="3-2-导出私有函数"><a href="#3-2-导出私有函数" class="headerlink" title="3.2.导出私有函数"></a>3.2.导出私有函数</h3>
       
     </div>
     
@@ -607,8 +426,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/14/病毒分析技术(8)--芦苇病毒/" rel="next" title="病毒分析技术(8) ---芦苇病毒">
-                <i class="fa fa-chevron-left"></i> 病毒分析技术(8) ---芦苇病毒
+              <a href="/2018/05/09/《windows PE》导入表/" rel="next" title="《windows PE》导入表">
+                <i class="fa fa-chevron-left"></i> 《windows PE》导入表
               </a>
             
           </div>
@@ -616,10 +435,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/04/26/《Windows Internals》第三章_映像加载器/" rel="prev" title="第三章：系统机制-映像加载器">
-                第三章：系统机制-映像加载器 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -751,7 +566,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一部分：文件操作"><span class="nav-number">1.</span> <span class="nav-text">第一部分：文件操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-文件权限"><span class="nav-number"></span> <span class="nav-text">第二部分 文件权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-文件查询"><span class="nav-number"></span> <span class="nav-text">第三部分 文件查询</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-预备知识"><span class="nav-number">1.</span> <span class="nav-text">第一部分 预备知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-导出表数据结构"><span class="nav-number">2.</span> <span class="nav-text">第二部分 导出表数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-定位导出表"><span class="nav-number">2.1.</span> <span class="nav-text">1.定位导出表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-导出目录IMAGE-EXPORT-DIRECTORY"><span class="nav-number">2.2.</span> <span class="nav-text">2.导出目录IMAGE_EXPORT_DIRECTORY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-导出表的应用"><span class="nav-number">2.3.</span> <span class="nav-text">3.导出表的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-导出函数覆盖"><span class="nav-number">2.3.1.</span> <span class="nav-text">3.1.导出函数覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-导出私有函数"><span class="nav-number">2.3.2.</span> <span class="nav-text">3.2.导出私有函数</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
