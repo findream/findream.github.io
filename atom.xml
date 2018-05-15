@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-05-14T06:22:53.401Z</updated>
+  <updated>2018-05-14T11:07:04.833Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,16 +21,14 @@
     <link href="http://yoursite.com/2018/05/14/%E3%80%8Awindows%20PE%E3%80%8B%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/"/>
     <id>http://yoursite.com/2018/05/14/《windows PE》重定位表/</id>
     <published>2018-05-14T06:02:11.000Z</published>
-    <updated>2018-05-14T06:22:53.401Z</updated>
+    <updated>2018-05-14T11:07:04.833Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="预备知识：代码重定位"><a href="#预备知识：代码重定位" class="headerlink" title="预备知识：代码重定位"></a>预备知识：代码重定位</h1><h2 id="重定位的提出"><a href="#重定位的提出" class="headerlink" title="重定位的提出"></a>重定位的提出</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line"><span class="keyword">add</span> <span class="built_in">esp</span>,ffffffc</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [00400FFC]   //全局变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">04</span>]     //局部变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [evp+<span class="number">08</span>]     //局部变量</div></pre></td></tr></table></figure></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位信息是在编译时期由编译器生成，并且保存在应用程序中，在程序执行的时候由操作系统予以修正。如果在装载时该位置已经被别的应用程序使用，操作系统会<strong>重新选择一个新的基地址</strong>。此时，就需要对所有重定位信息进行纠正，纠正的依据就是<strong>PE中的重定位表</strong>。</p><h1 id="PE文件中的重定位表"><a href="#PE文件中的重定位表" class="headerlink" title="PE文件中的重定位表"></a>PE文件中的重定位表</h1><h2 id="1-重定位表的定位"><a href="#1-重定位表的定位" class="headerlink" title="1.重定位表的定位"></a>1.重定位表的定位</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表位于数据目录中的第六个数据目录中。位置定位方法和前面的导入表和导出表一样。<br>    <img src="https://i.imgur.com/UqrSU1r.png" alt=""></p><h2 id="2-重定位表项IMAGE-BASE-RELOCATION"><a href="#2-重定位表项IMAGE-BASE-RELOCATION" class="headerlink" title="2.重定位表项IMAGE_BASE_RELOCATION"></a>2.重定位表项IMAGE_BASE_RELOCATION</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和导入表一样，重定位表指针指向的位置是一个数组。<strong>每个数组代表的是每一个内存页的重定位信息。</strong>也就是说每个内存页的重定位信息是不同的。下面是对于IMAGE_BASE_RELOCATION结构体的介绍:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">IMAGE_BASE_RELOCATION STRUC 【基址重定位位于数据目录表的第六项，共<span class="number">8</span>+N字节】</div><div class="line">&#123;</div><div class="line">+<span class="number">00</span> h DWORD VirtualAddress ;重定位数据开始的RVA 地址</div><div class="line">+<span class="number">04</span> h DWORD SizeOfBlock ;重定位块得长度，标识重定向字段个数</div><div class="line">+<span class="number">08</span> h WORD TypeOffset ;重定项位数组相对虚拟RVA,个数动态分配</div><div class="line">&#125;;</div><div class="line">IMAGE_BASE_RELOCATION ENDS</div></pre></td></tr></table></figure></p><ul><li>VirtualAddress:双字，表示的是重定位块的RVA。<strong>本来一个地址需要4个字节，因为一个内存页大小诶1000h,也就是2的12次，所以只需要2个字节即可</strong></li><li>SizeOfBlock：双字，重定位表项中的重定位块的个数。这些数组(表项)可能不是相邻的。</li><li>TypeOffset：表示重定位表项的类型：高四位表示的是类型。低十二位表示的重定位地址。<br>  <img src="https://i.imgur.com/QjFxUnO.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位块的大小：n*12+4+4</li></ul><h2 id="3-重定位表的结构"><a href="#3-重定位表的结构" class="headerlink" title="3.重定位表的结构"></a>3.重定位表的结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表中包含有重定位块，重定位块中包含有重定位表项和前面的VirtualAddress，SizeOfBlock，TypeOffset字段。<br>    <img src="https://i.imgur.com/4pZ0mvd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的重定位块最终以VirtualAddress字段为0的IMAGE_BASE_RELOCATION结构为结束标志。</p><h2 id="4-实例分析"><a href="#4-实例分析" class="headerlink" title="4.实例分析"></a>4.实例分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图，我们知道第一个重定位块位于0x1c00，代码起始页面RVA为00001000，块的大小为000000E8。后面的是每个重定位表项的相对位置。根据以下计算公式得到最终的实际地址。<br>VA=基地址(程序基地址)+代码起始页面RVA+<strong>低12位虚拟地址。</strong><br>VA=01000000+00001000+009<br>    <img src="https://i.imgur.com/tLuBjY9.png" alt=""></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="预备知识：代码重定位"><a href="#预备知识：代码重定位" class="headerlink" title="预备知识：代码重定位"></a>预备知识：代码重定位</h1><h2 id="重定位的提出"><a href="#重定位的提出" class="headerlink" title="重定位的提出"></a>重定位的提出</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line"><span class="keyword">add</span> <span class="built_in">esp</span>,ffffffc</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [00400FFC]   //全局变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">04</span>]     //局部变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [evp+<span class="number">08</span>]     //局部变量</div></pre></td></tr></table></figure></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位信息是在编译时期由编译器生成，并且保存在应用程序中，在程序执行的时候由操作系统予以修正。如果在装载时该位置已经被别的应用程序使用，操作系统会<strong>重新选择一个新的基地址</strong>。此时，就需要对所有重定位信息进行纠正，纠正的依据就是<strong>PE中的重定位表</strong>。<br><a id="more"></a></p><h1 id="PE文件中的重定位表"><a href="#PE文件中的重定位表" class="headerlink" title="PE文件中的重定位表"></a>PE文件中的重定位表</h1><h2 id="1-重定位表的定位"><a href="#1-重定位表的定位" class="headerlink" title="1.重定位表的定位"></a>1.重定位表的定位</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表位于数据目录中的第六个数据目录中。位置定位方法和前面的导入表和导出表一样。<br>    <img src="https://i.imgur.com/UqrSU1r.png" alt=""></p><h2 id="2-重定位表项IMAGE-BASE-RELOCATION"><a href="#2-重定位表项IMAGE-BASE-RELOCATION" class="headerlink" title="2.重定位表项IMAGE_BASE_RELOCATION"></a>2.重定位表项IMAGE_BASE_RELOCATION</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和导入表一样，重定位表指针指向的位置是一个数组。<strong>每个数组代表的是每一个内存页的重定位信息。</strong>也就是说每个内存页的重定位信息是不同的。下面是对于IMAGE_BASE_RELOCATION结构体的介绍:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">IMAGE_BASE_RELOCATION STRUC 【基址重定位位于数据目录表的第六项，共<span class="number">8</span>+N字节】</div><div class="line">&#123;</div><div class="line">+<span class="number">00</span> h DWORD VirtualAddress ;重定位数据开始的RVA 地址</div><div class="line">+<span class="number">04</span> h DWORD SizeOfBlock ;重定位块得长度，标识重定向字段个数</div><div class="line">+<span class="number">08</span> h WORD TypeOffset ;重定项位数组相对虚拟RVA,个数动态分配</div><div class="line">&#125;;</div><div class="line">IMAGE_BASE_RELOCATION ENDS</div></pre></td></tr></table></figure></p><ul><li>VirtualAddress:双字，表示的是重定位块的RVA。<strong>本来一个地址需要4个字节，因为一个内存页大小诶1000h,也就是2的12次，所以只需要2个字节即可</strong></li><li>SizeOfBlock：双字，重定位表项中的重定位块的个数。这些数组(表项)可能不是相邻的。</li><li>TypeOffset：表示重定位表项的类型：高四位表示的是类型。低十二位表示的重定位地址。<br>  <img src="https://i.imgur.com/QjFxUnO.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位块的大小：n*12+4+4</li></ul><h2 id="3-重定位表的结构"><a href="#3-重定位表的结构" class="headerlink" title="3.重定位表的结构"></a>3.重定位表的结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表中包含有重定位块，重定位块中包含有重定位表项和前面的VirtualAddress，SizeOfBlock，TypeOffset字段。<br>    <img src="https://i.imgur.com/4pZ0mvd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的重定位块最终以VirtualAddress字段为0的IMAGE_BASE_RELOCATION结构为结束标志。</p><h2 id="4-实例分析"><a href="#4-实例分析" class="headerlink" title="4.实例分析"></a>4.实例分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图，我们知道第一个重定位块位于0x1c00，代码起始页面RVA为00001000，块的大小为000000E8。后面的是每个重定位表项的相对位置。根据以下计算公式得到最终的实际地址。<br>VA=基地址(程序基地址)+代码起始页面RVA+<strong>低12位虚拟地址。</strong><br>VA=01000000+00001000+009<br>    <img src="https://i.imgur.com/tLuBjY9.png" alt=""></p>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h1 id=&quot;预备知识：代码重定位&quot;&gt;&lt;a href=&quot;#预备知识：代码重定位&quot; class=&quot;headerlink&quot; title=&quot;预备知识：代码重定位&quot;&gt;&lt;/a&gt;预备知识：代码重定位&lt;/h1&gt;&lt;h2 id=&quot;重定位的提出&quot;&gt;&lt;a href=&quot;#重定位的提出&quot; class=&quot;
-      
+      &lt;h1 id=&quot;预备知识：代码重定位&quot;&gt;&lt;a href=&quot;#预备知识：代码重定位&quot; class=&quot;headerlink&quot; title=&quot;预备知识：代码重定位&quot;&gt;&lt;/a&gt;预备知识：代码重定位&lt;/h1&gt;&lt;h2 id=&quot;重定位的提出&quot;&gt;&lt;a href=&quot;#重定位的提出&quot; class=&quot;headerlink&quot; title=&quot;重定位的提出&quot;&gt;&lt;/a&gt;重定位的提出&lt;/h2&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。&lt;br&gt;&lt;figure class=&quot;highlight x86asm&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;ebp&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;ebp&lt;/span&gt;,&lt;span class=&quot;built_in&quot;&gt;esp&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;esp&lt;/span&gt;,ffffffc&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;eax&lt;/span&gt;,&lt;span class=&quot;built_in&quot;&gt;dword&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;ptr&lt;/span&gt; [00400FFC]   //全局变量&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;eax&lt;/span&gt;,&lt;span class=&quot;built_in&quot;&gt;dword&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;ptr&lt;/span&gt; [&lt;span class=&quot;built_in&quot;&gt;ebp&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;04&lt;/span&gt;]     //局部变量&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;eax&lt;/span&gt;,&lt;span class=&quot;built_in&quot;&gt;dword&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;ptr&lt;/span&gt; [evp+&lt;span class=&quot;number&quot;&gt;08&lt;/span&gt;]     //局部变量&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;重定位信息是在编译时期由编译器生成，并且保存在应用程序中，在程序执行的时候由操作系统予以修正。如果在装载时该位置已经被别的应用程序使用，操作系统会&lt;strong&gt;重新选择一个新的基地址&lt;/strong&gt;。此时，就需要对所有重定位信息进行纠正，纠正的依据就是&lt;strong&gt;PE中的重定位表&lt;/strong&gt;。&lt;br&gt;
     
     </summary>
     
@@ -146,6 +144,26 @@
 &lt;li&gt;命令 -h(–help)&lt;/li&gt;
 &lt;li&gt;help [命令] shell内置命令的帮助信息（shell编程中的命令）&lt;ul&gt;
 &lt;li&gt;也可以查看命令的路径&lt;br&gt;&lt;img src=&quot;https://i.imgur.com/glgYvQ4.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://i.imgur.com/D9fufqV.png&quot; alt=&quot;&quot;&gt;
+    
+    </summary>
+    
+      <category term="linux" scheme="http://yoursite.com/categories/linux/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Linux常见命令(4)用户和用户组管理</title>
+    <link href="http://yoursite.com/2018/04/28/Linux(4)%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84%E7%AE%A1%E7%90%86/"/>
+    <id>http://yoursite.com/2018/04/28/Linux(4)用户和用户组管理/</id>
+    <published>2018-04-28T07:02:11.000Z</published>
+    <updated>2018-05-15T03:27:55.351Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="第一部分-用户信息配置文件"><a href="#第一部分-用户信息配置文件" class="headerlink" title="第一部分 用户信息配置文件"></a>第一部分 用户信息配置文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。<br>    <img src="https://i.imgur.com/cpdt8BN.png" alt=""><br><a id="more"></a></p><ul><li>用户名称</li><li>密码标志：x代表设置密码，其他代表没有设置密码</li><li>UID：用户编号，系统唯一标识用户信息的编号，通过修改UID，可以修改权限，例如把UID修改为0，达到管理员权限。<ul><li>0 超级用户</li><li>1-499 系统用户（系统中应用程序的用户，不可删除）</li><li>500-65535 普通用户</li></ul></li><li>GID：组ID<ul><li>初始化组：<ul><li>每个用户只有一个初始化组</li><li>每个用户必须要有初始化组</li><li>可以修改初始化组，但是不建议修改</li></ul></li><li>附加组：<ul><li>每个用户可以有多个附加组，但是拥有附加组的权限</li></ul></li></ul></li><li>用户说明</li><li>主目录：<ul><li>root用户的主目录是/root<br><img src="https://i.imgur.com/hb45jFV.png" alt=""></li><li>普通用户的主目录是/home/usrname<br><img src="https://i.imgur.com/lEYPJmN.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是值得注意的是 sudo -s并不是进入管理员账号，而是获取了管理员的权限，你利用pwd会发现，使用sudo -s，他的工作目录并不是/root，而是/home/username。</li></ul></li><li>shell：用户使用shell解释器的路径</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;第一部分-用户信息配置文件&quot;&gt;&lt;a href=&quot;#第一部分-用户信息配置文件&quot; class=&quot;headerlink&quot; title=&quot;第一部分 用户信息配置文件&quot;&gt;&lt;/a&gt;第一部分 用户信息配置文件&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。&lt;br&gt;    &lt;img src=&quot;https://i.imgur.com/cpdt8BN.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;
     
     </summary>
     
@@ -313,6 +331,29 @@
   </entry>
   
   <entry>
+    <title>第三章：系统机制-同步</title>
+    <link href="http://yoursite.com/2018/04/08/%E3%80%8AWindows%20Internals%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0_%E5%90%8C%E6%AD%A5/"/>
+    <id>http://yoursite.com/2018/04/08/《Windows Internals》第三章_同步/</id>
+    <published>2018-04-08T07:02:11.000Z</published>
+    <updated>2018-04-09T04:44:36.758Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p><h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p><h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p><h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;3-3-同步&quot;&gt;&lt;a href=&quot;#3-3-同步&quot; class=&quot;headerlink&quot; title=&quot;3.3 同步&quot;&gt;&lt;/a&gt;3.3 同步&lt;/h1&gt;&lt;h2 id=&quot;高IRQL的同步&quot;&gt;&lt;a href=&quot;#高IRQL的同步&quot; class=&quot;headerlink&quot; 
+      
+    
+    </summary>
+    
+      <category term="windows系统" scheme="http://yoursite.com/categories/windows%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>C++Primer 第五章：语句</title>
     <link href="http://yoursite.com/2018/04/08/C++%E7%AC%AC%E4%BA%94%E7%AB%A0_%E8%AF%AD%E5%8F%A5/"/>
     <id>http://yoursite.com/2018/04/08/C++第五章_语句/</id>
@@ -333,29 +374,6 @@
     </summary>
     
       <category term="C++" scheme="http://yoursite.com/categories/C/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>第三章：系统机制-同步</title>
-    <link href="http://yoursite.com/2018/04/08/%E3%80%8AWindows%20Internals%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0_%E5%90%8C%E6%AD%A5/"/>
-    <id>http://yoursite.com/2018/04/08/《Windows Internals》第三章_同步/</id>
-    <published>2018-04-08T07:02:11.000Z</published>
-    <updated>2018-04-09T04:44:36.758Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p><h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p><h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p><h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;3-3-同步&quot;&gt;&lt;a href=&quot;#3-3-同步&quot; class=&quot;headerlink&quot; title=&quot;3.3 同步&quot;&gt;&lt;/a&gt;3.3 同步&lt;/h1&gt;&lt;h2 id=&quot;高IRQL的同步&quot;&gt;&lt;a href=&quot;#高IRQL的同步&quot; class=&quot;headerlink&quot; 
-      
-    
-    </summary>
-    
-      <category term="windows系统" scheme="http://yoursite.com/categories/windows%E7%B3%BB%E7%BB%9F/"/>
     
     
   </entry>
@@ -434,30 +452,6 @@
     <updated>2018-03-31T05:59:27.576Z</updated>
     
     <content type="html"><![CDATA[<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul><li>1.样本信息</li><li>2.行为分析</li><li>3.样本分析</li><li>4.详细分析<a id="more"></a><h1 id="二：样本信息："><a href="#二：样本信息：" class="headerlink" title="二：样本信息："></a>二：样本信息：</h1></li><li>1.病毒名称：2E6682932F826269B0F84A93AAB9E609.85A681D7</li><li>2.MD5：见下图</li><li>3.是否加壳：是，一种安装型程序的加壳方法</li><li>4.编写语言：未知</li><li>5.来源：<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1" target="_blank" rel="external">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1</a><h1 id="三：行为分析："><a href="#三：行为分析：" class="headerlink" title="三：行为分析："></a>三：行为分析：</h1></li><li>1）隐藏自身</li><li>2）创建临时文件，判断系统是否被感染</li><li>3) 复制文件到两个目录google/Update，实现隐藏</li><li>3）利用run或者AppCertDll注册表来实现自启</li><li>4）执行子程序，是个远控程序（未验证）<h1 id="四：详细分析："><a href="#四：详细分析：" class="headerlink" title="四：详细分析："></a>四：详细分析：</h1><h2 id="一：样本分析"><a href="#一：样本分析" class="headerlink" title="一：样本分析"></a>一：样本分析</h2></li><li>1）查壳：发现这是一个Nullsoft Install System的东西。<br>  <img src="https://i.imgur.com/tMn0qQN.png" alt=""></li><li>2）直接拖入IDA中，病毒首先做了一些初始化的工作，为以后的运行做准备。<br>  <img src="https://i.imgur.com/sibx97U.png" alt=""></li><li>3）在各磁盘创建临时文件，然后删除文件，重新读取样本文件并重新创建一个新的tmp文件，做这一步的目的主要是隐藏自身<br>  <img src="https://i.imgur.com/s4SkUhk.png" alt=""><br>  <img src="https://i.imgur.com/Qpb4ukN.png" alt=""><br>  <img src="https://i.imgur.com/HASEWpD.png" alt=""></li><li>5）获取了关于本地的一些基本设置之后，程序调用StartAddress，执行病毒的主体部分，这一步开始以为很简单，所以没有过多的静态分析，等到动态验证的时候，跟进去发现sub401389这个函数执行了很长时间（运行时间异常），打开火绒剑发现其进行了很多操作。<br>  <img src="https://i.imgur.com/GaXylPo.png" alt=""><br>  <img src="https://i.imgur.com/AsBMgR9.png" alt=""></li><li>6）通过分析，出现一个很复杂的函数…….其中很多操作都用这个函数的身影，我们采用病毒分析最常见的方法，通过行为来分析代码，这样才能最快速的分析病毒。<br>  <img src="https://i.imgur.com/XiaBJEU.png" alt=""><br>  <img src="https://i.imgur.com/XTzerMd.png" alt=""></li><li>7）在C:\Documents and Settings\hacky\Local Settings\Application Data\NVIDIA Corporation\Update\目录下创建病毒文件</li><li>8）在AppCertDlls下写入本体文件路径，实现自启动。但是没有实现成功</li><li>9）向<strong>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\</strong> 下面写入数据，关闭兼容性助手，可以是作者是想避免病毒因为兼容性问题导致被发现吧。</li><li>10）执行第七步创建的文件，创建进程，远程恢复进程的执行。<br>  <img src="https://i.imgur.com/YmXta3e.png" alt=""><br>  <img src="https://i.imgur.com/z2Piv6M.png" alt=""></li><li>11） 调用RegSetValueEx函数来设置开机启动项，因为其最后创建新的本体，把现在的启动项删除了，我们可以知道这两个也是病毒的启动项，因为他们的构造方法是一样的<br>   <img src="https://i.imgur.com/BUTucqx.png" alt=""><br>   <img src="https://i.imgur.com/oanmmrf.png" alt=""></li><li>12）创建了文件，并实现了其自启动，<br>  <img src="https://i.imgur.com/xfW2mBx.png" alt=""><br>  <img src="https://i.imgur.com/QdAGewk.png" alt=""><br>  <img src="https://i.imgur.com/SkXjqTu.png" alt=""></li><li>13）修改desktop.ini文件实现自身的隐藏<br>  <img src="https://i.imgur.com/OvlEVqE.png" alt=""></li><li>14）启动寄宿文件<br>  <img src="https://i.imgur.com/WN3TcoO.png" alt=""></li><li>15）最后删除之前创建的nsk6.tmp，我估计是用于识别病毒是否成功感染吧。<br>  <img src="https://i.imgur.com/o5Q9zJ4.png" alt=""><br>  <img src="https://i.imgur.com/u25eWFe.png" alt=""><h2 id="二：释放样本分析"><a href="#二：释放样本分析" class="headerlink" title="二：释放样本分析"></a>二：释放样本分析</h2></li><li>1）这个样本只是做了隐藏，但是没有什么破坏行为，通过比较文件指纹信息，发现样本释放的文件和样本不一样。<br>  <img src="https://i.imgur.com/NpUEYiM.png" alt=""></li><li>2）加壳文件什么鬼，关键是软件没查到壳，这个有点难受，IDA可以分析出导入表，但无法交叉引用。gg</li><li>3）网上说这个病毒是个远控程序，搭建inetsim模拟网络，竟然没有查看到信息。<br>  <img src="https://i.imgur.com/Yd6mfTF.png" alt=""><br>  <img src="https://i.imgur.com/a6uQbvf.png" alt=""></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;一：目录&quot;&gt;&lt;a href=&quot;#一：目录&quot; class=&quot;headerlink&quot; title=&quot;一：目录&quot;&gt;&lt;/a&gt;一：目录&lt;/h1&gt;&lt;ul&gt;
-&lt;li&gt;1.样本信息&lt;/li&gt;
-&lt;li&gt;2.行为分析&lt;/li&gt;
-&lt;li&gt;3.样本分析&lt;/li&gt;
-&lt;li&gt;4.详细分析
-    
-    </summary>
-    
-      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>病毒分析技术(6) ---熊猫烧香</title>
-    <link href="http://yoursite.com/2018/03/25/%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF(6)--%E7%86%8A%E7%8C%AB%E7%83%A7%E9%A6%99%E7%97%85%E6%AF%92/"/>
-    <id>http://yoursite.com/2018/03/25/病毒分析技术(6)--熊猫烧香病毒/</id>
-    <published>2018-03-25T06:02:11.000Z</published>
-    <updated>2018-03-25T06:26:45.670Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul><li>1.样本信息</li><li>2.行为分析</li><li>3.样本分析</li><li>4.详细分析<a id="more"></a><h1 id="二：样本分析"><a href="#二：样本分析" class="headerlink" title="二：样本分析"></a>二：样本分析</h1></li><li>1）病毒名称：panda.exe</li><li>2) MD5:3520D3565273E41C9EEB04675D05DCA8</li><li>3) 编译器：delphi</li><li>4）是否加壳：无</li></ul><h1 id="三：行为分析："><a href="#三：行为分析：" class="headerlink" title="三：行为分析："></a>三：行为分析：</h1><ul><li>1）经过两次自校验</li><li>2）判断程序是样本程序，还是被感染程序，还是被隐藏的程序</li><li>3）感染PE文件，WEB文件</li><li>4）设置定时器，结束防御软件进程</li><li>5）利用U盘和网络进行机器间传播</li></ul><h1 id="四：详细分析："><a href="#四：详细分析：" class="headerlink" title="四：详细分析："></a>四：详细分析：</h1><ul><li>1）病毒首先进过两次字验证，来验证自身。<br>   <img src="https://i.imgur.com/qAsM8Ja.png" alt=""></li><li>2）当病毒成功认证完后，跳转到40D173，执行4082F8，获取文件当前目录，查找desktop.ini文件，如果存在，则删除该文件<br>   <img src="https://i.imgur.com/1hWLBcr.png" alt=""></li><li>3）比较进程名是否是C;/WINDOWS/SYSTEM/DIRVER/SPCOLSV，如果是则进行4，否则进行5</li><li>4）查找spcolsv.exe并结束该进程。然后获取/WINDOWS/SYSTEM/DIRVER/SPCOLSV，将病毒本体拷贝到该目录，并且以该目录为参数，启动程序，结束样本进程，实现病毒的隐藏。<br>  <img src="https://i.imgur.com/Os2I7TR.png" alt=""><br>  <img src="https://i.imgur.com/p6E1i8s.png" alt=""></li><li>5）<strong>判断是否为被感染的程序，执行可以自己删除的批处理文件，重复执行4）的操作</strong></li><li>6）执行感染行为<br>  <img src="https://i.imgur.com/7JTZWOv.png" alt=""><br>  <img src="https://i.imgur.com/bfmP9Go.png" alt=""></li><li>7）病毒实现自我保护<br>  <img src="https://i.imgur.com/lBVRRzr.png" alt=""></li><li>8）破坏防病毒软件，结束其进程<br>  <img src="https://i.imgur.com/u69RtFp.png" alt=""></li></ul><h1 id="五：感悟"><a href="#五：感悟" class="headerlink" title="五：感悟"></a>五：感悟</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;病毒没有采用很高深的对抗和隐藏技术，这个病毒分析困难在他把关键的API调用隐藏在函数的嵌套中，不容易看出来，如果直接用导入表为切入口可能会很好解决。</p>]]></content>
     
     <summary type="html">
     
