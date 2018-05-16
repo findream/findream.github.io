@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-05-14T11:07:04.833Z</updated>
+  <updated>2018-05-15T04:14:42.321Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,49 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux常见命令(4)用户和用户组管理</title>
+    <link href="http://yoursite.com/2018/05/15/Linux(4)%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84%E7%AE%A1%E7%90%86/"/>
+    <id>http://yoursite.com/2018/05/15/Linux(4)用户和用户组管理/</id>
+    <published>2018-05-15T07:02:11.000Z</published>
+    <updated>2018-05-15T04:14:42.321Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="第一部分-用户信息配置文件passwd"><a href="#第一部分-用户信息配置文件passwd" class="headerlink" title="第一部分 用户信息配置文件passwd"></a>第一部分 用户信息配置文件passwd</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。<br>    <img src="https://i.imgur.com/cpdt8BN.png" alt=""><br><a id="more"></a></p><ul><li>用户名称</li><li>密码标志：x代表设置密码，其他代表没有设置密码</li><li>UID：用户编号，系统唯一标识用户信息的编号，通过修改UID，可以修改权限，例如把UID修改为0，达到管理员权限。<ul><li>0 超级用户</li><li>1-499 系统用户（系统中应用程序的用户，不可删除）</li><li>500-65535 普通用户</li></ul></li><li>GID：组ID<ul><li>初始化组：<ul><li>每个用户只有一个初始化组</li><li>每个用户必须要有初始化组</li><li>可以修改初始化组，但是不建议修改</li></ul></li><li>附加组：<ul><li>每个用户可以有多个附加组，但是拥有附加组的权限</li></ul></li></ul></li><li>用户说明</li><li>主目录：<ul><li>root用户的主目录是/root<br><img src="https://i.imgur.com/hb45jFV.png" alt=""></li><li>普通用户的主目录是/home/usrname<br><img src="https://i.imgur.com/lEYPJmN.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是值得注意的是 sudo -s并不是进入管理员账号，而是获取了管理员的权限，你利用pwd会发现，使用sudo -s，他的工作目录并不是/root，而是/home/username。</li></ul></li><li>shell：用户使用shell解释器的路径</li></ul><h1 id="第二部分-shadow文件"><a href="#第二部分-shadow文件" class="headerlink" title="第二部分 shadow文件"></a>第二部分 shadow文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shadow文件位于/etc/shadow中（利用man 5 shadow可查），需要root权限才能打开。一共有八个字段，分别是：用户名，加密的密码串，最后一次修改密码的日期(时间戳)，密码有效期，最大密码年龄，警告时间段，密码禁用期，账号过期日期，保留。<br>    <img src="https://i.imgur.com/pmd6SXJ.png" alt=""></p><ul><li>用户名</li><li>加密的密码串：使用*或者！表示密码无效，也就是说账户被禁用。</li><li>最后一次修改密码的时间戳：<ul><li>0：表示下次登陆账户时，修改密码</li><li>为空：表示密码年龄的功能被禁用</li></ul></li><li>密码有效期(最小密码年龄)：修改密码之后，要等n时间才能被允许修改密码。<ul><li>0或者为空：表示没有设置密码有效期</li></ul></li><li>最大密码年龄:在最大密码年龄之后必须要修改密码</li><li>警告时间段：在密码到期之前n天，警告必须修改密码</li><li>密码禁用期：过了密码有效期之后，仍可以使用原密码登录的最大期限。过了此期限后，账户不能登录，空字段表示没有强制密码过期。</li><li>账户过期日期：</li><li>保留<br>  <img src="https://i.imgur.com/LjpkH5X.png" alt=""></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;第一部分-用户信息配置文件passwd&quot;&gt;&lt;a href=&quot;#第一部分-用户信息配置文件passwd&quot; class=&quot;headerlink&quot; title=&quot;第一部分 用户信息配置文件passwd&quot;&gt;&lt;/a&gt;第一部分 用户信息配置文件passwd&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。&lt;br&gt;    &lt;img src=&quot;https://i.imgur.com/cpdt8BN.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="linux" scheme="http://yoursite.com/categories/linux/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>《windows PE》延迟加载导入表</title>
+    <link href="http://yoursite.com/2018/05/14/%E3%80%8Awindows%20PE%E3%80%8B%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%E8%A1%A8/"/>
+    <id>http://yoursite.com/2018/05/14/《windows PE》延迟加载表/</id>
+    <published>2018-05-14T11:02:11.000Z</published>
+    <updated>2018-05-15T05:34:20.006Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="1-延迟加载导入的概念及作用"><a href="#1-延迟加载导入的概念及作用" class="headerlink" title="1.延迟加载导入的概念及作用"></a>1.延迟加载导入的概念及作用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;延迟加载导入表和导入表示相互分离的，延迟加载导入表是特殊的导入表，和导入表不同的是，延迟加载导入表所记录的dll不会被操作系统加载，只有在函数被应用程序调用的时候，PE中注册的延迟加载函数才会根据延迟加载导入表的记录，动态加载dll，以及修正导入函数的VA。</p><h2 id="2-延迟加载的优势"><a href="#2-延迟加载的优势" class="headerlink" title="2.延迟加载的优势"></a>2.延迟加载的优势</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;延迟加载由于没有在程序初始化的时候初始化dll，只是会在应用程序调用某个模块的时候加载该模块，所以使用延迟加载技术的程序拥有更高的初始化速度。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过延迟加载的方法，提高了程序的兼容性，原因在于基于延迟加载，所用到的模块不需要在初始化前加载，保证了程序能够运行成功，如果缺少模块或者缺少模<br>块里面的函数造成的异常，可以使得编译器单独处理该某个dll或者某个函数的调用。</p><h1 id="PE中的延迟加载导入表"><a href="#PE中的延迟加载导入表" class="headerlink" title="PE中的延迟加载导入表"></a>PE中的延迟加载导入表</h1><h2 id="1-延迟加载导入表的定位"><a href="#1-延迟加载导入表的定位" class="headerlink" title="1.延迟加载导入表的定位"></a>1.延迟加载导入表的定位</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;延迟加载导入表的描述信息在数目目录的第14个目录项中，定位方法和前面的导入导出表一致。</p><h2 id="2-延迟加载描述符IMAGE-DELAY-IMPORT-DESCRIPTOR"><a href="#2-延迟加载描述符IMAGE-DELAY-IMPORT-DESCRIPTOR" class="headerlink" title="2.延迟加载描述符IMAGE_DELAY_IMPORT_DESCRIPTOR"></a>2.延迟加载描述符IMAGE_DELAY_IMPORT_DESCRIPTOR</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMAGE_DELAY_IMPORT_DESCRIPTOR的结构如下：<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">IMAGE_DELAY_IMPORT_DESCRIPTOR</span> STRUCT </span></div><div class="line"><span class="class"></span>&#123;  </div><div class="line">    DWORD           Attributes;           <span class="comment">// 保留  </span></div><div class="line">    RVA             RVA_DLLName;          <span class="comment">// 指向延迟加载dll的名字字符串的RVA  </span></div><div class="line">    RVA             RVA_ModuleHandle;     <span class="comment">// 指向DLL句柄的RVA   </span></div><div class="line">    RVA             RVA_DelayIAT;         <span class="comment">// RVA of the IAT  </span></div><div class="line">    RVA             RVA_DelayINT;         <span class="comment">// RVA of the INT  </span></div><div class="line">    RVA             RVA_BoundIAT;      <span class="comment">// RVA of the optional bound IAT  </span></div><div class="line">    RVA             RVA_UnloadIAT;     <span class="comment">// RVA of optional copy of original IAT  </span></div><div class="line">    DWORD           dwTimeStamp;       <span class="comment">// 0 if not bound,  </span></div><div class="line">                                       <span class="comment">// 绑定到DLL的时间戳</span></div><div class="line">&#125; ImgDelayDescr, * PImgDelayDescr;</div></pre></td></tr></table></figure></p><ul><li>Attributes：双字，暂时未用到，</li><li>RVA_DLLName：双字，延迟加载dll名称的字符串的地址。</li><li>RVA_ModuleHandle：双字，延迟加载dll的句柄的地址。</li><li>RVA_DelayIAT: 延迟加载导入地址表的RVA</li><li>RVA_DelayINT：延迟加载导入名称表的RVA</li><li>RVA_BoundIAT：延迟绑定导入地址表的RVA，延迟绑定导入地址表是由IMAGE_THUNK_DATA组成的数组。他和最后一项dwTimeStamp用于最后的绑定阶段。</li><li>RVA_UnloadIAT：延迟卸载导入地址表由IMAGE_THUNK_DATA组成的数组，程序使用它来卸载dll(包括函数)，所用到的参数是原来IAT的精确副本。做释放处理需要做一下几个工作<ul><li>1）释放函数/dll</li><li>2）ModuleHandle清零</li><li>3）使用UIAT覆盖IAT。</li></ul></li></ul><h2 id="3-详解延迟加载机制"><a href="#3-详解延迟加载机制" class="headerlink" title="3.详解延迟加载机制"></a>3.详解延迟加载机制</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用延迟加载技术的程序，链接器会做一下几个事情：</p><ul><li>1）将函数_delayLoadHelper嵌入到可执行模块</li><li>2）删除可执行文件导入表的相关内容，避免在初始化时候显式加载dll</li><li>3）构造PE相关信息，以便_delayLoadHelper正确的延迟加载函数。</li><li>4）调用_delayLoadHelper函数加载dll或获取调用函数地址。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在_delayLoadHelper函数中，还调用了LoadLibrary加载dll，调用了GetprocessAddress获取函数地址，调用了FreeLibrary去释放dll。</li></ul><h2 id="4-利用windbg查看延迟加载导入表"><a href="#4-利用windbg查看延迟加载导入表" class="headerlink" title="4.利用windbg查看延迟加载导入表"></a>4.利用windbg查看延迟加载导入表</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们首先用windows xp下的explorer程序举例子。</p><ul><li>查看程序加载的模块：<strong>lm m explorer</strong><br>  <img src="https://i.imgur.com/OwrUPxC.png" alt=""></li><li>显示PE文件头：<strong>!dh start_address -f</strong><br>  <img src="https://i.imgur.com/WmC45oC.png" alt=""></li><li>查看延迟加载导入的内存空间:<strong>dd start_address+offset</strong><br>  <img src="https://i.imgur.com/ER4HHJ0.png" alt=""></li><li>比如查看延迟加载导入表第二项的内容dll的ASCII：<strong>da address</strong><br>  <img src="https://i.imgur.com/fvZrYYJ.png" alt=""></li></ul><h2 id="4-延迟导入的两个问题"><a href="#4-延迟导入的两个问题" class="headerlink" title="4.延迟导入的两个问题"></a>4.延迟导入的两个问题</h2><h3 id="1）异常处理"><a href="#1）异常处理" class="headerlink" title="1）异常处理"></a>1）异常处理</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过延迟加载机制，未能成功加载的dll或者由于版本问题，未能成功调用的函数，函数_delayLoadHelper会抛出软件异常（其实是API函数剖出的异常）</p><h3 id="2）dll卸载"><a href="#2）dll卸载" class="headerlink" title="2）dll卸载"></a>2）dll卸载</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不能使用FreeLibrary卸载dll，因为在函数_delayLoadHelper中存在卸载函数，</p><h1 id="3-延迟加载机制在dll注入的实例。"><a href="#3-延迟加载机制在dll注入的实例。" class="headerlink" title="3.延迟加载机制在dll注入的实例。"></a>3.延迟加载机制在dll注入的实例。</h1><p><a href="https://www.anquanke.com/post/id/86919" target="_blank" rel="external">https://www.anquanke.com/post/id/86919</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;预备知识&quot;&gt;&lt;a href=&quot;#预备知识&quot; class=&quot;headerlink&quot; title=&quot;预备知识&quot;&gt;&lt;/a&gt;预备知识&lt;/h1&gt;&lt;h2 id=&quot;1-延迟加载导入的概念及作用&quot;&gt;&lt;a href=&quot;#1-延迟加载导入的概念及作用&quot; class=&quot;headerli
+      
+    
+    </summary>
+    
+      <category term="windows PE" scheme="http://yoursite.com/categories/windows-PE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>《windows PE》重定位表</title>
@@ -144,26 +187,6 @@
 &lt;li&gt;命令 -h(–help)&lt;/li&gt;
 &lt;li&gt;help [命令] shell内置命令的帮助信息（shell编程中的命令）&lt;ul&gt;
 &lt;li&gt;也可以查看命令的路径&lt;br&gt;&lt;img src=&quot;https://i.imgur.com/glgYvQ4.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://i.imgur.com/D9fufqV.png&quot; alt=&quot;&quot;&gt;
-    
-    </summary>
-    
-      <category term="linux" scheme="http://yoursite.com/categories/linux/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Linux常见命令(4)用户和用户组管理</title>
-    <link href="http://yoursite.com/2018/04/28/Linux(4)%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84%E7%AE%A1%E7%90%86/"/>
-    <id>http://yoursite.com/2018/04/28/Linux(4)用户和用户组管理/</id>
-    <published>2018-04-28T07:02:11.000Z</published>
-    <updated>2018-05-15T03:27:55.351Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="第一部分-用户信息配置文件"><a href="#第一部分-用户信息配置文件" class="headerlink" title="第一部分 用户信息配置文件"></a>第一部分 用户信息配置文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。<br>    <img src="https://i.imgur.com/cpdt8BN.png" alt=""><br><a id="more"></a></p><ul><li>用户名称</li><li>密码标志：x代表设置密码，其他代表没有设置密码</li><li>UID：用户编号，系统唯一标识用户信息的编号，通过修改UID，可以修改权限，例如把UID修改为0，达到管理员权限。<ul><li>0 超级用户</li><li>1-499 系统用户（系统中应用程序的用户，不可删除）</li><li>500-65535 普通用户</li></ul></li><li>GID：组ID<ul><li>初始化组：<ul><li>每个用户只有一个初始化组</li><li>每个用户必须要有初始化组</li><li>可以修改初始化组，但是不建议修改</li></ul></li><li>附加组：<ul><li>每个用户可以有多个附加组，但是拥有附加组的权限</li></ul></li></ul></li><li>用户说明</li><li>主目录：<ul><li>root用户的主目录是/root<br><img src="https://i.imgur.com/hb45jFV.png" alt=""></li><li>普通用户的主目录是/home/usrname<br><img src="https://i.imgur.com/lEYPJmN.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是值得注意的是 sudo -s并不是进入管理员账号，而是获取了管理员的权限，你利用pwd会发现，使用sudo -s，他的工作目录并不是/root，而是/home/username。</li></ul></li><li>shell：用户使用shell解释器的路径</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;第一部分-用户信息配置文件&quot;&gt;&lt;a href=&quot;#第一部分-用户信息配置文件&quot; class=&quot;headerlink&quot; title=&quot;第一部分 用户信息配置文件&quot;&gt;&lt;/a&gt;第一部分 用户信息配置文件&lt;/h1&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。&lt;br&gt;    &lt;img src=&quot;https://i.imgur.com/cpdt8BN.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;
     
     </summary>
     
@@ -440,30 +463,6 @@
     </summary>
     
       <category term="C++" scheme="http://yoursite.com/categories/C/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>病毒分析技术(7) ---初步分析[明日再战]</title>
-    <link href="http://yoursite.com/2018/03/29/%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF(7)%20/"/>
-    <id>http://yoursite.com/2018/03/29/病毒分析技术(7) /</id>
-    <published>2018-03-29T06:02:11.000Z</published>
-    <updated>2018-03-31T05:59:27.576Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul><li>1.样本信息</li><li>2.行为分析</li><li>3.样本分析</li><li>4.详细分析<a id="more"></a><h1 id="二：样本信息："><a href="#二：样本信息：" class="headerlink" title="二：样本信息："></a>二：样本信息：</h1></li><li>1.病毒名称：2E6682932F826269B0F84A93AAB9E609.85A681D7</li><li>2.MD5：见下图</li><li>3.是否加壳：是，一种安装型程序的加壳方法</li><li>4.编写语言：未知</li><li>5.来源：<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1" target="_blank" rel="external">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1</a><h1 id="三：行为分析："><a href="#三：行为分析：" class="headerlink" title="三：行为分析："></a>三：行为分析：</h1></li><li>1）隐藏自身</li><li>2）创建临时文件，判断系统是否被感染</li><li>3) 复制文件到两个目录google/Update，实现隐藏</li><li>3）利用run或者AppCertDll注册表来实现自启</li><li>4）执行子程序，是个远控程序（未验证）<h1 id="四：详细分析："><a href="#四：详细分析：" class="headerlink" title="四：详细分析："></a>四：详细分析：</h1><h2 id="一：样本分析"><a href="#一：样本分析" class="headerlink" title="一：样本分析"></a>一：样本分析</h2></li><li>1）查壳：发现这是一个Nullsoft Install System的东西。<br>  <img src="https://i.imgur.com/tMn0qQN.png" alt=""></li><li>2）直接拖入IDA中，病毒首先做了一些初始化的工作，为以后的运行做准备。<br>  <img src="https://i.imgur.com/sibx97U.png" alt=""></li><li>3）在各磁盘创建临时文件，然后删除文件，重新读取样本文件并重新创建一个新的tmp文件，做这一步的目的主要是隐藏自身<br>  <img src="https://i.imgur.com/s4SkUhk.png" alt=""><br>  <img src="https://i.imgur.com/Qpb4ukN.png" alt=""><br>  <img src="https://i.imgur.com/HASEWpD.png" alt=""></li><li>5）获取了关于本地的一些基本设置之后，程序调用StartAddress，执行病毒的主体部分，这一步开始以为很简单，所以没有过多的静态分析，等到动态验证的时候，跟进去发现sub401389这个函数执行了很长时间（运行时间异常），打开火绒剑发现其进行了很多操作。<br>  <img src="https://i.imgur.com/GaXylPo.png" alt=""><br>  <img src="https://i.imgur.com/AsBMgR9.png" alt=""></li><li>6）通过分析，出现一个很复杂的函数…….其中很多操作都用这个函数的身影，我们采用病毒分析最常见的方法，通过行为来分析代码，这样才能最快速的分析病毒。<br>  <img src="https://i.imgur.com/XiaBJEU.png" alt=""><br>  <img src="https://i.imgur.com/XTzerMd.png" alt=""></li><li>7）在C:\Documents and Settings\hacky\Local Settings\Application Data\NVIDIA Corporation\Update\目录下创建病毒文件</li><li>8）在AppCertDlls下写入本体文件路径，实现自启动。但是没有实现成功</li><li>9）向<strong>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\</strong> 下面写入数据，关闭兼容性助手，可以是作者是想避免病毒因为兼容性问题导致被发现吧。</li><li>10）执行第七步创建的文件，创建进程，远程恢复进程的执行。<br>  <img src="https://i.imgur.com/YmXta3e.png" alt=""><br>  <img src="https://i.imgur.com/z2Piv6M.png" alt=""></li><li>11） 调用RegSetValueEx函数来设置开机启动项，因为其最后创建新的本体，把现在的启动项删除了，我们可以知道这两个也是病毒的启动项，因为他们的构造方法是一样的<br>   <img src="https://i.imgur.com/BUTucqx.png" alt=""><br>   <img src="https://i.imgur.com/oanmmrf.png" alt=""></li><li>12）创建了文件，并实现了其自启动，<br>  <img src="https://i.imgur.com/xfW2mBx.png" alt=""><br>  <img src="https://i.imgur.com/QdAGewk.png" alt=""><br>  <img src="https://i.imgur.com/SkXjqTu.png" alt=""></li><li>13）修改desktop.ini文件实现自身的隐藏<br>  <img src="https://i.imgur.com/OvlEVqE.png" alt=""></li><li>14）启动寄宿文件<br>  <img src="https://i.imgur.com/WN3TcoO.png" alt=""></li><li>15）最后删除之前创建的nsk6.tmp，我估计是用于识别病毒是否成功感染吧。<br>  <img src="https://i.imgur.com/o5Q9zJ4.png" alt=""><br>  <img src="https://i.imgur.com/u25eWFe.png" alt=""><h2 id="二：释放样本分析"><a href="#二：释放样本分析" class="headerlink" title="二：释放样本分析"></a>二：释放样本分析</h2></li><li>1）这个样本只是做了隐藏，但是没有什么破坏行为，通过比较文件指纹信息，发现样本释放的文件和样本不一样。<br>  <img src="https://i.imgur.com/NpUEYiM.png" alt=""></li><li>2）加壳文件什么鬼，关键是软件没查到壳，这个有点难受，IDA可以分析出导入表，但无法交叉引用。gg</li><li>3）网上说这个病毒是个远控程序，搭建inetsim模拟网络，竟然没有查看到信息。<br>  <img src="https://i.imgur.com/Yd6mfTF.png" alt=""><br>  <img src="https://i.imgur.com/a6uQbvf.png" alt=""></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;一：目录&quot;&gt;&lt;a href=&quot;#一：目录&quot; class=&quot;headerlink&quot; title=&quot;一：目录&quot;&gt;&lt;/a&gt;一：目录&lt;/h1&gt;&lt;ul&gt;
-&lt;li&gt;1.样本信息&lt;/li&gt;
-&lt;li&gt;2.行为分析&lt;/li&gt;
-&lt;li&gt;3.样本分析&lt;/li&gt;
-&lt;li&gt;4.详细分析
-    
-    </summary>
-    
-      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
     
     
   </entry>
