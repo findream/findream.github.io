@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://i.imgur.com/lEYPJmN.png">
 <meta property="og:image" content="https://i.imgur.com/pmd6SXJ.png">
 <meta property="og:image" content="https://i.imgur.com/LjpkH5X.png">
-<meta property="og:updated_time" content="2018-05-15T04:14:42.321Z">
+<meta property="og:updated_time" content="2018-05-16T10:01:36.359Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux常见命令(4)用户和用户组管理">
 <meta name="twitter:description" content="第一部分 用户信息配置文件passwd&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。">
@@ -439,6 +439,14 @@
 <li>账户过期日期：</li>
 <li>保留<br>  <img src="https://i.imgur.com/LjpkH5X.png" alt=""></li>
 </ul>
+<h1 id="第三部分-group和gshadow组配置文件"><a href="#第三部分-group和gshadow组配置文件" class="headerlink" title="第三部分 group和gshadow组配置文件"></a>第三部分 group和gshadow组配置文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group文件在/etc/group,文件下面一共有四个字段，分别是组名，组密码标志，GID，组中的附加用户。</p>
+<ul>
+<li>组名：在linux中，每次新加一个用户，该用户的初始组名也是用户名</li>
+<li>密码标志：存在密码为“x”字段，在etc/gshadow文件下可查看，但是基本都不存在组密码。存在的意义在于：执行了受限的root用户的权限，管理组内的用户。</li>
+<li>GID:</li>
+<li>附加用户：看不到初始用户。只能看附加用户，如果需要查看组的初始用户，先查看passwd中的GID，然后再看group中的GID，就行了。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gshadow文件在/etc/gshadow，有四个字段：组名，组密码，组管理员用户名，组中附加用户。</li>
+</ul>
+<h1 id="第四部分："><a href="#第四部分：" class="headerlink" title="第四部分："></a>第四部分：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户主目录：root用户为/root,权限为550，普通用户为/home/username,权限为700</p>
 
       
     </div>
@@ -603,7 +611,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-用户信息配置文件passwd"><span class="nav-number">1.</span> <span class="nav-text">第一部分 用户信息配置文件passwd</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-shadow文件"><span class="nav-number">2.</span> <span class="nav-text">第二部分 shadow文件</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-用户信息配置文件passwd"><span class="nav-number">1.</span> <span class="nav-text">第一部分 用户信息配置文件passwd</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-shadow文件"><span class="nav-number">2.</span> <span class="nav-text">第二部分 shadow文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-group和gshadow组配置文件"><span class="nav-number">3.</span> <span class="nav-text">第三部分 group和gshadow组配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分："><span class="nav-number">4.</span> <span class="nav-text">第四部分：</span></a></li></ol></div>
             
 
           </div>
