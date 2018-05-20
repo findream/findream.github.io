@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="第一部分 用户信息配置文件passwd&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux常见命令(4)用户和用户组管理">
+<meta property="og:url" content="http://yoursite.com/2018/05/15/Linux常见命令(4)用户和用户组管理/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="第一部分 用户信息配置文件passwd&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/cpdt8BN.png">
+<meta property="og:image" content="https://i.imgur.com/hb45jFV.png">
+<meta property="og:image" content="https://i.imgur.com/lEYPJmN.png">
+<meta property="og:image" content="https://i.imgur.com/pmd6SXJ.png">
+<meta property="og:image" content="https://i.imgur.com/LjpkH5X.png">
+<meta property="og:image" content="https://i.imgur.com/tCVCvFw.png">
+<meta property="og:image" content="https://i.imgur.com/24k4UtE.png">
+<meta property="og:image" content="https://i.imgur.com/6NDEo4O.png">
+<meta property="og:image" content="https://i.imgur.com/RBiJb6C.png">
+<meta property="og:image" content="https://i.imgur.com/mtG8CfO.png">
+<meta property="og:image" content="https://i.imgur.com/UKfNsqK.png">
+<meta property="og:image" content="https://i.imgur.com/zfl0RUR.png">
+<meta property="og:image" content="https://i.imgur.com/SBgETso.png">
+<meta property="og:image" content="https://i.imgur.com/0Dz6A5b.png">
+<meta property="og:updated_time" content="2018-05-18T16:59:58.345Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux常见命令(4)用户和用户组管理">
+<meta name="twitter:description" content="第一部分 用户信息配置文件passwd&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。">
+<meta name="twitter:image" content="https://i.imgur.com/cpdt8BN.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/15/Linux常见命令(4)用户和用户组管理/"/>
+
+
+
+
+
+  <title>Linux常见命令(4)用户和用户组管理 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/Linux常见命令(4)用户和用户组管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux常见命令(4)用户和用户组管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-15T15:02:11+08:00">
+                2018-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第一部分-用户信息配置文件passwd"><a href="#第一部分-用户信息配置文件passwd" class="headerlink" title="第一部分 用户信息配置文件passwd"></a>第一部分 用户信息配置文件passwd</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。<br>    <img src="https://i.imgur.com/cpdt8BN.png" alt=""><br><a id="more"></a></p>
+<ul>
+<li>用户名称</li>
+<li>密码标志：x代表设置密码，其他代表没有设置密码</li>
+<li>UID：用户编号，系统唯一标识用户信息的编号，通过修改UID，可以修改权限，例如把UID修改为0，达到管理员权限。<ul>
+<li>0 超级用户</li>
+<li>1-499 系统用户（系统中应用程序的用户，不可删除）</li>
+<li>500-65535 普通用户</li>
+</ul>
+</li>
+<li>GID：组ID<ul>
+<li>初始化组：<ul>
+<li>每个用户只有一个初始化组</li>
+<li>每个用户必须要有初始化组</li>
+<li>可以修改初始化组，但是不建议修改</li>
+</ul>
+</li>
+<li>附加组：<ul>
+<li>每个用户可以有多个附加组，但是拥有附加组的权限</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>用户说明</li>
+<li>主目录：<ul>
+<li>root用户的主目录是/root<br><img src="https://i.imgur.com/hb45jFV.png" alt=""></li>
+<li>普通用户的主目录是/home/usrname<br><img src="https://i.imgur.com/lEYPJmN.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是值得注意的是 sudo -s并不是进入管理员账号，而是获取了管理员的权限，你利用pwd会发现，使用sudo -s，他的工作目录并不是/root，而是/home/username。</li>
+</ul>
+</li>
+<li>shell：用户使用shell解释器的路径</li>
+</ul>
+<h1 id="第二部分-shadow文件"><a href="#第二部分-shadow文件" class="headerlink" title="第二部分 shadow文件"></a>第二部分 shadow文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shadow文件位于/etc/shadow中（利用man 5 shadow可查），需要root权限才能打开。一共有八个字段，分别是：用户名，加密的密码串，最后一次修改密码的日期(时间戳)，密码有效期，最大密码年龄，警告时间段，密码禁用期，账号过期日期，保留。<br>    <img src="https://i.imgur.com/pmd6SXJ.png" alt=""></p>
+<ul>
+<li>用户名</li>
+<li>加密的密码串：使用*或者！表示密码无效，也就是说账户被禁用。</li>
+<li>最后一次修改密码的时间戳：<ul>
+<li>0：表示下次登陆账户时，修改密码</li>
+<li>为空：表示密码年龄的功能被禁用</li>
+</ul>
+</li>
+<li>密码有效期(最小密码年龄)：修改密码之后，要等n时间才能被允许修改密码。<ul>
+<li>0或者为空：表示没有设置密码有效期</li>
+</ul>
+</li>
+<li>最大密码年龄:在最大密码年龄之后必须要修改密码</li>
+<li>警告时间段：在密码到期之前n天，警告必须修改密码</li>
+<li>密码禁用期：过了密码有效期之后，仍可以使用原密码登录的最大期限。过了此期限后，账户不能登录，空字段表示没有强制密码过期。</li>
+<li>账户过期日期：</li>
+<li>保留<br>  <img src="https://i.imgur.com/LjpkH5X.png" alt=""></li>
+</ul>
+<h1 id="第三部分-group和gshadow组配置文件"><a href="#第三部分-group和gshadow组配置文件" class="headerlink" title="第三部分 group和gshadow组配置文件"></a>第三部分 group和gshadow组配置文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group文件在/etc/group,文件下面一共有四个字段，分别是组名，组密码标志，GID，组中的附加用户。</p>
+<ul>
+<li>组名：在linux中，每次新加一个用户，该用户的初始组名也是用户名</li>
+<li>密码标志：存在密码为“x”字段，在etc/gshadow文件下可查看，但是基本都不存在组密码。存在的意义在于：执行了受限的root用户的权限，管理组内的用户。</li>
+<li>GID:</li>
+<li>附加用户：看不到初始用户。只能看附加用户，如果需要查看组的初始用户，先查看passwd中的GID，然后再看group中的GID，就行了。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gshadow文件在/etc/gshadow，有四个字段：组名，组密码，组管理员用户名，组中附加用户。</p>
+<h1 id="第四部分：主目录"><a href="#第四部分：主目录" class="headerlink" title="第四部分：主目录"></a>第四部分：主目录</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户主目录：root用户为/root,权限为550，普通用户为/home/username,权限为700</p>
+<h1 id="第五部分：useradd-添加用户"><a href="#第五部分：useradd-添加用户" class="headerlink" title="第五部分：useradd 添加用户"></a>第五部分：useradd 添加用户</h1><ul>
+<li>useradd [选项] [参数]<ul>
+<li>-u UID:手动指定用户的ID</li>
+<li>-d 主目录：</li>
+<li>-c 用户说明</li>
+<li>-g 组名：指定用户初始组</li>
+<li>-G 组名：指定用户附加组</li>
+<li>-s shell: 指定用户登录shell<br><img src="https://i.imgur.com/tCVCvFw.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/default/useradd,作为添加的缺省设置信息的文件。<br>    <img src="https://i.imgur.com/24k4UtE.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/login.defs:存放默认密码信息的文件</p>
+<h1 id="第六部分：passwd-修改设置用户密码"><a href="#第六部分：passwd-修改设置用户密码" class="headerlink" title="第六部分：passwd 修改设置用户密码"></a>第六部分：passwd 修改设置用户密码</h1><ul>
+<li>passwd [选项] [参数]<ul>
+<li>-S 查询用户密码状态(仅root可用)<br><img src="https://i.imgur.com/6NDEo4O.png" alt=""></li>
+<li>-l 暂时锁定用户(仅root可用)<br><img src="https://i.imgur.com/RBiJb6C.png" alt=""></li>
+<li>-u 解锁用户<br><img src="https://i.imgur.com/mtG8CfO.png" alt=""></li>
+<li>–stdin 使用标准化输入，使用shell编程：echo “123” | passwd stdin username</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;root可以修改所有用户密码，但是普通用户只能修改自己的，此时，使用passwd不能加自己的用户名，<strong>即修改密码是只需要输入passwd。</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁定用户原理是修改/etc/passwd的密码域，在前面添加!!。以至于密码串不正确，造成用户无法登陆。</p>
+<h2 id="第七部分-用户管理相关命令"><a href="#第七部分-用户管理相关命令" class="headerlink" title="第七部分 用户管理相关命令"></a>第七部分 用户管理相关命令</h2><ul>
+<li><p>usermod [选项] [用户]  修改已存在用户信息</p>
+<ul>
+<li>-c 修改用户说明</li>
+<li>-G 修改用户附加组</li>
+<li>-L 暂时锁定用户</li>
+<li>-U 暂时解锁用户</li>
+</ul>
+</li>
+<li><p>change [选项] [参数] 修改用户的密码信息(直接修改/etc/shadow方便)</p>
+</li>
+<li><p>userdel [选项] [用户]</p>
+<ul>
+<li>r:删除主目录</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手工删除以下目录：</p>
+<ul>
+<li>/etc/passwd</li>
+<li>/etc/shadow</li>
+<li>/etc/group</li>
+<li>/etc/gshadow</li>
+<li>rm -fr /var/spool/mail/username</li>
+<li><p>rm -rf /var/home/username</p>
+</li>
+<li><p>id [username]:查看用户ID，组ID，等信息<br>  <img src="https://i.imgur.com/UKfNsqK.png" alt=""></p>
+</li>
+<li><p>su [选项] [参数]切换用户命令</p>
+<ul>
+<li>-（减号）：连带切换用户的环境变量</li>
+<li>-c：只是赋予某个用户root权限，以便去执行需要root权限的操作</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们在切换用户的时候，务必添加”-“选项。如果不添加这个选项的话：如图2，你会发现这个的登录账户时wangxingyu但是，利用env查看环境变量的话，还是显示你原来的账户的环境变量，所以你必须要添加这个选项。<br>    <img src="https://i.imgur.com/zfl0RUR.png" alt=""><br>    <img src="https://i.imgur.com/SBgETso.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;su - root -c “useradd test123” 这是一次性利用root的权限去执行某个特殊权限的操作。<br>    <img src="https://i.imgur.com/0Dz6A5b.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Ubuntu以及分支版本切换root账户出现认证失败的情况，输入“sudo passwd root”，产生这类问题原因是因为默认没有设置root用户密码。</p>
+<ul>
+<li>groupadd [选项] [组名] :添加组名<ul>
+<li>-g：规定组ID</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>groupmod [选项] [组名] <ul>
+<li>-g：修改组ID</li>
+<li>-n: 修改组名：groupmod -n newgroupname oldgroupname</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不要宿便修改</p>
+<ul>
+<li><p>groupdel [组名]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果存在初始用户，次组不能被删除，如果只存在附加用户，此组可以删除。</p>
+</li>
+<li><p>gpasswd [选项] [groupname]</p>
+<ul>
+<li>-a username：将username 添加groupname</li>
+<li>-d username：将username 从groupname组中删除</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/15/Linux常见命令(5)权限管理/" rel="next" title="Linux常见命令(5)权限管理">
+                <i class="fa fa-chevron-left"></i> Linux常见命令(5)权限管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-用户信息配置文件passwd"><span class="nav-number">1.</span> <span class="nav-text">第一部分 用户信息配置文件passwd</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-shadow文件"><span class="nav-number">2.</span> <span class="nav-text">第二部分 shadow文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-group和gshadow组配置文件"><span class="nav-number">3.</span> <span class="nav-text">第三部分 group和gshadow组配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分：主目录"><span class="nav-number">4.</span> <span class="nav-text">第四部分：主目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分：useradd-添加用户"><span class="nav-number">5.</span> <span class="nav-text">第五部分：useradd 添加用户</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六部分：passwd-修改设置用户密码"><span class="nav-number">6.</span> <span class="nav-text">第六部分：passwd 修改设置用户密码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第七部分-用户管理相关命令"><span class="nav-number">6.1.</span> <span class="nav-text">第七部分 用户管理相关命令</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
