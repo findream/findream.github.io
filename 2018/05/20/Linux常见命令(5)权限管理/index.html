@@ -84,14 +84,22 @@
 <meta name="description" content="ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux常见命令(5)权限管理">
-<meta property="og:url" content="http://yoursite.com/2018/05/15/Linux常见命令(5)权限管理/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/05/20/Linux常见命令(5)权限管理/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/xXz86iD.png">
 <meta property="og:image" content="https://i.imgur.com/cMxGQ1O.png">
 <meta property="og:image" content="https://i.imgur.com/UrVW9GN.png">
-<meta property="og:updated_time" content="2018-05-20T13:15:52.871Z">
+<meta property="og:image" content="https://i.imgur.com/X11rr4S.png">
+<meta property="og:image" content="https://i.imgur.com/CkqerBj.png">
+<meta property="og:image" content="https://i.imgur.com/AsTl3ai.png">
+<meta property="og:image" content="https://i.imgur.com/WIXJEvL.png">
+<meta property="og:image" content="https://i.imgur.com/ia4oSEW.png">
+<meta property="og:image" content="https://i.imgur.com/Gl9v46W.png">
+<meta property="og:image" content="https://i.imgur.com/5pT77Td.png">
+<meta property="og:image" content="https://i.imgur.com/X11rr4S.png">
+<meta property="og:updated_time" content="2018-05-21T07:08:48.342Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux常见命令(5)权限管理">
 <meta name="twitter:description" content="ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
@@ -125,7 +133,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/05/15/Linux常见命令(5)权限管理/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/20/Linux常见命令(5)权限管理/"/>
 
 
 
@@ -298,7 +306,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/Linux常见命令(5)权限管理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/20/Linux常见命令(5)权限管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -327,8 +335,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-15T15:02:11+08:00">
-                2018-05-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-20T15:02:11+08:00">
+                2018-05-20
               </time>
             
 
@@ -397,6 +405,31 @@
 <li>临时开启ACL权限。mount -o remount,acl /<br>  <img src="https://i.imgur.com/cMxGQ1O.png" alt=""></li>
 <li>永久开启ACL权限：修改/etc/fstab文件，然后重启<br>   <img src="https://i.imgur.com/UrVW9GN.png" alt=""></li>
 </ul>
+<h1 id="ACL权限管理"><a href="#ACL权限管理" class="headerlink" title="ACL权限管理"></a>ACL权限管理</h1><ul>
+<li><p>getfacl [文件名]：获取文件ACL权限<br>  <img src="https://i.imgur.com/X11rr4S.png" alt=""></p>
+</li>
+<li><p>setfacl [选项] [u/g:username:权限] [文件名]：给用户/组设定ACL权限。</p>
+<ul>
+<li>-m:添加ACL权限</li>
+<li>-x:删除指定给的ACL权限</li>
+<li>-b：删除所有的ACL权限</li>
+<li>-d：设置默认的ACL权限</li>
+<li>-k：删除默认的ACL权限</li>
+<li>-R：递归设定ACL权限</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>实例：添加一个文件ACL权限<ul>
+<li>首先创建3个用户test1,test2，st和一个组tgroup。<br><img src="https://i.imgur.com/CkqerBj.png" alt=""></li>
+<li>将两个用户添加到tgroud组中。<br><img src="https://i.imgur.com/AsTl3ai.png" alt=""></li>
+<li>修改文件的所有者和所属组<br><img src="https://i.imgur.com/WIXJEvL.png" alt=""></li>
+<li>修改权限<br><img src="https://i.imgur.com/ia4oSEW.png" alt=""></li>
+<li>设置ACL权限：setfacl -m u:st:rx /tmp/test<br><img src="https://i.imgur.com/Gl9v46W.png" alt=""><br><img src="https://i.imgur.com/5pT77Td.png" alt=""></li>
+<li>通过getfacl命令查看ACL权限<br><img src="https://i.imgur.com/X11rr4S.png" alt=""></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -421,8 +454,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/14/《windows PE》延迟加载表/" rel="next" title="《windows PE》延迟加载导入表">
-                <i class="fa fa-chevron-left"></i> 《windows PE》延迟加载导入表
+              <a href="/2018/05/17/Linux常见命令(4)用户和用户组管理/" rel="next" title="Linux常见命令(4)用户和用户组管理">
+                <i class="fa fa-chevron-left"></i> Linux常见命令(4)用户和用户组管理
               </a>
             
           </div>
@@ -430,10 +463,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/15/Linux常见命令(4)用户和用户组管理/" rel="prev" title="Linux常见命令(4)用户和用户组管理">
-                Linux常见命令(4)用户和用户组管理 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -565,7 +594,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ACL权限"><span class="nav-number">1.</span> <span class="nav-text">ACL权限</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ACL权限"><span class="nav-number">1.</span> <span class="nav-text">ACL权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ACL权限管理"><span class="nav-number">2.</span> <span class="nav-text">ACL权限管理</span></a></li></ol></div>
             
 
           </div>
