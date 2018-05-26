@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="动态规划算法思想&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态规划--编辑距离问题">
+<meta property="og:url" content="http://yoursite.com/2018/05/24/动态规划_编辑距离/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="动态规划算法思想&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/GSJa6Bj.png">
+<meta property="og:image" content="https://i.imgur.com/KszA78b.png">
+<meta property="og:image" content="https://i.imgur.com/oSg3Hy9.png">
+<meta property="og:image" content="https://i.imgur.com/6julLh7.png">
+<meta property="og:image" content="https://i.imgur.com/CQcUHwy.png">
+<meta property="og:updated_time" content="2018-05-24T11:42:21.509Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动态规划--编辑距离问题">
+<meta name="twitter:description" content="动态规划算法思想&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。">
+<meta name="twitter:image" content="https://i.imgur.com/GSJa6Bj.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/24/动态规划_编辑距离/"/>
+
+
+
+
+
+  <title>动态规划--编辑距离问题 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/动态规划_编辑距离/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动态规划--编辑距离问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T14:02:11+08:00">
+                2018-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="动态规划算法思想"><a href="#动态规划算法思想" class="headerlink" title="动态规划算法思想"></a>动态规划算法思想</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。<br><a id="more"></a></p>
+<h2 id="编辑路径问题"><a href="#编辑路径问题" class="headerlink" title="编辑路径问题"></a>编辑路径问题</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所谓编辑距离问题，是指一个字符串转化为另一个字符串最少的编辑次数，许可的编辑操作包括将一个字符替换成另一个字符，插入一个字符，删除一个字符。一般来说，编辑距离越小，两个串的相似度越大。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们先用BCD和ACDF举例子，我们利用二维数组来存储编辑字符串所需要的最短的步数，如图，我们先初始化这个二维数组，如图所示：<br>    <img src="https://i.imgur.com/GSJa6Bj.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已知，看行坐标，第一个字符是A，再看列坐标，第一个字符是B，两个不相等，我们记做1，表示从A–&gt;B,最小需要一步操作(修改)。如图所示：<br>    <img src="https://i.imgur.com/KszA78b.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后A—&gt;BC，<strong>需要在上一步的基础上，</strong>加一个C，才能使得A—&gt;BC，这充分体现了动态规划的基本原则。然后A—&gt;BCD是同样的道理。<br>    <img src="https://i.imgur.com/oSg3Hy9.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着是AC–&gt;B,AC–&gt;BC,AC–&gt;BCD,分别要求的最短路径是2.1.2<br>    <img src="https://i.imgur.com/6julLh7.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同理：补全该图：红色区域是由之前的ACD—&gt;BCD的结果获得而来，因为ACD–&gt;BCD只需要1步，而ACDF—&gt;BCD只需要在去掉F即可。也就是在加一步。<br>      <img src="https://i.imgur.com/CQcUHwy.png" alt=""></p>
+<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a>参考代码</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个是问题的主要代码，首先初始化整个二维数组，然后再次遍历，找个里面三个操作（插入，删除，修改）里面的最好情况。AC–&gt;B,首先需要将A–&gt;B,然后需要删除C。我们可以得到公式：d[2] [1] =d[1] [1]+1，这里加1，是指在前一步的基础上<strong>再加一步</strong>删除。递推出来就是：d[i] [j] =d[i-1] [j]+1,同理插入：c = d[i] [j -1] + 1,如果是修改就看他是否相等了，相等不需要修改，不相等需要加1<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">CalcEditDistance</span><span class="params">(<span class="keyword">char</span> *StrA, <span class="keyword">char</span> *StrB, <span class="keyword">int</span> **d)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> i,j; </div><div class="line">	<span class="keyword">int</span> a,b,c,e;</div><div class="line">	<span class="keyword">int</span> len1 = <span class="built_in">strlen</span>(StrA);</div><div class="line">	<span class="keyword">int</span> len2 = <span class="built_in">strlen</span>(StrB);</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>;i &lt;= len1;i++)   <span class="comment">//初始化二维数组 </span></div><div class="line">		d[i] = <span class="keyword">new</span> <span class="keyword">int</span>[len2 + <span class="number">1</span>];  </div><div class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>;i &lt;= len1;i++)   <span class="comment">//初始化第一个字符串的标号 </span></div><div class="line">		d[i][<span class="number">0</span>] = i;</div><div class="line">	<span class="keyword">for</span> (j = <span class="number">0</span>;j &lt;= len2;j++)   <span class="comment">//初始化第一个字符串的标号 </span></div><div class="line">		d[<span class="number">0</span>][j] = j;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>;i &lt;= len1;i++)   <span class="comment">//循环确定每个规划中三种方法中的最优解。 </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>;j &lt;= len2;j++)</div><div class="line">		&#123;</div><div class="line">			a = StrA[i<span class="number">-1</span>] == StrB[j<span class="number">-1</span>] ? <span class="number">0</span> : <span class="number">1</span>;  <span class="comment">//如果两个字符串相等就是为0 </span></div><div class="line">			b = d[i - <span class="number">1</span>][j] + <span class="number">1</span>; <span class="comment">//删除 </span></div><div class="line">			c = d[i][j - <span class="number">1</span>] + <span class="number">1</span>; <span class="comment">// 插入 </span></div><div class="line">			e = d[i - <span class="number">1</span>][j - <span class="number">1</span>] + a;<span class="comment">//修改 </span></div><div class="line">			d[i][j] = FindTripleMin(b, c, e);  <span class="comment">//寻找b，c，e里面的最小值 </span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 返回编辑距离值 ...</span></div><div class="line">	<span class="keyword">return</span> d[<span class="built_in">strlen</span>(StrA)][<span class="built_in">strlen</span>(StrB)];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后经过上面三个操作，<strong>注意：这三种操作不直接写入二维数组，</strong>需要一个找到他们直接值最小的，然后把最小的写入数组。这样保证了每次的编辑距离都是最小的。<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> FindTripleMin(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> c)   <span class="comment">//为了保证每次操作次数都是三种情况中间最少的 </span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">int</span> t = (a &lt; b) ? a : b;</div><div class="line">	<span class="keyword">return</span> ((t &lt; c) ? t : c);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/22/XCTF嘉年华比赛试题/" rel="next" title="XCTF嘉年华资格赛">
+                <i class="fa fa-chevron-left"></i> XCTF嘉年华资格赛
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/26/GCTF/" rel="prev" title="GCTF解析">
+                GCTF解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动态规划算法思想"><span class="nav-number">1.</span> <span class="nav-text">动态规划算法思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑路径问题"><span class="nav-number">2.</span> <span class="nav-text">编辑路径问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">3.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
