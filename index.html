@@ -1439,7 +1439,7 @@
 
       
         
-          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。<br>
+          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，<strong>通过在INT获得的函数地址覆盖到IAT中，</strong>此时，导出表起到了参照和指引的作用。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/05/11/《windows PE》导出表/#more" rel="contents">
@@ -1746,6 +1746,17 @@
 <li>sudo apt-get upgrade:更新所有软件<br><img src="https://i.imgur.com/1wfzSk5.png" alt=""></li>
 </ul>
 </li>
+</ul>
+<h2 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h2><ul>
+<li>获取tar.gz源文件</li>
+<li>tar -zxvf xxx.tar.gz 解压tar文件</li>
+<li>./configure —&gt;makefile</li>
+<li>make 编译</li>
+<li>make install</li>
+<li>service fuwu start:开启服务</li>
+<li>/etc/init.d/fuwu start</li>
+<li>测试：看进程</li>
+<li>服务配置</li>
 </ul>
 
           

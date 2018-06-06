@@ -102,7 +102,7 @@
 <meta property="og:image" content="https://i.imgur.com/zfl0RUR.png">
 <meta property="og:image" content="https://i.imgur.com/SBgETso.png">
 <meta property="og:image" content="https://i.imgur.com/0Dz6A5b.png">
-<meta property="og:updated_time" content="2018-05-21T06:47:03.344Z">
+<meta property="og:updated_time" content="2018-05-28T05:14:47.994Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux常见命令(4)用户和用户组管理">
 <meta name="twitter:description" content="第一部分 用户信息配置文件passwd&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。">
@@ -432,7 +432,7 @@
 <h1 id="第二部分-shadow文件"><a href="#第二部分-shadow文件" class="headerlink" title="第二部分 shadow文件"></a>第二部分 shadow文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shadow文件位于/etc/shadow中（利用man 5 shadow可查），需要root权限才能打开。一共有八个字段，分别是：用户名，加密的密码串，最后一次修改密码的日期(时间戳)，密码有效期，最大密码年龄，警告时间段，密码禁用期，账号过期日期，保留。<br>    <img src="https://i.imgur.com/pmd6SXJ.png" alt=""></p>
 <ul>
 <li>用户名</li>
-<li>加密的密码串：使用*或者！表示密码无效，也就是说账户被禁用。</li>
+<li>加密的密码串：如果这个字段为空的话，说明这个账号不需要使用密码也能登录，使用*表示这个账号已经被锁定。如果是！！表示密码无效/过期，也就是说账户被禁用。</li>
 <li>最后一次修改密码的时间戳：<ul>
 <li>0：表示下次登陆账户时，修改密码</li>
 <li>为空：表示密码年龄的功能被禁用</li>
@@ -445,7 +445,7 @@
 <li>最大密码年龄:在最大密码年龄之后必须要修改密码</li>
 <li>警告时间段：在密码到期之前n天，警告必须修改密码</li>
 <li>密码禁用期：过了密码有效期之后，仍可以使用原密码登录的最大期限。过了此期限后，账户不能登录，空字段表示没有强制密码过期。</li>
-<li>账户过期日期：</li>
+<li>账户过期日期：账户没有登录多少天后，账户过期。</li>
 <li>保留<br>  <img src="https://i.imgur.com/LjpkH5X.png" alt=""></li>
 </ul>
 <h1 id="第三部分-group和gshadow组配置文件"><a href="#第三部分-group和gshadow组配置文件" class="headerlink" title="第三部分 group和gshadow组配置文件"></a>第三部分 group和gshadow组配置文件</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group文件在/etc/group,文件下面一共有四个字段，分别是组名，组密码标志，GID，组中的附加用户。</p>
@@ -532,7 +532,7 @@
 <ul>
 <li><p>groupdel [组名]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果存在初始用户，次组不能被删除，如果只存在附加用户，此组可以删除。</p>
 </li>
-<li><p>gpasswd [选项] [username] [groupname]</p>
+<li><p>gpasswd [选项] [username] [groupname]：管理组内用户</p>
 <ul>
 <li>-a username：将username 添加groupname</li>
 <li>-d username：将username 从groupname组中删除</li>

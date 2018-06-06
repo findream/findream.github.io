@@ -92,7 +92,7 @@
 <meta property="og:image" content="https://i.imgur.com/QjFxUnO.png">
 <meta property="og:image" content="https://i.imgur.com/4pZ0mvd.png">
 <meta property="og:image" content="https://i.imgur.com/tLuBjY9.png">
-<meta property="og:updated_time" content="2018-05-14T11:07:04.833Z">
+<meta property="og:updated_time" content="2018-05-28T09:41:22.538Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《windows PE》重定位表">
 <meta name="twitter:description" content="预备知识：代码重定位重定位的提出&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。123456push ebpmov ebp,espa">
@@ -397,7 +397,7 @@
 <li>SizeOfBlock：双字，重定位表项中的重定位块的个数。这些数组(表项)可能不是相邻的。</li>
 <li>TypeOffset：表示重定位表项的类型：高四位表示的是类型。低十二位表示的重定位地址。<br>  <img src="https://i.imgur.com/QjFxUnO.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位块的大小：n*12+4+4</li>
 </ul>
-<h2 id="3-重定位表的结构"><a href="#3-重定位表的结构" class="headerlink" title="3.重定位表的结构"></a>3.重定位表的结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表中包含有重定位块，重定位块中包含有重定位表项和前面的VirtualAddress，SizeOfBlock，TypeOffset字段。<br>    <img src="https://i.imgur.com/4pZ0mvd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的重定位块最终以VirtualAddress字段为0的IMAGE_BASE_RELOCATION结构为结束标志。</p>
+<h2 id="3-重定位表的结构"><a href="#3-重定位表的结构" class="headerlink" title="3.重定位表的结构"></a>3.重定位表的结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表中包含有重定位块，重定位块中包含有重定位表项和前面的VirtualAddress，SizeOfBlock，TypeOffset字段(TypeOffset是一个数组，它的元素个数就是( SizeOfBlock - 8 ) / 2 ，TypeOffset 每一个元素占用两个字节即16位，其中高4位表示重定位类型（一般都为3），低12位表示重定位地址。)。<br>    <img src="https://i.imgur.com/4pZ0mvd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所有的重定位块最终以VirtualAddress字段为0的IMAGE_BASE_RELOCATION结构为结束标志。</p>
 <h2 id="4-实例分析"><a href="#4-实例分析" class="headerlink" title="4.实例分析"></a>4.实例分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图，我们知道第一个重定位块位于0x1c00，代码起始页面RVA为00001000，块的大小为000000E8。后面的是每个重定位表项的相对位置。根据以下计算公式得到最终的实际地址。<br>VA=基地址(程序基地址)+代码起始页面RVA+<strong>低12位虚拟地址。</strong><br>VA=01000000+00001000+009<br>    <img src="https://i.imgur.com/tLuBjY9.png" alt=""></p>
 
       
