@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="注册表用法&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;注册表的配置数据主要在四个时间点被修改。  由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。 在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经">
+<meta property="og:type" content="article">
+<meta property="og:title" content="注册表">
+<meta property="og:url" content="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="注册表用法&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;注册表的配置数据主要在四个时间点被修改。  由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。 在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/Ej3n9P0.png">
+<meta property="og:image" content="https://i.imgur.com/8yfnMK3.png">
+<meta property="og:image" content="https://i.imgur.com/nUG2rw4.png">
+<meta property="og:image" content="https://i.imgur.com/4Ffc53E.png">
+<meta property="og:image" content="https://i.imgur.com/FaGauvF.png">
+<meta property="og:image" content="https://i.imgur.com/RwudfZI.png">
+<meta property="og:image" content="https://i.imgur.com/qn84dGf.png">
+<meta property="og:image" content="https://i.imgur.com/zVBGxJo.png">
+<meta property="og:image" content="https://i.imgur.com/5nvD88p.png">
+<meta property="og:image" content="https://i.imgur.com/b6R9joX.png">
+<meta property="og:image" content="https://i.imgur.com/CdpuB0E.png">
+<meta property="og:image" content="https://i.imgur.com/vullJ3m.png">
+<meta property="og:image" content="https://i.imgur.com/GOH6nDp.png">
+<meta property="og:image" content="https://i.imgur.com/cSYnQsX.png">
+<meta property="og:image" content="https://i.imgur.com/jhyfMBE.png">
+<meta property="og:image" content="https://i.imgur.com/bZGzLA6.png">
+<meta property="og:image" content="https://i.imgur.com/VYoWIov.png">
+<meta property="og:image" content="https://i.imgur.com/qPYSrU9.png">
+<meta property="og:image" content="https://i.imgur.com/HvKm3TD.png">
+<meta property="og:image" content="https://i.imgur.com/9GzNlgc.png">
+<meta property="og:image" content="https://i.imgur.com/W352lyG.png">
+<meta property="og:image" content="https://i.imgur.com/QeXMV6u.png">
+<meta property="og:image" content="https://i.imgur.com/vH16dDH.png">
+<meta property="og:image" content="https://i.imgur.com/Q9CaD3C.png">
+<meta property="og:updated_time" content="2018-06-09T09:21:10.965Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="注册表">
+<meta name="twitter:description" content="注册表用法&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;注册表的配置数据主要在四个时间点被修改。  由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。 在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经">
+<meta name="twitter:image" content="https://i.imgur.com/Ej3n9P0.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/"/>
+
+
+
+
+
+  <title>注册表 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">注册表</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-04T15:02:11+08:00">
+                2018-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="注册表用法"><a href="#注册表用法" class="headerlink" title="注册表用法"></a>注册表用法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的配置数据主要在四个时间点被修改。</p>
+<ul>
+<li>由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。</li>
+<li>在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经系统行为的配置。</li>
+<li>在windows登录过程中，Explorer和windows组件读取用户配置信息。</li>
+<li>应用程序启动过程中，读取系统全局配置信息。</li>
+<li>其他时间：在调用API修改注册表的时候，注册表也提供异步回调机制，这是优先接收注册表变化的方法。<strong>系统不建议使用轮询的方法检测注册表的修改。</strong></li>
+</ul>
+<h2 id="注册表的数据类型"><a href="#注册表的数据类型" class="headerlink" title="注册表的数据类型"></a>注册表的数据类型</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的结构类似于一个文件系统的结构。只不过注册表包含的是键和值，一般的我们把键看做目录，值看做文件。例如\trade\mark中，trade表示的是键，mark表示的是值。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的值有多种数据类型，常见的数据类型是REG_DWORD(存储大部分的整形和布尔类型)，REG_BINARY(存储的是超过32位的整数类型，例如加密口令)，REG_SZ(存储的是字符串)。<strong>其中还有特殊的是REG_LINK，</strong>REG_LINK存储的是一个链接类型，标明这个数据类型可以让一个键指向另一个键。例如\ROOT1\LINK指向的是ROOT2\REGKEY，其中REGKEY存储的值是REGVALUE，则对于REGVALUE有两个路径可以访问：\ROOT1\LINK\REGVALUE或者\ROOT2\REGKEY\REGVALUE。<strong>windows中六个注册表根有三个是链接，他们指向的是三个非连接的跟腱中的子健。</strong></p>
+<h2 id="注册表的逻辑结构"><a href="#注册表的逻辑结构" class="headerlink" title="注册表的逻辑结构"></a>注册表的逻辑结构</h2><h3 id="HKEY-CURRENT-USER"><a href="#HKEY-CURRENT-USER" class="headerlink" title="HKEY_CURRENT_USER:"></a>HKEY_CURRENT_USER:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;存储和当前登录用户相关的数据(包含用户参数和软件配置信息)，指向当前登录用户的用户轮廓，位于磁盘下的\Users\用户名\Ntuser.dat文件中。是HKEY_USERS下对应的当前登录用户的子健。**当一个用户登录系统，首先会创建HKCU，然后把HKCU映射到HKEY_USERS/<currentuser>中<br>     <img src="https://i.imgur.com/Ej3n9P0.png" alt=""><br>     <img src="https://i.imgur.com/8yfnMK3.png" alt=""><br>     <img src="https://i.imgur.com/nUG2rw4.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面是关于HKEY_CURRENT_USER的子健信息。<br>    <img src="https://i.imgur.com/4Ffc53E.png" alt=""></currentuser></p>
+<h3 id="HKEY-USERS："><a href="#HKEY-USERS：" class="headerlink" title="HKEY_USERS："></a>HKEY_USERS：</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包含所有已加载用户轮廓的子健，他不是一个链接。但是他包含了一个名为HKU.DEFAULTD的链接。当有新用户登录的时候，系统依赖Users\Default的轮廓为该用户创建一个新的轮廓。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表HKLM\Software\Microsoft\Windows Nt\CurrentVersion\ProfileList\ProfilesDirectory中的ProfilesDirectory保存的是系统中存在的用户轮廓列表。每个轮廓存放在ProfileList键下面。<br>     <img src="https://i.imgur.com/FaGauvF.png" alt=""><br>     <img src="https://i.imgur.com/RwudfZI.png" alt=""><br>     <img src="https://i.imgur.com/qn84dGf.png" alt=""></p>
+<h3 id="HKEY-CLASS-ROOT："><a href="#HKEY-CLASS-ROOT：" class="headerlink" title="HKEY_CLASS_ROOT："></a>HKEY_CLASS_ROOT：</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包含的是文件关联和COM注册信息以及UAC虚拟化注册表根。<strong>其中HKCR下的根键保存的是文件拓展名关联，UAC虚拟化注册表位于VirtualStore键下面，其他键包含的是注册在系统中的COM对象的详细配置信息</strong><br>    <img src="https://i.imgur.com/zVBGxJo.png" alt=""><br>    <img src="https://i.imgur.com/5nvD88p.png" alt=""><br>    <img src="https://i.imgur.com/b6R9joX.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKCR是由HKLM\SOFTWARE\Classes(系统全局)和HKEY_USERS\<sid>\SOFTWARE\Classes(用户)组合的视图。将用户注册表信息和系统全局注册表信息分开，保证了系统的安全性，避免非特权用户访问并修改系统全局信息。</sid></p>
+<h3 id="HKEY-LOCAL-MACHINE"><a href="#HKEY-LOCAL-MACHINE" class="headerlink" title="HKEY_LOCAL_MACHINE:"></a>HKEY_LOCAL_MACHINE:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包含了机器的全局设置，包括了BCD00000000,COMPONENTS,HARDWARE,SAM,SECURITY,SOFTWARE,SYSTEM,该注册表不是一个链接。<br>    <img src="https://i.imgur.com/CdpuB0E.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\BCD0000000保存的是引导配置数据库，这是作为一个注册表储巢加载进来的。<br>     <img src="https://i.imgur.com/vullJ3m.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\CONPONENTS保存的是关于CBS(基于组件的服务)，当系统组件需要更新，安装或者卸载的时候，保存在这个键下的信息将要被用到。当然为了优化系统资源，CBS栈在服务一个请求的时候只是被动态的加载到系统。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\HKLM\HARDWARE维护了当前系统中的遗留硬件，以及一些硬件设备到其驱动程序的映射关系描述信息。<br>     <img src="https://i.imgur.com/GOH6nDp.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\SAM存放的是用户账户和组的信息，SAM的安全描述符一般被设置成管理员无法访问(system可以访问)<br>     <img src="https://i.imgur.com/cSYnQsX.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\SECURITY存放的是系统全局的安全设置和用户权限分配，HKLM\SAM是HKLM\SECURITY\SAM下的SERURITY子键，默认情况下无法查看HKLM\SECURITY和HKLM\SAM的内容<br>     <img src="https://i.imgur.com/jhyfMBE.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\OTFWARE存放是系统全局配置信息和第三方应用程序的全局设置。<br>     <img src="https://i.imgur.com/bZGzLA6.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HKLM\SYSTEM保存的是引导系统所需要的全局信息，例如下载的驱动程序或者启动的服务。这些信息对于系统的启动十分重要。<br>     <img src="https://i.imgur.com/VYoWIov.png" alt=""></p>
+<h3 id="HKEY-CURRENT-CONFIG"><a href="#HKEY-CURRENT-CONFIG" class="headerlink" title="HKEY_CURRENT_CONFIG:"></a>HKEY_CURRENT_CONFIG:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;保存的是当前的硬件配置信息，是HKLM\SYSTEM\CurrentControlSet\Hardware Profiles\Current下的子健，</p>
+<h3 id="HKEY-PERFORMACHE-DATA"><a href="#HKEY-PERFORMACHE-DATA" class="headerlink" title="HKEY_PERFORMACHE_DATA:"></a>HKEY_PERFORMACHE_DATA:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该项是一个性能计数器，不是一个链接。在注册表编辑器中无法找到，只有试用RegQueryValueEx函数去获取性能信息。<strong>性能信息并不是保存在注册表中，RegQueryValueEx函数只是利用该键获得从性能数据提供者那里提供的信息</strong></p>
+<h2 id="事务性注册表"><a href="#事务性注册表" class="headerlink" title="事务性注册表"></a>事务性注册表</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>事务性注册表的封闭性：</strong>当使用RegCreateKeyTransacted以实物的方式创建一个注册表的时候，之后的所有操作必须是以事物方式运行，而且此过程是对事物外部不可见。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>事物的隔离性：</strong>事物是相互隔离的，在一个事物内部所做的修改，在该事物被提交之前，在该事物外部是不可见的。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>事物的低优先级：</strong>一个非事物任务的写会导致事物内部的写操作失败。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>提交生效：</strong>事物只有提交之后才会立即生效。</p>
+<h2 id="注册表的内部机理"><a href="#注册表的内部机理" class="headerlink" title="注册表的内部机理"></a>注册表的内部机理</h2><h3 id="储巢"><a href="#储巢" class="headerlink" title="储巢"></a>储巢</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表是一组称为储巢的独立文件，每一个储巢包含了一个注册表数，有一个键作为该树的根，子键或者值存储在根的下面，但是注册表编辑器所显示的根键和储巢里面的根键不是相互关联的。<strong>除了用户轮廓，其他轮廓路径都被编码进了配置管理器中，当加载储巢的时候，配置管理器会在HKLM\SYSTEM\CurrentControlSet\Control\Hivelist子键下记录每个储巢的路径。</strong>并将这些储巢链接起来，以便建立其注册表结构。<br>    <img src="https://i.imgur.com/qPYSrU9.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图是注册表路径和储巢路径对应图，其中有一项是易失储巢。标明这个储巢是易变的，并没有对应的文件，由操作系统在内存中加载并且管理。其中著名的例子就是HKLM\HARDWARE.这个储巢保存的系统物理设备和设备资源的信息。<strong>每次引导的时候会进行资源分配和硬件检测。</strong><br>    <img src="https://i.imgur.com/HvKm3TD.png" alt=""></p>
+<h3 id="注册表符号链接"><a href="#注册表符号链接" class="headerlink" title="注册表符号链接"></a>注册表符号链接</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表符号链接一个种使配置管理器将键与键链接起来的<strong>特殊键，</strong>符号链接在外部是利用CreateRegKey函数指定REG_GREATE_LINK标志创建起来的，</p>
+<h3 id="储巢结构"><a href="#储巢结构" class="headerlink" title="储巢结构"></a>储巢结构</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，我们从全局来把握一下注册表的储巢结构，在了解储巢结构之前，我们需要了解一下几个概念。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>块：</strong>配置管理器从逻辑上将一个储巢分成一些称为块的分配单元。每个块的大小是4096字节。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>基本块：</strong>一个储巢的第一个块称为基本块，基本块包含了有关该储巢的全局信息。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>巢室：</strong>一个巢室包含了所存储的注册表键的基本数据结构，之所以称为巢室，是因为巢室是存储注册表键的内容的容器。一个巢室包含了一个键，一个值，一个安全描述符，一列子键，一列子值。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>巢箱：</strong>新巢室正好拓展到下一个块或者页面的大小，说白了就是巢室的箱子(多个巢室组成了巢箱)。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>巢室索引：</strong> 详见巢室映射表<br>    <img src="https://i.imgur.com/9GzNlgc.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;巢室开始的四个字节表示的是该巢室数据类型。一共有五种巢室的基本数据类型：键巢室，值巢室，子键列表巢室，值列表巢室，安全描述符巢室。</p>
+<ul>
+<li>键巢室：包含了一个注册表键的巢室</li>
+<li>值巢室：包含了一个键的值得巢室</li>
+<li>子键列表巢室：包含了<strong>许多子键巢室的索引</strong>的巢室</li>
+<li>值列表巢室：包含了<strong>许多值巢室的索引</strong>的巢室，是父键的所有值</li>
+<li>安全描述符巢室：包含了一个安全描述符的巢室<br>   <img src="https://i.imgur.com/W352lyG.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>windows选择利用巢箱的结构来拓展巢室</strong>，当一个巢室要被添加到储巢的时候，系统创建一个巢箱来容纳巢室，这导致了系统分配和释放巢箱的频率比使用巢室要慢的多。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置管理器会将储巢整个读入，同时也会象磁盘碎片管理的方式，合并诸多空巢箱，当储巢尾部的巢箱变为空闲的时候才会缩短该储巢。</li>
+</ul>
+<h3 id="巢室映射表"><a href="#巢室映射表" class="headerlink" title="巢室映射表"></a>巢室映射表</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表被映射如内存是不连续的，配置管理器采用的是和虚拟内存映射到物理内存地址的策略。<strong>和windows的分段内存管理机制一样</strong>，windows使用连续的内存代表一个巢箱，这样一个巢箱内部所有的巢室都出现在一个视图中。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows使用<strong>巢室索引</strong>来实现映射策略，巢室索引有三个域：目录索引，表索引，字节偏移。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;【重点】①windows将目录索引解释成一个巢室的映射表目录的索引，也就是说根据这个索引才能找到巢室映射目录表的地址。②巢室映射表目录有1024个，每个目录项指向的是一个映射表，利用第二个域–表索引，根据巢室映射表找到巢室所在巢箱的偏移，③根据第三个域找到巢室的偏移。</p>
+<h3 id="注册表名字空间和操作"><a href="#注册表名字空间和操作" class="headerlink" title="注册表名字空间和操作"></a>注册表名字空间和操作</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>键对象：</strong>当打开或创建一个注册表键的时候，对象管理器会给应用程序分配一个句柄让程序通过此句柄引用该键。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>键控制块：</strong>每次打开注册表键的时候，配置管理器也会分配一个键控制块，用于保存键名称，巢室索引，和一个标志(表示键的句柄被关闭后，配置管理器是否应该删除该键句柄所引用的键巢室)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关系：键对象指向他对应的键控制块，如果两个应用程序打开一个注册表键的时候，会产生两个不同的键对象，这两个键对象指向同一个键控制块，(因为键控制块包含了键的名称等唯一信息)。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用键控制块的引用个数来决定是否删除该键控制块，如果引用计数为0的时候，说明这个键控制块不再被需要了。</p>
+<h3 id="【实验】查看键控制块"><a href="#【实验】查看键控制块" class="headerlink" title="【实验】查看键控制块"></a>【实验】查看键控制块</h3><ul>
+<li>!reg openkeys:查看系统中已经被分配的键控制块。<br>  <img src="https://i.imgur.com/QeXMV6u.png" alt=""></li>
+<li>!reg findkcb:查看一个已经打开的kcb<br>  <img src="https://i.imgur.com/vH16dDH.png" alt=""></li>
+<li>!reg kcb:查看具体的kcb内容<br>  <img src="https://i.imgur.com/Q9CaD3C.png" alt=""></li>
+</ul>
+<h3 id="稳定可靠的存储"><a href="#稳定可靠的存储" class="headerlink" title="稳定可靠的存储"></a>稳定可靠的存储</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用双日志方案，将脏数据累加写入同一个日志文件，如果不发生错误，只写入某一个文件。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于写脏数据到日志文件，使用了双序列号模式，延时写出器首先更新日志文件一个序列号，然后在写入脏数据，此时发生意外，系统在引导时，配置管理器肯定会注意到序列号不一致，触发储巢回滚。如果写入日志成功，在写另一个序列号。保证两个序列号一致。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/26/GCTF/" rel="next" title="GCTF解析">
+                <i class="fa fa-chevron-left"></i> GCTF解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册表用法"><span class="nav-number">1.</span> <span class="nav-text">注册表用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册表的数据类型"><span class="nav-number">2.</span> <span class="nav-text">注册表的数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册表的逻辑结构"><span class="nav-number">3.</span> <span class="nav-text">注册表的逻辑结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-CURRENT-USER"><span class="nav-number">3.1.</span> <span class="nav-text">HKEY_CURRENT_USER:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-USERS："><span class="nav-number">3.2.</span> <span class="nav-text">HKEY_USERS：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-CLASS-ROOT："><span class="nav-number">3.3.</span> <span class="nav-text">HKEY_CLASS_ROOT：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-LOCAL-MACHINE"><span class="nav-number">3.4.</span> <span class="nav-text">HKEY_LOCAL_MACHINE:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-CURRENT-CONFIG"><span class="nav-number">3.5.</span> <span class="nav-text">HKEY_CURRENT_CONFIG:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HKEY-PERFORMACHE-DATA"><span class="nav-number">3.6.</span> <span class="nav-text">HKEY_PERFORMACHE_DATA:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务性注册表"><span class="nav-number">4.</span> <span class="nav-text">事务性注册表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册表的内部机理"><span class="nav-number">5.</span> <span class="nav-text">注册表的内部机理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#储巢"><span class="nav-number">5.1.</span> <span class="nav-text">储巢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册表符号链接"><span class="nav-number">5.2.</span> <span class="nav-text">注册表符号链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#储巢结构"><span class="nav-number">5.3.</span> <span class="nav-text">储巢结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#巢室映射表"><span class="nav-number">5.4.</span> <span class="nav-text">巢室映射表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册表名字空间和操作"><span class="nav-number">5.5.</span> <span class="nav-text">注册表名字空间和操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#【实验】查看键控制块"><span class="nav-number">5.6.</span> <span class="nav-text">【实验】查看键控制块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#稳定可靠的存储"><span class="nav-number">5.7.</span> <span class="nav-text">稳定可靠的存储</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
