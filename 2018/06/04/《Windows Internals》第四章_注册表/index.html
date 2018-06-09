@@ -112,7 +112,7 @@
 <meta property="og:image" content="https://i.imgur.com/QeXMV6u.png">
 <meta property="og:image" content="https://i.imgur.com/vH16dDH.png">
 <meta property="og:image" content="https://i.imgur.com/Q9CaD3C.png">
-<meta property="og:updated_time" content="2018-06-09T09:21:10.965Z">
+<meta property="og:updated_time" content="2018-06-09T09:26:59.012Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="注册表">
 <meta name="twitter:description" content="注册表用法&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;注册表的配置数据主要在四个时间点被修改。  由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。 在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经">
@@ -414,9 +414,9 @@
 <li>在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经系统行为的配置。</li>
 <li>在windows登录过程中，Explorer和windows组件读取用户配置信息。</li>
 <li>应用程序启动过程中，读取系统全局配置信息。</li>
-<li>其他时间：在调用API修改注册表的时候，注册表也提供异步回调机制，这是优先接收注册表变化的方法。<strong>系统不建议使用轮询的方法检测注册表的修改。</strong></li>
+<li>其他时间：在调用API修改注册表的时候，注册表也提供异步回调机制，这是优先接收注册表变化的方法。<strong>系统不建议使用轮询的方法检测注册表的修改。</strong><a id="more"></a>
+<h2 id="注册表的数据类型"><a href="#注册表的数据类型" class="headerlink" title="注册表的数据类型"></a>注册表的数据类型</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的结构类似于一个文件系统的结构。只不过注册表包含的是键和值，一般的我们把键看做目录，值看做文件。例如\trade\mark中，trade表示的是键，mark表示的是值。</li>
 </ul>
-<h2 id="注册表的数据类型"><a href="#注册表的数据类型" class="headerlink" title="注册表的数据类型"></a>注册表的数据类型</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的结构类似于一个文件系统的结构。只不过注册表包含的是键和值，一般的我们把键看做目录，值看做文件。例如\trade\mark中，trade表示的是键，mark表示的是值。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的值有多种数据类型，常见的数据类型是REG_DWORD(存储大部分的整形和布尔类型)，REG_BINARY(存储的是超过32位的整数类型，例如加密口令)，REG_SZ(存储的是字符串)。<strong>其中还有特殊的是REG_LINK，</strong>REG_LINK存储的是一个链接类型，标明这个数据类型可以让一个键指向另一个键。例如\ROOT1\LINK指向的是ROOT2\REGKEY，其中REGKEY存储的值是REGVALUE，则对于REGVALUE有两个路径可以访问：\ROOT1\LINK\REGVALUE或者\ROOT2\REGKEY\REGVALUE。<strong>windows中六个注册表根有三个是链接，他们指向的是三个非连接的跟腱中的子健。</strong></p>
 <h2 id="注册表的逻辑结构"><a href="#注册表的逻辑结构" class="headerlink" title="注册表的逻辑结构"></a>注册表的逻辑结构</h2><h3 id="HKEY-CURRENT-USER"><a href="#HKEY-CURRENT-USER" class="headerlink" title="HKEY_CURRENT_USER:"></a>HKEY_CURRENT_USER:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;存储和当前登录用户相关的数据(包含用户参数和软件配置信息)，指向当前登录用户的用户轮廓，位于磁盘下的\Users\用户名\Ntuser.dat文件中。是HKEY_USERS下对应的当前登录用户的子健。**当一个用户登录系统，首先会创建HKCU，然后把HKCU映射到HKEY_USERS/<currentuser>中<br>     <img src="https://i.imgur.com/Ej3n9P0.png" alt=""><br>     <img src="https://i.imgur.com/8yfnMK3.png" alt=""><br>     <img src="https://i.imgur.com/nUG2rw4.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面是关于HKEY_CURRENT_USER的子健信息。<br>    <img src="https://i.imgur.com/4Ffc53E.png" alt=""></currentuser></p>
 <h3 id="HKEY-USERS："><a href="#HKEY-USERS：" class="headerlink" title="HKEY_USERS："></a>HKEY_USERS：</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包含所有已加载用户轮廓的子健，他不是一个链接。但是他包含了一个名为HKU.DEFAULTD的链接。当有新用户登录的时候，系统依赖Users\Default的轮廓为该用户创建一个新的轮廓。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表HKLM\Software\Microsoft\Windows Nt\CurrentVersion\ProfileList\ProfilesDirectory中的ProfilesDirectory保存的是系统中存在的用户轮廓列表。每个轮廓存放在ProfileList键下面。<br>     <img src="https://i.imgur.com/FaGauvF.png" alt=""><br>     <img src="https://i.imgur.com/RwudfZI.png" alt=""><br>     <img src="https://i.imgur.com/qn84dGf.png" alt=""></p>
