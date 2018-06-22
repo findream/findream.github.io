@@ -294,6 +294,286 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/10/Linux常见命令(7)shell编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/10/Linux常见命令(7)shell编程/" itemprop="url">Linux常见命令(6)shell</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T15:02:11+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1><h2 id="常见的字符串截取命令"><a href="#常见的字符串截取命令" class="headerlink" title="常见的字符串截取命令"></a>常见的字符串截取命令</h2><ul>
+<li>grep：截取行</li>
+<li>cut：截取列</li>
+<li>printf</li>
+<li>awk</li>
+<li>sed</li>
+</ul>
+<h2 id="cut命令"><a href="#cut命令" class="headerlink" title="cut命令"></a>cut命令</h2><ul>
+<li>cut [选项] [文件名]：用于提取指定列的信息<ul>
+<li>-d:指定分割符(默认分隔符是tab)</li>
+<li>-f：指定列号</li>
+</ul>
+</li>
+<li>例子1：-f<br>  <img src="https://i.imgur.com/jQxcAHP.png" alt=""></li>
+<li>例子2：-f -d<br>  <img src="https://i.imgur.com/28qDT9k.png" alt=""></li>
+<li>例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab<br>  <img src="https://i.imgur.com/cEjiJ4B.png" alt=""></li>
+</ul>
+<h2 id="printf命令"><a href="#printf命令" class="headerlink" title="printf命令"></a>printf命令</h2><ul>
+<li>printf [输出类型/格式(转义符)] 内容<ul>
+<li>%ns:输出n个字符串。默认数据类型</li>
+<li>%ni：输出n个数，但是不进行ASCII转化</li>
+<li>%n.mf:输出浮点数</li>
+</ul>
+</li>
+<li>[建议]：最好应该像C语言一样，给数据类型加上双引号，尤其是在存在多个格式化输出的时候。</li>
+<li>例子1：printf %s 12345<br>  <img src="https://i.imgur.com/OIRafQp.png" alt=""></li>
+<li>例子2：printf %s %s %s \n 1 2 3<br>  <img src="https://i.imgur.com/uNaSyUx.png" alt=""></li>
+</ul>
+<h2 id="awk命令"><a href="#awk命令" class="headerlink" title="awk命令"></a>awk命令</h2><ul>
+<li>awk [条件1] [‘{动作1}’] [条件2] [‘{动作2}’] [filename]</li>
+<li>例子1：awk ‘{printf $1 “\t” $2 “\n”}’ TestAwk.txt<br>  <img src="https://i.imgur.com/urLV4Vp.png" alt=""></li>
+<li>例子2：<br>  <img src="https://i.imgur.com/WrAuwiS.png" alt=""></li>
+<li>例子3：BEGIN（大写）：用于提前输出 <ul>
+<li>awk ‘BEGIN{print “TEST TEST\n”}{print $2 “\t” $3}’ TestAwk.txt<br><img src="https://i.imgur.com/OwW72HG.png" alt=""></li>
+</ul>
+</li>
+<li>例子4：FS指定分隔符<ul>
+<li>awk ‘BEGIN{FS=”:”}{print $1 “\t” $2}’ /etc/passwd<br><img src="https://i.imgur.com/VzdNYY5.png" alt=""></li>
+</ul>
+</li>
+<li>例子5：END：所有动作执行完毕后，在执行END动作</li>
+</ul>
+<h2 id="sed命令"><a href="#sed命令" class="headerlink" title="sed命令"></a>sed命令</h2><ul>
+<li>sed [选项] [‘动作’] filename<ul>
+<li>选项-n:只将sed处理过的内容打印出来</li>
+<li>选项-e:允许对结果执行多个sed动作</li>
+<li>选项-i：将修改回写入文件。</li>
+<li>动作’a \’：在当前行后添加一行<br><img src="https://i.imgur.com/dDHWMUi.png" alt=""></li>
+<li>动作’i \’:在当前行插入一行或者多行<br><img src="https://i.imgur.com/lBriTb0.png" alt=""></li>
+<li>动作’c \’:用c后面的字符串替换原来的行<br><img src="https://i.imgur.com/aK6dSpL.png" alt=""></li>
+<li>动作d:删除指定行<br><img src="https://i.imgur.com/HCLWc8n.png" alt=""></li>
+<li>动作p：输出指定行<br><img src="https://i.imgur.com/rw33CCn.png" alt=""><br><img src="https://i.imgur.com/L9ruq8C.png" alt=""></li>
+<li>动作s:字符替换’行范围s/旧子串/新字串g’(不加行范围就是默认全局)<br><img src="https://i.imgur.com/lCCyaOa.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="3-字符处理命令"><a href="#3-字符处理命令" class="headerlink" title="3 字符处理命令"></a>3 字符处理命令</h1><h2 id="1-排序命令"><a href="#1-排序命令" class="headerlink" title="1 排序命令"></a>1 排序命令</h2><ul>
+<li>sort [选项] filename<br>  <img src="https://i.imgur.com/Q0ocx9F.png" alt=""><ul>
+<li>-f:忽略大小写<br><img src="https://i.imgur.com/sohnG65.png" alt=""></li>
+<li>-n:按照数值型排序，默认使用的是字符串排序</li>
+<li>-r:反向排序<br><img src="https://i.imgur.com/spocohO.png" alt=""></li>
+<li>-t:指定分隔符，默认使用的是tab</li>
+<li>-k [m,n]:指定字段范围。m-n列<br><img src="https://i.imgur.com/Jba3W5I.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="2-统计命令"><a href="#2-统计命令" class="headerlink" title="2 统计命令"></a>2 统计命令</h2><h3 id="wc命令统计"><a href="#wc命令统计" class="headerlink" title="wc命令统计"></a>wc命令统计</h3><ul>
+<li>wc [选项] filename<br>  <img src="https://i.imgur.com/AcfN7sj.png" alt=""><ul>
+<li>-l:统计行数<br><img src="https://i.imgur.com/upAiJJv.png" alt=""></li>
+<li>-w:统计单词数<br><img src="https://i.imgur.com/hnhrT9l.png" alt=""></li>
+<li>-m:统计字符数<br><img src="https://i.imgur.com/BgPnQGC.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h3 id="test命令"><a href="#test命令" class="headerlink" title="test命令"></a>test命令</h3><p>   test命令主要用于文件测试，字符串测试，数值测试</p>
+<ul>
+<li>test [选项] [项目]<ul>
+<li>-e：文件或者目录是否存在</li>
+<li>-f：文件是否存在</li>
+<li>-d：目录是否存在</li>
+<li>-w：写权限</li>
+<li>-r：读权限</li>
+<li>-x：执行权限</li>
+<li>-nt</li>
+<li>-ot</li>
+<li>-ef </li>
+<li>-eq：等于</li>
+<li>-ne：不等于</li>
+<li>-lt：小于</li>
+<li>-le:小于等于</li>
+<li>-gt：大于</li>
+<li>-ge：大于等于</li>
+<li>！：取反，[ ! -f /etc/passwd],主要中间要有间隔</li>
+<li>-a：逻辑与，[-f /etc/passwd -a -d /etc]</li>
+<li>-o：逻辑或，[-f /etc/passwd -o -d /etc]</li>
+</ul>
+</li>
+</ul>
+<h1 id="4-分支与循环"><a href="#4-分支与循环" class="headerlink" title="4 分支与循环"></a>4 分支与循环</h1><h2 id="1-if语句"><a href="#1-if语句" class="headerlink" title="1 if语句"></a>1 if语句</h2><ul>
+<li><p>单if：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>双if</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">    <span class="keyword">then</span></div><div class="line">       [执行体]</div><div class="line">    <span class="keyword">else</span> </div><div class="line">       [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>例子：<br>  <img src="https://i.imgur.com/2pPiouT.png" alt=""></p>
+</li>
+<li>多if<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">elif</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">else</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="case语句"><a href="#case语句" class="headerlink" title="case语句"></a>case语句</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> $x <span class="keyword">in</span></div><div class="line">     分支<span class="number">1</span> )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支<span class="number">2</span> ）</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支* )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">esac</div></pre></td></tr></table></figure>
+<h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2><ul>
+<li><p>No 1 </p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for i in <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span></div><div class="line">     do </div><div class="line">         [循环体]  # i依次遍历<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span></div><div class="line">     done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子1：<br>  <img src="https://i.imgur.com/SMbOcVN.png" alt=""></p>
+</li>
+<li><p>No 2：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>((<span class="built_in">i</span>=<span class="number">0</span>;<span class="built_in">i</span>&lt;<span class="number">100</span>;<span class="built_in">i</span>=<span class="built_in">i</span>+<span class="number">1</span>))</div><div class="line">   do </div><div class="line">      [循环体]</div><div class="line">   done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子2：<br>  <img src="https://i.imgur.com/YUwr4Bu.png" alt=""></p>
+</li>
+</ul>
+<h2 id="while和until循环"><a href="#while和until循环" class="headerlink" title="while和until循环"></a>while和until循环</h2><ul>
+<li><p>while循环：判断条件为真，循环执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span>[ 测试条件 ]</div><div class="line">    <span class="keyword">do</span> </div><div class="line">       [循环体]</div><div class="line">    <span class="keyword">done</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>例子 1<br>  <img src="https://i.imgur.com/OZLpAgc.png" alt=""></p>
+</li>
+<li><p>until循环：判断条件为假，循环执行</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">until <span class="string">[ 测试条件 ]</span></div><div class="line">    do </div><div class="line">         <span class="string">[循环体]</span></div><div class="line">    done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子2<br>  <img src="https://i.imgur.com/FGskRVO.png" alt=""></p>
+</li>
+</ul>
+<h2 id="break和continue"><a href="#break和continue" class="headerlink" title="break和continue"></a>break和continue</h2><ul>
+<li>break[n]:n指的是跳出n层循环，默认是1</li>
+<li>cntinue[n]:n指的是跳出n层循环，默认是1</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1605,152 +1885,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/11/《windows PE》导出表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/11/《windows PE》导出表/" itemprop="url">《windows PE》导出表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T14:02:11+08:00">
-                2018-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，<strong>通过在INT获得的函数地址覆盖到IAT中，</strong>此时，导出表起到了参照和指引的作用。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/11/《windows PE》导出表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1801,7 +1935,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

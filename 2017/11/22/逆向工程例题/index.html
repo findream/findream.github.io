@@ -132,7 +132,10 @@
 <meta property="og:image" content="https://i.imgur.com/ZLhCwOS.png">
 <meta property="og:image" content="https://i.imgur.com/tdMK2C7.png">
 <meta property="og:image" content="https://i.imgur.com/OAu9jKO.png">
-<meta property="og:updated_time" content="2018-05-16T12:14:18.714Z">
+<meta property="og:image" content="https://i.imgur.com/u7EtpNt.png">
+<meta property="og:image" content="https://i.imgur.com/5WLyLmX.png">
+<meta property="og:image" content="https://i.imgur.com/Kt2UYoI.png">
+<meta property="og:updated_time" content="2018-06-11T06:52:08.467Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="逆向工程例题">
 <meta name="twitter:description" content="逆向分析：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;软件逆向工程（Software Reverse Engineering）又称软件反向工程，是指从可运行的程序系统出发，运用解密、反汇编、系统分析、程序理解等多种计算机技术,对软件的结构、流程、算法、代码等进行逆向拆解和分析，推导出软件产品的源代码、设计原理、结构、算法、处理过程、运行方法及相关文档等。通常，人们把对软">
@@ -575,6 +578,10 @@
 </ul>
 </li>
 </ul>
+<h1 id="例9-debug"><a href="#例9-debug" class="headerlink" title="例9 debug"></a>例9 debug</h1><ul>
+<li><strong>题目来源：<a href="http://www.shiyanbar.com/ctf/2044" target="_blank" rel="external">http://www.shiyanbar.com/ctf/2044</a></strong></li>
+<li>思路：IDA定位到start函数，发现内部调用main的参数有问题，本来会push sub_804855A,但是按照正常逻辑应该调用的是sub_804849B这个函数。我没有用网上的方法，我直接修补程序运行<br>  <img src="https://i.imgur.com/u7EtpNt.png" alt=""><br>  <img src="https://i.imgur.com/5WLyLmX.png" alt=""><br>  <img src="https://i.imgur.com/Kt2UYoI.png" alt=""></li>
+</ul>
 
       
     </div>
@@ -688,7 +695,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -743,7 +750,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#逆向分析："><span class="nav-number">1.</span> <span class="nav-text">逆向分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：分道扬镳"><span class="nav-number">2.</span> <span class="nav-text">例1：分道扬镳</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2：Position"><span class="nav-number">3.</span> <span class="nav-text">例2：Position</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3：NSCTF-Reverse-400"><span class="nav-number">4.</span> <span class="nav-text">例3：NSCTF Reverse 400</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4：证明自己吧"><span class="nav-number">5.</span> <span class="nav-text">例4：证明自己吧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5：看雪CTF2017冬季赛第2题："><span class="nav-number">6.</span> <span class="nav-text">例5：看雪CTF2017冬季赛第2题：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6：GCTF-逆向题Debug"><span class="nav-number">7.</span> <span class="nav-text">例6：GCTF-逆向题Debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7：CSTC-Re2-creakme-Bin2"><span class="nav-number">8.</span> <span class="nav-text">例7：CSTC-Re2:creakme(Bin2)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8：Nuptzj-CTF-Re4-WxyVM"><span class="nav-number">9.</span> <span class="nav-text">例8：Nuptzj_CTF Re4:WxyVM</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#逆向分析："><span class="nav-number">1.</span> <span class="nav-text">逆向分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例1：分道扬镳"><span class="nav-number">2.</span> <span class="nav-text">例1：分道扬镳</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例2：Position"><span class="nav-number">3.</span> <span class="nav-text">例2：Position</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例3：NSCTF-Reverse-400"><span class="nav-number">4.</span> <span class="nav-text">例3：NSCTF Reverse 400</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例4：证明自己吧"><span class="nav-number">5.</span> <span class="nav-text">例4：证明自己吧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例5：看雪CTF2017冬季赛第2题："><span class="nav-number">6.</span> <span class="nav-text">例5：看雪CTF2017冬季赛第2题：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例6：GCTF-逆向题Debug"><span class="nav-number">7.</span> <span class="nav-text">例6：GCTF-逆向题Debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例7：CSTC-Re2-creakme-Bin2"><span class="nav-number">8.</span> <span class="nav-text">例7：CSTC-Re2:creakme(Bin2)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例8：Nuptzj-CTF-Re4-WxyVM"><span class="nav-number">9.</span> <span class="nav-text">例8：Nuptzj_CTF Re4:WxyVM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例9-debug"><span class="nav-number">10.</span> <span class="nav-text">例9 debug</span></a></li></ol></div>
             
 
           </div>

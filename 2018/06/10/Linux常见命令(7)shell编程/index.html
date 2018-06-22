@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="1 shell中的正则表达式2 字符截取命令常见的字符串截取命令 grep：截取行 cut：截取列 printf awk sed  cut命令 cut [选项] [文件名]：用于提取指定列的信息 -d:指定分割符(默认分隔符是tab) -f：指定列号   例子1：-f   例子2：-f -d   例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab    printf命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux常见命令(6)shell">
+<meta property="og:url" content="http://yoursite.com/2018/06/10/Linux常见命令(7)shell编程/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="1 shell中的正则表达式2 字符截取命令常见的字符串截取命令 grep：截取行 cut：截取列 printf awk sed  cut命令 cut [选项] [文件名]：用于提取指定列的信息 -d:指定分割符(默认分隔符是tab) -f：指定列号   例子1：-f   例子2：-f -d   例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab    printf命令">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/jQxcAHP.png">
+<meta property="og:image" content="https://i.imgur.com/28qDT9k.png">
+<meta property="og:image" content="https://i.imgur.com/cEjiJ4B.png">
+<meta property="og:image" content="https://i.imgur.com/OIRafQp.png">
+<meta property="og:image" content="https://i.imgur.com/uNaSyUx.png">
+<meta property="og:image" content="https://i.imgur.com/urLV4Vp.png">
+<meta property="og:image" content="https://i.imgur.com/WrAuwiS.png">
+<meta property="og:image" content="https://i.imgur.com/OwW72HG.png">
+<meta property="og:image" content="https://i.imgur.com/VzdNYY5.png">
+<meta property="og:image" content="https://i.imgur.com/dDHWMUi.png">
+<meta property="og:image" content="https://i.imgur.com/lBriTb0.png">
+<meta property="og:image" content="https://i.imgur.com/aK6dSpL.png">
+<meta property="og:image" content="https://i.imgur.com/HCLWc8n.png">
+<meta property="og:image" content="https://i.imgur.com/rw33CCn.png">
+<meta property="og:image" content="https://i.imgur.com/L9ruq8C.png">
+<meta property="og:image" content="https://i.imgur.com/lCCyaOa.png">
+<meta property="og:image" content="https://i.imgur.com/Q0ocx9F.png">
+<meta property="og:image" content="https://i.imgur.com/sohnG65.png">
+<meta property="og:image" content="https://i.imgur.com/spocohO.png">
+<meta property="og:image" content="https://i.imgur.com/Jba3W5I.png">
+<meta property="og:image" content="https://i.imgur.com/AcfN7sj.png">
+<meta property="og:image" content="https://i.imgur.com/upAiJJv.png">
+<meta property="og:image" content="https://i.imgur.com/hnhrT9l.png">
+<meta property="og:image" content="https://i.imgur.com/BgPnQGC.png">
+<meta property="og:image" content="https://i.imgur.com/2pPiouT.png">
+<meta property="og:image" content="https://i.imgur.com/SMbOcVN.png">
+<meta property="og:image" content="https://i.imgur.com/YUwr4Bu.png">
+<meta property="og:image" content="https://i.imgur.com/OZLpAgc.png">
+<meta property="og:image" content="https://i.imgur.com/FGskRVO.png">
+<meta property="og:updated_time" content="2018-06-21T09:28:39.400Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux常见命令(6)shell">
+<meta name="twitter:description" content="1 shell中的正则表达式2 字符截取命令常见的字符串截取命令 grep：截取行 cut：截取列 printf awk sed  cut命令 cut [选项] [文件名]：用于提取指定列的信息 -d:指定分割符(默认分隔符是tab) -f：指定列号   例子1：-f   例子2：-f -d   例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab    printf命令">
+<meta name="twitter:image" content="https://i.imgur.com/jQxcAHP.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/10/Linux常见命令(7)shell编程/"/>
+
+
+
+
+
+  <title>Linux常见命令(6)shell | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/10/Linux常见命令(7)shell编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux常见命令(6)shell</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T15:02:11+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1><h2 id="常见的字符串截取命令"><a href="#常见的字符串截取命令" class="headerlink" title="常见的字符串截取命令"></a>常见的字符串截取命令</h2><ul>
+<li>grep：截取行</li>
+<li>cut：截取列</li>
+<li>printf</li>
+<li>awk</li>
+<li>sed</li>
+</ul>
+<h2 id="cut命令"><a href="#cut命令" class="headerlink" title="cut命令"></a>cut命令</h2><ul>
+<li>cut [选项] [文件名]：用于提取指定列的信息<ul>
+<li>-d:指定分割符(默认分隔符是tab)</li>
+<li>-f：指定列号</li>
+</ul>
+</li>
+<li>例子1：-f<br>  <img src="https://i.imgur.com/jQxcAHP.png" alt=""></li>
+<li>例子2：-f -d<br>  <img src="https://i.imgur.com/28qDT9k.png" alt=""></li>
+<li>例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab<br>  <img src="https://i.imgur.com/cEjiJ4B.png" alt=""></li>
+</ul>
+<h2 id="printf命令"><a href="#printf命令" class="headerlink" title="printf命令"></a>printf命令</h2><ul>
+<li>printf [输出类型/格式(转义符)] 内容<ul>
+<li>%ns:输出n个字符串。默认数据类型</li>
+<li>%ni：输出n个数，但是不进行ASCII转化</li>
+<li>%n.mf:输出浮点数</li>
+</ul>
+</li>
+<li>[建议]：最好应该像C语言一样，给数据类型加上双引号，尤其是在存在多个格式化输出的时候。</li>
+<li>例子1：printf %s 12345<br>  <img src="https://i.imgur.com/OIRafQp.png" alt=""></li>
+<li>例子2：printf %s %s %s \n 1 2 3<br>  <img src="https://i.imgur.com/uNaSyUx.png" alt=""></li>
+</ul>
+<h2 id="awk命令"><a href="#awk命令" class="headerlink" title="awk命令"></a>awk命令</h2><ul>
+<li>awk [条件1] [‘{动作1}’] [条件2] [‘{动作2}’] [filename]</li>
+<li>例子1：awk ‘{printf $1 “\t” $2 “\n”}’ TestAwk.txt<br>  <img src="https://i.imgur.com/urLV4Vp.png" alt=""></li>
+<li>例子2：<br>  <img src="https://i.imgur.com/WrAuwiS.png" alt=""></li>
+<li>例子3：BEGIN（大写）：用于提前输出 <ul>
+<li>awk ‘BEGIN{print “TEST TEST\n”}{print $2 “\t” $3}’ TestAwk.txt<br><img src="https://i.imgur.com/OwW72HG.png" alt=""></li>
+</ul>
+</li>
+<li>例子4：FS指定分隔符<ul>
+<li>awk ‘BEGIN{FS=”:”}{print $1 “\t” $2}’ /etc/passwd<br><img src="https://i.imgur.com/VzdNYY5.png" alt=""></li>
+</ul>
+</li>
+<li>例子5：END：所有动作执行完毕后，在执行END动作</li>
+</ul>
+<h2 id="sed命令"><a href="#sed命令" class="headerlink" title="sed命令"></a>sed命令</h2><ul>
+<li>sed [选项] [‘动作’] filename<ul>
+<li>选项-n:只将sed处理过的内容打印出来</li>
+<li>选项-e:允许对结果执行多个sed动作</li>
+<li>选项-i：将修改回写入文件。</li>
+<li>动作’a \’：在当前行后添加一行<br><img src="https://i.imgur.com/dDHWMUi.png" alt=""></li>
+<li>动作’i \’:在当前行插入一行或者多行<br><img src="https://i.imgur.com/lBriTb0.png" alt=""></li>
+<li>动作’c \’:用c后面的字符串替换原来的行<br><img src="https://i.imgur.com/aK6dSpL.png" alt=""></li>
+<li>动作d:删除指定行<br><img src="https://i.imgur.com/HCLWc8n.png" alt=""></li>
+<li>动作p：输出指定行<br><img src="https://i.imgur.com/rw33CCn.png" alt=""><br><img src="https://i.imgur.com/L9ruq8C.png" alt=""></li>
+<li>动作s:字符替换’行范围s/旧子串/新字串g’(不加行范围就是默认全局)<br><img src="https://i.imgur.com/lCCyaOa.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="3-字符处理命令"><a href="#3-字符处理命令" class="headerlink" title="3 字符处理命令"></a>3 字符处理命令</h1><h2 id="1-排序命令"><a href="#1-排序命令" class="headerlink" title="1 排序命令"></a>1 排序命令</h2><ul>
+<li>sort [选项] filename<br>  <img src="https://i.imgur.com/Q0ocx9F.png" alt=""><ul>
+<li>-f:忽略大小写<br><img src="https://i.imgur.com/sohnG65.png" alt=""></li>
+<li>-n:按照数值型排序，默认使用的是字符串排序</li>
+<li>-r:反向排序<br><img src="https://i.imgur.com/spocohO.png" alt=""></li>
+<li>-t:指定分隔符，默认使用的是tab</li>
+<li>-k [m,n]:指定字段范围。m-n列<br><img src="https://i.imgur.com/Jba3W5I.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="2-统计命令"><a href="#2-统计命令" class="headerlink" title="2 统计命令"></a>2 统计命令</h2><h3 id="wc命令统计"><a href="#wc命令统计" class="headerlink" title="wc命令统计"></a>wc命令统计</h3><ul>
+<li>wc [选项] filename<br>  <img src="https://i.imgur.com/AcfN7sj.png" alt=""><ul>
+<li>-l:统计行数<br><img src="https://i.imgur.com/upAiJJv.png" alt=""></li>
+<li>-w:统计单词数<br><img src="https://i.imgur.com/hnhrT9l.png" alt=""></li>
+<li>-m:统计字符数<br><img src="https://i.imgur.com/BgPnQGC.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h3 id="test命令"><a href="#test命令" class="headerlink" title="test命令"></a>test命令</h3><p>   test命令主要用于文件测试，字符串测试，数值测试</p>
+<ul>
+<li>test [选项] [项目]<ul>
+<li>-e：文件或者目录是否存在</li>
+<li>-f：文件是否存在</li>
+<li>-d：目录是否存在</li>
+<li>-w：写权限</li>
+<li>-r：读权限</li>
+<li>-x：执行权限</li>
+<li>-nt</li>
+<li>-ot</li>
+<li>-ef </li>
+<li>-eq：等于</li>
+<li>-ne：不等于</li>
+<li>-lt：小于</li>
+<li>-le:小于等于</li>
+<li>-gt：大于</li>
+<li>-ge：大于等于</li>
+<li>！：取反，[ ! -f /etc/passwd],主要中间要有间隔</li>
+<li>-a：逻辑与，[-f /etc/passwd -a -d /etc]</li>
+<li>-o：逻辑或，[-f /etc/passwd -o -d /etc]</li>
+</ul>
+</li>
+</ul>
+<h1 id="4-分支与循环"><a href="#4-分支与循环" class="headerlink" title="4 分支与循环"></a>4 分支与循环</h1><h2 id="1-if语句"><a href="#1-if语句" class="headerlink" title="1 if语句"></a>1 if语句</h2><ul>
+<li><p>单if：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>双if</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">    <span class="keyword">then</span></div><div class="line">       [执行体]</div><div class="line">    <span class="keyword">else</span> </div><div class="line">       [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>例子：<br>  <img src="https://i.imgur.com/2pPiouT.png" alt=""></p>
+</li>
+<li>多if<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">elif</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">else</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="case语句"><a href="#case语句" class="headerlink" title="case语句"></a>case语句</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> $x <span class="keyword">in</span></div><div class="line">     分支<span class="number">1</span> )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支<span class="number">2</span> ）</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支* )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">esac</div></pre></td></tr></table></figure>
+<h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2><ul>
+<li><p>No 1 </p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for i in <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span></div><div class="line">     do </div><div class="line">         [循环体]  # i依次遍历<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span></div><div class="line">     done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子1：<br>  <img src="https://i.imgur.com/SMbOcVN.png" alt=""></p>
+</li>
+<li><p>No 2：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>((<span class="built_in">i</span>=<span class="number">0</span>;<span class="built_in">i</span>&lt;<span class="number">100</span>;<span class="built_in">i</span>=<span class="built_in">i</span>+<span class="number">1</span>))</div><div class="line">   do </div><div class="line">      [循环体]</div><div class="line">   done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子2：<br>  <img src="https://i.imgur.com/YUwr4Bu.png" alt=""></p>
+</li>
+</ul>
+<h2 id="while和until循环"><a href="#while和until循环" class="headerlink" title="while和until循环"></a>while和until循环</h2><ul>
+<li><p>while循环：判断条件为真，循环执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span>[ 测试条件 ]</div><div class="line">    <span class="keyword">do</span> </div><div class="line">       [循环体]</div><div class="line">    <span class="keyword">done</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>例子 1<br>  <img src="https://i.imgur.com/OZLpAgc.png" alt=""></p>
+</li>
+<li><p>until循环：判断条件为假，循环执行</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">until <span class="string">[ 测试条件 ]</span></div><div class="line">    do </div><div class="line">         <span class="string">[循环体]</span></div><div class="line">    done</div></pre></td></tr></table></figure>
+</li>
+<li><p>例子2<br>  <img src="https://i.imgur.com/FGskRVO.png" alt=""></p>
+</li>
+</ul>
+<h2 id="break和continue"><a href="#break和continue" class="headerlink" title="break和continue"></a>break和continue</h2><ul>
+<li>break[n]:n指的是跳出n层循环，默认是1</li>
+<li>cntinue[n]:n指的是跳出n层循环，默认是1</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/04/《Windows Internals》第四章_注册表/" rel="next" title="注册表">
+                <i class="fa fa-chevron-left"></i> 注册表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-shell中的正则表达式"><span class="nav-number">1.</span> <span class="nav-text">1 shell中的正则表达式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-字符截取命令"><span class="nav-number">2.</span> <span class="nav-text">2 字符截取命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的字符串截取命令"><span class="nav-number">2.1.</span> <span class="nav-text">常见的字符串截取命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cut命令"><span class="nav-number">2.2.</span> <span class="nav-text">cut命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#printf命令"><span class="nav-number">2.3.</span> <span class="nav-text">printf命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#awk命令"><span class="nav-number">2.4.</span> <span class="nav-text">awk命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sed命令"><span class="nav-number">2.5.</span> <span class="nav-text">sed命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-字符处理命令"><span class="nav-number">3.</span> <span class="nav-text">3 字符处理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-排序命令"><span class="nav-number">3.1.</span> <span class="nav-text">1 排序命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-统计命令"><span class="nav-number">3.2.</span> <span class="nav-text">2 统计命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#wc命令统计"><span class="nav-number">3.2.1.</span> <span class="nav-text">wc命令统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#test命令"><span class="nav-number">3.2.2.</span> <span class="nav-text">test命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-分支与循环"><span class="nav-number">4.</span> <span class="nav-text">4 分支与循环</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-if语句"><span class="nav-number">4.1.</span> <span class="nav-text">1 if语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#case语句"><span class="nav-number">4.2.</span> <span class="nav-text">case语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for循环"><span class="nav-number">4.3.</span> <span class="nav-text">for循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#while和until循环"><span class="nav-number">4.4.</span> <span class="nav-text">while和until循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#break和continue"><span class="nav-number">4.5.</span> <span class="nav-text">break和continue</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
