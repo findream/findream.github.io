@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-06-21T09:28:39.400Z</updated>
+  <updated>2018-07-08T11:09:48.515Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>病毒分析技术(9) ---文件下载者病毒</title>
+    <link href="http://yoursite.com/2018/07/08/%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF(9)--%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E8%80%85/"/>
+    <id>http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/</id>
+    <published>2018-07-08T06:02:11.000Z</published>
+    <updated>2018-07-08T11:09:48.515Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul><li>1.目录</li><li>2.样本信息</li><li>3.行为分析</li><li>4.样本分析</li><li>5.技术上的总结<a id="more"></a></li></ul><h1 id="二-样本分析"><a href="#二-样本分析" class="headerlink" title="二 样本分析"></a>二 样本分析</h1><ul><li>1.样本名称：sample.WSDump.exe</li><li>2.样本md5：25a1eb3d3f8767a86050d16c226f9912</li><li>3.是否加壳：UPX</li><li>4.编写语言：VC++6.0</li><li>5.样本来源：52pojie<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=697680&amp;extra=page%3D2%26filter%3Dtypeid%26typeid%3D62" title="52pojie" target="_blank" rel="external">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=697680&amp;extra=page%3D2%26filter%3Dtypeid%26typeid%3D62</a></li></ul><h1 id="三-行为分析"><a href="#三-行为分析" class="headerlink" title="三 行为分析"></a>三 行为分析</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;病毒首先创建互斥体121212，和判断自身文件是否存在，如果存在就启用网络套接字以便执行下一步操作。如果不存在则退出程序。<br>    <img src="https://i.imgur.com/Up7dPhZ.png" alt=""></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在执行体函数中，程序首先初始化一些服务控制器的状态信息，然后创建”Net CLR”的互斥体，接着枚举二进制资源，加载hra33.dll这个dll文件，接下来分别创建三个线程，执行不同的操作。<br>    <img src="https://i.imgur.com/UfiDvfo.png" alt=""></p><h1 id="四-样本分析"><a href="#四-样本分析" class="headerlink" title="四 样本分析"></a>四 样本分析</h1><h2 id="ExecuteFun"><a href="#ExecuteFun" class="headerlink" title="ExecuteFun"></a>ExecuteFun</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个函数是程序的主要执行部分。</p><ul><li>设置serviceStatus状态<br>  <img src="https://i.imgur.com/FLYazwS.png" alt=""></li><li>更新资源</li><li>加载hra33.dll这个动态链接库文件</li><li>创建三个线程<br>  <img src="https://i.imgur.com/Kj8IAzt.png" alt=""></li></ul><h2 id="UpdateSource"><a href="#UpdateSource" class="headerlink" title="UpdateSource"></a>UpdateSource</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个函数主要是用于更新资源的，但是由于注册表Services.Net CLR不存在导致函数提前退出。<br>    <img src="https://i.imgur.com/PvxVeFO.png" alt=""></p><ul><li>根据Service注册表下Net CLR文件，创建新文件<br>  <img src="https://i.imgur.com/eO39k7g.png" alt=""></li><li>然后利用跟新资源的方式让其像一个可执行文件<br>  <img src="https://i.imgur.com/A91JbCZ.png" alt=""></li></ul><h2 id="Thread-1"><a href="#Thread-1" class="headerlink" title="Thread_1"></a>Thread_1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用od跟入Thread_1函数。</p><ul><li>获取本地主机的名称和地址<br>  <img src="https://i.imgur.com/4QH59S2.png" alt=""></li><li>获取本地网关<br>  <img src="https://i.imgur.com/uJrXKab.png" alt=""><br>  <img src="https://i.imgur.com/2JGKjbK.png" alt=""></li><li>这里有个病毒作者的错误，本来他想的是如果主机用户是管理员则执行这个判断，但是他直接引用的是字符串，造成判断无效，所有用户都成立<br>  <img src="https://i.imgur.com/7VJTb4v.png" alt=""></li><li>利用上面得到的本地网关地址，和用户名及密码作为参数传入CreateFileAndExecuteFun(emmmm不像是真的)。<br>  <img src="https://i.imgur.com/dk8oKbI.png" alt=""></li></ul><h3 id="CreateFileAndExecuteFun"><a href="#CreateFileAndExecuteFun" class="headerlink" title="CreateFileAndExecuteFun"></a>CreateFileAndExecuteFun</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序先与远程主机利用ipc$漏洞创建一个共享的命名管道，用IPC$,连接者甚至可以与目标主机建立一个空的连接而无需用户名与密码(当然,对方机器必须开了ipc$共享,否则你是连接不上的)，而利用这个空的连接，连接者还可以得到目标主机上的用户列表(不过负责的管理员会禁止导出用户列表的)。还可以访问共享资源,并使用一些字典工具，进行密码探测，以至于获得更高的权限。然后黑客从服务端可以利用nc等软件向主机发送一个shell。</p><ul><li>创建映射方式，以便后期的文件操作，通过WNetAddConnection2A API将共享目录映射为本地磁盘，之后即可按本地文件形式访问文件，最后断开连接。[参考：<a href="http://blog.sina.com.cn/s/blog_672355630102vnwa.html" target="_blank" rel="external">http://blog.sina.com.cn/s/blog_672355630102vnwa.html</a>]<br>  <img src="https://i.imgur.com/QtFlY04.png" alt=""></li><li>把本地文件复制到共享文件的C-E盘<br>   <img src="https://i.imgur.com/8jUIjNa.png" alt=""></li></ul><h2 id="Thread-2"><a href="#Thread-2" class="headerlink" title="Thread_2"></a>Thread_2</h2><ul><li>获取本地时间和20130221进行比较，如果大于则创建Thread3这个线程执行，<br>  <img src="https://i.imgur.com/SisWINB.png" alt=""><br>  <img src="https://i.imgur.com/UFTq1t2.png" alt=""></li></ul><h2 id="Thread-3"><a href="#Thread-3" class="headerlink" title="Thread_3"></a>Thread_3</h2><ul><li>判断链接192.168.1.107是否正常<br>  <img src="https://i.imgur.com/2pjgCY0.png" alt=""></li><li>利用switch 通过接收不同的指令，来决定执行的操作，如下图<br>  <img src="https://i.imgur.com/PaexMGd.png" alt=""><ul><li>16号：<br><img src="https://i.imgur.com/y4CgGAP.png" alt=""></li><li>18号：<br><img src="https://i.imgur.com/Sm9E6nA.png" alt=""></li><li>20号：<br><img src="https://i.imgur.com/UQHocaf.png" alt=""></li><li>6号：<br><img src="https://i.imgur.com/J1PSmYE.png" alt=""></li><li>2号：<br><img src="https://i.imgur.com/4o89JYA.png" alt=""></li><li>3号：<br><img src="https://i.imgur.com/2Gjuiwp.png" alt=""></li><li>4号：<br><img src="https://i.imgur.com/viggCZX.png" alt=""><h3 id="IsConnectFun"><a href="#IsConnectFun" class="headerlink" title="IsConnectFun()"></a>IsConnectFun()</h3></li></ul></li><li>解Base编码得到IP地址：192.168.1.107:83<br>  <img src="https://i.imgur.com/S6nBGNh.png" alt=""></li></ul><h3 id="GetInformationFun"><a href="#GetInformationFun" class="headerlink" title="GetInformationFun"></a>GetInformationFun</h3><ul><li>识别出当前系统版本信息<br>  <img src="https://i.imgur.com/UITUJTP.png" alt=""></li><li>读取注册表，查看CPU的频率<br>  <img src="https://i.imgur.com/eALSKAq.png" alt=""><br>  <img src="https://i.imgur.com/aw2pDqE.png" alt=""><br>  <img src="https://i.imgur.com/ddttIFX.png" alt=""></li><li>调用 GlobalMemoryStatusEx获取内存信息，<br>  <img src="https://i.imgur.com/UdVhHfo.png" alt=""></li><li>查看网络适配器情况<br>  <img src="https://i.imgur.com/CCkwTgW.png" alt=""></li></ul><h1 id="五-技术上的总结"><a href="#五-技术上的总结" class="headerlink" title="五 技术上的总结"></a>五 技术上的总结</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;调试程序比较难的地方在于跟入CreateThread创建的线程中，因为OD是单线程调试器，所以不会直接跟入创建的线程(子线程)中，我们采用Sleep函数来跟入线程函数中。</p><ul><li>找到线程所指向的函数，在函数开头下断</li><li><p>修改调用CreateThread函数下一条语句，写入如下部分</p><figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="number">100000</span>  ;将Slepp的参数压入</div><div class="line"><span class="keyword">Call</span> Kernel32.<span class="built_in">Sleep</span></div></pre></td></tr></table></figure></li><li><p>f8执行，函数自动断在线程函数刚刚下断的地方。</p></li></ul><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考自：<a href="https://blog.csdn.net/whatday/article/details/9059281" target="_blank" rel="external">https://blog.csdn.net/whatday/article/details/9059281</a></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于ipc$的使用，参考自<a href="https://blog.csdn.net/smithjackhack/article/details/78559970" target="_blank" rel="external">https://blog.csdn.net/smithjackhack/article/details/78559970</a></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据文件：<a href="https://pan.baidu.com/s/1SObNJQLCFQ_FVAZFJ5QaSg" target="_blank" rel="external">https://pan.baidu.com/s/1SObNJQLCFQ_FVAZFJ5QaSg</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;一-目录：&quot;&gt;&lt;a href=&quot;#一-目录：&quot; class=&quot;headerlink&quot; title=&quot;一 目录：&quot;&gt;&lt;/a&gt;一 目录：&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;1.目录&lt;/li&gt;
+&lt;li&gt;2.样本信息&lt;/li&gt;
+&lt;li&gt;3.行为分析&lt;/li&gt;
+&lt;li&gt;4.样本分析&lt;/li&gt;
+&lt;li&gt;5.技术上的总结
+    
+    </summary>
+    
+      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Linux常见命令(8)进程管理</title>
+    <link href="http://yoursite.com/2018/06/22/Linux%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4(8)%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"/>
+    <id>http://yoursite.com/2018/06/22/Linux常见命令(8)进程管理/</id>
+    <published>2018-06-22T07:02:11.000Z</published>
+    <updated>2018-06-24T12:14:55.324Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h2><ul><li>ps：查看进程信息<ul><li>-le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程)<br><img src="https://i.imgur.com/fMArD9p.png" alt=""></li><li>aux:查看系统内所有进程的详细信息<br><img src="https://i.imgur.com/nw0N6nW.png" alt=""></li><li>显示的内容介绍<br><img src="https://i.imgur.com/TfRz0CK.png" alt=""><br><img src="https://i.imgur.com/lrpYYuX.png" alt=""></li></ul></li><li>top：查看系统信息<ul><li>-d：指定刷新时间间隔</li><li>P：以CPU使用率排序(默认)</li><li>M：内存使用率</li><li>N：以PID排序<br><img src="https://i.imgur.com/vmkHY7T.png" alt=""><br><img src="https://i.imgur.com/0xRwOhM.png" alt=""><br><img src="https://i.imgur.com/noyZqLF.png" alt=""><br><img src="https://i.imgur.com/ol87Tg3.png" alt=""></li></ul></li><li>pstree：查看进程树<ul><li>-p：罗列进程树<br><img src="https://i.imgur.com/B17g579.png" alt=""><h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2></li></ul></li><li>kill [信号] [PID]：杀死指定进程<br>  <img src="https://i.imgur.com/D5K7o8W.png" alt=""><ul><li>重启进程-1<br><img src="https://i.imgur.com/qIXs2a4.png" alt=""></li><li>正常结束-15</li><li>强制结束-9  </li></ul></li><li>killall [选项] [信号] [PID]：按照进程名杀死进程<br>  <img src="https://i.imgur.com/IE7XUzK.png" alt=""><br>  <img src="https://i.imgur.com/99l2LwH.png" alt=""></li><li>pkill [选项] [信号] [进程名]：按照进程名杀死进程<ul><li>-t 终端号：按照终端号剔除用户</li></ul></li><li>实例1：<ul><li>w：查看登录用户<br><img src="https://i.imgur.com/Z3YvsOk.png" alt=""></li><li>pkill -t [终端号]:剔除用户<br><img src="https://i.imgur.com/iVqIu6a.png" alt=""><h1 id="工作管理"><a href="#工作管理" class="headerlink" title="工作管理"></a>工作管理</h1></li></ul></li><li>jobs:查看后台命令<br>  <img src="https://i.imgur.com/HgQWJgN.png" alt=""></li><li>fg %工作号：将后台执行的命令恢复到前台<br>  <img src="https://i.imgur.com/TzCBD31.png" alt=""><br>  <img src="https://i.imgur.com/0sJgDGQ.png" alt=""></li><li>bg %工作号：将后台执行的命令恢复到后台<h1 id="系统资源查看"><a href="#系统资源查看" class="headerlink" title="系统资源查看"></a>系统资源查看</h1></li><li>vmstat[间隔] [次数] ：查看系统资源<br>  <img src="https://i.imgur.com/pFSGGZK.png" alt=""></li><li>dmesg：查看开机内核信息(查看软硬件信息)<br>  <img src="https://i.imgur.com/mMiooza.png" alt=""></li><li>free：查看内存使用状态<ul><li>k</li><li>m</li><li>g </li></ul></li><li>uptime：看时间</li><li>uname：查看系统内核信息<ul><li>-a：所有信息</li><li>-r：内核版本</li><li>-s：内核名称<br><img src="https://i.imgur.com/0upkqqI.png" alt=""></li></ul></li><li>file /bin/ls:判断操作系统位数(间接)<br>  <img src="https://i.imgur.com/YGNrOk6.png" alt=""></li><li>lsb_release -a:查看系统发行版本<br>  <img src="https://i.imgur.com/D8jJCIe.png" alt=""></li><li>lsof [选项]：列出进程使用或者打开的文件<ul><li>-c [字符串]：</li><li>-u [uid]:</li><li>-p [pid]:<br><img src="https://i.imgur.com/DAeJlxL.png" alt=""><h1 id="系统定时任务"><a href="#系统定时任务" class="headerlink" title="系统定时任务"></a>系统定时任务</h1></li></ul></li><li>crontab </li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;进程管理&quot;&gt;&lt;a href=&quot;#进程管理&quot; class=&quot;headerlink&quot; title=&quot;进程管理&quot;&gt;&lt;/a&gt;进程管理&lt;/h1&gt;&lt;h2 id=&quot;查看进程&quot;&gt;&lt;a href=&quot;#查看进程&quot; class=&quot;headerlink&quot; title=&quot;查看进程&quot;&gt;&lt;/a
+      
+    
+    </summary>
+    
+      <category term="linux" scheme="http://yoursite.com/categories/linux/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Linux常见命令(6)shell</title>
@@ -410,55 +458,6 @@
     </summary>
     
       <category term="windows系统" scheme="http://yoursite.com/categories/windows%E7%B3%BB%E7%BB%9F/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Linux常见命令-文件相关</title>
-    <link href="http://yoursite.com/2018/04/14/Linux%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4(1)%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3/"/>
-    <id>http://yoursite.com/2018/04/14/Linux常见命令(1)文件相关/</id>
-    <published>2018-04-14T07:02:11.000Z</published>
-    <updated>2018-05-16T10:08:12.149Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="第一部分：文件操作"><a href="#第一部分：文件操作" class="headerlink" title="第一部分：文件操作"></a>第一部分：文件操作</h2><ul><li><p>查看文件  <strong>ls [选项]</strong></p><ul><li>-a:查看隐藏文件<br><img src="https://i.imgur.com/kXUvm5N.png" alt=""></li><li>-l:查看详细信息<br><img src="https://i.imgur.com/y6Nk6KF.png" alt=""></li><li>-d:查看指定路径<br><img src="https://i.imgur.com/4ssnuiF.png" alt=""></li><li>-h:查看文件大小（非字节显示）[要和-l参数合用]<br><img src="https://i.imgur.com/OD734Dk.png" alt=""></li><li>-i:查看文件id<br><img src="https://i.imgur.com/WQa7g2f.png" alt=""></li></ul></li><li><p>创建目录  <strong>mkdir [目录名]</strong></p><ul><li>-p:递归创建<br><img src="https://i.imgur.com/KLZNntK.png" alt=""><br><img src="https://i.imgur.com/WCbgKOg.png" alt=""></li></ul></li><li><p>切换目录  <strong>cd [目录]</strong></p><ul><li>.. ：回到上级目录 </li></ul></li><li>删除目录  <strong>rmdir [目录]</strong><br>  <img src="https://i.imgur.com/IdQAxZw.png" alt=""><ul><li>-p： 递归删除空目录<br><img src="https://i.imgur.com/VYj8Fww.png" alt=""></li></ul></li><li><p>查看当前目录 <strong>pwd</strong></p></li><li><p>复制文件  <strong>cp [源文件/目录] [目标文件/目录]</strong></p><ul><li>-r:复制目录</li><li>-p:保存被复制文件的属性</li><li>可以改名，在目标文件中修改</li></ul></li><li><p>剪切或者改名   <strong>mv [源文件/目录] [目标文件/目录]</strong></p><ul><li>可以改名</li></ul></li><li><p>删除文件    <strong>rm [文件名称]</strong></p><ul><li>-r 删除目录</li><li>-f 强制执行</li></ul></li><li><p>创建文件   <strong>touch [文件]</strong></p><ul><li>创建带有空格的文件，可以使用“”把文件名引起来</li></ul></li><li><p>查看文件内容  <strong>cat [文件名]</strong></p><ul><li>-n :显示行数</li></ul></li><li><p>查看文件内容 wc [] [文件名]</p><ul><li>-l ：显示行数</li><li>-m ：显示字符数</li><li>-c : 显示字节数</li><li>-L ：显示最长行的长度</li></ul></li><li><p>反向查看文件 <strong>tac [文件名]</strong></p></li><li><p>分页查看文件 <strong> more [文件名]</strong></p><ul><li>空格/f 翻页</li><li>Enter 换行</li><li>Q/q   退出</li></ul></li><li><p>可向上翻页查看文件  <strong> less [文件名]</strong></p><ul><li>PageUp 向上翻页</li><li>上方向键 向上换行</li><li>/ 搜索</li><li>n 搜索下一个</li></ul></li><li><p>查看文件前几行  <strong>head [文件]</strong></p><ul><li>-n 规定行数（默认是10行）</li></ul></li><li><p>查看文件末尾几行 <strong>tail [文件]</strong></p><ul><li>-n 规定行数</li><li>-f 实时显示[查看日志文件]</li></ul></li><li><p>创建文件链接 **ln [选项] [链接目录文件] [链接名]</p><ul><li>-s:创建的是软连接（快捷方式）<br><img src="https://i.imgur.com/gGbO2yy.png" alt=""></li><li>默认：硬链接（读写操作和源文件一样） </li></ul></li></ul><h1 id="第二部分-文件权限"><a href="#第二部分-文件权限" class="headerlink" title="第二部分 文件权限"></a>第二部分 文件权限</h1><ul><li><p>chmod 修改文件或者目录权限</p><ul><li>chmod [{ugoa}{+-=}{rwx}] [目录]<br><img src="https://i.imgur.com/vtqOU5b.png" alt=""></li><li>-R 递归修改</li><li>chmod [{4(r)2(w)1(x)}] [目录/文件]<br><img src="https://i.imgur.com/Mf7UhJ9.png" alt=""></li><li>普通用户即使没有w权限也可以删除root用户创建的文件（对文件的删除的必要条件是对文件所处在目录具有写入权限）</li></ul></li><li><p>chown 修改文件所有者</p><ul><li><p>chown [用户名] [文件/目录]<br><img src="https://i.imgur.com/poHs1KY.png" alt=""></p></li><li><p>useradd [用户名] 创建用户</p></li><li>chgrp [组名] [文件/目录]</li></ul></li><li><p>umask 显示默认权限</p><ul><li>显示的数值是权限的掩码，真实权限是777-该数值，例如数值为022，权限则为755<br><img src="https://i.imgur.com/WfSX6U3.png" alt=""></li><li>-S ：显示具体的权限（rwx）</li><li>umask [权限掩码] ：修改默认的权限数值</li></ul></li></ul><h1 id="第三部分-文件查询"><a href="#第三部分-文件查询" class="headerlink" title="第三部分 文件查询"></a>第三部分 文件查询</h1><ul><li><p>find [范围] [搜索条件] 搜索文件</p><ul><li>-name <ul><li>-name “<em>init</em>”  :文件名中存在init<br><img src="https://i.imgur.com/Bldk7hu.png" alt=""></li><li>-name “inti??”  :文件名前四个为init，后面两个任意<br><img src="https://i.imgur.com/aWJP0MQ.png" alt=""></li><li>-iname：不分大小写</li></ul></li><li>-size 根据文件大小<ul><li>+n 大于n</li><li>-n 小于n</li><li>n 等于n</li></ul></li><li>-cmin -时间   根据修改时间<br><img src="https://i.imgur.com/PLL9v4O.png" alt=""></li><li>-amin -时间    根据访问时间</li><li>-mmin -时间    根据文件内容</li><li>-a ： 表示两个条件都符合</li><li>-o ： 表示多个条件只需要符合一个<br><img src="https://i.imgur.com/ee3VxCC.png" alt=""></li><li>-type  按照文件类型查找<ul><li>-f 文件<br><img src="https://i.imgur.com/Cuei40d.png" alt=""></li><li>-d 目录<br><img src="https://i.imgur.com/5aASlFG.png" alt=""></li><li>-l 链接<br><img src="https://i.imgur.com/N9l3WS3.png" alt=""></li></ul></li><li>-inum  根据i节点来查找</li><li>-exec/-ok   {}\;   调用其他命令。</li></ul></li><li><p>locate [目录/文件] 搜索（需要更新文件数据库）<br>  <img src="https://i.imgur.com/mQKqGiF.png" alt=""></p><ul><li>-i：不区分大小写</li><li>updatedb ：更新数据库</li></ul></li><li><p>which [文件/目录]  ：用于查找系统命令</p><ul><li>查看命令是否带有别名<br><img src="https://i.imgur.com/fKGDysQ.png" alt=""></li></ul></li><li>grep [关键词] [搜索路径]  ：搜索文件内容<ul><li>-i 不区分不大小写<br><img src="https://i.imgur.com/gUlksFp.png" alt=""></li><li>-v 排除指定字符<br><img src="https://i.imgur.com/rwBOdI1.png" alt=""></li></ul></li><li>whereis [命令]<ul><li>查看命令的所在位置，查看配置文件的位置，和帮助文件的文职。一般的文件名是1的是命令的帮助文件，文件名是5的是配置文件的帮助</li></ul></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;第一部分：文件操作&quot;&gt;&lt;a href=&quot;#第一部分：文件操作&quot; class=&quot;headerlink&quot; title=&quot;第一部分：文件操作&quot;&gt;&lt;/a&gt;第一部分：文件操作&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;查看文件  &lt;strong&gt;ls [选项]&lt;/strong&gt;&lt;/p
-      
-    
-    </summary>
-    
-      <category term="linux" scheme="http://yoursite.com/categories/linux/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>病毒分析技术(8) ---芦苇病毒</title>
-    <link href="http://yoursite.com/2018/04/14/%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF(8)--%E8%8A%A6%E8%8B%87%E7%97%85%E6%AF%92/"/>
-    <id>http://yoursite.com/2018/04/14/病毒分析技术(8)--芦苇病毒/</id>
-    <published>2018-04-14T06:02:11.000Z</published>
-    <updated>2018-04-25T10:50:52.229Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul><li>1.目录</li><li>2.样本信息</li><li>3.行为分析</li><li>4.样本分析</li><li>5.技术上的总结<a id="more"></a><h1 id="二-样本信息"><a href="#二-样本信息" class="headerlink" title="二 样本信息"></a>二 样本信息</h1></li><li>1.样本名称：芦苇病毒.exe</li><li>2.MD5:c71091507f731c203b6c93bc91adedb6</li><li>3.是否加壳：否</li><li>4.编写语言：Microsoft Visual C++ ver 5.0/6.0</li><li>5.样本来源：卡饭社区病毒样本专栏</li></ul><h1 id="三-行为分析"><a href="#三-行为分析" class="headerlink" title="三 行为分析"></a>三 行为分析</h1><ul><li>1.病毒将自身写入/run注册表项，实现自启</li><li>2.向c盘根目录写入三个文件</li><li>3.向样本同一目录下写入bmp文件，并设置隐藏</li><li>4.执行根目录下文件，error图标，随着鼠标移动而移动</li><li>5.加载windows音频驱动，播放音乐。</li><li>6.调用cmd，执行各种批处理</li><li>7.禁用系统安全选项</li><li>8.小结：这个病毒属于恶作剧病毒，没有采用常见的隐藏自身的行为，而是很大方的告诉用户本机已经中病毒了，也许是作者对自身病毒很有自信，执行大量批处理。</li></ul><h1 id="四-样本分析"><a href="#四-样本分析" class="headerlink" title="四 样本分析"></a>四 样本分析</h1><ul><li>1.省略前面的初始化工作，经过程序od跟踪，进入第一个可以用于病毒执行的函数<br>  <img src="https://i.imgur.com/FY1YLu0.png" alt=""><br>  <img src="https://i.imgur.com/l4KcSze.png" alt=""><br>  <img src="https://i.imgur.com/0nJRrMd.png" alt=""></li><li>2.先把1.bmp传入函数，调用004062F0函数，利用Cfile库来创建文件，其实这个库底层也是调用createfile函数实现的。<br>  <img src="https://i.imgur.com/3gZWzZa.png" alt=""></li><li>3.然后利用DistributeFun函数(自定义)进行函数的分发，原理是根据函数入口表，利用jmp去跳转到对应的函数入口。关于这部分内容文章后期介绍。<br>  <img src="https://i.imgur.com/VgKYU9B.png" alt=""></li><li>4.设置文件安全属性(主要是隐藏)，但是不明白的是为什么要把bmp文件设置隐藏。<br>  <img src="https://i.imgur.com/alHyrbp.png" alt=""></li><li>5.调用sub_463F60利用修改注册表的键值来修改桌面配置信息<br>  <img src="https://i.imgur.com/9v6U9LX.png" alt=""><br>  <img src="https://i.imgur.com/FHryWgf.png" alt=""><br>  <img src="https://i.imgur.com/eW9ZlR6.png" alt=""></li><li>6.加载wdmaud.drv等windows音频驱动文件<br>   <img src="https://i.imgur.com/cWqIOsV.png" alt=""><br>   <img src="https://i.imgur.com/NtqcLOk.png" alt=""></li><li>7.播放音乐<br>   <img src="https://i.imgur.com/53Ck3uI.png" alt=""></li><li>8.在c盘根目录下释放三个文件，分别是drawerror.exe。ghost.exe。main.cpp，<br>   <img src="https://i.imgur.com/hxk47VA.png" alt=""></li><li>9.执行前两个文件。drawerror.exe产生error图标，随着鼠标移动而移动。ghost文件没有实际的操作。<br>   <img src="https://i.imgur.com/X5SIkSb.png" alt=""></li><li>10.关闭windows的安全选项，这些函数都是通过删除注册表子项(如SYSTEM\CurrentControlSet\Control\SafeBoot\Minimal)的方法，阻止用户使用安全选项。<br>  <img src="https://i.imgur.com/5d778EX.png" alt=""></li><li>11.修改注册表，实现开机自启<br>  <img src="https://i.imgur.com/SmAtU9l.png" alt=""><br>  <img src="https://i.imgur.com/TIjRv1g.png" alt=""><br>  <img src="https://i.imgur.com/sdqxBTG.png" alt=""></li><li>12.通过消息分发函数调用cmd.exe 执行批处理（关于DispatchMessage函数的溯源放到本次分析的后续介绍）<ul><li>1）创建C:\cc.ico和1.bat</li><li>2）这是比较有意思的一步，程序通过向注册表HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\中写入1.bat，同时释放了一个名为ascaris.dll的文件，这是一个关于过UAC的一个方法。原文来自：安全客<a href="http://bobao.360.cn/learning/detail/420.html" target="_blank" rel="external">http://bobao.360.cn/learning/detail/420.html</a></li><li>3）通过注册表HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\AppCertDlls实现隐藏。</li><li>调用cmd.exe执行操作</li><li>把所有exe格式的文件的图标全部替换成释放的cc.ico  </li></ul></li><li>13.关于1.bat功能的介绍<ul><li>assoc .exe=exefile 关联exe文件，使其可以运行。</li></ul></li><li>14.关于ascaris.bat的介绍<ul><li>根据上文，我们知道使用ascaris.bat和ascaris.dll来避开UAC机制，其中ascaris.bat是主要的执行部分//前面有注释。</li><li>1.复制自身</li><li>2.隐藏文件</li><li>3.制造大文件，破坏行为</li><li>4.监视U盘</li><li>5.隐藏文件等</li></ul></li><li>15.关于兵团.bat的介绍<ul><li>遍历磁盘</li><li>创建随机文件<br><img src="https://i.imgur.com/P8RN0yn.png" alt=""></li></ul></li></ul><h1 id="5-技术总结"><a href="#5-技术总结" class="headerlink" title="5 技术总结"></a>5 技术总结</h1><ul><li>1.关于DistributeFun分发函数的介绍<ul><li>首先函数先将目标函数的地址出传入ebx，然后利用跳转表跳入分发函数的入口地址<br><img src="https://i.imgur.com/6pWui9r.png" alt=""></li><li>继续跟入分发函数可以发现，函数内部，进行了一次调用call ebx，这样就把目标函数的实际调用隐藏起来了。<br><img src="https://i.imgur.com/H8L5nUn.png" alt=""></li></ul></li><li>2.关于DispatchMessage消息分发函数的介绍<ul><li>DispatchMessage函数是将消息派发给窗口函数，我们可以利用SPY++来查看消息对应的窗口处理函数，然后在目标的窗口进程下断点，然后就可以开始调试了。<br><img src="https://i.imgur.com/KYbGkF9.png" alt=""></li></ul></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;一-目录：&quot;&gt;&lt;a href=&quot;#一-目录：&quot; class=&quot;headerlink&quot; title=&quot;一 目录：&quot;&gt;&lt;/a&gt;一 目录：&lt;/h1&gt;&lt;ul&gt;
-&lt;li&gt;1.目录&lt;/li&gt;
-&lt;li&gt;2.样本信息&lt;/li&gt;
-&lt;li&gt;3.行为分析&lt;/li&gt;
-&lt;li&gt;4.样本分析&lt;/li&gt;
-&lt;li&gt;5.技术上的总结
-    
-    </summary>
-    
-      <category term="安全" scheme="http://yoursite.com/categories/%E5%AE%89%E5%85%A8/"/>
     
     
   </entry>

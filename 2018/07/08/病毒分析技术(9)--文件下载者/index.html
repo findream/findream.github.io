@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="病毒分析技术(9) ---文件下载者病毒">
+<meta property="og:url" content="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/Up7dPhZ.png">
+<meta property="og:image" content="https://i.imgur.com/UfiDvfo.png">
+<meta property="og:image" content="https://i.imgur.com/FLYazwS.png">
+<meta property="og:image" content="https://i.imgur.com/Kj8IAzt.png">
+<meta property="og:image" content="https://i.imgur.com/PvxVeFO.png">
+<meta property="og:image" content="https://i.imgur.com/eO39k7g.png">
+<meta property="og:image" content="https://i.imgur.com/A91JbCZ.png">
+<meta property="og:image" content="https://i.imgur.com/4QH59S2.png">
+<meta property="og:image" content="https://i.imgur.com/uJrXKab.png">
+<meta property="og:image" content="https://i.imgur.com/2JGKjbK.png">
+<meta property="og:image" content="https://i.imgur.com/7VJTb4v.png">
+<meta property="og:image" content="https://i.imgur.com/dk8oKbI.png">
+<meta property="og:image" content="https://i.imgur.com/QtFlY04.png">
+<meta property="og:image" content="https://i.imgur.com/8jUIjNa.png">
+<meta property="og:image" content="https://i.imgur.com/SisWINB.png">
+<meta property="og:image" content="https://i.imgur.com/UFTq1t2.png">
+<meta property="og:image" content="https://i.imgur.com/2pjgCY0.png">
+<meta property="og:image" content="https://i.imgur.com/PaexMGd.png">
+<meta property="og:image" content="https://i.imgur.com/y4CgGAP.png">
+<meta property="og:image" content="https://i.imgur.com/Sm9E6nA.png">
+<meta property="og:image" content="https://i.imgur.com/UQHocaf.png">
+<meta property="og:image" content="https://i.imgur.com/J1PSmYE.png">
+<meta property="og:image" content="https://i.imgur.com/4o89JYA.png">
+<meta property="og:image" content="https://i.imgur.com/2Gjuiwp.png">
+<meta property="og:image" content="https://i.imgur.com/viggCZX.png">
+<meta property="og:image" content="https://i.imgur.com/S6nBGNh.png">
+<meta property="og:image" content="https://i.imgur.com/UITUJTP.png">
+<meta property="og:image" content="https://i.imgur.com/eALSKAq.png">
+<meta property="og:image" content="https://i.imgur.com/aw2pDqE.png">
+<meta property="og:image" content="https://i.imgur.com/ddttIFX.png">
+<meta property="og:image" content="https://i.imgur.com/UdVhHfo.png">
+<meta property="og:image" content="https://i.imgur.com/CCkwTgW.png">
+<meta property="og:updated_time" content="2018-07-08T11:09:48.515Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="病毒分析技术(9) ---文件下载者病毒">
+<meta name="twitter:description" content="一 目录： 1.目录 2.样本信息 3.行为分析 4.样本分析 5.技术上的总结">
+<meta name="twitter:image" content="https://i.imgur.com/Up7dPhZ.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/"/>
+
+
+
+
+
+  <title>病毒分析技术(9) ---文件下载者病毒 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(9) ---文件下载者病毒</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T14:02:11+08:00">
+                2018-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术上的总结<a id="more"></a>
+</li>
+</ul>
+<h1 id="二-样本分析"><a href="#二-样本分析" class="headerlink" title="二 样本分析"></a>二 样本分析</h1><ul>
+<li>1.样本名称：sample.WSDump.exe</li>
+<li>2.样本md5：25a1eb3d3f8767a86050d16c226f9912</li>
+<li>3.是否加壳：UPX</li>
+<li>4.编写语言：VC++6.0</li>
+<li>5.样本来源：52pojie<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=697680&amp;extra=page%3D2%26filter%3Dtypeid%26typeid%3D62" title="52pojie" target="_blank" rel="external">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=697680&amp;extra=page%3D2%26filter%3Dtypeid%26typeid%3D62</a></li>
+</ul>
+<h1 id="三-行为分析"><a href="#三-行为分析" class="headerlink" title="三 行为分析"></a>三 行为分析</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;病毒首先创建互斥体121212，和判断自身文件是否存在，如果存在就启用网络套接字以便执行下一步操作。如果不存在则退出程序。<br>    <img src="https://i.imgur.com/Up7dPhZ.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在执行体函数中，程序首先初始化一些服务控制器的状态信息，然后创建”Net CLR”的互斥体，接着枚举二进制资源，加载hra33.dll这个dll文件，接下来分别创建三个线程，执行不同的操作。<br>    <img src="https://i.imgur.com/UfiDvfo.png" alt=""></p>
+<h1 id="四-样本分析"><a href="#四-样本分析" class="headerlink" title="四 样本分析"></a>四 样本分析</h1><h2 id="ExecuteFun"><a href="#ExecuteFun" class="headerlink" title="ExecuteFun"></a>ExecuteFun</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个函数是程序的主要执行部分。</p>
+<ul>
+<li>设置serviceStatus状态<br>  <img src="https://i.imgur.com/FLYazwS.png" alt=""></li>
+<li>更新资源</li>
+<li>加载hra33.dll这个动态链接库文件</li>
+<li>创建三个线程<br>  <img src="https://i.imgur.com/Kj8IAzt.png" alt=""></li>
+</ul>
+<h2 id="UpdateSource"><a href="#UpdateSource" class="headerlink" title="UpdateSource"></a>UpdateSource</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个函数主要是用于更新资源的，但是由于注册表Services.Net CLR不存在导致函数提前退出。<br>    <img src="https://i.imgur.com/PvxVeFO.png" alt=""></p>
+<ul>
+<li>根据Service注册表下Net CLR文件，创建新文件<br>  <img src="https://i.imgur.com/eO39k7g.png" alt=""></li>
+<li>然后利用跟新资源的方式让其像一个可执行文件<br>  <img src="https://i.imgur.com/A91JbCZ.png" alt=""></li>
+</ul>
+<h2 id="Thread-1"><a href="#Thread-1" class="headerlink" title="Thread_1"></a>Thread_1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用od跟入Thread_1函数。</p>
+<ul>
+<li>获取本地主机的名称和地址<br>  <img src="https://i.imgur.com/4QH59S2.png" alt=""></li>
+<li>获取本地网关<br>  <img src="https://i.imgur.com/uJrXKab.png" alt=""><br>  <img src="https://i.imgur.com/2JGKjbK.png" alt=""></li>
+<li>这里有个病毒作者的错误，本来他想的是如果主机用户是管理员则执行这个判断，但是他直接引用的是字符串，造成判断无效，所有用户都成立<br>  <img src="https://i.imgur.com/7VJTb4v.png" alt=""></li>
+<li>利用上面得到的本地网关地址，和用户名及密码作为参数传入CreateFileAndExecuteFun(emmmm不像是真的)。<br>  <img src="https://i.imgur.com/dk8oKbI.png" alt=""></li>
+</ul>
+<h3 id="CreateFileAndExecuteFun"><a href="#CreateFileAndExecuteFun" class="headerlink" title="CreateFileAndExecuteFun"></a>CreateFileAndExecuteFun</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序先与远程主机利用ipc$漏洞创建一个共享的命名管道，用IPC$,连接者甚至可以与目标主机建立一个空的连接而无需用户名与密码(当然,对方机器必须开了ipc$共享,否则你是连接不上的)，而利用这个空的连接，连接者还可以得到目标主机上的用户列表(不过负责的管理员会禁止导出用户列表的)。还可以访问共享资源,并使用一些字典工具，进行密码探测，以至于获得更高的权限。然后黑客从服务端可以利用nc等软件向主机发送一个shell。</p>
+<ul>
+<li>创建映射方式，以便后期的文件操作，通过WNetAddConnection2A API将共享目录映射为本地磁盘，之后即可按本地文件形式访问文件，最后断开连接。[参考：<a href="http://blog.sina.com.cn/s/blog_672355630102vnwa.html" target="_blank" rel="external">http://blog.sina.com.cn/s/blog_672355630102vnwa.html</a>]<br>  <img src="https://i.imgur.com/QtFlY04.png" alt=""></li>
+<li>把本地文件复制到共享文件的C-E盘<br>   <img src="https://i.imgur.com/8jUIjNa.png" alt=""></li>
+</ul>
+<h2 id="Thread-2"><a href="#Thread-2" class="headerlink" title="Thread_2"></a>Thread_2</h2><ul>
+<li>获取本地时间和20130221进行比较，如果大于则创建Thread3这个线程执行，<br>  <img src="https://i.imgur.com/SisWINB.png" alt=""><br>  <img src="https://i.imgur.com/UFTq1t2.png" alt=""></li>
+</ul>
+<h2 id="Thread-3"><a href="#Thread-3" class="headerlink" title="Thread_3"></a>Thread_3</h2><ul>
+<li>判断链接192.168.1.107是否正常<br>  <img src="https://i.imgur.com/2pjgCY0.png" alt=""></li>
+<li>利用switch 通过接收不同的指令，来决定执行的操作，如下图<br>  <img src="https://i.imgur.com/PaexMGd.png" alt=""><ul>
+<li>16号：<br><img src="https://i.imgur.com/y4CgGAP.png" alt=""></li>
+<li>18号：<br><img src="https://i.imgur.com/Sm9E6nA.png" alt=""></li>
+<li>20号：<br><img src="https://i.imgur.com/UQHocaf.png" alt=""></li>
+<li>6号：<br><img src="https://i.imgur.com/J1PSmYE.png" alt=""></li>
+<li>2号：<br><img src="https://i.imgur.com/4o89JYA.png" alt=""></li>
+<li>3号：<br><img src="https://i.imgur.com/2Gjuiwp.png" alt=""></li>
+<li>4号：<br><img src="https://i.imgur.com/viggCZX.png" alt=""><h3 id="IsConnectFun"><a href="#IsConnectFun" class="headerlink" title="IsConnectFun()"></a>IsConnectFun()</h3></li>
+</ul>
+</li>
+<li>解Base编码得到IP地址：192.168.1.107:83<br>  <img src="https://i.imgur.com/S6nBGNh.png" alt=""></li>
+</ul>
+<h3 id="GetInformationFun"><a href="#GetInformationFun" class="headerlink" title="GetInformationFun"></a>GetInformationFun</h3><ul>
+<li>识别出当前系统版本信息<br>  <img src="https://i.imgur.com/UITUJTP.png" alt=""></li>
+<li>读取注册表，查看CPU的频率<br>  <img src="https://i.imgur.com/eALSKAq.png" alt=""><br>  <img src="https://i.imgur.com/aw2pDqE.png" alt=""><br>  <img src="https://i.imgur.com/ddttIFX.png" alt=""></li>
+<li>调用 GlobalMemoryStatusEx获取内存信息，<br>  <img src="https://i.imgur.com/UdVhHfo.png" alt=""></li>
+<li>查看网络适配器情况<br>  <img src="https://i.imgur.com/CCkwTgW.png" alt=""></li>
+</ul>
+<h1 id="五-技术上的总结"><a href="#五-技术上的总结" class="headerlink" title="五 技术上的总结"></a>五 技术上的总结</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;调试程序比较难的地方在于跟入CreateThread创建的线程中，因为OD是单线程调试器，所以不会直接跟入创建的线程(子线程)中，我们采用Sleep函数来跟入线程函数中。</p>
+<ul>
+<li>找到线程所指向的函数，在函数开头下断</li>
+<li><p>修改调用CreateThread函数下一条语句，写入如下部分</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="number">100000</span>  ;将Slepp的参数压入</div><div class="line"><span class="keyword">Call</span> Kernel32.<span class="built_in">Sleep</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>f8执行，函数自动断在线程函数刚刚下断的地方。</p>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考自：<a href="https://blog.csdn.net/whatday/article/details/9059281" target="_blank" rel="external">https://blog.csdn.net/whatday/article/details/9059281</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于ipc$的使用，参考自<a href="https://blog.csdn.net/smithjackhack/article/details/78559970" target="_blank" rel="external">https://blog.csdn.net/smithjackhack/article/details/78559970</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据文件：<a href="https://pan.baidu.com/s/1SObNJQLCFQ_FVAZFJ5QaSg" target="_blank" rel="external">https://pan.baidu.com/s/1SObNJQLCFQ_FVAZFJ5QaSg</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/22/Linux常见命令(8)进程管理/" rel="next" title="Linux常见命令(8)进程管理">
+                <i class="fa fa-chevron-left"></i> Linux常见命令(8)进程管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-目录："><span class="nav-number">1.</span> <span class="nav-text">一 目录：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-样本分析"><span class="nav-number">2.</span> <span class="nav-text">二 样本分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-行为分析"><span class="nav-number">3.</span> <span class="nav-text">三 行为分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-样本分析"><span class="nav-number">4.</span> <span class="nav-text">四 样本分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ExecuteFun"><span class="nav-number">4.1.</span> <span class="nav-text">ExecuteFun</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UpdateSource"><span class="nav-number">4.2.</span> <span class="nav-text">UpdateSource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-1"><span class="nav-number">4.3.</span> <span class="nav-text">Thread_1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CreateFileAndExecuteFun"><span class="nav-number">4.3.1.</span> <span class="nav-text">CreateFileAndExecuteFun</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-2"><span class="nav-number">4.4.</span> <span class="nav-text">Thread_2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-3"><span class="nav-number">4.5.</span> <span class="nav-text">Thread_3</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IsConnectFun"><span class="nav-number">4.5.1.</span> <span class="nav-text">IsConnectFun()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GetInformationFun"><span class="nav-number">4.5.2.</span> <span class="nav-text">GetInformationFun</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-技术上的总结"><span class="nav-number">5.</span> <span class="nav-text">五 技术上的总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

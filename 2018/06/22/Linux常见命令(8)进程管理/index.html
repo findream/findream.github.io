@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="进程管理查看进程 ps：查看进程信息 -le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程) aux:查看系统内所有进程的详细信息 显示的内容介绍   top：查看系统信息 -d：指定刷新时间间隔 P：以CPU使用率排序(默认) M：内存使用率 N：以PID排序   pstree：查看进程树 -p：罗列进程树杀死进程   kill [信号] [PID]：杀死指定进程   重">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux常见命令(8)进程管理">
+<meta property="og:url" content="http://yoursite.com/2018/06/22/Linux常见命令(8)进程管理/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="进程管理查看进程 ps：查看进程信息 -le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程) aux:查看系统内所有进程的详细信息 显示的内容介绍   top：查看系统信息 -d：指定刷新时间间隔 P：以CPU使用率排序(默认) M：内存使用率 N：以PID排序   pstree：查看进程树 -p：罗列进程树杀死进程   kill [信号] [PID]：杀死指定进程   重">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/fMArD9p.png">
+<meta property="og:image" content="https://i.imgur.com/nw0N6nW.png">
+<meta property="og:image" content="https://i.imgur.com/TfRz0CK.png">
+<meta property="og:image" content="https://i.imgur.com/lrpYYuX.png">
+<meta property="og:image" content="https://i.imgur.com/vmkHY7T.png">
+<meta property="og:image" content="https://i.imgur.com/0xRwOhM.png">
+<meta property="og:image" content="https://i.imgur.com/noyZqLF.png">
+<meta property="og:image" content="https://i.imgur.com/ol87Tg3.png">
+<meta property="og:image" content="https://i.imgur.com/B17g579.png">
+<meta property="og:image" content="https://i.imgur.com/D5K7o8W.png">
+<meta property="og:image" content="https://i.imgur.com/qIXs2a4.png">
+<meta property="og:image" content="https://i.imgur.com/IE7XUzK.png">
+<meta property="og:image" content="https://i.imgur.com/99l2LwH.png">
+<meta property="og:image" content="https://i.imgur.com/Z3YvsOk.png">
+<meta property="og:image" content="https://i.imgur.com/iVqIu6a.png">
+<meta property="og:image" content="https://i.imgur.com/HgQWJgN.png">
+<meta property="og:image" content="https://i.imgur.com/TzCBD31.png">
+<meta property="og:image" content="https://i.imgur.com/0sJgDGQ.png">
+<meta property="og:image" content="https://i.imgur.com/pFSGGZK.png">
+<meta property="og:image" content="https://i.imgur.com/mMiooza.png">
+<meta property="og:image" content="https://i.imgur.com/0upkqqI.png">
+<meta property="og:image" content="https://i.imgur.com/YGNrOk6.png">
+<meta property="og:image" content="https://i.imgur.com/D8jJCIe.png">
+<meta property="og:image" content="https://i.imgur.com/DAeJlxL.png">
+<meta property="og:updated_time" content="2018-06-24T12:14:55.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux常见命令(8)进程管理">
+<meta name="twitter:description" content="进程管理查看进程 ps：查看进程信息 -le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程) aux:查看系统内所有进程的详细信息 显示的内容介绍   top：查看系统信息 -d：指定刷新时间间隔 P：以CPU使用率排序(默认) M：内存使用率 N：以PID排序   pstree：查看进程树 -p：罗列进程树杀死进程   kill [信号] [PID]：杀死指定进程   重">
+<meta name="twitter:image" content="https://i.imgur.com/fMArD9p.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/22/Linux常见命令(8)进程管理/"/>
+
+
+
+
+
+  <title>Linux常见命令(8)进程管理 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/Linux常见命令(8)进程管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux常见命令(8)进程管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T15:02:11+08:00">
+                2018-06-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h2><ul>
+<li>ps：查看进程信息<ul>
+<li>-le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程)<br><img src="https://i.imgur.com/fMArD9p.png" alt=""></li>
+<li>aux:查看系统内所有进程的详细信息<br><img src="https://i.imgur.com/nw0N6nW.png" alt=""></li>
+<li>显示的内容介绍<br><img src="https://i.imgur.com/TfRz0CK.png" alt=""><br><img src="https://i.imgur.com/lrpYYuX.png" alt=""></li>
+</ul>
+</li>
+<li>top：查看系统信息<ul>
+<li>-d：指定刷新时间间隔</li>
+<li>P：以CPU使用率排序(默认)</li>
+<li>M：内存使用率</li>
+<li>N：以PID排序<br><img src="https://i.imgur.com/vmkHY7T.png" alt=""><br><img src="https://i.imgur.com/0xRwOhM.png" alt=""><br><img src="https://i.imgur.com/noyZqLF.png" alt=""><br><img src="https://i.imgur.com/ol87Tg3.png" alt=""></li>
+</ul>
+</li>
+<li>pstree：查看进程树<ul>
+<li>-p：罗列进程树<br><img src="https://i.imgur.com/B17g579.png" alt=""><h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2></li>
+</ul>
+</li>
+<li>kill [信号] [PID]：杀死指定进程<br>  <img src="https://i.imgur.com/D5K7o8W.png" alt=""><ul>
+<li>重启进程-1<br><img src="https://i.imgur.com/qIXs2a4.png" alt=""></li>
+<li>正常结束-15</li>
+<li>强制结束-9  </li>
+</ul>
+</li>
+<li>killall [选项] [信号] [PID]：按照进程名杀死进程<br>  <img src="https://i.imgur.com/IE7XUzK.png" alt=""><br>  <img src="https://i.imgur.com/99l2LwH.png" alt=""></li>
+<li>pkill [选项] [信号] [进程名]：按照进程名杀死进程<ul>
+<li>-t 终端号：按照终端号剔除用户</li>
+</ul>
+</li>
+<li>实例1：<ul>
+<li>w：查看登录用户<br><img src="https://i.imgur.com/Z3YvsOk.png" alt=""></li>
+<li>pkill -t [终端号]:剔除用户<br><img src="https://i.imgur.com/iVqIu6a.png" alt=""><h1 id="工作管理"><a href="#工作管理" class="headerlink" title="工作管理"></a>工作管理</h1></li>
+</ul>
+</li>
+<li>jobs:查看后台命令<br>  <img src="https://i.imgur.com/HgQWJgN.png" alt=""></li>
+<li>fg %工作号：将后台执行的命令恢复到前台<br>  <img src="https://i.imgur.com/TzCBD31.png" alt=""><br>  <img src="https://i.imgur.com/0sJgDGQ.png" alt=""></li>
+<li>bg %工作号：将后台执行的命令恢复到后台<h1 id="系统资源查看"><a href="#系统资源查看" class="headerlink" title="系统资源查看"></a>系统资源查看</h1></li>
+<li>vmstat[间隔] [次数] ：查看系统资源<br>  <img src="https://i.imgur.com/pFSGGZK.png" alt=""></li>
+<li>dmesg：查看开机内核信息(查看软硬件信息)<br>  <img src="https://i.imgur.com/mMiooza.png" alt=""></li>
+<li>free：查看内存使用状态<ul>
+<li>k</li>
+<li>m</li>
+<li>g </li>
+</ul>
+</li>
+<li>uptime：看时间</li>
+<li>uname：查看系统内核信息<ul>
+<li>-a：所有信息</li>
+<li>-r：内核版本</li>
+<li>-s：内核名称<br><img src="https://i.imgur.com/0upkqqI.png" alt=""></li>
+</ul>
+</li>
+<li>file /bin/ls:判断操作系统位数(间接)<br>  <img src="https://i.imgur.com/YGNrOk6.png" alt=""></li>
+<li>lsb_release -a:查看系统发行版本<br>  <img src="https://i.imgur.com/D8jJCIe.png" alt=""></li>
+<li>lsof [选项]：列出进程使用或者打开的文件<ul>
+<li>-c [字符串]：</li>
+<li>-u [uid]:</li>
+<li>-p [pid]:<br><img src="https://i.imgur.com/DAeJlxL.png" alt=""><h1 id="系统定时任务"><a href="#系统定时任务" class="headerlink" title="系统定时任务"></a>系统定时任务</h1></li>
+</ul>
+</li>
+<li>crontab </li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/10/Linux常见命令(7)shell编程/" rel="next" title="Linux常见命令(6)shell">
+                <i class="fa fa-chevron-left"></i> Linux常见命令(6)shell
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/08/病毒分析技术(9)--文件下载者/" rel="prev" title="病毒分析技术(9) ---文件下载者病毒">
+                病毒分析技术(9) ---文件下载者病毒 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程管理"><span class="nav-number">1.</span> <span class="nav-text">进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看进程"><span class="nav-number">1.1.</span> <span class="nav-text">查看进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杀死进程"><span class="nav-number">1.2.</span> <span class="nav-text">杀死进程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工作管理"><span class="nav-number">2.</span> <span class="nav-text">工作管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统资源查看"><span class="nav-number">3.</span> <span class="nav-text">系统资源查看</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统定时任务"><span class="nav-number">4.</span> <span class="nav-text">系统定时任务</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
