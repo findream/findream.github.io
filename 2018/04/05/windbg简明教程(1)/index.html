@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="配置篇： 1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：  1）修改虚拟机C盘根目录下配置文件boot.ini 2）修改虚拟机设置，添加一个串行串口 3）在宿主主机启动winbdg，进入内核调试，配置如下 PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加“windbg -b -k com:pipe,port=\.\pipe\com_1,re">
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是在四月份写的本系列的第一篇笔记，没有很系统的学习windbg的使用，马上要去四叶草学习，暑假这几天先系统性的学一下windbg的使用，系列笔记会在这篇文章中。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="windbg内核调试（1）">
-<meta property="og:url" content="http://yoursite.com/2018/04/05/windbg使用简明教程（1）/index.html">
+<meta property="og:title" content="windbg简明教程（1）">
+<meta property="og:url" content="http://yoursite.com/2018/04/05/windbg简明教程(1)/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="配置篇： 1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：  1）修改虚拟机C盘根目录下配置文件boot.ini 2）修改虚拟机设置，添加一个串行串口 3）在宿主主机启动winbdg，进入内核调试，配置如下 PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加“windbg -b -k com:pipe,port=\.\pipe\com_1,re">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是在四月份写的本系列的第一篇笔记，没有很系统的学习windbg的使用，马上要去四叶草学习，暑假这几天先系统性的学一下windbg的使用，系列笔记会在这篇文章中。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/A4wPzBq.png">
 <meta property="og:image" content="https://i.imgur.com/8aGsnQY.png">
@@ -107,10 +107,10 @@
 <meta property="og:image" content="https://i.imgur.com/VnOEiqm.png">
 <meta property="og:image" content="https://i.imgur.com/uRnnzeK.png">
 <meta property="og:image" content="https://i.imgur.com/F1CAKdp.png">
-<meta property="og:updated_time" content="2018-04-06T06:23:29.865Z">
+<meta property="og:updated_time" content="2018-07-17T06:37:10.488Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="windbg内核调试（1）">
-<meta name="twitter:description" content="配置篇： 1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：  1）修改虚拟机C盘根目录下配置文件boot.ini 2）修改虚拟机设置，添加一个串行串口 3）在宿主主机启动winbdg，进入内核调试，配置如下 PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加“windbg -b -k com:pipe,port=\.\pipe\com_1,re">
+<meta name="twitter:title" content="windbg简明教程（1）">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是在四月份写的本系列的第一篇笔记，没有很系统的学习windbg的使用，马上要去四叶草学习，暑假这几天先系统性的学一下windbg的使用，系列笔记会在这篇文章中。">
 <meta name="twitter:image" content="https://i.imgur.com/A4wPzBq.png">
 
 
@@ -141,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/04/05/windbg使用简明教程（1）/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/04/05/windbg简明教程(1)/"/>
 
 
 
 
 
-  <title>windbg内核调试（1） | findream's blog</title>
+  <title>windbg简明教程（1） | findream's blog</title>
   
 
 
@@ -314,7 +314,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/05/windbg使用简明教程（1）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/05/windbg简明教程(1)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -331,7 +331,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">windbg内核调试（1）</h1>
+          <h1 class="post-title" itemprop="name headline">windbg简明教程（1）</h1>
         
 
         <div class="post-meta">
@@ -403,18 +403,19 @@
       
 
       
-        <h2 id="配置篇："><a href="#配置篇：" class="headerlink" title="配置篇："></a>配置篇：</h2><ul>
-<li><p>1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：</p>
-<ul>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是在四月份写的本系列的第一篇笔记，没有很系统的学习windbg的使用，马上要去四叶草学习，暑假这几天先系统性的学一下windbg的使用，系列笔记会在<windbg简明教程(2)>这篇文章中。<br><a id="more"></a></windbg简明教程(2)></p>
+<h2 id="配置篇："><a href="#配置篇：" class="headerlink" title="配置篇："></a>配置篇：</h2><ul>
+<li>1）安装WinDbg，如果要进入内核模式调试的话需要进行如下步骤：<ul>
 <li>1）修改虚拟机C盘根目录下配置文件boot.ini</li>
 <li>2）修改虚拟机设置，添加一个串行串口</li>
 <li>3）在宿主主机启动winbdg，进入内核调试，配置如下<br><img src="https://i.imgur.com/A4wPzBq.png" alt=""></li>
-<li>PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加<strong>“windbg -b -k com:pipe,port=\.\pipe\com_1,resets=0”</strong>即可<br><img src="https://i.imgur.com/8aGsnQY.png" alt=""><a id="more"></a>
-<h2 id="进程篇"><a href="#进程篇" class="headerlink" title="进程篇"></a>进程篇</h2><h3 id="1-查看进程列表"><a href="#1-查看进程列表" class="headerlink" title="1.查看进程列表"></a>1.查看进程列表</h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有多个命令可以显示进程列表，他们主要是：“|”，“.tlist”,“!process”,“!dml_proc”。  </li>
+<li>PS：如果遇到Fail Open \.\pipe\com_1，只需要在快捷方式后面添加<strong>“windbg -b -k com:pipe,port=\.\pipe\com_1,resets=0”</strong>即可<br><img src="https://i.imgur.com/8aGsnQY.png" alt=""></li>
 </ul>
 </li>
-<li><p><font color="#DC143C">| [进程号]</font><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户态下，这个命令显示当前被调试进程的状态信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;被调试进程列表。大多数情况下，调试器中只有一个被调试进程，但可以通过.attach或者.create命令同时挂载或创建多个调试对象。当同时对多个进程调试时，进程号是从0开始的整数。</p>
-</li>
+</ul>
+<h2 id="进程篇"><a href="#进程篇" class="headerlink" title="进程篇"></a>进程篇</h2><h3 id="1-查看进程列表"><a href="#1-查看进程列表" class="headerlink" title="1.查看进程列表"></a>1.查看进程列表</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有多个命令可以显示进程列表，他们主要是：“|”，“.tlist”,“!process”,“!dml_proc”。  </p>
+<ul>
+<li><font color="#DC143C">| [进程号]</font><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户态下，这个命令显示当前被调试进程的状态信息</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;被调试进程列表。大多数情况下，调试器中只有一个被调试进程，但可以通过.attach或者.create命令同时挂载或创建多个调试对象。当同时对多个进程调试时，进程号是从0开始的整数。</li>
 <li><font color="#DC143C">tlist [选项] [模块名]</font><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在用户模式</strong>下显示系统当前的进程列表，存在两个参数选项：-v:显示进程的详细信息，-c显示当前进程信息。默认是-v<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以通过“.attach”或者“.create”来创建或者附件多个调试对象<br>   <img src="https://i.imgur.com/7UqOBCF.png" alt=""></li>
 <li><font color="#DC143C">!process:<strong>显示调试器当前运行的进程信息</strong></font><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是这个命令只能在内核调试中使用，如果在用户态中调试，则会出现如下的错误提示。No export prcoess found<br>   <img src="https://i.imgur.com/CgfwHrG.png" alt=""></li>
 <li><font color="#DC143C"><strong>显示当前进程列表（内核态)</strong></font><br>   <img src="https://i.imgur.com/MetSOw4.png" alt=""></li>
@@ -512,8 +513,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/08/C++第五章_语句/" rel="prev" title="C++Primer 第五章：语句">
-                C++Primer 第五章：语句 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/08/《Windows Internals》第三章_同步/" rel="prev" title="第三章：系统机制-同步">
+                第三章：系统机制-同步 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -591,7 +592,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">69</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -646,7 +647,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置篇："><span class="nav-number">1.</span> <span class="nav-text">配置篇：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程篇"><span class="nav-number">2.</span> <span class="nav-text">进程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-查看进程列表"><span class="nav-number">2.1.</span> <span class="nav-text">1.查看进程列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-进程信息"><span class="nav-number">2.2.</span> <span class="nav-text">2.进程信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-切换进程"><span class="nav-number">2.3.</span> <span class="nav-text">3.切换进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-加载dll"><span class="nav-number">2.4.</span> <span class="nav-text">4.加载dll</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程篇"><span class="nav-number">3.</span> <span class="nav-text">线程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-线程冰封"><span class="nav-number">3.1.</span> <span class="nav-text">1.线程冰封</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-线程切换"><span class="nav-number">3.2.</span> <span class="nav-text">2.线程切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-遍历线程"><span class="nav-number">3.3.</span> <span class="nav-text">3.遍历线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找句柄"><span class="nav-number">3.4.</span> <span class="nav-text">查找句柄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常与事件"><span class="nav-number">3.5.</span> <span class="nav-text">异常与事件</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置篇："><span class="nav-number">2.</span> <span class="nav-text">配置篇：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程篇"><span class="nav-number">3.</span> <span class="nav-text">进程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-查看进程列表"><span class="nav-number">3.1.</span> <span class="nav-text">1.查看进程列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-进程信息"><span class="nav-number">3.2.</span> <span class="nav-text">2.进程信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-切换进程"><span class="nav-number">3.3.</span> <span class="nav-text">3.切换进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-加载dll"><span class="nav-number">3.4.</span> <span class="nav-text">4.加载dll</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程篇"><span class="nav-number">4.</span> <span class="nav-text">线程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-线程冰封"><span class="nav-number">4.1.</span> <span class="nav-text">1.线程冰封</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-线程切换"><span class="nav-number">4.2.</span> <span class="nav-text">2.线程切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-遍历线程"><span class="nav-number">4.3.</span> <span class="nav-text">3.遍历线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找句柄"><span class="nav-number">4.4.</span> <span class="nav-text">查找句柄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常与事件"><span class="nav-number">4.5.</span> <span class="nav-text">异常与事件</span></a></li></ol></li></ol></div>
             
 
           </div>

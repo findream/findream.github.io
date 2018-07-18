@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。 标准命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windbg简明教程（2）">
+<meta property="og:url" content="http://yoursite.com/2018/07/17/windbg简明教程(2)/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。 标准命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/14ktkii.png">
+<meta property="og:image" content="https://i.imgur.com/ehKXMyu.png">
+<meta property="og:image" content="https://i.imgur.com/fakV1jR.png">
+<meta property="og:image" content="https://i.imgur.com/9UBWdJV.png">
+<meta property="og:image" content="https://i.imgur.com/ZRY6LUQ.png">
+<meta property="og:image" content="https://i.imgur.com/sZ8bZej.png">
+<meta property="og:image" content="https://i.imgur.com/GvtTQuo.png">
+<meta property="og:image" content="https://i.imgur.com/LeyExkU.png">
+<meta property="og:image" content="https://i.imgur.com/56vzYoz.png">
+<meta property="og:image" content="https://i.imgur.com/V2ZAvqX.png">
+<meta property="og:image" content="https://i.imgur.com/JseZyB4.png">
+<meta property="og:image" content="https://i.imgur.com/Bn6URkx.png">
+<meta property="og:image" content="https://i.imgur.com/gbN3KAo.png">
+<meta property="og:image" content="https://i.imgur.com/H8bV8me.png">
+<meta property="og:image" content="https://i.imgur.com/7gQzK9C.png">
+<meta property="og:image" content="https://i.imgur.com/gOp09Pz.png">
+<meta property="og:image" content="https://i.imgur.com/3OJtGsP.png">
+<meta property="og:image" content="https://i.imgur.com/yFIysir.png">
+<meta property="og:image" content="https://i.imgur.com/K9Wbgmm.png">
+<meta property="og:image" content="https://i.imgur.com/5jsZPtd.png">
+<meta property="og:image" content="https://i.imgur.com/SErTVJv.png">
+<meta property="og:updated_time" content="2018-07-18T09:36:38.132Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windbg简明教程（2）">
+<meta name="twitter:description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。 标准命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta name="twitter:image" content="https://i.imgur.com/14ktkii.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/17/windbg简明教程(2)/"/>
+
+
+
+
+
+  <title>windbg简明教程（2） | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/windbg简明教程(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">windbg简明教程（2）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-17T15:02:11+08:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第一部分-windbg命令"><a href="#第一部分-windbg命令" class="headerlink" title="第一部分 windbg命令"></a>第一部分 windbg命令</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。</p>
+<h2 id="标准命令"><a href="#标准命令" class="headerlink" title="标准命令"></a>标准命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一共有大概15中标准命令：</p>
+<ul>
+<li>控制程序目标执行：<ul>
+<li>g:恢复程序运行</li>
+<li>t：跟踪步入(trace into)</li>
+<li>o：跟踪步过(trace over)</li>
+</ul>
+</li>
+<li>观察修改寄存器：r命令</li>
+<li>内存数据：<ul>
+<li>d：查看</li>
+<li>e：编辑</li>
+<li>s：搜索</li>
+</ul>
+</li>
+<li>观察堆栈：k命令</li>
+<li>断点相关：<ul>
+<li>BP：设置软件断点</li>
+<li>BA：设置硬件断点</li>
+<li>BL：列举断点</li>
+<li>BC：清除断点</li>
+<li>BD：禁止断点</li>
+<li>BE：重启断点</li>
+</ul>
+</li>
+<li>显示控制线程：~命令</li>
+<li>显示控制进程：|命令</li>
+<li>显示表达式：？命令，显示C++表达式：？？命令</li>
+<li>用于汇编：a命令，用户反汇编的u命令</li>
+<li>显示段选择子：dg命令</li>
+<li>检查符号命令：x命令，搜索符号：ln命令，显示模块命令：lm命令，ld：加载符号表</li>
+<li>结束调试：q命令</li>
+</ul>
+<h2 id="源命令"><a href="#源命令" class="headerlink" title="源命令"></a>源命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;源命令一般以”.”开头，所以也称之为点命令。</p>
+<ul>
+<li>控制调试会话和调试目标：<ul>
+<li>重新开始会话：.restart</li>
+<li>放弃调试目标：.abandon</li>
+<li>创建新进程进行调试：.create</li>
+<li>附加进程进行调试：.attach</li>
+<li>打开转储文件：.opendump</li>
+<li>分离调试目标：.detach</li>
+<li>杀死进程：.kill</li>
+</ul>
+</li>
+<li>管理拓展命令模块：<ul>
+<li>加载模块：.load</li>
+<li>卸载模块：.unload和.unloadall</li>
+<li>显示已经加载的模块：.clain</li>
+</ul>
+</li>
+<li>显示转储调试目标：<ul>
+<li>产生转储目标：.dump</li>
+<li>将原始内存数据写入文件：.writemem</li>
+<li>显示调试会话时间：.time</li>
+<li>显示线程时间：.ttime</li>
+<li>列举任务（进程）列表.tlist</li>
+</ul>
+</li>
+</ul>
+<h2 id="拓展命令"><a href="#拓展命令" class="headerlink" title="拓展命令"></a>拓展命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拓展命令保存的windbg安装目录下的dll文件里面，具体使用是”![模块名称].[命令名称] [参数]”。一般使用.load命令需要写入模块的绝对路径，使用.loadby只需要写入模块名称即可！</p>
+<h1 id="第二部分-命令提示符"><a href="#第二部分-命令提示符" class="headerlink" title="第二部分 命令提示符"></a>第二部分 命令提示符</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;命令提示符号是由一系列文字和大于号组成。他一般标识调试对象的状态或者调试环境的状态。</p>
+<h2 id="调试状态"><a href="#调试状态" class="headerlink" title="调试状态"></a>调试状态</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一般存在三个调试状态。繁忙，暂无调试对象和等待。<br>    <img src="https://i.imgur.com/14ktkii.png" alt=""><br>    <img src="https://i.imgur.com/ehKXMyu.png" alt=""><br>    <img src="https://i.imgur.com/fakV1jR.png" alt=""></p>
+<h2 id="调试环境状态"><a href="#调试环境状态" class="headerlink" title="调试环境状态"></a>调试环境状态</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当调试器处于等待状态，则windbg显示的是调试环境状态。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如上图：第一个0代表的系统号，如果是0代表的是用户态调试，如果是1代表的是内核态调试</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一个0表示的是进程号，是第0号进程。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三个数字表示的是线程号。</p>
+<h2 id="切换调试对象"><a href="#切换调试对象" class="headerlink" title="切换调试对象"></a>切换调试对象</h2><ul>
+<li>切换系统号：||<system_index> s</system_index></li>
+<li>切换进程号：|<process_index> s</process_index></li>
+<li>切换线程号：~<thread_index> s<br>  <img src="https://i.imgur.com/9UBWdJV.png" alt=""></thread_index></li>
+</ul>
+<h1 id="第三部分-创建调试会话"><a href="#第三部分-创建调试会话" class="headerlink" title="第三部分 创建调试会话"></a>第三部分 创建调试会话</h1><h2 id="附加已运行进程"><a href="#附加已运行进程" class="headerlink" title="附加已运行进程"></a>附加已运行进程</h2><ul>
+<li>file菜单—&gt;attach to a process</li>
+<li>.attach (多个会话)</li>
+</ul>
+<h2 id="创建新进程"><a href="#创建新进程" class="headerlink" title="创建新进程"></a>创建新进程</h2><ul>
+<li>file菜单</li>
+<li>.create xxx.exe</li>
+</ul>
+<h2 id="本地内核调试"><a href="#本地内核调试" class="headerlink" title="本地内核调试"></a>本地内核调试</h2><ul>
+<li>file菜单—&gt;kernel Debug</li>
+<li>.attach -k</li>
+</ul>
+<h2 id="调试转储文件"><a href="#调试转储文件" class="headerlink" title="调试转储文件"></a>调试转储文件</h2><ul>
+<li>file菜单—&gt;open Crash dump</li>
+<li>.opendump</li>
+</ul>
+<h1 id="第四部分-理解上下文"><a href="#第四部分-理解上下文" class="headerlink" title="第四部分 理解上下文"></a>第四部分 理解上下文</h1><h2 id="会话上下文"><a href="#会话上下文" class="headerlink" title="会话上下文"></a>会话上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无论用户采用的是本地登录还是远程登录，windows都会为其创建一个会话，这就意味着会话是与windows登录是相关的。<strong>会话上下文只有在内核调试才有作用</strong></p>
+<ul>
+<li><p>!session ：查看系统当前会话<br>  <img src="https://i.imgur.com/ZRY6LUQ.png" alt=""></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kd&gt; !session </div><div class="line">Sessions on <span class="string">machine:</span> <span class="number">1</span>                    <span class="comment">//系统中有1个会话</span></div><div class="line">Valid <span class="string">Sessions:</span> <span class="number">0</span> <span class="number">1</span> <span class="number">3</span>                     <span class="comment">//有效的会话ID是0</span></div><div class="line">Current Session <span class="number">1</span>                         <span class="comment">//当前会话是1</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>!session -s[会话ID]：修改当前会话</p>
+<p>   <img src="https://i.imgur.com/sZ8bZej.png" alt=""></p>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改变会话后，默认进程页随之改变成新会话中的进程，因此以前缓存的用户空间不在有效。目前会话上下文只有在内核调试时才有意义。</p>
+<ul>
+<li>!sprocess：查看当前会话内部的所有进程<br>   <img src="https://i.imgur.com/GvtTQuo.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没有会话都有一个csrss.exe进程(会话管理器进程)，但是该进程不属于任何一个会话。</li>
+</ul>
+<h2 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们都知道一个32位的系统，进程空间为4GB，其中高2GB是系统区域，低2GB是用户区域，但是windows中，系统区域是共享的，但是用户区域是彼此独立的，也就是说，<strong>在内核调试的时候，需要切换进程上下文，但是在用户调试的时候，不需要切换进程上下文。</strong></p>
+<ul>
+<li>!process 0 0:列出所有进程的基本信息，主要是<strong>EPROCESS信息</strong>，这是切换进程上下文的重要信息。<br>  <img src="https://i.imgur.com/LeyExkU.png" alt=""></li>
+<li>.process [EPROCESS]:切换进程上下文。<br>  <img src="https://i.imgur.com/56vzYoz.png" alt=""></li>
+<li>.context：显示页目录基址<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所谓页目录基址，每个进程用户空间都是基于一个页目录基址的，同时也存在一个进程多个页目录基址，此时使用.process会更加有效！</li>
+</ul>
+<h2 id="寄存器上下文"><a href="#寄存器上下文" class="headerlink" title="寄存器上下文"></a>寄存器上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;寄存器存储的是当前线程的数据值，其他线程都存放在内存中，一般在线程切换(线程上下文)或者产生中断(或异常)(异常上下文)会使用寄存器上下文。</p>
+<ul>
+<li>!process [EPROCESS] ：查看进程所有线程信息<br>  <img src="https://i.imgur.com/V2ZAvqX.png" alt=""></li>
+<li>.thread：查看当前线程(我感觉!thread比.thread显示的信息详细很多)<br>  <img src="https://i.imgur.com/JseZyB4.png" alt=""><br>  <img src="https://i.imgur.com/Bn6URkx.png" alt=""></li>
+<li>.thread [THREAD]：修改线程上下文<br>  <img src="https://i.imgur.com/gbN3KAo.png" alt=""></li>
+</ul>
+<h2 id="局部上下文"><a href="#局部上下文" class="headerlink" title="局部上下文"></a>局部上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;函数的局部变量关系着函数执行的顺序和位置，<strong>在调试时，调试器默认显示的是当前函数所对应的局部上下文。</strong></p>
+<ul>
+<li>.frame：显示局部上下文，如下图：显示当前堆栈对于的函数为<strong>RtlpBreakWithStatusInstruction</strong><br>  <img src="https://i.imgur.com/H8bV8me.png" alt=""></li>
+<li>kn：显示帧栈函数列表<br>  <img src="https://i.imgur.com/7gQzK9C.png" alt=""></li>
+<li>.frame [栈函数编号]：切换局部上下文<br>  <img src="https://i.imgur.com/gOp09Pz.png" alt=""></li>
+</ul>
+<h1 id="第五部分-符号与模块"><a href="#第五部分-符号与模块" class="headerlink" title="第五部分 符号与模块"></a>第五部分 符号与模块</h1><h2 id="查看模块信息"><a href="#查看模块信息" class="headerlink" title="查看模块信息"></a>查看模块信息</h2><ul>
+<li>lm :显示当前进程的模块信息<br>  <img src="https://i.imgur.com/3OJtGsP.png" alt=""><ul>
+<li>v：显示详细信息</li>
+<li>m：过滤指定模块名：lm m k*</li>
+<li>o: 过滤已经加载过的模块<br><img src="https://i.imgur.com/yFIysir.png" alt=""></li>
+</ul>
+</li>
+<li>!lmi:可以指定进程名，但是只显示一个模块<br>  <img src="https://i.imgur.com/K9Wbgmm.png" alt=""></li>
+<li>符号类别<br>  <img src="https://i.imgur.com/5jsZPtd.png" alt=""></li>
+</ul>
+<h2 id="查看和分析符号"><a href="#查看和分析符号" class="headerlink" title="查看和分析符号"></a>查看和分析符号</h2><ul>
+<li>x [选项] 模块名!符号名：查看符号信息(支持正则)<ul>
+<li>/a /A: 按地址升序或者降序显示</li>
+<li>/n /N：按名称—</li>
+<li>/z /Z: 按大小</li>
+<li>/t：显示数据类型</li>
+<li>/v：显示符号的类型和大小</li>
+<li>/p: 省略函数名和括号之间的空格，意义不是很大</li>
+</ul>
+</li>
+</ul>
+<h2 id="查看符号"><a href="#查看符号" class="headerlink" title="查看符号"></a>查看符号</h2><ul>
+<li>ln [指定位置符号]：查看指定位置最近的符号<br>  <img src="https://i.imgur.com/SErTVJv.png" alt=""></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/15/常见壳的脱壳思路/" rel="next" title="常见的脱壳思路">
+                <i class="fa fa-chevron-left"></i> 常见的脱壳思路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">69</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-windbg命令"><span class="nav-number">1.</span> <span class="nav-text">第一部分 windbg命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标准命令"><span class="nav-number">1.1.</span> <span class="nav-text">标准命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源命令"><span class="nav-number">1.2.</span> <span class="nav-text">源命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拓展命令"><span class="nav-number">1.3.</span> <span class="nav-text">拓展命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-命令提示符"><span class="nav-number">2.</span> <span class="nav-text">第二部分 命令提示符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调试状态"><span class="nav-number">2.1.</span> <span class="nav-text">调试状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试环境状态"><span class="nav-number">2.2.</span> <span class="nav-text">调试环境状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#切换调试对象"><span class="nav-number">2.3.</span> <span class="nav-text">切换调试对象</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-创建调试会话"><span class="nav-number">3.</span> <span class="nav-text">第三部分 创建调试会话</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#附加已运行进程"><span class="nav-number">3.1.</span> <span class="nav-text">附加已运行进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建新进程"><span class="nav-number">3.2.</span> <span class="nav-text">创建新进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地内核调试"><span class="nav-number">3.3.</span> <span class="nav-text">本地内核调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试转储文件"><span class="nav-number">3.4.</span> <span class="nav-text">调试转储文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分-理解上下文"><span class="nav-number">4.</span> <span class="nav-text">第四部分 理解上下文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#会话上下文"><span class="nav-number">4.1.</span> <span class="nav-text">会话上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程上下文"><span class="nav-number">4.2.</span> <span class="nav-text">进程上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寄存器上下文"><span class="nav-number">4.3.</span> <span class="nav-text">寄存器上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#局部上下文"><span class="nav-number">4.4.</span> <span class="nav-text">局部上下文</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分-符号与模块"><span class="nav-number">5.</span> <span class="nav-text">第五部分 符号与模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看模块信息"><span class="nav-number">5.1.</span> <span class="nav-text">查看模块信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看和分析符号"><span class="nav-number">5.2.</span> <span class="nav-text">查看和分析符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看符号"><span class="nav-number">5.3.</span> <span class="nav-text">查看符号</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

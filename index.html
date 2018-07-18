@@ -294,6 +294,437 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/windbg简明教程(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/17/windbg简明教程(2)/" itemprop="url">windbg简明教程（2）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-17T15:02:11+08:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="第一部分-windbg命令"><a href="#第一部分-windbg命令" class="headerlink" title="第一部分 windbg命令"></a>第一部分 windbg命令</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。</p>
+<h2 id="标准命令"><a href="#标准命令" class="headerlink" title="标准命令"></a>标准命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一共有大概15中标准命令：</p>
+<ul>
+<li>控制程序目标执行：<ul>
+<li>g:恢复程序运行</li>
+<li>t：跟踪步入(trace into)</li>
+<li>o：跟踪步过(trace over)</li>
+</ul>
+</li>
+<li>观察修改寄存器：r命令</li>
+<li>内存数据：<ul>
+<li>d：查看</li>
+<li>e：编辑</li>
+<li>s：搜索</li>
+</ul>
+</li>
+<li>观察堆栈：k命令</li>
+<li>断点相关：<ul>
+<li>BP：设置软件断点</li>
+<li>BA：设置硬件断点</li>
+<li>BL：列举断点</li>
+<li>BC：清除断点</li>
+<li>BD：禁止断点</li>
+<li>BE：重启断点</li>
+</ul>
+</li>
+<li>显示控制线程：~命令</li>
+<li>显示控制进程：|命令</li>
+<li>显示表达式：？命令，显示C++表达式：？？命令</li>
+<li>用于汇编：a命令，用户反汇编的u命令</li>
+<li>显示段选择子：dg命令</li>
+<li>检查符号命令：x命令，搜索符号：ln命令，显示模块命令：lm命令，ld：加载符号表</li>
+<li>结束调试：q命令</li>
+</ul>
+<h2 id="源命令"><a href="#源命令" class="headerlink" title="源命令"></a>源命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;源命令一般以”.”开头，所以也称之为点命令。</p>
+<ul>
+<li>控制调试会话和调试目标：<ul>
+<li>重新开始会话：.restart</li>
+<li>放弃调试目标：.abandon</li>
+<li>创建新进程进行调试：.create</li>
+<li>附加进程进行调试：.attach</li>
+<li>打开转储文件：.opendump</li>
+<li>分离调试目标：.detach</li>
+<li>杀死进程：.kill</li>
+</ul>
+</li>
+<li>管理拓展命令模块：<ul>
+<li>加载模块：.load</li>
+<li>卸载模块：.unload和.unloadall</li>
+<li>显示已经加载的模块：.clain</li>
+</ul>
+</li>
+<li>显示转储调试目标：<ul>
+<li>产生转储目标：.dump</li>
+<li>将原始内存数据写入文件：.writemem</li>
+<li>显示调试会话时间：.time</li>
+<li>显示线程时间：.ttime</li>
+<li>列举任务（进程）列表.tlist</li>
+</ul>
+</li>
+</ul>
+<h2 id="拓展命令"><a href="#拓展命令" class="headerlink" title="拓展命令"></a>拓展命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拓展命令保存的windbg安装目录下的dll文件里面，具体使用是”![模块名称].[命令名称] [参数]”。一般使用.load命令需要写入模块的绝对路径，使用.loadby只需要写入模块名称即可！</p>
+<h1 id="第二部分-命令提示符"><a href="#第二部分-命令提示符" class="headerlink" title="第二部分 命令提示符"></a>第二部分 命令提示符</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;命令提示符号是由一系列文字和大于号组成。他一般标识调试对象的状态或者调试环境的状态。</p>
+<h2 id="调试状态"><a href="#调试状态" class="headerlink" title="调试状态"></a>调试状态</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一般存在三个调试状态。繁忙，暂无调试对象和等待。<br>    <img src="https://i.imgur.com/14ktkii.png" alt=""><br>    <img src="https://i.imgur.com/ehKXMyu.png" alt=""><br>    <img src="https://i.imgur.com/fakV1jR.png" alt=""></p>
+<h2 id="调试环境状态"><a href="#调试环境状态" class="headerlink" title="调试环境状态"></a>调试环境状态</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当调试器处于等待状态，则windbg显示的是调试环境状态。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如上图：第一个0代表的系统号，如果是0代表的是用户态调试，如果是1代表的是内核态调试</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一个0表示的是进程号，是第0号进程。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三个数字表示的是线程号。</p>
+<h2 id="切换调试对象"><a href="#切换调试对象" class="headerlink" title="切换调试对象"></a>切换调试对象</h2><ul>
+<li>切换系统号：||<system_index> s</system_index></li>
+<li>切换进程号：|<process_index> s</process_index></li>
+<li>切换线程号：~<thread_index> s<br>  <img src="https://i.imgur.com/9UBWdJV.png" alt=""></thread_index></li>
+</ul>
+<h1 id="第三部分-创建调试会话"><a href="#第三部分-创建调试会话" class="headerlink" title="第三部分 创建调试会话"></a>第三部分 创建调试会话</h1><h2 id="附加已运行进程"><a href="#附加已运行进程" class="headerlink" title="附加已运行进程"></a>附加已运行进程</h2><ul>
+<li>file菜单—&gt;attach to a process</li>
+<li>.attach (多个会话)</li>
+</ul>
+<h2 id="创建新进程"><a href="#创建新进程" class="headerlink" title="创建新进程"></a>创建新进程</h2><ul>
+<li>file菜单</li>
+<li>.create xxx.exe</li>
+</ul>
+<h2 id="本地内核调试"><a href="#本地内核调试" class="headerlink" title="本地内核调试"></a>本地内核调试</h2><ul>
+<li>file菜单—&gt;kernel Debug</li>
+<li>.attach -k</li>
+</ul>
+<h2 id="调试转储文件"><a href="#调试转储文件" class="headerlink" title="调试转储文件"></a>调试转储文件</h2><ul>
+<li>file菜单—&gt;open Crash dump</li>
+<li>.opendump</li>
+</ul>
+<h1 id="第四部分-理解上下文"><a href="#第四部分-理解上下文" class="headerlink" title="第四部分 理解上下文"></a>第四部分 理解上下文</h1><h2 id="会话上下文"><a href="#会话上下文" class="headerlink" title="会话上下文"></a>会话上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无论用户采用的是本地登录还是远程登录，windows都会为其创建一个会话，这就意味着会话是与windows登录是相关的。<strong>会话上下文只有在内核调试才有作用</strong></p>
+<ul>
+<li><p>!session ：查看系统当前会话<br>  <img src="https://i.imgur.com/ZRY6LUQ.png" alt=""></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kd&gt; !session </div><div class="line">Sessions on <span class="string">machine:</span> <span class="number">1</span>                    <span class="comment">//系统中有1个会话</span></div><div class="line">Valid <span class="string">Sessions:</span> <span class="number">0</span> <span class="number">1</span> <span class="number">3</span>                     <span class="comment">//有效的会话ID是0</span></div><div class="line">Current Session <span class="number">1</span>                         <span class="comment">//当前会话是1</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>!session -s[会话ID]：修改当前会话</p>
+<p>   <img src="https://i.imgur.com/sZ8bZej.png" alt=""></p>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改变会话后，默认进程页随之改变成新会话中的进程，因此以前缓存的用户空间不在有效。目前会话上下文只有在内核调试时才有意义。</p>
+<ul>
+<li>!sprocess：查看当前会话内部的所有进程<br>   <img src="https://i.imgur.com/GvtTQuo.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没有会话都有一个csrss.exe进程(会话管理器进程)，但是该进程不属于任何一个会话。</li>
+</ul>
+<h2 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们都知道一个32位的系统，进程空间为4GB，其中高2GB是系统区域，低2GB是用户区域，但是windows中，系统区域是共享的，但是用户区域是彼此独立的，也就是说，<strong>在内核调试的时候，需要切换进程上下文，但是在用户调试的时候，不需要切换进程上下文。</strong></p>
+<ul>
+<li>!process 0 0:列出所有进程的基本信息，主要是<strong>EPROCESS信息</strong>，这是切换进程上下文的重要信息。<br>  <img src="https://i.imgur.com/LeyExkU.png" alt=""></li>
+<li>.process [EPROCESS]:切换进程上下文。<br>  <img src="https://i.imgur.com/56vzYoz.png" alt=""></li>
+<li>.context：显示页目录基址<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所谓页目录基址，每个进程用户空间都是基于一个页目录基址的，同时也存在一个进程多个页目录基址，此时使用.process会更加有效！</li>
+</ul>
+<h2 id="寄存器上下文"><a href="#寄存器上下文" class="headerlink" title="寄存器上下文"></a>寄存器上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;寄存器存储的是当前线程的数据值，其他线程都存放在内存中，一般在线程切换(线程上下文)或者产生中断(或异常)(异常上下文)会使用寄存器上下文。</p>
+<ul>
+<li>!process [EPROCESS] ：查看进程所有线程信息<br>  <img src="https://i.imgur.com/V2ZAvqX.png" alt=""></li>
+<li>.thread：查看当前线程(我感觉!thread比.thread显示的信息详细很多)<br>  <img src="https://i.imgur.com/JseZyB4.png" alt=""><br>  <img src="https://i.imgur.com/Bn6URkx.png" alt=""></li>
+<li>.thread [THREAD]：修改线程上下文<br>  <img src="https://i.imgur.com/gbN3KAo.png" alt=""></li>
+</ul>
+<h2 id="局部上下文"><a href="#局部上下文" class="headerlink" title="局部上下文"></a>局部上下文</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;函数的局部变量关系着函数执行的顺序和位置，<strong>在调试时，调试器默认显示的是当前函数所对应的局部上下文。</strong></p>
+<ul>
+<li>.frame：显示局部上下文，如下图：显示当前堆栈对于的函数为<strong>RtlpBreakWithStatusInstruction</strong><br>  <img src="https://i.imgur.com/H8bV8me.png" alt=""></li>
+<li>kn：显示帧栈函数列表<br>  <img src="https://i.imgur.com/7gQzK9C.png" alt=""></li>
+<li>.frame [栈函数编号]：切换局部上下文<br>  <img src="https://i.imgur.com/gOp09Pz.png" alt=""></li>
+</ul>
+<h1 id="第五部分-符号与模块"><a href="#第五部分-符号与模块" class="headerlink" title="第五部分 符号与模块"></a>第五部分 符号与模块</h1><h2 id="查看模块信息"><a href="#查看模块信息" class="headerlink" title="查看模块信息"></a>查看模块信息</h2><ul>
+<li>lm :显示当前进程的模块信息<br>  <img src="https://i.imgur.com/3OJtGsP.png" alt=""><ul>
+<li>v：显示详细信息</li>
+<li>m：过滤指定模块名：lm m k*</li>
+<li>o: 过滤已经加载过的模块<br><img src="https://i.imgur.com/yFIysir.png" alt=""></li>
+</ul>
+</li>
+<li>!lmi:可以指定进程名，但是只显示一个模块<br>  <img src="https://i.imgur.com/K9Wbgmm.png" alt=""></li>
+<li>符号类别<br>  <img src="https://i.imgur.com/5jsZPtd.png" alt=""></li>
+</ul>
+<h2 id="查看和分析符号"><a href="#查看和分析符号" class="headerlink" title="查看和分析符号"></a>查看和分析符号</h2><ul>
+<li>x [选项] 模块名!符号名：查看符号信息(支持正则)<ul>
+<li>/a /A: 按地址升序或者降序显示</li>
+<li>/n /N：按名称—</li>
+<li>/z /Z: 按大小</li>
+<li>/t：显示数据类型</li>
+<li>/v：显示符号的类型和大小</li>
+<li>/p: 省略函数名和括号之间的空格，意义不是很大</li>
+</ul>
+</li>
+</ul>
+<h2 id="查看符号"><a href="#查看符号" class="headerlink" title="查看符号"></a>查看符号</h2><ul>
+<li>ln [指定位置符号]：查看指定位置最近的符号<br>  <img src="https://i.imgur.com/SErTVJv.png" alt=""></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/常见壳的脱壳思路/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/15/常见壳的脱壳思路/" itemprop="url">常见的脱壳思路</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T14:02:11+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/15/常见壳的脱壳思路/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -537,71 +968,14 @@
 
       
         
-          
-            <h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h2><ul>
-<li>ps：查看进程信息<ul>
-<li>-le：查看系统内所有进程的详细信息(-l:显示详细信息，-e:显示所有进程)<br><img src="https://i.imgur.com/fMArD9p.png" alt=""></li>
-<li>aux:查看系统内所有进程的详细信息<br><img src="https://i.imgur.com/nw0N6nW.png" alt=""></li>
-<li>显示的内容介绍<br><img src="https://i.imgur.com/TfRz0CK.png" alt=""><br><img src="https://i.imgur.com/lrpYYuX.png" alt=""></li>
-</ul>
-</li>
-<li>top：查看系统信息<ul>
-<li>-d：指定刷新时间间隔</li>
-<li>P：以CPU使用率排序(默认)</li>
-<li>M：内存使用率</li>
-<li>N：以PID排序<br><img src="https://i.imgur.com/vmkHY7T.png" alt=""><br><img src="https://i.imgur.com/0xRwOhM.png" alt=""><br><img src="https://i.imgur.com/noyZqLF.png" alt=""><br><img src="https://i.imgur.com/ol87Tg3.png" alt=""></li>
-</ul>
-</li>
-<li>pstree：查看进程树<ul>
-<li>-p：罗列进程树<br><img src="https://i.imgur.com/B17g579.png" alt=""><h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2></li>
-</ul>
-</li>
-<li>kill [信号] [PID]：杀死指定进程<br>  <img src="https://i.imgur.com/D5K7o8W.png" alt=""><ul>
-<li>重启进程-1<br><img src="https://i.imgur.com/qIXs2a4.png" alt=""></li>
-<li>正常结束-15</li>
-<li>强制结束-9  </li>
-</ul>
-</li>
-<li>killall [选项] [信号] [PID]：按照进程名杀死进程<br>  <img src="https://i.imgur.com/IE7XUzK.png" alt=""><br>  <img src="https://i.imgur.com/99l2LwH.png" alt=""></li>
-<li>pkill [选项] [信号] [进程名]：按照进程名杀死进程<ul>
-<li>-t 终端号：按照终端号剔除用户</li>
-</ul>
-</li>
-<li>实例1：<ul>
-<li>w：查看登录用户<br><img src="https://i.imgur.com/Z3YvsOk.png" alt=""></li>
-<li>pkill -t [终端号]:剔除用户<br><img src="https://i.imgur.com/iVqIu6a.png" alt=""><h1 id="工作管理"><a href="#工作管理" class="headerlink" title="工作管理"></a>工作管理</h1></li>
-</ul>
-</li>
-<li>jobs:查看后台命令<br>  <img src="https://i.imgur.com/HgQWJgN.png" alt=""></li>
-<li>fg %工作号：将后台执行的命令恢复到前台<br>  <img src="https://i.imgur.com/TzCBD31.png" alt=""><br>  <img src="https://i.imgur.com/0sJgDGQ.png" alt=""></li>
-<li>bg %工作号：将后台执行的命令恢复到后台<h1 id="系统资源查看"><a href="#系统资源查看" class="headerlink" title="系统资源查看"></a>系统资源查看</h1></li>
-<li>vmstat[间隔] [次数] ：查看系统资源<br>  <img src="https://i.imgur.com/pFSGGZK.png" alt=""></li>
-<li>dmesg：查看开机内核信息(查看软硬件信息)<br>  <img src="https://i.imgur.com/mMiooza.png" alt=""></li>
-<li>free：查看内存使用状态<ul>
-<li>k</li>
-<li>m</li>
-<li>g </li>
-</ul>
-</li>
-<li>uptime：看时间</li>
-<li>uname：查看系统内核信息<ul>
-<li>-a：所有信息</li>
-<li>-r：内核版本</li>
-<li>-s：内核名称<br><img src="https://i.imgur.com/0upkqqI.png" alt=""></li>
-</ul>
-</li>
-<li>file /bin/ls:判断操作系统位数(间接)<br>  <img src="https://i.imgur.com/YGNrOk6.png" alt=""></li>
-<li>lsb_release -a:查看系统发行版本<br>  <img src="https://i.imgur.com/D8jJCIe.png" alt=""></li>
-<li>lsof [选项]：列出进程使用或者打开的文件<ul>
-<li>-c [字符串]：</li>
-<li>-u [uid]:</li>
-<li>-p [pid]:<br><img src="https://i.imgur.com/DAeJlxL.png" alt=""><h1 id="系统定时任务"><a href="#系统定时任务" class="headerlink" title="系统定时任务"></a>系统定时任务</h1></li>
-</ul>
-</li>
-<li>crontab </li>
-</ul>
-
-          
+          <h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/06/22/Linux常见命令(8)进程管理/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -667,7 +1041,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/06/10/Linux常见命令(7)shell编程/" itemprop="url">Linux常见命令(6)shell</a></h1>
+                <a class="post-title-link" href="/2018/06/10/Linux常见命令(7)shell编程/" itemprop="url">Linux常见命令(7)shell</a></h1>
         
 
         <div class="post-meta">
@@ -740,148 +1114,14 @@
 
       
         
-          
-            <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1><h2 id="常见的字符串截取命令"><a href="#常见的字符串截取命令" class="headerlink" title="常见的字符串截取命令"></a>常见的字符串截取命令</h2><ul>
-<li>grep：截取行</li>
-<li>cut：截取列</li>
-<li>printf</li>
-<li>awk</li>
-<li>sed</li>
-</ul>
-<h2 id="cut命令"><a href="#cut命令" class="headerlink" title="cut命令"></a>cut命令</h2><ul>
-<li>cut [选项] [文件名]：用于提取指定列的信息<ul>
-<li>-d:指定分割符(默认分隔符是tab)</li>
-<li>-f：指定列号</li>
-</ul>
-</li>
-<li>例子1：-f<br>  <img src="https://i.imgur.com/jQxcAHP.png" alt=""></li>
-<li>例子2：-f -d<br>  <img src="https://i.imgur.com/28qDT9k.png" alt=""></li>
-<li>例子3：为什么会产生这种情况呢？红线画出来的是因为分隔符是空格，默认的是tab<br>  <img src="https://i.imgur.com/cEjiJ4B.png" alt=""></li>
-</ul>
-<h2 id="printf命令"><a href="#printf命令" class="headerlink" title="printf命令"></a>printf命令</h2><ul>
-<li>printf [输出类型/格式(转义符)] 内容<ul>
-<li>%ns:输出n个字符串。默认数据类型</li>
-<li>%ni：输出n个数，但是不进行ASCII转化</li>
-<li>%n.mf:输出浮点数</li>
-</ul>
-</li>
-<li>[建议]：最好应该像C语言一样，给数据类型加上双引号，尤其是在存在多个格式化输出的时候。</li>
-<li>例子1：printf %s 12345<br>  <img src="https://i.imgur.com/OIRafQp.png" alt=""></li>
-<li>例子2：printf %s %s %s \n 1 2 3<br>  <img src="https://i.imgur.com/uNaSyUx.png" alt=""></li>
-</ul>
-<h2 id="awk命令"><a href="#awk命令" class="headerlink" title="awk命令"></a>awk命令</h2><ul>
-<li>awk [条件1] [‘{动作1}’] [条件2] [‘{动作2}’] [filename]</li>
-<li>例子1：awk ‘{printf $1 “\t” $2 “\n”}’ TestAwk.txt<br>  <img src="https://i.imgur.com/urLV4Vp.png" alt=""></li>
-<li>例子2：<br>  <img src="https://i.imgur.com/WrAuwiS.png" alt=""></li>
-<li>例子3：BEGIN（大写）：用于提前输出 <ul>
-<li>awk ‘BEGIN{print “TEST TEST\n”}{print $2 “\t” $3}’ TestAwk.txt<br><img src="https://i.imgur.com/OwW72HG.png" alt=""></li>
-</ul>
-</li>
-<li>例子4：FS指定分隔符<ul>
-<li>awk ‘BEGIN{FS=”:”}{print $1 “\t” $2}’ /etc/passwd<br><img src="https://i.imgur.com/VzdNYY5.png" alt=""></li>
-</ul>
-</li>
-<li>例子5：END：所有动作执行完毕后，在执行END动作</li>
-</ul>
-<h2 id="sed命令"><a href="#sed命令" class="headerlink" title="sed命令"></a>sed命令</h2><ul>
-<li>sed [选项] [‘动作’] filename<ul>
-<li>选项-n:只将sed处理过的内容打印出来</li>
-<li>选项-e:允许对结果执行多个sed动作</li>
-<li>选项-i：将修改回写入文件。</li>
-<li>动作’a \’：在当前行后添加一行<br><img src="https://i.imgur.com/dDHWMUi.png" alt=""></li>
-<li>动作’i \’:在当前行插入一行或者多行<br><img src="https://i.imgur.com/lBriTb0.png" alt=""></li>
-<li>动作’c \’:用c后面的字符串替换原来的行<br><img src="https://i.imgur.com/aK6dSpL.png" alt=""></li>
-<li>动作d:删除指定行<br><img src="https://i.imgur.com/HCLWc8n.png" alt=""></li>
-<li>动作p：输出指定行<br><img src="https://i.imgur.com/rw33CCn.png" alt=""><br><img src="https://i.imgur.com/L9ruq8C.png" alt=""></li>
-<li>动作s:字符替换’行范围s/旧子串/新字串g’(不加行范围就是默认全局)<br><img src="https://i.imgur.com/lCCyaOa.png" alt=""></li>
-</ul>
-</li>
-</ul>
-<h1 id="3-字符处理命令"><a href="#3-字符处理命令" class="headerlink" title="3 字符处理命令"></a>3 字符处理命令</h1><h2 id="1-排序命令"><a href="#1-排序命令" class="headerlink" title="1 排序命令"></a>1 排序命令</h2><ul>
-<li>sort [选项] filename<br>  <img src="https://i.imgur.com/Q0ocx9F.png" alt=""><ul>
-<li>-f:忽略大小写<br><img src="https://i.imgur.com/sohnG65.png" alt=""></li>
-<li>-n:按照数值型排序，默认使用的是字符串排序</li>
-<li>-r:反向排序<br><img src="https://i.imgur.com/spocohO.png" alt=""></li>
-<li>-t:指定分隔符，默认使用的是tab</li>
-<li>-k [m,n]:指定字段范围。m-n列<br><img src="https://i.imgur.com/Jba3W5I.png" alt=""></li>
-</ul>
-</li>
-</ul>
-<h2 id="2-统计命令"><a href="#2-统计命令" class="headerlink" title="2 统计命令"></a>2 统计命令</h2><h3 id="wc命令统计"><a href="#wc命令统计" class="headerlink" title="wc命令统计"></a>wc命令统计</h3><ul>
-<li>wc [选项] filename<br>  <img src="https://i.imgur.com/AcfN7sj.png" alt=""><ul>
-<li>-l:统计行数<br><img src="https://i.imgur.com/upAiJJv.png" alt=""></li>
-<li>-w:统计单词数<br><img src="https://i.imgur.com/hnhrT9l.png" alt=""></li>
-<li>-m:统计字符数<br><img src="https://i.imgur.com/BgPnQGC.png" alt=""></li>
-</ul>
-</li>
-</ul>
-<h3 id="test命令"><a href="#test命令" class="headerlink" title="test命令"></a>test命令</h3><p>   test命令主要用于文件测试，字符串测试，数值测试</p>
-<ul>
-<li>test [选项] [项目]<ul>
-<li>-e：文件或者目录是否存在</li>
-<li>-f：文件是否存在</li>
-<li>-d：目录是否存在</li>
-<li>-w：写权限</li>
-<li>-r：读权限</li>
-<li>-x：执行权限</li>
-<li>-nt</li>
-<li>-ot</li>
-<li>-ef </li>
-<li>-eq：等于</li>
-<li>-ne：不等于</li>
-<li>-lt：小于</li>
-<li>-le:小于等于</li>
-<li>-gt：大于</li>
-<li>-ge：大于等于</li>
-<li>！：取反，[ ! -f /etc/passwd],主要中间要有间隔</li>
-<li>-a：逻辑与，[-f /etc/passwd -a -d /etc]</li>
-<li>-o：逻辑或，[-f /etc/passwd -o -d /etc]</li>
-</ul>
-</li>
-</ul>
-<h1 id="4-分支与循环"><a href="#4-分支与循环" class="headerlink" title="4 分支与循环"></a>4 分支与循环</h1><h2 id="1-if语句"><a href="#1-if语句" class="headerlink" title="1 if语句"></a>1 if语句</h2><ul>
-<li><p>单if：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>双if</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">    <span class="keyword">then</span></div><div class="line">       [执行体]</div><div class="line">    <span class="keyword">else</span> </div><div class="line">       [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>例子：<br>  <img src="https://i.imgur.com/2pPiouT.png" alt=""></p>
-</li>
-<li>多if<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>[条件]</div><div class="line">   <span class="keyword">then</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">elif</span></div><div class="line">      [执行体]</div><div class="line">   <span class="keyword">else</span></div><div class="line">      [执行体]</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="case语句"><a href="#case语句" class="headerlink" title="case语句"></a>case语句</h2><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> $x <span class="keyword">in</span></div><div class="line">     分支<span class="number">1</span> )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支<span class="number">2</span> ）</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">     分支* )</div><div class="line">            [<span class="meta">执行体</span>]</div><div class="line">            ；；</div><div class="line">esac</div></pre></td></tr></table></figure>
-<h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2><ul>
-<li><p>No 1 </p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for i in <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span></div><div class="line">     do </div><div class="line">         [循环体]  # i依次遍历<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span></div><div class="line">     done</div></pre></td></tr></table></figure>
-</li>
-<li><p>例子1：<br>  <img src="https://i.imgur.com/SMbOcVN.png" alt=""></p>
-</li>
-<li><p>No 2：</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>((<span class="built_in">i</span>=<span class="number">0</span>;<span class="built_in">i</span>&lt;<span class="number">100</span>;<span class="built_in">i</span>=<span class="built_in">i</span>+<span class="number">1</span>))</div><div class="line">   do </div><div class="line">      [循环体]</div><div class="line">   done</div></pre></td></tr></table></figure>
-</li>
-<li><p>例子2：<br>  <img src="https://i.imgur.com/YUwr4Bu.png" alt=""></p>
-</li>
-</ul>
-<h2 id="while和until循环"><a href="#while和until循环" class="headerlink" title="while和until循环"></a>while和until循环</h2><ul>
-<li><p>while循环：判断条件为真，循环执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span>[ 测试条件 ]</div><div class="line">    <span class="keyword">do</span> </div><div class="line">       [循环体]</div><div class="line">    <span class="keyword">done</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>例子 1<br>  <img src="https://i.imgur.com/OZLpAgc.png" alt=""></p>
-</li>
-<li><p>until循环：判断条件为假，循环执行</p>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">until <span class="string">[ 测试条件 ]</span></div><div class="line">    do </div><div class="line">         <span class="string">[循环体]</span></div><div class="line">    done</div></pre></td></tr></table></figure>
-</li>
-<li><p>例子2<br>  <img src="https://i.imgur.com/FGskRVO.png" alt=""></p>
-</li>
-</ul>
-<h2 id="break和continue"><a href="#break和continue" class="headerlink" title="break和continue"></a>break和continue</h2><ul>
-<li>break[n]:n指的是跳出n层循环，默认是1</li>
-<li>cntinue[n]:n指的是跳出n层循环，默认是1</li>
-</ul>
-
-          
+          <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/06/10/Linux常见命令(7)shell编程/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1654,298 +1894,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/20/Linux常见命令(5)权限管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/Linux常见命令(5)权限管理/" itemprop="url">Linux常见命令(5)权限管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-20T15:02:11+08:00">
-                2018-05-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-ACL权限"><a href="#第一部分-ACL权限" class="headerlink" title="第一部分 ACL权限"></a>第一部分 ACL权限</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用<strong>dumpe2fs -h /dev/sda3</strong>这个命令即可查看。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/20/Linux常见命令(5)权限管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/17/Linux常见命令(4)用户和用户组管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/17/Linux常见命令(4)用户和用户组管理/" itemprop="url">Linux常见命令(4)用户和用户组管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-17T15:02:11+08:00">
-                2018-05-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-用户信息配置文件passwd"><a href="#第一部分-用户信息配置文件passwd" class="headerlink" title="第一部分 用户信息配置文件passwd"></a>第一部分 用户信息配置文件passwd</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息文件路径为/etc/passwd,一共有七个字段。分别是用户名称，秘密标志，UID,GID，用户说明，主目录，shell。<br>    <img src="https://i.imgur.com/cpdt8BN.png" alt=""><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/17/Linux常见命令(4)用户和用户组管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1996,7 +1944,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">69</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
