@@ -109,7 +109,7 @@
 <meta property="og:image" content="https://i.imgur.com/DEcHzCP.png">
 <meta property="og:image" content="https://i.imgur.com/67nJFsJ.png">
 <meta property="og:image" content="https://i.imgur.com/ju9KaFZ.png">
-<meta property="og:updated_time" content="2018-07-21T10:26:23.612Z">
+<meta property="og:updated_time" content="2018-07-21T10:31:52.889Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="windbg学习笔记（3）">
 <meta name="twitter:description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
@@ -405,7 +405,7 @@
       
 
       
-        <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。</p>
+        <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。<br><a id="more"></a></p>
 <h2 id="二次机会"><a href="#二次机会" class="headerlink" title="二次机会"></a>二次机会</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于每个异常，windows异常处理模块给与两次处理异常的机会，<strong>也就是说程序拥有两次处理机会，</strong>处理后调试器会向系统返回一直处理结果。如果最后一次无法处理完异常，windows本身会调用默认的异常处理(用户态下抛出默认提示框，内核下蓝屏)。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于第一次处理异常机会，调试器一般会放弃处理，让系统继续分发，交给自身的异常处理程序处理，对于第二次处理机会，调试器一般会断在产生异常的地方。(与原文表述不同)</p>
 <h2 id="GH和GN命令"><a href="#GH和GN命令" class="headerlink" title="GH和GN命令"></a>GH和GN命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在调试器中断异常后，可以使用G命令(go)恢复程序运行，我们可以指定程序关于异常处理的结果，也就是如果GH(go handle)表示此异常得到处理，如果是GN(go not handle)表示异常为处理.</p>
