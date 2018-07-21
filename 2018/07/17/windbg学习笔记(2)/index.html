@@ -83,8 +83,8 @@
 
 <meta name="description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="windbg简明教程（2）">
-<meta property="og:url" content="http://yoursite.com/2018/07/17/windbg简明教程(2)/index.html">
+<meta property="og:title" content="windbg学习笔记（2）">
+<meta property="og:url" content="http://yoursite.com/2018/07/17/windbg学习笔记(2)/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。">
 <meta property="og:locale" content="zh-Hans">
@@ -109,9 +109,9 @@
 <meta property="og:image" content="https://i.imgur.com/K9Wbgmm.png">
 <meta property="og:image" content="https://i.imgur.com/5jsZPtd.png">
 <meta property="og:image" content="https://i.imgur.com/SErTVJv.png">
-<meta property="og:updated_time" content="2018-07-18T09:43:38.166Z">
+<meta property="og:updated_time" content="2018-07-21T10:27:04.841Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="windbg简明教程（2）">
+<meta name="twitter:title" content="windbg学习笔记（2）">
 <meta name="twitter:description" content="第一部分 windbg命令&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。">
 <meta name="twitter:image" content="https://i.imgur.com/14ktkii.png">
 
@@ -143,13 +143,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/17/windbg简明教程(2)/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/17/windbg学习笔记(2)/"/>
 
 
 
 
 
-  <title>windbg简明教程（2） | findream's blog</title>
+  <title>windbg学习笔记（2） | findream's blog</title>
   
 
 
@@ -316,7 +316,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/windbg简明教程(2)/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/windbg学习笔记(2)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -333,7 +333,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">windbg简明教程（2）</h1>
+          <h1 class="post-title" itemprop="name headline">windbg学习笔记（2）</h1>
         
 
         <div class="post-meta">
@@ -421,7 +421,15 @@
 <li>s：搜索</li>
 </ul>
 </li>
-<li>观察堆栈：k命令</li>
+<li>观察堆栈：k命令<ul>
+<li>kd：显示所有栈情况</li>
+<li>kp：显示调用栈</li>
+<li>kb：显示前三个参数</li>
+<li>kc：只显示调用栈的模块名和地址（不显示调用栈的地址）</li>
+<li>kn：段函数加标号</li>
+<li>Kv：显示FPO和调用约定</li>
+</ul>
+</li>
 <li>断点相关：<ul>
 <li>BP：设置软件断点</li>
 <li>BA：设置硬件断点</li>
@@ -583,6 +591,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/07/19/windbg学习笔记(3)/" rel="prev" title="windbg学习笔记（3）">
+                windbg学习笔记（3） <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -658,7 +670,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">69</span>
+                  <span class="site-state-item-count">70</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

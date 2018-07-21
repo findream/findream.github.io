@@ -81,16 +81,39 @@
 
 
 
-<meta name="description" content="Apes--change the world&apos;s animals">
-<meta property="og:type" content="website">
-<meta property="og:title" content="findream&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windbg学习笔记（3）">
+<meta property="og:url" content="http://yoursite.com/2018/07/19/windbg学习笔记(3)/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="Apes--change the world&apos;s animals">
+<meta property="og:description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/xq7KW1V.png">
+<meta property="og:image" content="https://i.imgur.com/iMygNk2.png">
+<meta property="og:image" content="https://i.imgur.com/snBzvbi.png">
+<meta property="og:image" content="https://i.imgur.com/tlmSTkN.png">
+<meta property="og:image" content="https://i.imgur.com/voVX6Ut.png">
+<meta property="og:image" content="https://i.imgur.com/NSAlWWv.png">
+<meta property="og:image" content="https://i.imgur.com/XPdCGi3.png">
+<meta property="og:image" content="https://i.imgur.com/FXiZyt1.png">
+<meta property="og:image" content="https://i.imgur.com/57u8vYS.png">
+<meta property="og:image" content="https://i.imgur.com/iwJQhhq.png">
+<meta property="og:image" content="https://i.imgur.com/BFIfI2o.png">
+<meta property="og:image" content="https://i.imgur.com/f6PjmmK.png">
+<meta property="og:image" content="https://i.imgur.com/XdiwG7f.png">
+<meta property="og:image" content="https://i.imgur.com/Dtwfc9f.png">
+<meta property="og:image" content="https://i.imgur.com/ZrYiG3g.png">
+<meta property="og:image" content="https://i.imgur.com/kuaFEce.png">
+<meta property="og:image" content="https://i.imgur.com/EM5w2Ww.png">
+<meta property="og:image" content="https://i.imgur.com/Ug5rUYz.png">
+<meta property="og:image" content="https://i.imgur.com/DEcHzCP.png">
+<meta property="og:image" content="https://i.imgur.com/67nJFsJ.png">
+<meta property="og:image" content="https://i.imgur.com/ju9KaFZ.png">
+<meta property="og:updated_time" content="2018-07-21T10:26:23.612Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="findream&#39;s blog">
-<meta name="twitter:description" content="Apes--change the world&apos;s animals">
+<meta name="twitter:title" content="windbg学习笔记（3）">
+<meta name="twitter:description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
+<meta name="twitter:image" content="https://i.imgur.com/xq7KW1V.png">
 
 
 
@@ -120,13 +143,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/19/windbg学习笔记(3)/"/>
 
 
 
 
 
-  <title>findream's blog</title>
+  <title>windbg学习笔记（3） | findream's blog</title>
   
 
 
@@ -145,8 +168,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -279,9 +301,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -311,9 +333,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/19/windbg学习笔记(3)/" itemprop="url">windbg学习笔记（3）</a></h1>
+          <h1 class="post-title" itemprop="name headline">windbg学习笔记（3）</h1>
         
 
         <div class="post-meta">
@@ -385,9 +405,7 @@
       
 
       
-        
-          
-            <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。</p>
+        <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。</p>
 <h2 id="二次机会"><a href="#二次机会" class="headerlink" title="二次机会"></a>二次机会</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于每个异常，windows异常处理模块给与两次处理异常的机会，<strong>也就是说程序拥有两次处理机会，</strong>处理后调试器会向系统返回一直处理结果。如果最后一次无法处理完异常，windows本身会调用默认的异常处理(用户态下抛出默认提示框，内核下蓝屏)。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于第一次处理异常机会，调试器一般会放弃处理，让系统继续分发，交给自身的异常处理程序处理，对于第二次处理机会，调试器一般会断在产生异常的地方。(与原文表述不同)</p>
 <h2 id="GH和GN命令"><a href="#GH和GN命令" class="headerlink" title="GH和GN命令"></a>GH和GN命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在调试器中断异常后，可以使用G命令(go)恢复程序运行，我们可以指定程序关于异常处理的结果，也就是如果GH(go handle)表示此异常得到处理，如果是GN(go not handle)表示异常为处理.</p>
@@ -594,8 +612,6 @@
 <li>dl[b] startaddress counter size</li>
 </ul>
 
-          
-        
       
     </div>
     
@@ -612,158 +628,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/17/windbg学习笔记(2)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/17/windbg学习笔记(2)/" itemprop="url">windbg学习笔记（2）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-17T15:02:11+08:00">
-                2018-07-17
-              </time>
+              <a href="/2018/07/17/windbg学习笔记(2)/" rel="next" title="windbg学习笔记（2）">
+                <i class="fa fa-chevron-left"></i> windbg学习笔记（2）
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows内核/" itemprop="url" rel="index">
-                    <span itemprop="name">windows内核</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <h1 id="第一部分-windbg命令"><a href="#第一部分-windbg命令" class="headerlink" title="第一部分 windbg命令"></a>第一部分 windbg命令</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg命令一共有三大类：标准命令(命令特别短，容易记忆)，元命令(也是windbg内置命令，一般用”.”表示，也成点命令)，拓展命令(利用windbg目录中的dll文件实现的，使用的时候需要加载需要使用的模块)。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/17/windbg学习笔记(2)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -773,1196 +659,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/常见壳的脱壳思路/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/15/常见壳的脱壳思路/" itemprop="url">常见的脱壳思路</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T14:02:11+08:00">
-                2018-07-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/15/常见壳的脱壳思路/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/08/病毒分析技术(9)--文件下载者/" itemprop="url">病毒分析技术(9) ---文件下载者病毒</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T14:02:11+08:00">
-                2018-07-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
-<li>1.目录</li>
-<li>2.样本信息</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术上的总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/08/病毒分析技术(9)--文件下载者/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/Linux常见命令(8)进程管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/22/Linux常见命令(8)进程管理/" itemprop="url">Linux常见命令(8)进程管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T15:02:11+08:00">
-                2018-06-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/06/22/Linux常见命令(8)进程管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/10/Linux常见命令(7)shell编程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/10/Linux常见命令(7)shell编程/" itemprop="url">Linux常见命令(7)shell</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T15:02:11+08:00">
-                2018-06-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/06/10/Linux常见命令(7)shell编程/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/04/《Windows Internals》第四章_注册表/" itemprop="url">注册表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-04T15:02:11+08:00">
-                2018-06-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows系统/" itemprop="url" rel="index">
-                    <span itemprop="name">windows系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="注册表用法"><a href="#注册表用法" class="headerlink" title="注册表用法"></a>注册表用法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的配置数据主要在四个时间点被修改。</p>
-<ul>
-<li>由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。</li>
-<li>在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经系统行为的配置。</li>
-<li>在windows登录过程中，Explorer和windows组件读取用户配置信息。</li>
-<li>应用程序启动过程中，读取系统全局配置信息。</li>
-<li>其他时间：在调用API修改注册表的时候，注册表也提供异步回调机制，这是优先接收注册表变化的方法。<strong>系统不建议使用轮询的方法检测注册表的修改。</strong>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/06/04/《Windows Internals》第四章_注册表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/26/GCTF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/26/GCTF/" itemprop="url">GCTF解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-26T14:02:11+08:00">
-                2018-05-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index">
-                    <span itemprop="name">CTF</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><h2 id="Hackme"><a href="#Hackme" class="headerlink" title="Hackme"></a>Hackme</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是一个ELF的逆向题，IDA打开，发现流程如下：输入字符串，然后经过一个函数的加密，利用这个函数返回出来的数值，对该数值以22取余数，得到索引，得到Hex数组里面的数据，然后经过第一个循环得到V16，再用V16和输入的字符串异或，然后把结果和Hex比较即可。
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/26/GCTF/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/Linux常见命令(6)shell基础/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/25/Linux常见命令(6)shell基础/" itemprop="url">Linux常见命令(6)shell</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-25T15:02:11+08:00">
-                2018-05-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="1-shell概述"><a href="#1-shell概述" class="headerlink" title="1 shell概述"></a>1 shell概述</h1><ul>
-<li>特点：<ul>
-<li>1：解释型编程语言</li>
-<li>2：可以直接调用系统命令
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/25/Linux常见命令(6)shell基础/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/动态规划_编辑距离/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/24/动态规划_编辑距离/" itemprop="url">动态规划--编辑距离问题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T14:02:11+08:00">
-                2018-05-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/算法/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="动态规划算法思想"><a href="#动态规划算法思想" class="headerlink" title="动态规划算法思想"></a>动态规划算法思想</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/24/动态规划_编辑距离/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
 
 
           </div>
@@ -1970,6 +671,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -1990,8 +695,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -2051,6 +765,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-事件处理"><span class="nav-number">1.</span> <span class="nav-text">第一部分 事件处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调试事件与异常"><span class="nav-number">1.1.</span> <span class="nav-text">调试事件与异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二次机会"><span class="nav-number">1.2.</span> <span class="nav-text">二次机会</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GH和GN命令"><span class="nav-number">1.3.</span> <span class="nav-text">GH和GN命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-控制调试目标"><span class="nav-number">2.</span> <span class="nav-text">第二部分 控制调试目标</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始断点"><span class="nav-number">2.1.</span> <span class="nav-text">初始断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行"><span class="nav-number">2.2.</span> <span class="nav-text">单步执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行到指定位置"><span class="nav-number">2.3.</span> <span class="nav-text">单步执行到指定位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行到下一个函数调用"><span class="nav-number">2.4.</span> <span class="nav-text">执行到下一个函数调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行到下一个分支"><span class="nav-number">2.5.</span> <span class="nav-text">单步执行到下一个分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继续运行"><span class="nav-number">2.6.</span> <span class="nav-text">继续运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跟踪监视"><span class="nav-number">2.7.</span> <span class="nav-text">跟踪监视</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-使用断点"><span class="nav-number">3.</span> <span class="nav-text">第三部分 使用断点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#软件断点"><span class="nav-number">3.1.</span> <span class="nav-text">软件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件断点"><span class="nav-number">3.2.</span> <span class="nav-text">硬件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件断点"><span class="nav-number">3.3.</span> <span class="nav-text">条件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#地址表达式"><span class="nav-number">3.4.</span> <span class="nav-text">地址表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#针对线程设置断点"><span class="nav-number">3.5.</span> <span class="nav-text">针对线程设置断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理断点"><span class="nav-number">3.6.</span> <span class="nav-text">管理断点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分-观察栈"><span class="nav-number">4.</span> <span class="nav-text">第四部分 观察栈</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示栈回溯"><span class="nav-number">4.1.</span> <span class="nav-text">显示栈回溯</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察栈变量"><span class="nav-number">4.2.</span> <span class="nav-text">观察栈变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手工回溯栈"><span class="nav-number">4.3.</span> <span class="nav-text">手工回溯栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EBP和ESP可靠"><span class="nav-number">4.3.1.</span> <span class="nav-text">EBP和ESP可靠</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EBP和ESP不可靠"><span class="nav-number">4.4.</span> <span class="nav-text">EBP和ESP不可靠</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分-分析内存"><span class="nav-number">5.</span> <span class="nav-text">第五部分 分析内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示内存"><span class="nav-number">5.1.</span> <span class="nav-text">显示内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示数据类型"><span class="nav-number">5.2.</span> <span class="nav-text">显示数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改内存数据"><span class="nav-number">5.3.</span> <span class="nav-text">修改内存数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察内存属性"><span class="nav-number">5.4.</span> <span class="nav-text">观察内存属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示链表"><span class="nav-number">5.5.</span> <span class="nav-text">显示链表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -2177,6 +907,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
