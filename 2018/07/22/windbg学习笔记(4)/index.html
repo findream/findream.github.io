@@ -89,7 +89,7 @@
 <meta property="og:description" content="第一部分 调试目标程序的函数.call命令的原理&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们使用.call调试被调试程序的函数。利用.call元命令可以不需要使函数运行到函数调用处，而是类似于进行一次虚拟调用。具体原理如下：  windbg在栈上创建一小段代码，这段代码用于被调用函数的父函数，函数返回到这段代码，然后中断。 在栈上">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/aIovBr8.png">
-<meta property="og:updated_time" content="2018-07-22T11:44:50.812Z">
+<meta property="og:updated_time" content="2018-07-24T08:46:39.301Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="windbg学习笔记 (4)">
 <meta name="twitter:description" content="第一部分 调试目标程序的函数.call命令的原理&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们使用.call调试被调试程序的函数。利用.call元命令可以不需要使函数运行到函数调用处，而是类似于进行一次虚拟调用。具体原理如下：  windbg在栈上创建一小段代码，这段代码用于被调用函数的父函数，函数返回到这段代码，然后中断。 在栈上">
@@ -389,7 +389,8 @@
 <ul>
 <li>windbg在栈上创建一小段代码，这段代码用于被调用函数的父函数，函数返回到这段代码，然后中断。</li>
 <li>在栈上创建一个新的关于被调用函数的栈帧，用于模拟被调用函数</li>
-<li>修改寄存器，使程序指向模拟被调用的函数的起始地址，保证恢复程序运行就能执行这个函数</li>
+<li>修改寄存器，使程序指向模拟被调用的函数的起始地址，保证恢复程序运行就能执行这个函数<a id="more"></a>
+</li>
 </ul>
 <h2 id="限制条件"><a href="#限制条件" class="headerlink" title="限制条件"></a>限制条件</h2><ul>
 <li>只能支持调试用户态程序时使用</li>
@@ -529,7 +530,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-count">74</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
