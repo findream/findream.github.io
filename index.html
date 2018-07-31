@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/病毒分析技术(11)---文件下载者变种1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/病毒分析技术(12) ---GandCrab勒索病毒/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -313,7 +313,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/07/31/病毒分析技术(11)---文件下载者变种1/" itemprop="url">病毒分析技术(12) ---文件下载者病毒变种</a></h1>
+                <a class="post-title-link" href="/2018/07/31/病毒分析技术(12) ---GandCrab勒索病毒/" itemprop="url">病毒分析技术(11) ---GandCrab勒索病毒</a></h1>
         
 
         <div class="post-meta">
@@ -325,7 +325,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T14:02:11+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T11:02:11+08:00">
                 2018-07-31
               </time>
             
@@ -386,15 +386,19 @@
 
       
         
-          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;呼，历时4天半，终于完成了对GandCrab病毒的分析，这个病毒是在52破解ScareCrowL前辈的帖子上参考借鉴而来，漫漫病毒分析之路，任重且道远，还好，我们拥有巨人的肩膀，让我们看的更远更多。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先讲一下，为什么分析这个病毒，在四叶草公司实习，几天下来，有点厌倦分析病毒这件事了，哇，想到以后还要干好多年，心态炸了。公司峰哥给我了两个样本，说现在流行勒索和挖矿病毒，客户也中过，叫我去试试分析。然后就有了这篇病毒分析报告。顿时，分析出来有不一样的收获，这是传统病毒不一样的。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一月份，GandCrab勒索软件首次亮相，这是一种着名的恶意软件，分布在黑暗网络上，可能源于俄罗斯，主要针对斯堪的纳维亚和英语国家。……（码字太麻烦了，这里有一份关于GandCrab简介，了解一下：<a href="http://baijiahao.baidu.com/s?id=1599794170709869995&amp;wfr=spider&amp;for=pc" target="_blank" rel="external">http://baijiahao.baidu.com/s?id=1599794170709869995&amp;wfr=spider&amp;for=pc</a>）</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDA产生的分析数据库(IDA 6.8)：<a href="https://pan.baidu.com/s/156A8SyhBVMjAKcjlf5SN4Q" target="_blank" rel="external">https://pan.baidu.com/s/156A8SyhBVMjAKcjlf5SN4Q</a></p>
+<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
 <li>1.目录</li>
 <li>2.样本信息</li>
 <li>3.行为分析</li>
 <li>4.样本分析</li>
-<li>5.技术上的总结
+<li>5.技术总结
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/07/31/病毒分析技术(11)---文件下载者变种1/#more" rel="contents">
+            <a class="btn" href="/2018/07/31/病毒分析技术(12) ---GandCrab勒索病毒/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -537,225 +541,10 @@
 
       
         
-          
-            <h2 id="前记："><a href="#前记：" class="headerlink" title="前记："></a>前记：</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21号，陪朋友参加了巅峰极客的CTF线上赛，也只是签了个到，其实题目并不是很难。所以这次的比赛我们打的并不是很好，这次写一下关于这次CTF的逆向和杂项的wp，参考的是<a href="https://www.colabug.com/3667674.html" target="_blank" rel="external">https://www.colabug.com/3667674.html</a></p>
-<h2 id="Re题"><a href="#Re题" class="headerlink" title="Re题"></a>Re题</h2><h3 id="第一题：Base-N"><a href="#第一题：Base-N" class="headerlink" title="第一题：Base-N"></a>第一题：Base-N</h3><ul>
-<li>第一步：查壳分析没有壳，IDA直接定位到main函数</li>
-<li>程序流程如下：<ul>
-<li>根据IDA显示的pdb的信息，发现这是一个利用Base32加密的程序<br><img src="https://i.imgur.com/w0ZGp6u.png" alt=""></li>
-<li>首先使用cin输入flag，然后获取长度，长度大于10成立</li>
-<li>接着，调用00401100函数，这个函数主要是对输入的input进行字符变换(在这次调用是这样的)。<br><img src="https://i.imgur.com/jaOeqqB.png" alt=""></li>
-<li>如果输入的字符和经过change函数变换后的字符串相同的话，则报错。而且这不是主要的函数<br><img src="https://i.imgur.com/R55X6gC.png" alt=""></li>
-<li>但是这个CM的主要的两个函数是sub_4012C0和sub_401310，我们提前知道这是一个Base32的加密方法，必然有一个是构造Table的函数，一个是进行Base32加密的函数。在和特定的字符串比较得到Success。<br><img src="https://i.imgur.com/PvMrcpF.png" alt=""></li>
-<li>现在存在两个问题，第一个是构造的Table是什么？第二个是加密函数确定是Base32么(确定是Base32，我只是想分析一下这个函数)。</li>
-<li>在sub_4012C0中发现有一个全局变量，这个全局变量有可能是Table，因为Table的数据是不容易被修改的，所以我们可以使用olldbg动态dump出Table(通过查看全局变量的值)，也可以使用IDA分析Table的构造流程。我们跟踪od，得到Table是<code>NoPqRsTuVwXyZaBcDeFgHiJkLm567234</code><br><img src="https://i.imgur.com/emd7mjo.png" alt=""></li>
-<li>写下来是sub_401310，进入里面发现是末尾，程序给不足位数自动添加4个=，我们知道，base64是补齐2个=，base32是补齐4个=。<br><img src="https://i.imgur.com/tWF3yvO.png" alt=""></li>
-<li>由于base32的加密Table已经和原来的Base32函数不同，所以我们在网上找一个解密函数，然后修改里面的Table。解得flag为Y@u_Kn@W<em>b@s332</em>@Nd_r0t13<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div></pre></td><td class="code"><pre><div class="line">from __future__ import print_function</div><div class="line">#! /usr/bin/env <span class="keyword">python</span></div><div class="line"></div><div class="line"><span class="string">""</span><span class="string">"RFC 3548: Base16, Base32, Base64 Data Encodings"</span><span class="string">""</span></div><div class="line"></div><div class="line"># Modified <span class="number">04</span>-Oct-<span class="number">1995</span> by Jack Jansen <span class="keyword">to</span> use binascii module</div><div class="line"># Modified <span class="number">30</span>-Dec-<span class="number">2003</span> by Barry Warsaw <span class="keyword">to</span> <span class="built_in">add</span> full RFC <span class="number">3548</span> support</div><div class="line"></div><div class="line">import re</div><div class="line">import struct</div><div class="line">import binascii</div><div class="line"></div><div class="line">__all__ = [</div><div class="line">    # Legacy interface exports traditional RFC <span class="number">1521</span> Base64 encodings</div><div class="line">    <span class="string">'encode'</span>, <span class="string">'decode'</span>, <span class="string">'encodestring'</span>, <span class="string">'decodestring'</span>,</div><div class="line">    # Generalized interface <span class="keyword">for</span> other encodings</div><div class="line">    <span class="string">'b64encode'</span>, <span class="string">'b64decode'</span>, <span class="string">'b32encode'</span>, <span class="string">'b32decode'</span>,</div><div class="line">    <span class="string">'b16encode'</span>, <span class="string">'b16decode'</span>,</div><div class="line">    # Standard Base64 encoding</div><div class="line">    <span class="string">'standard_b64encode'</span>, <span class="string">'standard_b64decode'</span>,</div><div class="line">    # Some common Base64 alternatives.  As referenced by RFC <span class="number">3458</span>, see thread</div><div class="line">    # starting <span class="keyword">a</span><span class="variable">t:</span></div><div class="line">    #</div><div class="line">    # http://zgp.org/pipermail/p2p-hackers/<span class="number">2001</span>-September/<span class="number">000316</span>.html</div><div class="line">    <span class="string">'urlsafe_b64encode'</span>, <span class="string">'urlsafe_b64decode'</span>,</div><div class="line">]</div><div class="line"></div><div class="line">_translation = [chr(_x) <span class="keyword">for</span> _x in <span class="built_in">range</span>(<span class="number">256</span>)]</div><div class="line">EMPTYSTRING = <span class="string">''</span></div><div class="line"></div><div class="line"></div><div class="line">def _translate(s, altchars):</div><div class="line">    translation = _translation[:]</div><div class="line">    <span class="keyword">for</span> <span class="keyword">k</span>, v in altchars.<span class="built_in">items</span>():</div><div class="line">        translation[ord(<span class="keyword">k</span>)] = v</div><div class="line">    <span class="keyword">return</span> s.translate(<span class="string">''</span>.<span class="keyword">join</span>(translation))</div><div class="line"></div><div class="line"></div><div class="line">str = <span class="string">"NoPqRsTuVwXyZaBcDeFgHiJkLm567234"</span>    //Table</div><div class="line">_b32alphabet = &#123;i:str[i] <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">32</span>)&#125;</div><div class="line"></div><div class="line">_b32tab = _b32alphabet.<span class="built_in">items</span>()</div><div class="line">_b32tab.<span class="keyword">sort</span>()</div><div class="line">_b32tab = [v <span class="keyword">for</span> <span class="keyword">k</span>, v in _b32tab]</div><div class="line">_b32rev = dict([(v, (<span class="keyword">k</span>)) <span class="keyword">for</span> <span class="keyword">k</span>, v in _b32alphabet.<span class="built_in">items</span>()])</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">def b32decode(s, casefold=False, map01=None):</div><div class="line">    <span class="string">""</span><span class="comment">"Decode a Base32 encoded string.</span></div><div class="line"></div><div class="line">    s <span class="keyword">is</span> the <span class="built_in">string</span> <span class="keyword">to</span> decode.  Optional casefold <span class="keyword">is</span> <span class="keyword">a</span> flag specifying whether</div><div class="line">    <span class="keyword">a</span> lowercase alphabet <span class="keyword">is</span> acceptable <span class="keyword">as</span> <span class="built_in">input</span>.  For security purposes, the</div><div class="line">    default <span class="keyword">is</span> False.</div><div class="line"></div><div class="line">    RFC <span class="number">3548</span> allows <span class="keyword">for</span> optional mapping of the digit <span class="number">0</span> (zero) <span class="keyword">to</span> the letter O</div><div class="line">    (oh), <span class="built_in">and</span> <span class="keyword">for</span> optional mapping of the digit <span class="number">1</span> (one) <span class="keyword">to</span> either the letter I</div><div class="line">    (eye) <span class="built_in">or</span> letter L (<span class="keyword">el</span>).  The optional <span class="keyword">argument</span> map01 when not None,</div><div class="line">    specifies which letter the digit <span class="number">1</span> should <span class="keyword">be</span> mapped <span class="keyword">to</span> (when map01 <span class="keyword">is</span> not</div><div class="line">    None, the digit <span class="number">0</span> <span class="keyword">is</span> always mapped <span class="keyword">to</span> the letter O).  For security</div><div class="line">    purposes the default <span class="keyword">is</span> None, <span class="keyword">so</span> that <span class="number">0</span> <span class="built_in">and</span> <span class="number">1</span> are not allowed in the</div><div class="line">    <span class="built_in">input</span>.</div><div class="line"></div><div class="line">    The decoded <span class="built_in">string</span> <span class="keyword">is</span> returned.  A TypeError <span class="keyword">is</span> raised <span class="keyword">if</span> s were</div><div class="line">    incorrectly padded <span class="built_in">or</span> <span class="keyword">if</span> there are non-alphabet characters present in the</div><div class="line">    <span class="built_in">string</span>.</div><div class="line">    <span class="string">""</span><span class="comment">"</span></div><div class="line">    quanta, leftover = divmod(<span class="built_in">len</span>(s), <span class="number">8</span>)</div><div class="line">    <span class="keyword">if</span> leftover:</div><div class="line">        raise TypeError(<span class="string">'Incorrect padding'</span>)</div><div class="line">    # Handle section <span class="number">2.4</span> zero <span class="built_in">and</span> one mapping.  The flag map01 will <span class="keyword">be</span> either</div><div class="line">    # False, <span class="built_in">or</span> the character <span class="keyword">to</span> <span class="keyword">map</span> the digit <span class="number">1</span> (one) <span class="keyword">to</span>.  It should <span class="keyword">be</span></div><div class="line">    # either L (<span class="keyword">el</span>) <span class="built_in">or</span> I (eye).</div><div class="line">    <span class="keyword">if</span> map01:</div><div class="line">        s = _translate(s, &#123;<span class="string">'0'</span>: <span class="string">'O'</span>, <span class="string">'1'</span>: map01&#125;)</div><div class="line">    <span class="keyword">if</span> casefold:</div><div class="line">        s = s.upper()</div><div class="line">    # Strip off pad characters from the <span class="keyword">right</span>.  We need <span class="keyword">to</span> <span class="built_in">count</span> the pad</div><div class="line">    # characters because this will tell us how many null bytes <span class="keyword">to</span> <span class="built_in">remove</span> from</div><div class="line">    # the end of the decoded <span class="built_in">string</span>.</div><div class="line">    padchars = <span class="number">0</span></div><div class="line">    mo = re.<span class="built_in">search</span>(<span class="string">'(?P&lt;pad&gt;[=]*)$'</span>, s)</div><div class="line">    <span class="keyword">if</span> mo:</div><div class="line">        padchars = <span class="built_in">len</span>(mo.group(<span class="string">'pad'</span>))</div><div class="line">        <span class="keyword">if</span> padchars &gt; <span class="number">0</span>:</div><div class="line">            s = s[:-padchars]</div><div class="line">    # Now decode the full quanta</div><div class="line">    parts = []</div><div class="line">    acc = <span class="number">0</span></div><div class="line">    shift = <span class="number">35</span></div><div class="line">    <span class="keyword">for</span> <span class="keyword">c</span> in <span class="variable">s:</span></div><div class="line">        val = _b32rev.<span class="built_in">get</span>(<span class="keyword">c</span>)</div><div class="line">        <span class="keyword">if</span> val <span class="keyword">is</span> None:</div><div class="line">            raise TypeError(<span class="string">'Non-base32 digit found'</span>)</div><div class="line">        acc += _b32rev[<span class="keyword">c</span>] &lt;&lt; shift</div><div class="line">        shift -= <span class="number">5</span></div><div class="line">        <span class="keyword">if</span> shift &lt; <span class="number">0</span>:</div><div class="line">            parts.<span class="keyword">append</span>(binascii.unhexlify(<span class="string">'%010x'</span> % acc))</div><div class="line">            acc = <span class="number">0</span></div><div class="line">            shift = <span class="number">35</span></div><div class="line">    # Process the <span class="keyword">last</span>, partial quanta</div><div class="line">    <span class="keyword">last</span> = binascii.unhexlify(<span class="string">'%010x'</span> % acc)</div><div class="line">    <span class="keyword">if</span> padchars == <span class="number">0</span>:</div><div class="line">        <span class="keyword">last</span> = <span class="string">''</span>  # No characters</div><div class="line">    elif padchars == <span class="number">1</span>:</div><div class="line">        <span class="keyword">last</span> = <span class="keyword">last</span>[:-<span class="number">1</span>]</div><div class="line">    elif padchars == <span class="number">3</span>:</div><div class="line">        <span class="keyword">last</span> = <span class="keyword">last</span>[:-<span class="number">2</span>]</div><div class="line">    elif padchars == <span class="number">4</span>:</div><div class="line">        <span class="keyword">last</span> = <span class="keyword">last</span>[:-<span class="number">3</span>]</div><div class="line">    elif padchars == <span class="number">6</span>:</div><div class="line">        <span class="keyword">last</span> = <span class="keyword">last</span>[:-<span class="number">4</span>]</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        raise TypeError(<span class="string">'Incorrect padding'</span>)</div><div class="line">    parts.<span class="keyword">append</span>(<span class="keyword">last</span>)</div><div class="line">    <span class="keyword">return</span> EMPTYSTRING.<span class="keyword">join</span>(parts)</div><div class="line"></div><div class="line"># RFC <span class="number">3548</span>, Base <span class="number">16</span> Alphabet specifies uppercase, but hexlify() returns</div><div class="line"># lowercase.  The RFC also recommends against accepting <span class="built_in">input</span> case</div><div class="line"></div><div class="line">r = <span class="string">"weNTDk5LZsNRHk6cVogqTZmFy2NRP7X4ZHLTBZwg"</span>    //Codestring</div><div class="line">r = b32decode(r)</div><div class="line"><span class="keyword">print</span>(r)</div><div class="line"><span class="keyword">for</span> i in r:</div><div class="line">    v = ord(i)-ord(<span class="string">'a'</span>)</div><div class="line">    <span class="keyword">if</span>(v&gt;=<span class="number">0</span> <span class="built_in">and</span> v&lt;<span class="number">26</span>):</div><div class="line">        <span class="keyword">k</span> = v+ord(<span class="string">'T'</span>)</div><div class="line">        <span class="keyword">while</span>(<span class="keyword">k</span>&lt;=ord(<span class="string">'a'</span>)):</div><div class="line">            <span class="keyword">k</span> += <span class="number">26</span></div><div class="line">        <span class="keyword">print</span>(chr(<span class="keyword">k</span>), end=<span class="string">''</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        v = ord(i) - ord(<span class="string">'A'</span>)</div><div class="line">        <span class="keyword">if</span> (v &gt;= <span class="number">0</span> <span class="built_in">and</span> v &lt; <span class="number">26</span>):</div><div class="line">            <span class="keyword">k</span> = (v + ord(<span class="string">'4'</span>))</div><div class="line">            <span class="keyword">while</span>(<span class="keyword">k</span>&lt;=ord(<span class="string">'A'</span>)):</div><div class="line">                <span class="keyword">k</span> += <span class="number">26</span></div><div class="line">            <span class="keyword">print</span>(chr(<span class="keyword">k</span>), end=<span class="string">''</span>)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">print</span>(i, end=<span class="string">''</span>)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="Input-your-luncky-number-string-这道题没看懂"><a href="#Input-your-luncky-number-string-这道题没看懂" class="headerlink" title="Input your luncky number_string[这道题没看懂]"></a>Input your luncky number_string[这道题没看懂]</h3><ul>
-<li>main函数中通过cin接收输入，下面做了一大堆操作，但是通过对input变量的跟踪，可以发现都没有什么卵用，与输入无关，因此我们根本不需要去读，反正都是正向操作。<br>  <img src="https://i.imgur.com/dHcngJw.png" alt=""></li>
-<li><p>只有箭头所指的部分才需要关注</p>
-</li>
-<li><p>于是查看sub_401100</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">v3 = _mm_cvtsi32_si128(<span class="name">input</span>)<span class="comment">;</span></div><div class="line">v4 = _mm_unpacklo_epi8(<span class="name">v3</span>, v3)<span class="comment">;</span></div><div class="line">v5 = _mm_shuffle_epi32(<span class="name">_mm_unpacklo_epi16</span>(<span class="name">v4</span>, v4), <span class="number">0</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>最开头这三个处理非常丑，要不挨个去查手册，要不就直接动调观察汇编指令是三条</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">punpcklbw</span> <span class="built_in">xmm0</span>, <span class="built_in">xmm0</span></div><div class="line"><span class="keyword">punpcklwd</span> <span class="built_in">xmm0</span>, <span class="built_in">xmm0</span></div><div class="line"><span class="keyword">pshufd</span> <span class="built_in">xmm1</span>, <span class="built_in">xmm0</span>, <span class="number">0</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>全部是交叉赋值的，分别将1字节的input变为2字节、4字节、16字节<br>  <img src="https://i.imgur.com/7agv0Sb.png" alt=""></p>
-</li>
-<li><p>（试了OD和IDA都看不到XMM寄存器的值，最后用x32dbg才成功跟踪到）<br>下面两段循环实际上都是逐字节异或<br>因为第一段以XMM寄存器来操作，单位必须是16个字节，对于零头就无能为力了，于是使用第二段循环来逐字节操作<br>不知道是出题人故意设置的干扰还是编译器为了加速而优化出来的23333<br>  <img src="https://i.imgur.com/6tS3yIa.png" alt=""></p>
-</li>
-<li><p>那么下一个问题就是key啦,回头看参数a2对应的值，是0x401000+v6处的代码,观察加密后的HEX<br>  <img src="https://i.imgur.com/YJy1RKP.png" alt=""></p>
-</li>
-<li><p>（动调可知起始字节在0x89之后）</p>
-</li>
-</ul>
-<p>这里有大量的连续0x5A出现，在PE文件中通常会有大量的0x00作为填充，这里由于加密字节数太少所以没有用到上述的论据<br>不过连续三个0x5A通常一般是0x00000001之类的值加密得到的，因此还是只得一试的<br>之后还有0x7E、0x1E的出现频率比较高，但不连续，如果0x5A失败的话也可以试一试~</p>
-<ul>
-<li><p>（实在不行也可以手动爆破，好几个交流的朋友都是一个一个试的，甚至还有一个小可爱是从255倒着试的23333333333333333333333333）</p>
-</li>
-<li><p>0x5A对应十进制的90，即NOP，这个数字还是比较有意义的233<br>输入以后便回显了flag（cin接受的是int类型，因此直接输入数字即可，而不用chr）</p>
-</li>
-<li><p>我们继续解密查看一下代码<br>解密IDC脚本<code>auto i;for(i=0;i&lt;0x61;i++){PatchByte(0x401013+i, Byte(0x401013+i)^90);}</code><br>  <img src="https://i.imgur.com/5qOg23U.png" alt=""></p>
-</li>
-<li>还是挺简单的，后面字节直接拷贝，前4个字节异或解密覆盖上去就完了.</li>
-</ul>
-<h2 id="MISC题"><a href="#MISC题" class="headerlink" title="MISC题"></a>MISC题</h2><h3 id="Loli"><a href="#Loli" class="headerlink" title="Loli"></a>Loli</h3><ul>
-<li><p>根据tip，0xff，我们猜测将图片xor一个0xff，所以编写以下脚本（脑洞真的大，但是当时我想到了）</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># coding=utf-8</span></div><div class="line"></div><div class="line">def xor():</div><div class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">'./1.png'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> f, <span class="built_in">open</span>(<span class="string">'xor.png'</span>, <span class="string">'wb'</span>) <span class="keyword">as</span> wf:</div><div class="line">        <span class="keyword">for</span> <span class="keyword">each</span> <span class="keyword">in</span> f.<span class="built_in">read</span>():</div><div class="line">            wf.<span class="built_in">write</span>(chr(ord(<span class="keyword">each</span>) ^ <span class="number">0xff</span>))</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    xor()</div></pre></td></tr></table></figure>
-</li>
-<li><p>生成一个文件，利用Hex工具打开，拖到结尾，我们可以看出：末尾有个字符串<code>black and white</code>,以及还有png格式的末尾标志符<code>IEND</code>。我们猜测文件中存在一个png文件，我们使用<code>binwalk</code>命令无法打开。</p>
-<p>  <img src="https://i.imgur.com/l1ioDby.png" alt=""><br>  <img src="https://i.imgur.com/1tn51UW.png" alt=""></p>
-</li>
-<li><p>所以，我们只能使用<code>foremost命令</code>得到一副黑白图，观察png文件，可以看到色块分为11列，每列隔行的色块永远是黑色，这说明应该横向读取图片，而列中的横长条由8个小色块组成，显然其代表的是一个字节的数据。(原谅我真的没看出来)，编写如下代码:</p>
-<figure class="highlight processing"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> matplotlib.<span class="built_in">image</span> as mpimg</div><div class="line"></div><div class="line">res_str = []</div><div class="line">res = []</div><div class="line"></div><div class="line"></div><div class="line">def readpng():</div><div class="line">    png = mpimg.imread(<span class="string">'./out.png'</span>)</div><div class="line">    yy, xx, depth = png.<span class="built_in">shape</span></div><div class="line">    <span class="keyword">for</span> y in range(yy):</div><div class="line">        <span class="keyword">if</span> y % <span class="number">2</span> == <span class="number">0</span>:</div><div class="line">            <span class="keyword">for</span> x in range(<span class="number">1</span>, xx - <span class="number">1</span>, <span class="number">9</span>):</div><div class="line">                _str = <span class="string">"0b"</span> + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">1</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">2</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">3</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">4</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">5</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">6</span>][<span class="number">0</span>])) + <span class="built_in">str</span>(<span class="built_in">int</span>(png[y][x + <span class="number">7</span>][<span class="number">0</span>]))</div><div class="line">                res_str.<span class="built_in">append</span>(_str)</div><div class="line">                res.<span class="built_in">append</span>(bin2hex(_str))</div><div class="line">    <span class="built_in">print</span> res_str</div><div class="line">    with <span class="built_in">open</span>(<span class="string">'res.bin'</span>, <span class="string">'wb'</span>) as f:</div><div class="line">        <span class="keyword">for</span> each in res:</div><div class="line">            f.write(chr(each))</div><div class="line"></div><div class="line"></div><div class="line">def bin2hex(_bin=<span class="string">"0b101"</span>):</div><div class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(_bin, <span class="number">2</span>) ^ <span class="number">0xFF</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    readpng()</div></pre></td></tr></table></figure>
-</li>
-<li><p>得到res.bin文件，cat该文件得到flag。</p>
-</li>
-</ul>
-<h3 id="Warmup"><a href="#Warmup" class="headerlink" title="Warmup"></a>Warmup</h3><ul>
-<li><p>这是一道LSB隐写，这是很容易想到的，利用Stego打开，分别取红黄蓝的第最低一位。</p>
-<p>  <img src="https://i.imgur.com/DABzKSS.png" alt=""><br>  <img src="https://i.imgur.com/qpJV1NW.png" alt=""><br>  <img src="https://i.imgur.com/yboezSH.png" alt=""></p>
-</li>
-<li>这是0OK!和BF编码，在线解码就行了<a href="https://www.splitbrain.org/services/ook" target="_blank" rel="external">https://www.splitbrain.org/services/ook</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/病毒分析技术(12) ---GandCrab勒索病毒/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/27/病毒分析技术(12) ---GandCrab勒索病毒/" itemprop="url">病毒分析技术(11) ---GandCrab勒索病毒</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T14:02:11+08:00">
-                2018-07-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;呼，历时4天半，终于完成了对GandCrab病毒的分析，这个病毒是在52破解ScareCrowL前辈的帖子上参考借鉴而来，漫漫病毒分析之路，任重且道远，还好，我们拥有巨人的肩膀，让我们看的更远更多。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先讲一下，为什么分析这个病毒，在四叶草公司实习，几天下来，有点厌倦分析病毒这件事了，哇，想到以后还要干好多年，心态炸了。公司峰哥给我了两个样本，说现在流行勒索和挖矿病毒，客户也中过，叫我去试试分析。然后就有了这篇病毒分析报告。顿时，分析出来有不一样的收获，这是传统病毒不一样的。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一月份，GandCrab勒索软件首次亮相，这是一种着名的恶意软件，分布在黑暗网络上，可能源于俄罗斯，主要针对斯堪的纳维亚和英语国家。……（码字太麻烦了，这里有一份关于GandCrab简介，了解一下：<a href="http://baijiahao.baidu.com/s?id=1599794170709869995&amp;wfr=spider&amp;for=pc" target="_blank" rel="external">http://baijiahao.baidu.com/s?id=1599794170709869995&amp;wfr=spider&amp;for=pc</a>）</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDA产生的分析数据库(IDA 6.8)：<a href="https://pan.baidu.com/s/156A8SyhBVMjAKcjlf5SN4Q" target="_blank" rel="external">https://pan.baidu.com/s/156A8SyhBVMjAKcjlf5SN4Q</a></p>
-<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
-<li>1.目录</li>
-<li>2.样本信息</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术总结
+          <h2 id="前记："><a href="#前记：" class="headerlink" title="前记："></a>前记：</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21号，陪朋友参加了巅峰极客的CTF线上赛，也只是签了个到，其实题目并不是很难。所以这次的比赛我们打的并不是很好，这次写一下关于这次CTF的逆向和杂项的wp，参考的是<a href="https://www.colabug.com/3667674.html" target="_blank" rel="external">https://www.colabug.com/3667674.html</a><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/07/27/病毒分析技术(12) ---GandCrab勒索病毒/#more" rel="contents">
+            <a class="btn" href="/2018/07/28/巅峰极客CTF/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -908,6 +697,157 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/25/windbg学习笔记(5)--内核调试基本命令/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/病毒分析技术(11)---文件下载者变种1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/" itemprop="url">病毒分析技术(11) ---文件下载者病毒变种</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:02:11+08:00">
+                2018-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术上的总结
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
