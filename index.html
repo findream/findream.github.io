@@ -294,6 +294,356 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/02/西电CTF(moectf)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/02/西电CTF(moectf)/" itemprop="url">西电CTF(moectf)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-02T14:02:11+08:00">
+                2018-08-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Re题"><a href="#Re题" class="headerlink" title="Re题"></a>Re题</h1><h2 id="RE1"><a href="#RE1" class="headerlink" title="RE1"></a>RE1</h2><ul>
+<li>签个到，分析一下流程，然后查一下字符，</li>
+<li>得到flag:<code>moectf{Qidao_by_fa1con}</code><br>   <img src="https://i.imgur.com/hUxBv9r.png" alt=""></li>
+</ul>
+<h2 id="RE2"><a href="#RE2" class="headerlink" title="RE2:"></a>RE2:</h2><ul>
+<li><p>流程如下：程序经过将input和特定值1xor之后20位后，将22位数据与特定值2进行比较。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">printf(<span class="string">"Please enter the flag:"</span>);</div><div class="line">fgets(&amp;Buf, <span class="number">29</span>, __iob);</div><div class="line">for ( i = <span class="number">0</span>; i &lt;= <span class="number">19</span>; ++i )</div><div class="line">  v27[i - <span class="number">48</span>] ^= v27[i - <span class="number">80</span>];                 <span class="comment">// string_hex^input</span></div><div class="line">for ( i = <span class="number">0</span>; i &lt;= <span class="number">21</span> &amp;&amp; v27[i - <span class="number">48</span>] == v27[i - <span class="number">112</span>]; ++i )</div><div class="line">  ;                                           <span class="comment">// 75 5A 70 55 41 73 2C 49 46 75 39 65 3E 4F 25 73 60  </span></div><div class="line">                                              <span class="comment">// 66 38 5A 21 7D                                   </span></div><div class="line">if ( i == <span class="number">22</span> )</div><div class="line">  printf(<span class="string">"conglution!"</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><p>利用OD调试一下，发现特定值1为<code>0x75,0x5A,0x70,0x55,0x41,0x73,0x2C,0x49,0x46,0x75,0x39,0x65,0x3E,0x4F,0x25,0x73,0x60,0x66,0x38,0x5A,0x21,0x7D</code><br>   <img src="https://i.imgur.com/XIxCTDE.png" alt=""></p>
+</li>
+<li><p>特定值2为<code>0x18,0x35,0x15,0x36,0x35,0x15,0x57,0x20,0x15,0x2A,0x4F,0x20,0x4C,0x36,0x7A,0x36,0x20,0x15,0x41,0x7B</code><br>  <img src="https://i.imgur.com/QIUrnjT.png" alt=""></p>
+</li>
+<li><p>写出脚本</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">	int num1[<span class="number">22</span>]=&#123;<span class="number">0x75</span>,<span class="number">0x5A</span>,<span class="number">0x70</span>,<span class="number">0x55</span>,<span class="number">0x41</span>,<span class="number">0x73</span>,<span class="number">0x2C</span>,<span class="number">0x49</span>,<span class="number">0x46</span>,<span class="number">0x75</span>,<span class="number">0x39</span>,<span class="number">0x65</span>,<span class="number">0x3E</span>,<span class="number">0x4F</span>,<span class="number">0x25</span>,<span class="number">0x73</span>,<span class="number">0x60</span>,<span class="number">0x66</span>,<span class="number">0x38</span>,<span class="number">0x5A</span>,<span class="number">0x21</span>,<span class="number">0x7D</span>&#125;;</div><div class="line">	int num2[<span class="number">20</span>]=&#123;<span class="number">0x18</span>,<span class="number">0x35</span>,<span class="number">0x15</span>,<span class="number">0x36</span>,<span class="number">0x35</span>,<span class="number">0x15</span>,<span class="number">0x57</span>,<span class="number">0x20</span>,<span class="number">0x15</span>,<span class="number">0x2A</span>,<span class="number">0x4F</span>,<span class="number">0x20</span>,<span class="number">0x4C</span>,<span class="number">0x36</span>,<span class="number">0x7A</span>,<span class="number">0x36</span>,<span class="number">0x20</span>,<span class="number">0x15</span>,<span class="number">0x41</span>,<span class="number">0x7B</span>&#125;;</div><div class="line">	for(int i=<span class="number">0</span>;i&lt;=<span class="number">19</span>;i++)</div><div class="line">		num1[i]=num1[i]^num2[i];</div><div class="line">	for(int i=<span class="number">0</span>;i&lt;=<span class="number">21</span>;i++)</div><div class="line">		printf(<span class="string">"%c"</span>,num1[i]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>flag:<code>moectf{iS_vEry_E@sy!!}</code></p>
+</li>
+</ul>
+<h1 id="py逆向"><a href="#py逆向" class="headerlink" title="py逆向"></a>py逆向</h1><ul>
+<li><p>利用网上的反编译工具，反编译如下：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># visit http://tool.lu/pyc/ for more information</span></div><div class="line">import base64</div><div class="line">r = <span class="built_in">open</span>(<span class="string">'flag'</span>, <span class="string">'r'</span>)   <span class="comment"># 输入</span></div><div class="line">rflag = <span class="string">'bX;oY4Tpe4D8Q2;VRW:&#123;U2;IQIP8fR?@'</span></div><div class="line">key = base64.b64encode(r.<span class="built_in">read</span>())   <span class="comment">#base64编码：Ylg7b1k0VHBlNEQ4UTI7VlJXOntVMjtJUUlQOGZSP0A=</span></div><div class="line">flag = <span class="string">''</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="built_in">len</span>(key) / <span class="number">4</span>):     <span class="comment">#取4分之1的长度</span></div><div class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">4</span>):            <span class="comment"># 0-3</span></div><div class="line">        flag += chr(ord(key[i * <span class="number">4</span> + j]) + j)   <span class="comment">#ord(key[i * 4 + j])这一步注意的是变化的是下标。0,1,3,4(i*4+0)5,6,7,8...</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> rflag == flag:  <span class="comment"># bX;oY4Tpe4D8Q2;VRW:&#123;U2;IQIP8fR?@  比较</span></div><div class="line">    print <span class="string">'You are right.'</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>得知流程如下：先将input过一遍base64，然后进行位置数值运算，主要在原基础上+4的模，这个长度为0-3。然后按照位置写入flag，最后和特定字符比较。逆向过程如下：<br>  <img src="https://i.imgur.com/EUtQHP3.png" alt=""></p>
+</li>
+<li>flag:<code>moectf{pyC_RE_1S_E@sy}</code></li>
+</ul>
+<h1 id="你玩过2048么"><a href="#你玩过2048么" class="headerlink" title="你玩过2048么"></a>你玩过2048么</h1><ul>
+<li>第一回答一下：没玩过</li>
+<li>分析一下哈，查找一下字符串，有重点字符串<br>   <img src="https://i.imgur.com/JIQSol1.png" alt=""></li>
+<li>交叉引用一下，找到几处重点区域：<br>   <img src="https://i.imgur.com/evV9K9k.png" alt=""><br>   <img src="https://i.imgur.com/1u0OHif.png" alt=""></li>
+<li>我们分析如下：程序没有输入(利用awsd控制方向)，还有使用了rand伪随机数函数，我们可以判断出，可以使用爆破程序的方式得到flag。</li>
+<li>利用OD，在需要跳转的地方改为jmp，不需要跳转的地方改为nop，修补程序，运行，登上1mins，既可以了。</li>
+<li>flag:<code>moectf{Would_u_Like_Cola?}</code><br>  <img src="https://i.imgur.com/RYgcCmw.png" alt=""></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/01/北邮自招CTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/01/北邮自招CTF/" itemprop="url">北邮自招CTF-Re</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-01T14:02:11+08:00">
+                2018-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="kaisa"><a href="#kaisa" class="headerlink" title="kaisa"></a>kaisa</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;听名字就是知道是一个恺撒密码。</p>
+<ul>
+<li>查壳，检查地址随机化。</li>
+<li>直接F5，发现是个恺撒密码<br>   <img src="https://i.imgur.com/fT6R93g.png" alt=""></li>
+<li>如果是个恺撒的话，肯定存在一个原始数据，经过恺撒变换的。string找一下。<pre><code>![](https://i.imgur.com/ODIW2RZ.png)
+</code></pre></li>
+<li>双击，查看具体是啥数据，注意前面的m不要漏了<pre><code>![](https://i.imgur.com/yUHWdz5.png)
+</code></pre></li>
+<li>这就结束了，放到解密网站上跑一下就好了<br>   <img src="https://i.imgur.com/t8zVv47.png" alt=""><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">  Output(aInputYourFlag_);</div><div class="line">  <span class="built_in">scanf</span>(aS, flag);</div><div class="line">  Length = <span class="built_in">strlen</span>(flag);</div><div class="line">  v4 = <span class="number">0</span>;</div><div class="line">  <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)Length &gt; <span class="number">0</span> )</div><div class="line">  &#123;</div><div class="line">    v5 = byte_408030;</div><div class="line">    <span class="keyword">do</span></div><div class="line">    &#123;</div><div class="line">      v6 = flag[v4];</div><div class="line">      <span class="keyword">if</span> ( v6 &lt; <span class="string">'a'</span> || v6 &gt; <span class="string">'z'</span> )</div><div class="line">      &#123;</div><div class="line">        <span class="keyword">if</span> ( v6 &gt;= <span class="string">'A'</span> &amp;&amp; v6 &lt;= <span class="string">'Z'</span> )</div><div class="line">          v6 = (<span class="keyword">unsigned</span> __int16)((<span class="keyword">unsigned</span> __int8)(v6 + v5 - <span class="string">'A'</span>) % <span class="number">26</span>) + <span class="string">'A'</span>;<span class="comment">// 大写字母</span></div><div class="line">      &#125;</div><div class="line">      <span class="keyword">else</span></div><div class="line">      &#123;</div><div class="line">        v6 = (<span class="keyword">unsigned</span> __int16)((<span class="keyword">unsigned</span> __int8)(v6 + v5 - <span class="string">'a'</span>) % <span class="number">26</span>) + <span class="string">'a'</span>;<span class="comment">// 小写字母</span></div><div class="line">      &#125;</div><div class="line">      flag[v4++] = v6;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">while</span> ( v4 &lt; (<span class="keyword">signed</span> <span class="keyword">int</span>)Length );          <span class="comment">// 恺撒密码</span></div><div class="line">  &#125;</div><div class="line">  v7 = <span class="number">0</span>;</div><div class="line">  <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)Length &lt;= <span class="number">0</span> )</div><div class="line">  &#123;</div><div class="line">LABEL_13:</div><div class="line">    Output(aFlagIsYourInpu);                    <span class="comment">// 输出</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="simple"><a href="#simple" class="headerlink" title="simple"></a>simple</h2><ul>
+<li>查壳，检查地址随机化。</li>
+<li><p>直接F5。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"> Output((<span class="keyword">int</span>)aPlzGiveMeYourF, v10);            <span class="comment">// plz give me your flag</span></div><div class="line">  scanf(aS, &amp;<span class="keyword">input</span>);</div><div class="line">  length = strlen(&amp;<span class="keyword">input</span>) + <span class="number">1</span>;</div><div class="line">  <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)(length - <span class="number">1</span>) &gt; <span class="number">31</span> )</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)(length - <span class="number">1</span>) &lt;= <span class="number">40</span> )</div><div class="line">    &#123;</div><div class="line">      Output((<span class="keyword">int</span>)aOkYouCanContin, v3);         <span class="comment">// ok,you can continue!</span></div><div class="line">      v6 = <span class="number">0</span>;</div><div class="line">      v14 = <span class="number">0</span>;</div><div class="line">      <span class="keyword">if</span> ( <span class="keyword">input</span> )</div><div class="line">      &#123;</div><div class="line">        <span class="keyword">while</span> ( <span class="number">1</span> )</div><div class="line">        &#123;</div><div class="line">          v7 = byte_408054[v6];</div><div class="line">          v8 = byte_408030[v6] ^ (<span class="number">16</span> * *(&amp;<span class="keyword">input</span> + v6) | ((<span class="keyword">unsigned</span> <span class="number">__</span>int8)*(&amp;<span class="keyword">input</span> + v6) &gt;&gt; <span class="number">4</span>));<span class="comment">// 运算式</span></div><div class="line">          *(&amp;<span class="keyword">input</span> + v6) = v8;</div><div class="line">          <span class="keyword">if</span> ( v8 != v7 )</div><div class="line">  			<span class="keyword">break</span>;</div><div class="line">          v9 = v13[v6++];</div><div class="line">          <span class="keyword">if</span> ( !v9 )                            <span class="comment">// v9==0</span></div><div class="line">            goto LABEL_10;</div><div class="line">        &#125;</div><div class="line">        Output((<span class="keyword">int</span>)aNononoYourInpu, v11);      <span class="comment">// nonono, your input is not flag!</span></div><div class="line">LABEL_10:</div><div class="line">        <span class="keyword">if</span> ( v6 == <span class="number">32</span> )                         <span class="comment">// 长度为32</span></div><div class="line">          Output((<span class="keyword">int</span>)aGoodYouVeGotTh, v11);    <span class="comment">// 'good! you',27h,'ve got the flag~~~</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>得到运行流程是：初始化了byte_408054[v6]和byte_408030[v6]，使得byte_408030[v6]经过<code>byte_408030[v6] ^ (16 * *(&amp;input + v6) | ((unsigned __int8)*(&amp;input + v6) &gt;&gt; 4))</code>加密后和byte_408054[v6]每一位比较。相同即可！其他的都是障眼法。但是长度取32位即可！</p>
+</li>
+<li><p>利用z3写出脚本，[划重点，z3相当于一个计算器，如果可以使我们的思维不再逆向化]</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"># -*- coding: UTF-<span class="number">8</span> -*-</div><div class="line">from z3 import *</div><div class="line"></div><div class="line">v6 = [<span class="number">0x4f</span>,<span class="number">0x3b</span>,<span class="number">0x23</span>,<span class="number">0x11</span>,<span class="number">0xe1</span>,<span class="number">0x1f</span>,<span class="number">0xfe</span>,<span class="number">0xb3</span>,<span class="number">0x4b</span>,<span class="number">0xdd</span>,<span class="number">0x75</span>,<span class="number">0xfe</span>,<span class="number">0x47</span>,<span class="number">0xec</span>,<span class="number">0xf2</span>,<span class="number">0x43</span>,<span class="number">0xdc</span>,<span class="number">0x38</span>,<span class="number">0xd4</span>,<span class="number">0x64</span>,<span class="number">0xde</span>,<span class="number">0x45</span>,<span class="number">0xbd</span>,<span class="number">0x01</span>,<span class="number">0x1b</span>,<span class="number">0x04</span>,<span class="number">0xb9</span>,<span class="number">0x89</span>,<span class="number">0x7d</span>,<span class="number">0xb6</span>,<span class="number">0x4e</span>,<span class="number">0xe2</span>]</div><div class="line"></div><div class="line">v7 = [<span class="number">0x6b</span>,<span class="number">0x6e</span>,<span class="number">0x26</span>,<span class="number">0x54</span>,<span class="number">0x56</span>,<span class="number">0x4b</span>,<span class="number">0xe8</span>,<span class="number">0x80</span>,<span class="number">0xdc</span>,<span class="number">0x28</span>,<span class="number">0x46</span>,<span class="number">0x18</span>,<span class="number">0x71</span>,<span class="number">0xcb</span>,<span class="number">0x65</span>,<span class="number">0x44</span>,<span class="number">0x9b</span>,<span class="number">0x2b</span>,<span class="number">0x22</span>,<span class="number">0x82</span>,<span class="number">0x2b</span>,<span class="number">0x56</span>,<span class="number">0x8e</span>,<span class="number">0xe7</span>,<span class="number">0x69</span>,<span class="number">0x41</span>,<span class="number">0x4c</span>,<span class="number">0x1f</span>,<span class="number">0x3a</span>,<span class="number">0x45</span>,<span class="number">0x5c</span>,<span class="number">0x35</span>]</div><div class="line"></div><div class="line">v9 = [BitVec(<span class="string">"v9%d"</span>%i,<span class="number">16</span>) for i <span class="keyword">in</span> range(<span class="number">32</span>)]</div><div class="line"></div><div class="line">#print v9</div><div class="line">S = Solver()</div><div class="line"></div><div class="line">for i <span class="keyword">in</span> range(<span class="number">32</span>):</div><div class="line">    S.add(v9[i] &gt; <span class="number">32</span>)    #<span class="number">20</span>开始</div><div class="line">    S.add(v9[i] &lt; <span class="number">128</span>)   #小于<span class="number">128</span></div><div class="line">    S.add((v7[i]^(((<span class="number">16</span>*(v9[i]))|(v9[i]&gt;&gt;<span class="number">4</span>))<span class="subst">%256</span>)) == v6[i])  #暴力的大小是<span class="number">00</span>-FF(<span class="number">256</span>)之间</div><div class="line"></div><div class="line">if S.check() == sat:</div><div class="line">    m = S.model()</div><div class="line">    flag = <span class="string">''</span></div><div class="line"><span class="string">    for i in range(32):</span></div><div class="line"><span class="string">       flag += chr(m[v9[i]].as_long())</span></div><div class="line"><span class="string">    print flag</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>同样的，你也可以暴力去跑出结果，这两种方式其实差不多，思路是：输入字符从00开始到FF，逐个带入运算表达式，满足条件，进行下一组测试，这道晚上32组测试，结束循环！<br>  <img src="https://i.imgur.com/vqTIiMX.png" alt=""></p>
+</li>
+</ul>
+<h1 id="main"><a href="#main" class="headerlink" title="main"></a>main</h1><ul>
+<li>这题不知道思路是什么，遇到一个问题IDA提示<code>sp-analysis failed</code>,解决方案如下：</li>
+<li><p>找到esp不平衡的地方，在其上面一句，按下ALT+K修复栈指针。<br>   <img src="https://i.imgur.com/QkImnQf.png" alt=""></p>
+</li>
+<li><p>修改的内容是原来的偏移的相反数。</p>
+<pre><code>![](https://i.imgur.com/blZDmWp.png)
+</code></pre></li>
+<li><p>这样，修改后的ret的偏移为0，可以F5了<br>  <img src="https://i.imgur.com/0upNMwa.png" alt=""><br>  <img src="https://i.imgur.com/eDWqxjk.png" alt=""></p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/病毒分析技术(12) ---GandCrab勒索病毒/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1478,303 +1828,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/常见壳的脱壳思路/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/15/常见壳的脱壳思路/" itemprop="url">常见的脱壳思路</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T14:02:11+08:00">
-                2018-07-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/15/常见壳的脱壳思路/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/病毒分析技术(9)--文件下载者/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/08/病毒分析技术(9)--文件下载者/" itemprop="url">病毒分析技术(9) ---文件下载者病毒</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T14:02:11+08:00">
-                2018-07-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
-<li>1.目录</li>
-<li>2.样本信息</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术上的总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/08/病毒分析技术(9)--文件下载者/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1825,7 +1878,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-count">78</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
