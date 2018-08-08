@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://i.imgur.com/evV9K9k.png">
 <meta property="og:image" content="https://i.imgur.com/1u0OHif.png">
 <meta property="og:image" content="https://i.imgur.com/RYgcCmw.png">
-<meta property="og:updated_time" content="2018-08-02T06:31:20.096Z">
+<meta property="og:updated_time" content="2018-08-05T06:26:18.617Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="西电CTF(moectf)">
 <meta name="twitter:description" content="Re题RE1 签个到，分析一下流程，然后查一下字符， 得到flag:moectf{Qidao_by_fa1con}">
@@ -411,7 +411,7 @@
 <li><p>flag:<code>moectf{iS_vEry_E@sy!!}</code></p>
 </li>
 </ul>
-<h1 id="py逆向"><a href="#py逆向" class="headerlink" title="py逆向"></a>py逆向</h1><ul>
+<h2 id="py逆向"><a href="#py逆向" class="headerlink" title="py逆向"></a>py逆向</h2><ul>
 <li><p>利用网上的反编译工具，反编译如下：</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python</span></div><div class="line"><span class="comment"># visit http://tool.lu/pyc/ for more information</span></div><div class="line">import base64</div><div class="line">r = <span class="built_in">open</span>(<span class="string">'flag'</span>, <span class="string">'r'</span>)   <span class="comment"># 输入</span></div><div class="line">rflag = <span class="string">'bX;oY4Tpe4D8Q2;VRW:&#123;U2;IQIP8fR?@'</span></div><div class="line">key = base64.b64encode(r.<span class="built_in">read</span>())   <span class="comment">#base64编码：Ylg7b1k0VHBlNEQ4UTI7VlJXOntVMjtJUUlQOGZSP0A=</span></div><div class="line">flag = <span class="string">''</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="built_in">len</span>(key) / <span class="number">4</span>):     <span class="comment">#取4分之1的长度</span></div><div class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">4</span>):            <span class="comment"># 0-3</span></div><div class="line">        flag += chr(ord(key[i * <span class="number">4</span> + j]) + j)   <span class="comment">#ord(key[i * 4 + j])这一步注意的是变化的是下标。0,1,3,4(i*4+0)5,6,7,8...</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> rflag == flag:  <span class="comment"># bX;oY4Tpe4D8Q2;VRW:&#123;U2;IQIP8fR?@  比较</span></div><div class="line">    print <span class="string">'You are right.'</span></div></pre></td></tr></table></figure>
 </li>
@@ -419,7 +419,7 @@
 </li>
 <li>flag:<code>moectf{pyC_RE_1S_E@sy}</code></li>
 </ul>
-<h1 id="你玩过2048么"><a href="#你玩过2048么" class="headerlink" title="你玩过2048么"></a>你玩过2048么</h1><ul>
+<h2 id="你玩过2048么"><a href="#你玩过2048么" class="headerlink" title="你玩过2048么"></a>你玩过2048么</h2><ul>
 <li>第一回答一下：没玩过</li>
 <li>分析一下哈，查找一下字符串，有重点字符串<br>   <img src="https://i.imgur.com/JIQSol1.png" alt=""></li>
 <li>交叉引用一下，找到几处重点区域：<br>   <img src="https://i.imgur.com/evV9K9k.png" alt=""><br>   <img src="https://i.imgur.com/1u0OHif.png" alt=""></li>
@@ -460,6 +460,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/08/病毒分析技术(13) ---WannaCry勒索病毒/" rel="prev" title="病毒分析技术(13) ---WannaCry勒索病毒">
+                病毒分析技术(13) ---WannaCry勒索病毒 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -536,7 +540,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">78</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -591,7 +595,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Re题"><span class="nav-number">1.</span> <span class="nav-text">Re题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RE1"><span class="nav-number">1.1.</span> <span class="nav-text">RE1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RE2"><span class="nav-number">1.2.</span> <span class="nav-text">RE2:</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#py逆向"><span class="nav-number">2.</span> <span class="nav-text">py逆向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#你玩过2048么"><span class="nav-number">3.</span> <span class="nav-text">你玩过2048么</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Re题"><span class="nav-number">1.</span> <span class="nav-text">Re题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RE1"><span class="nav-number">1.1.</span> <span class="nav-text">RE1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RE2"><span class="nav-number">1.2.</span> <span class="nav-text">RE2:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#py逆向"><span class="nav-number">1.3.</span> <span class="nav-text">py逆向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你玩过2048么"><span class="nav-number">1.4.</span> <span class="nav-text">你玩过2048么</span></a></li></ol></li></ol></div>
             
 
           </div>
