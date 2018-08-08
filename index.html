@@ -1042,7 +1042,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/病毒分析技术(11)---文件下载者变种1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/windbg学习笔记(5)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -1061,7 +1061,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/" itemprop="url">病毒分析技术(11) ---文件下载者病毒变种</a></h1>
+                <a class="post-title-link" href="/2018/07/26/windbg学习笔记(5)/" itemprop="url">windbg学习笔记(6) --内核调试常用命令(2)</a></h1>
         
 
         <div class="post-meta">
@@ -1073,8 +1073,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:02:11+08:00">
-                2018-07-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T14:02:11+08:00">
+                2018-07-26
               </time>
             
 
@@ -1096,8 +1096,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
+                  <a href="/categories/windows-内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows 内核</span>
                   </a>
                 </span>
 
@@ -1134,19 +1134,59 @@
 
       
         
-          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
-<li>1.目录</li>
-<li>2.样本信息</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术上的总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <h2 id="内存相关"><a href="#内存相关" class="headerlink" title="内存相关"></a>内存相关</h2><ul>
+<li><strong>!address命令：</strong>显示内存信范围和权限的命令，命令在用户态下也可以使用。如果不带参数，可以显示内存所有信息。<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">kd&gt; !address</div><div class="line">  <span class="number">804d8000</span> - <span class="number">001f9000</span>                           </div><div class="line">          Usage       KernelSpaceUsageImage</div><div class="line">          ImageName   ntkrnlpa.exe</div><div class="line"></div><div class="line">  <span class="number">806d1000</span> - <span class="number">00021000</span></div><div class="line">          Usage       KernelSpaceUsageImage</div><div class="line">          ImageName   halaacpi.dll</div><div class="line"></div><div class="line">  <span class="number">80e86000</span> - <span class="number">01501000</span></div><div class="line">          Usage       KernelSpaceUsagePFNDatabase</div><div class="line"></div><div class="line">  <span class="number">82387000</span> - <span class="number">08000000</span></div><div class="line">          Usage       KernelSpaceUsageNonPagedPool</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kd&gt; x win32k!NtUserCreateWindowEx</div><div class="line">bf834964 win32k!NtUserCreateWindowEx = &lt;<span class="literal">no</span><span class="built_in"> type </span>information&gt;</div><div class="line">kd&gt; !address bf834964</div><div class="line">  bf800000 - 001c3000                           </div><div class="line">          Usage       KernelSpaceUsageImage</div><div class="line">          ImageName   \SystemRoot\System32\win32k.sys</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>!vm</strong>:显示虚拟内存信息：主要有物理大小，分页文件大小，分页内存大小等信息，用来检查内存使用情况，在进程虚拟内存中，每个进程按照从高到底的顺序排序，很容易看出大内存占用的进程。最后一部分是会话内存空间信息(关系到创建会话，窗口，钩子等)。<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">kd&gt; !vm 4</div><div class="line"></div><div class="line">*** Virtual Memory Usage ***</div><div class="line">	Physical Memory:     <span class="number"> 786300 </span>(  <span class="number"> 3145200 </span>Kb)</div><div class="line">	Page File: \??\C:\pagefile.sys</div><div class="line">	  Current:  <span class="number"> 2095104 </span>Kb  Free Space:  <span class="number"> 2080612 </span>Kb</div><div class="line">	  Minimum:  <span class="number"> 2095104 </span>Kb  Maximum:     <span class="number"> 4190208 </span>Kb</div><div class="line">	Available Pages:     <span class="number"> 692972 </span>(  <span class="number"> 2771888 </span>Kb)</div><div class="line">	ResAvail Pages:      <span class="number"> 707973 </span>(  <span class="number"> 2831892 </span>Kb)</div><div class="line">	Locked IO Pages:       <span class="number"> 1264 </span>(     <span class="number"> 5056 </span>Kb)</div><div class="line">	Free System PTEs:    <span class="number"> 161011 </span>(   <span class="number"> 644044 </span>Kb)</div><div class="line">	Free NP PTEs:         <span class="number"> 32766 </span>(   <span class="number"> 131064 </span>Kb)</div><div class="line">	Free Special NP:          <span class="number"> 0 </span>(        <span class="number"> 0 </span>Kb)</div><div class="line">	Modified Pages:         <span class="number"> 721 </span>(     <span class="number"> 2884 </span>Kb)</div><div class="line">	Modified PF Pages:      <span class="number"> 721 </span>(     <span class="number"> 2884 </span>Kb)</div><div class="line">	NonPagedPool Usage:    <span class="number"> 2381 </span>(     <span class="number"> 9524 </span>Kb)</div><div class="line">	NonPagedPool Max:     <span class="number"> 65536 </span>(   <span class="number"> 262144 </span>Kb)</div><div class="line">	PagedPool<span class="number"> 0 </span>Usage:     <span class="number"> 5494 </span>(    <span class="number"> 21976 </span>Kb)</div><div class="line">	PagedPool<span class="number"> 1 </span>Usage:      <span class="number"> 727 </span>(     <span class="number"> 2908 </span>Kb)</div><div class="line">	PagedPool<span class="number"> 2 </span>Usage:      <span class="number"> 714 </span>(     <span class="number"> 2856 </span>Kb)</div><div class="line">	PagedPool Usage:       <span class="number"> 6935 </span>(    <span class="number"> 27740 </span>Kb)</div><div class="line">	PagedPool Maximum:    <span class="number"> 92160 </span>(   <span class="number"> 368640 </span>Kb)</div><div class="line">	Shared Commit:        <span class="number"> 10924 </span>(    <span class="number"> 43696 </span>Kb)</div><div class="line">	Special Pool:             <span class="number"> 0 </span>(        <span class="number"> 0 </span>Kb)</div><div class="line">	Shared Process:        <span class="number"> 2241 </span>(     <span class="number"> 8964 </span>Kb)</div><div class="line">	PagedPool Commit:      <span class="number"> 6935 </span>(    <span class="number"> 27740 </span>Kb)</div><div class="line">	Driver Commit:         <span class="number"> 1196 </span>(     <span class="number"> 4784 </span>Kb)</div><div class="line">	Committed pages:      <span class="number"> 57554 </span>(   <span class="number"> 230216 </span>Kb)</div><div class="line">	Commit limit:       <span class="number"> 1269081 </span>(  <span class="number"> 5076324 </span>Kb)</div><div class="line"></div><div class="line">	Total Private:        <span class="number"> 35500 </span>(   <span class="number"> 142000 </span>Kb)</div><div class="line">        <span class="number"> 0454 </span>vmtoolsd.exe     <span class="number"> 4926 </span>(    <span class="number"> 19704 </span>Kb)</div><div class="line">        <span class="number"> 0538 </span>explorer.exe     <span class="number"> 4466 </span>(    <span class="number"> 17864 </span>Kb)</div><div class="line">         05dc SGTool.exe       <span class="number"> 3414 </span>(    <span class="number"> 13656 </span>Kb)</div><div class="line">         03b8 svchost.exe      <span class="number"> 3072 </span>(    <span class="number"> 12288 </span>Kb)</div><div class="line">        <span class="number"> 0270 </span>winlogon.exe     <span class="number"> 2973 </span>(    <span class="number"> 11892 </span>Kb)</div><div class="line">         06c0 vmtoolsd.exe     <span class="number"> 2886 </span>(    <span class="number"> 11544 </span>Kb)</div><div class="line">         04d4 rundll32.exe     <span class="number"> 1724 </span>(     <span class="number"> 6896 </span>Kb)</div><div class="line">        <span class="number"> 0470 </span>wuauclt.exe      <span class="number"> 1644 </span>(     <span class="number"> 6576 </span>Kb)</div><div class="line">         065c VGAuthService.e  <span class="number"> 1591 </span>(     <span class="number"> 6364 </span>Kb)</div><div class="line">         05e4 ctfmon.exe       <span class="number"> 1372 </span>(     <span class="number"> 5488 </span>Kb)</div><div class="line">         05ac spoolsv.exe      <span class="number"> 1102 </span>(     <span class="number"> 4408 </span>Kb)</div><div class="line">         02a8 lsass.exe        <span class="number"> 1003 </span>(     <span class="number"> 4012 </span>Kb)</div><div class="line">         077c wmiprvse.exe      <span class="number"> 985 </span>(     <span class="number"> 3940 </span>Kb)</div><div class="line">         034c svchost.exe       <span class="number"> 777 </span>(     <span class="number"> 3108 </span>Kb)</div><div class="line">        <span class="number"> 0608 </span>svchost.exe       <span class="number"> 559 </span>(     <span class="number"> 2236 </span>Kb)</div><div class="line">        <span class="number"> 0394 </span>svchost.exe       <span class="number"> 455 </span>(     <span class="number"> 1820 </span>Kb)</div><div class="line">        <span class="number"> 0258 </span>csrss.exe         <span class="number"> 452 </span>(     <span class="number"> 1808 </span>Kb)</div><div class="line">         029c services.exe      <span class="number"> 424 </span>(     <span class="number"> 1696 </span>Kb)</div><div class="line">         01e8 SohuNews.exe      <span class="number"> 406 </span>(     <span class="number"> 1624 </span>Kb)</div><div class="line">        <span class="number"> 0428 </span>svchost.exe       <span class="number"> 390 </span>(     <span class="number"> 1560 </span>Kb)</div><div class="line">         03f0 svchost.exe       <span class="number"> 343 </span>(     <span class="number"> 1372 </span>Kb)</div><div class="line">         00b0 alg.exe           <span class="number"> 314 </span>(     <span class="number"> 1256 </span>Kb)</div><div class="line">        <span class="number"> 0340 </span>vmacthlp.exe      <span class="number"> 173 </span>(      <span class="number"> 692 </span>Kb)</div><div class="line">        <span class="number"> 0228 </span>smss.exe           <span class="number"> 42 </span>(      <span class="number"> 168 </span>Kb)</div><div class="line">        <span class="number"> 0004 </span>System              <span class="number"> 7 </span>(       <span class="number"> 28 </span>Kb)</div><div class="line"></div><div class="line">	Terminal Server Memory Usage By Session:    //会话</div><div class="line"></div><div class="line">	Session Paged Pool Maximum is 4096K</div><div class="line">	Session View Space Maximum is 49152K</div><div class="line">               </div><div class="line">	Session ID<span class="number"> 0 </span>@ badca000:</div><div class="line">	Paged Pool Usage:           0K</div><div class="line">	Commit Usage:            2108K</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="对象相关"><a href="#对象相关" class="headerlink" title="对象相关"></a>对象相关</h2><ul>
+<li><p>!handle：查看句柄信息，包括句柄类型，引用计数，句柄名，0参数等同与默认参数，表示所有句柄！</p>
+<ul>
+<li><p>!handle [0]:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="string">kd&gt;</span> <span class="string">!handle</span></div><div class="line"><span class="string">processor</span> <span class="string">number</span> <span class="number">0</span><span class="string">,</span> <span class="string">process</span> <span class="number">805539</span><span class="string">a0</span></div><div class="line"><span class="string">PROCESS</span> <span class="number">805539</span><span class="string">a0</span>  <span class="attr">SessionId:</span> <span class="string">none</span>  <span class="attr">Cid:</span> <span class="number">0000</span>    <span class="attr">Peb:</span> <span class="number">00000000</span>  <span class="attr">ParentCid:</span> <span class="number">0000</span></div><div class="line"><span class="attr">    DirBase:</span> <span class="number">00331000</span>  <span class="attr">ObjectTable:</span> <span class="string">e1001c88</span>  <span class="attr">HandleCount:</span> <span class="number">250.</span></div><div class="line"><span class="attr">    Image:</span> <span class="string">Idle</span></div><div class="line"></div><div class="line"><span class="string">Handle</span> <span class="string">table</span> <span class="string">at</span> <span class="string">e16fd000</span> <span class="string">with</span> <span class="number">250</span> <span class="string">Entries</span> <span class="string">in</span> <span class="string">use</span></div><div class="line"><span class="number">0004</span><span class="string">:</span> <span class="attr">Object:</span> <span class="number">8</span><span class="string">a32c830</span>  <span class="attr">GrantedAccess:</span> <span class="number">001</span><span class="string">f0fff</span> <span class="attr">Entry:</span> <span class="string">e1002008</span></div><div class="line"><span class="attr">Object:</span> <span class="number">8</span><span class="string">a32c830</span>  <span class="attr">Type:</span> <span class="string">(8a32ce70)</span> <span class="string">Process</span></div><div class="line"><span class="attr">    ObjectHeader:</span> <span class="number">8</span><span class="string">a32c818</span> <span class="string">(old</span> <span class="string">version)</span></div><div class="line"><span class="attr">        HandleCount:</span> <span class="number">2</span>  <span class="attr">PointerCount:</span> <span class="number">60</span></div><div class="line"></div><div class="line"><span class="number">0008</span><span class="string">:</span> <span class="attr">Object:</span> <span class="number">8</span><span class="string">a32b020</span>  <span class="attr">GrantedAccess:</span> <span class="number">00000000</span> <span class="attr">Entry:</span> <span class="string">e1002010</span></div><div class="line"><span class="attr">Object:</span> <span class="number">8</span><span class="string">a32b020</span>  <span class="attr">Type:</span> <span class="string">(8a32cca0)</span> <span class="string">Thread</span></div><div class="line"><span class="attr">    ObjectHeader:</span> <span class="number">8</span><span class="string">a32b008</span> <span class="string">(old</span> <span class="string">version)</span></div><div class="line"><span class="attr">        HandleCount:</span> <span class="number">1</span>  <span class="attr">PointerCount:</span> <span class="number">1</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>!handle  xxxxxxx：查看指定进程的句柄信息。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">kd&gt; !prcess 0 0</div><div class="line"><span class="literal">No</span> <span class="builtin-name">export</span> prcess found</div><div class="line">kd&gt; !process 0 0</div><div class="line">**** NT ACTIVE PROCESS DUMP ****</div><div class="line">PROCESS 8a32c830  SessionId: none  Cid: 0004    Peb: 00000000  ParentCid: 0000</div><div class="line">    DirBase: 00331000  ObjectTable: e1001c88  HandleCount: 250.</div><div class="line">    Image: System</div><div class="line"></div><div class="line">kd&gt; !handle 8a32c830</div><div class="line">processor number 0, process 805539a0</div><div class="line">PROCESS 805539a0  SessionId: none  Cid: 0000    Peb: 00000000  ParentCid: 0000</div><div class="line">    DirBase: 00331000  ObjectTable: e1001c88  HandleCount: 250.</div><div class="line">    Image: Idle</div><div class="line"></div><div class="line">Kernel Handle table at e16fd000 with 250 Entries <span class="keyword">in</span> use</div><div class="line">8a32c830: free handle, Entry<span class="built_in"> address </span>8a297a88, Next Entry 00000000</div></pre></td></tr></table></figure>
+</li>
+<li><p>!handle [xxx]:显示指定的句柄信息</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="string">kd&gt;</span> <span class="string">!handle</span> <span class="number">0550</span></div><div class="line"><span class="string">processor</span> <span class="string">number</span> <span class="number">0</span><span class="string">,</span> <span class="string">process</span> <span class="number">89</span><span class="string">f0ada0</span></div><div class="line"><span class="string">PROCESS</span> <span class="number">89</span><span class="string">f0ada0</span>  <span class="attr">SessionId:</span> <span class="number">0</span>  <span class="attr">Cid:</span> <span class="number">0190</span>    <span class="attr">Peb:</span> <span class="number">7</span><span class="string">ffd5000</span>  <span class="attr">ParentCid:</span> <span class="number">0550</span></div><div class="line"><span class="attr">    DirBase:</span> <span class="number">13680340</span>  <span class="attr">ObjectTable:</span> <span class="string">e27288a0</span>  <span class="attr">HandleCount:</span> <span class="number">336.</span></div><div class="line"><span class="attr">    Image:</span> <span class="string">SogouCloud.exe</span></div><div class="line"></div><div class="line"><span class="string">Handle</span> <span class="string">table</span> <span class="string">at</span> <span class="string">e11d1000</span> <span class="string">with</span> <span class="number">336</span> <span class="string">Entries</span> <span class="string">in</span> <span class="string">use</span></div><div class="line"><span class="number">0550</span><span class="string">:</span> <span class="attr">Object:</span> <span class="number">8</span><span class="string">a14a030</span>  <span class="attr">GrantedAccess:</span> <span class="number">001</span><span class="string">f0001</span> <span class="string">(Inherit)</span> <span class="attr">Entry:</span> <span class="string">e11d1aa0</span></div><div class="line"><span class="attr">Object:</span> <span class="number">8</span><span class="string">a14a030</span>  <span class="attr">Type:</span> <span class="string">(8a3295e0)</span> <span class="string">Mutant</span></div><div class="line"><span class="attr">    ObjectHeader:</span> <span class="number">8</span><span class="string">a14a018</span> <span class="string">(old</span> <span class="string">version)</span></div><div class="line"><span class="attr">        HandleCount:</span> <span class="number">1</span>  <span class="attr">PointerCount:</span> <span class="number">2</span></div><div class="line">        <span class="string">Directory</span> <span class="attr">Object:</span> <span class="string">e155ad10</span>  <span class="attr">Name:</span> <span class="string">mutex_file_0x006E005D</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>!handle [xxxx] 3 [yyy]:显示指定的进程的指定句柄</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="string">kd&gt;</span> <span class="string">!handle</span> <span class="number">0550</span></div><div class="line"><span class="string">processor</span> <span class="string">number</span> <span class="number">0</span><span class="string">,</span> <span class="string">process</span> <span class="number">89</span><span class="string">f0ada0</span></div><div class="line"><span class="string">PROCESS</span> <span class="number">89</span><span class="string">f0ada0</span>  <span class="attr">SessionId:</span> <span class="number">0</span>  <span class="attr">Cid:</span> <span class="number">0190</span>    <span class="attr">Peb:</span> <span class="number">7</span><span class="string">ffd5000</span>  <span class="attr">ParentCid:</span> <span class="number">0550</span></div><div class="line"><span class="attr">    DirBase:</span> <span class="number">13680340</span>  <span class="attr">ObjectTable:</span> <span class="string">e27288a0</span>  <span class="attr">HandleCount:</span> <span class="number">336.</span></div><div class="line"><span class="attr">    Image:</span> <span class="string">SogouCloud.exe</span></div><div class="line"></div><div class="line"><span class="string">Handle</span> <span class="string">table</span> <span class="string">at</span> <span class="string">e11d1000</span> <span class="string">with</span> <span class="number">336</span> <span class="string">Entries</span> <span class="string">in</span> <span class="string">use</span></div><div class="line"><span class="number">0550</span><span class="string">:</span> <span class="attr">Object:</span> <span class="number">8</span><span class="string">a14a030</span>  <span class="attr">GrantedAccess:</span> <span class="number">001</span><span class="string">f0001</span> <span class="string">(Inherit)</span> <span class="attr">Entry:</span> <span class="string">e11d1aa0</span></div><div class="line"><span class="attr">Object:</span> <span class="number">8</span><span class="string">a14a030</span>  <span class="attr">Type:</span> <span class="string">(8a3295e0)</span> <span class="string">Mutant</span></div><div class="line"><span class="attr">    ObjectHeader:</span> <span class="number">8</span><span class="string">a14a018</span> <span class="string">(old</span> <span class="string">version)</span></div><div class="line"><span class="attr">        HandleCount:</span> <span class="number">1</span>  <span class="attr">PointerCount:</span> <span class="number">2</span></div><div class="line">        <span class="string">Directory</span> <span class="attr">Object:</span> <span class="string">e155ad10</span>  <span class="attr">Name:</span> <span class="string">mutex_file_0x006E005D</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>!object：查看对象</p>
+<ul>
+<li>!object xxxxxx：[表示对象的地址]<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0550</span>: <span class="attribute">Object</span>: <span class="number">8</span>a14a030  <span class="attribute">GrantedAccess</span>: <span class="number">001</span>f0001 (Inherit) <span class="attribute">Entry</span>: e11d1aa0</div><div class="line"><span class="attribute">Object</span>: <span class="number">8</span>a14a030  <span class="attribute">Type</span>: (<span class="number">8</span>a3295e0) Mutant</div><div class="line">    <span class="attribute">ObjectHeader</span>: <span class="number">8</span>a14a018 (old version)</div><div class="line">        <span class="attribute">HandleCount</span>: <span class="number">1</span>  <span class="attribute">PointerCount</span>: <span class="number">2</span></div><div class="line">        Directory <span class="attribute">Object</span>: e155ad10  <span class="attribute">Name</span>: mutex_file_0x006E005D</div><div class="line"></div><div class="line">kd&gt; !object <span class="number">8</span>a14a030</div><div class="line"><span class="attribute">Object</span>: <span class="number">8</span>a14a030  <span class="attribute">Type</span>: (<span class="number">8</span>a3295e0) Mutant</div><div class="line">    <span class="attribute">ObjectHeader</span>: <span class="number">8</span>a14a018 (old version)</div><div class="line">    <span class="attribute">HandleCount</span>: <span class="number">1</span>  <span class="attribute">PointerCount</span>: <span class="number">2</span></div><div class="line">    Directory <span class="attribute">Object</span>: e155ad10  <span class="attribute">Name</span>: mutex_file_0x006E005D</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="驱动相关"><a href="#驱动相关" class="headerlink" title="驱动相关"></a>驱动相关</h1><ul>
+<li><p>!drvobj：<strong>显示驱动信息</strong>，主要显示<strong>DRIVER_OBJECT结构信息</strong></p>
+<ul>
+<li>!drvobj xxxxx yy:xxxx表示的是设备驱动地址或者名称，yy表示掩码，一般为7，不加掩码，则显示粗略信息。<figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div></pre></td><td class="code"><pre><div class="line">kd&gt; !object \<span class="built_in">Driver</span>         <span class="comment">//显示\Driver下的对象信息</span></div><div class="line">Object: e101c918  <span class="built_in">Type</span>: (<span class="number">8</span>a3603b0) Directory</div><div class="line">    ObjectHeader: e101c900 (old version)</div><div class="line">    HandleCount: <span class="number">0</span>  PointerCount: <span class="number">81</span></div><div class="line">    Directory Object: e1000160  <span class="built_in">Name</span>: <span class="built_in">Driver</span></div><div class="line"></div><div class="line">    Hash Address  <span class="built_in">Type</span>          <span class="built_in">Name</span></div><div class="line">    ---- -------  ----          ----</div><div class="line">     <span class="number">00</span>  <span class="number">89</span>e9a438 <span class="built_in">Driver</span>        Beep</div><div class="line">         <span class="number">8</span>a3592d0 <span class="built_in">Driver</span>        NDIS</div><div class="line">         <span class="number">8</span>a2a7f38 <span class="built_in">Driver</span>        KSecDD</div><div class="line">     <span class="number">01</span>  <span class="number">89</span>dcad38 <span class="built_in">Driver</span>        Mouclass</div><div class="line">         <span class="number">8</span>a1997f0 <span class="built_in">Driver</span>        FsVga</div><div class="line">         <span class="number">8</span>a1eb6d8 <span class="built_in">Driver</span>        Raspti</div><div class="line">         <span class="number">8</span>a13ee40 <span class="built_in">Driver</span>        es1371</div><div class="line">     <span class="number">02</span>  <span class="number">8</span>a13f778 <span class="built_in">Driver</span>        vmx_svga</div><div class="line">     <span class="number">03</span>  <span class="number">8</span>a050ce8 <span class="built_in">Driver</span>        Fips</div><div class="line">         <span class="number">8</span>a173bf8 <span class="built_in">Driver</span>        Kbdclass</div><div class="line">     <span class="number">04</span>  <span class="number">8</span>a05c030 <span class="built_in">Driver</span>        VgaSave</div><div class="line">         <span class="number">8</span>a1dadd8 <span class="built_in">Driver</span>        NDProxy</div><div class="line">         <span class="number">89</span>e00f38 <span class="built_in">Driver</span>        Compbatt</div><div class="line">     <span class="number">05</span>  <span class="number">8</span>a1ebe08 <span class="built_in">Driver</span>        Ptilink</div><div class="line">         <span class="number">89</span>e196e8 <span class="built_in">Driver</span>        MountMgr</div><div class="line">         <span class="number">8</span>a105ac0 <span class="built_in">Driver</span>        wdmaud</div><div class="line">     <span class="number">07</span>  <span class="number">8</span>a2a92d8 <span class="built_in">Driver</span>        dmload</div><div class="line">         <span class="number">8</span>a2ad1c8 <span class="built_in">Driver</span>        isapnp</div><div class="line">     <span class="number">08</span>  <span class="number">89</span>df5030 <span class="built_in">Driver</span>        redbook</div><div class="line">         <span class="number">89</span>dcaf38 <span class="built_in">Driver</span>        vmmouse</div><div class="line">         <span class="number">8</span>a297f38 <span class="built_in">Driver</span>        atapi</div><div class="line">     <span class="number">09</span>  <span class="number">8</span>a234a08 <span class="built_in">Driver</span>        vmscsi</div><div class="line">     <span class="number">10</span>  <span class="number">89</span>a099c8 <span class="built_in">Driver</span>        RasAcd</div><div class="line">         <span class="number">8</span>a13e958 <span class="built_in">Driver</span>        PSched</div><div class="line">         <span class="number">8</span>a30e980 <span class="built_in">Driver</span>        dmio</div><div class="line">         <span class="number">8</span>a050950 <span class="built_in">Driver</span>        IpNat</div><div class="line">     <span class="number">11</span>  <span class="number">899</span>b7e30 <span class="built_in">Driver</span>        mouhid</div><div class="line">         <span class="number">89</span>e881b8 <span class="built_in">Driver</span>        audstub</div><div class="line">         <span class="number">8</span>a13f2a0 <span class="built_in">Driver</span>        usbuhci</div><div class="line">         <span class="number">8</span>a151da0 <span class="built_in">Driver</span>        Win32k</div><div class="line">     <span class="number">12</span>  <span class="number">89</span>aafda0 <span class="built_in">Driver</span>        usbhub</div><div class="line">         <span class="number">89</span>e7de80 <span class="built_in">Driver</span>        swenum</div><div class="line">         <span class="number">8</span>a167370 <span class="built_in">Driver</span>        rdpdr</div><div class="line">     <span class="number">13</span>  <span class="number">89</span>fd5258 <span class="built_in">Driver</span>        usbccgp</div><div class="line">         <span class="number">89</span>e1ddb0 <span class="built_in">Driver</span>        mchInjDrv</div><div class="line">         <span class="number">89</span>ed6548 <span class="built_in">Driver</span>        RDPCDD</div><div class="line">         <span class="number">89</span>e7d9c8 <span class="built_in">Driver</span>        Update</div><div class="line">         <span class="number">89</span>df51b8 <span class="built_in">Driver</span>        RasPppoe</div><div class="line">         <span class="number">8</span>a1cb3b8 <span class="built_in">Driver</span>        HTTP</div><div class="line">     <span class="number">14</span>  <span class="number">8</span>a11de30 <span class="built_in">Driver</span>        TermDD</div><div class="line">         <span class="number">8</span>a2a8160 <span class="built_in">Driver</span>        Ftdisk</div><div class="line">         <span class="number">8</span>a1c97b8 <span class="built_in">Driver</span>        sysaudio</div><div class="line">     <span class="number">15</span>  <span class="number">8</span>a173e18 <span class="built_in">Driver</span>        Rasl2tp</div><div class="line">     <span class="number">16</span>  <span class="number">8</span>a24a480 <span class="built_in">Driver</span>        vsock</div><div class="line">     <span class="number">17</span>  <span class="number">8</span>a30d1a0 <span class="built_in">Driver</span>        vmci</div><div class="line">     <span class="number">18</span>  <span class="number">8</span>a19a338 <span class="built_in">Driver</span>        PptpMiniport</div><div class="line">         <span class="number">8</span>a19acd8 <span class="built_in">Driver</span>        vmxnet</div><div class="line">         <span class="number">8</span>a3132f0 <span class="built_in">Driver</span>        WMIxWDM</div><div class="line">         <span class="number">8</span>a313878 <span class="built_in">Driver</span>        ACPI_HAL</div><div class="line">     <span class="number">19</span>  <span class="number">89</span>ac8458 <span class="built_in">Driver</span>        vmusbmouse</div><div class="line">     <span class="number">21</span>  <span class="number">89</span>e1dca8 <span class="built_in">Driver</span>        NetBT</div><div class="line">         <span class="number">8</span>a3126d0 <span class="built_in">Driver</span>        agp440</div><div class="line">     <span class="number">22</span>  <span class="number">8</span>a262d18 <span class="built_in">Driver</span>        Cdrom</div><div class="line">         <span class="number">89</span>e7e858 <span class="built_in">Driver</span>        mssmbios</div><div class="line">     <span class="number">24</span>  <span class="number">8</span>a10da70 <span class="built_in">Driver</span>        Wanarp</div><div class="line">         <span class="number">89</span>a07808 <span class="built_in">Driver</span>        Tcpip</div><div class="line">         <span class="number">89</span>e20338 <span class="built_in">Driver</span>        mnmdd</div><div class="line">         <span class="number">89</span>ea68d8 <span class="built_in">Driver</span>        gameenum</div><div class="line">     <span class="number">25</span>  <span class="number">8</span>a24a790 <span class="built_in">Driver</span>        VolSnap</div><div class="line">     <span class="number">26</span>  <span class="number">8</span>a199ec8 <span class="built_in">Driver</span>        intelppm</div><div class="line">     <span class="number">27</span>  <span class="number">89</span>dca318 <span class="built_in">Driver</span>        Imapi</div><div class="line">     <span class="number">28</span>  <span class="number">8</span>a050be0 <span class="built_in">Driver</span>        WS2IFSL</div><div class="line">         <span class="number">89</span>e21358 <span class="built_in">Driver</span>        Null</div><div class="line">         <span class="number">8</span>a13e7a0 <span class="built_in">Driver</span>        usbehci</div><div class="line">         <span class="number">89</span>ed2c08 <span class="built_in">Driver</span>        VMMEMCTL</div><div class="line">     <span class="number">29</span>  <span class="number">89</span>a09438 <span class="built_in">Driver</span>        IPSec</div><div class="line">         <span class="number">8</span>a147938 <span class="built_in">Driver</span>        Disk</div><div class="line">         <span class="number">8</span>a2b1218 <span class="built_in">Driver</span>        PCI</div><div class="line">     <span class="number">30</span>  <span class="number">89</span>dca508 <span class="built_in">Driver</span>        NdisTapi</div><div class="line">         <span class="number">8</span>a262f38 <span class="built_in">Driver</span>        NdisWan</div><div class="line">         <span class="number">8</span>a30d298 <span class="built_in">Driver</span>        PartMgr</div><div class="line">     <span class="number">31</span>  <span class="number">8</span>a13e550 <span class="built_in">Driver</span>        Gpc</div><div class="line">     <span class="number">32</span>  <span class="number">8</span>a30f030 <span class="built_in">Driver</span>        ACPI</div><div class="line">     <span class="number">33</span>  <span class="number">8</span>a35e2f8 <span class="built_in">Driver</span>        PnpManager</div><div class="line">     <span class="number">34</span>  <span class="number">8</span>a0507f8 <span class="built_in">Driver</span>        AFD</div><div class="line">         <span class="number">8</span>a106b10 <span class="built_in">Driver</span>        Ndisuio</div><div class="line">     <span class="number">35</span>  <span class="number">899</span>dc498 <span class="built_in">Driver</span>        hidusb</div><div class="line">     <span class="number">36</span>  <span class="number">8</span>a173f10 <span class="built_in">Driver</span>        i8042prt</div><div class="line">         <span class="number">8</span>a13e448 <span class="built_in">Driver</span>        CmBatt</div><div class="line">         <span class="number">8</span>a313780 <span class="built_in">Driver</span>        IntelIde</div><div class="line">kd&gt; !drvobj <span class="number">8</span>a313780 <span class="number">7</span>               <span class="comment">//显示InterIde的驱动信息</span></div><div class="line"><span class="built_in">Driver</span> object (<span class="number">8</span>a313780) is <span class="keyword">for</span>:</div><div class="line"> \<span class="built_in">Driver</span>\IntelIde</div><div class="line"><span class="built_in">Driver</span> Extension <span class="built_in">List</span>: (id , addr)</div><div class="line">(bab2c410 <span class="number">8</span>a30f7c8)  </div><div class="line">Device Object <span class="built_in">list</span>:</div><div class="line"><span class="number">8</span>a1a2570  <span class="number">8</span>a1a2740  <span class="number">8</span>a30e030  </div><div class="line"></div><div class="line">DriverEntry:   badacf05	intelide!GsDriverEntry</div><div class="line">DriverStartIo: <span class="number">00000000</span>	</div><div class="line">DriverUnload:  bab2c6dc	PCIIDEX!PciIdeUnload</div><div class="line">AddDevice:     bab2a7d2	PCIIDEX!ControllerAddDevice</div><div class="line"></div><div class="line">Dispatch routines:</div><div class="line">[<span class="number">00</span>] IRP_MJ_CREATE                      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">01</span>] IRP_MJ_CREATE_NAMED_PIPE           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">02</span>] IRP_MJ_CLOSE                       <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">03</span>] IRP_MJ_READ                        <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">04</span>] IRP_MJ_WRITE                       <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">05</span>] IRP_MJ_QUERY_INFORMATION           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">06</span>] IRP_MJ_SET_INFORMATION             <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">07</span>] IRP_MJ_QUERY_EA                    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">08</span>] IRP_MJ_SET_EA                      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">09</span>] IRP_MJ_FLUSH_BUFFERS               <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>a] IRP_MJ_QUERY_VOLUME_INFORMATION    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>b] IRP_MJ_SET_VOLUME_INFORMATION      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>c] IRP_MJ_DIRECTORY_CONTROL           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>d] IRP_MJ_FILE_SYSTEM_CONTROL         <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>e] IRP_MJ_DEVICE_CONTROL              <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>f] IRP_MJ_INTERNAL_DEVICE_CONTROL     bab2c4f2	PCIIDEX!PciIdeInternalDeviceIoControl</div><div class="line">[<span class="number">10</span>] IRP_MJ_SHUTDOWN                    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">11</span>] IRP_MJ_LOCK_CONTROL                <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">12</span>] IRP_MJ_CLEANUP                     <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">13</span>] IRP_MJ_CREATE_MAILSLOT             <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">14</span>] IRP_MJ_QUERY_SECURITY              <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">15</span>] IRP_MJ_SET_SECURITY                <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">16</span>] IRP_MJ_POWER                       bab28692	PCIIDEX!DispatchPower</div><div class="line">[<span class="number">17</span>] IRP_MJ_SYSTEM_CONTROL              bab2c46e	PCIIDEX!DispatchWmi</div><div class="line">[<span class="number">18</span>] IRP_MJ_DEVICE_CHANGE               <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">19</span>] IRP_MJ_QUERY_QUOTA                 <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">1</span>a] IRP_MJ_SET_QUOTA                   <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">1</span>b] IRP_MJ_PNP                         bab2c43a	PCIIDEX!DispatchPnp</div><div class="line"></div><div class="line">kd&gt; !drvobj IntelIde <span class="number">7</span>              <span class="comment">//显示InterIde的驱动信息   </span></div><div class="line"><span class="built_in">Driver</span> object (<span class="number">8</span>a313780) is <span class="keyword">for</span>:</div><div class="line"> \<span class="built_in">Driver</span>\IntelIde</div><div class="line"><span class="built_in">Driver</span> Extension <span class="built_in">List</span>: (id , addr)</div><div class="line">(bab2c410 <span class="number">8</span>a30f7c8)  </div><div class="line">Device Object <span class="built_in">list</span>:</div><div class="line"><span class="number">8</span>a1a2570  <span class="number">8</span>a1a2740  <span class="number">8</span>a30e030  </div><div class="line"></div><div class="line">DriverEntry:   badacf05	intelide!GsDriverEntry</div><div class="line">DriverStartIo: <span class="number">00000000</span>	</div><div class="line">DriverUnload:  bab2c6dc	PCIIDEX!PciIdeUnload</div><div class="line">AddDevice:     bab2a7d2	PCIIDEX!ControllerAddDevice</div><div class="line"></div><div class="line">Dispatch routines:</div><div class="line">[<span class="number">00</span>] IRP_MJ_CREATE                      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">01</span>] IRP_MJ_CREATE_NAMED_PIPE           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">02</span>] IRP_MJ_CLOSE                       <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">03</span>] IRP_MJ_READ                        <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">04</span>] IRP_MJ_WRITE                       <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">05</span>] IRP_MJ_QUERY_INFORMATION           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">06</span>] IRP_MJ_SET_INFORMATION             <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">07</span>] IRP_MJ_QUERY_EA                    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">08</span>] IRP_MJ_SET_EA                      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">09</span>] IRP_MJ_FLUSH_BUFFERS               <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>a] IRP_MJ_QUERY_VOLUME_INFORMATION    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>b] IRP_MJ_SET_VOLUME_INFORMATION      <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>c] IRP_MJ_DIRECTORY_CONTROL           <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>d] IRP_MJ_FILE_SYSTEM_CONTROL         <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>e] IRP_MJ_DEVICE_CONTROL              <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">0</span>f] IRP_MJ_INTERNAL_DEVICE_CONTROL     bab2c4f2	PCIIDEX!PciIdeInternalDeviceIoControl</div><div class="line">[<span class="number">10</span>] IRP_MJ_SHUTDOWN                    <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">11</span>] IRP_MJ_LOCK_CONTROL                <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">12</span>] IRP_MJ_CLEANUP                     <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">13</span>] IRP_MJ_CREATE_MAILSLOT             <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">14</span>] IRP_MJ_QUERY_SECURITY              <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">15</span>] IRP_MJ_SET_SECURITY                <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">16</span>] IRP_MJ_POWER                       bab28692	PCIIDEX!DispatchPower</div><div class="line">[<span class="number">17</span>] IRP_MJ_SYSTEM_CONTROL              bab2c46e	PCIIDEX!DispatchWmi</div><div class="line">[<span class="number">18</span>] IRP_MJ_DEVICE_CHANGE               <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">19</span>] IRP_MJ_QUERY_QUOTA                 <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">1</span>a] IRP_MJ_SET_QUOTA                   <span class="number">804</span>f454a	nt!IopInvalidDeviceRequest</div><div class="line">[<span class="number">1</span>b] IRP_MJ_PNP                         bab2c43a	PCIIDEX!DispatchPnp</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>!devobj：显示<strong>驱动设备信息</strong>。主要显示<strong>DEVICE_OBJECT结构</strong></p>
+<ul>
+<li>!devobj xxxx:xxxx为驱动地址或者名称<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">kd&gt; !drvobj Beep                 <span class="comment">//得到beep设备驱动的DEVICE_OBJECT的地址</span></div><div class="line">Driver <span class="keyword">object</span> (<span class="number">89</span>e9a438) <span class="keyword">is</span> <span class="keyword">for</span>:</div><div class="line"> \Driver\Beep</div><div class="line">Driver Extension List: (id , addr)</div><div class="line"></div><div class="line">Device <span class="keyword">Object</span> list:</div><div class="line"><span class="number">89</span>e9a2c8  </div><div class="line">kd&gt; !devobj <span class="number">89</span>e9a2c8            <span class="comment">//查看Beep驱动的DEVICE_OBJECT的信息</span></div><div class="line">Device <span class="keyword">object</span> (<span class="number">89</span>e9a2c8) <span class="keyword">is</span> <span class="keyword">for</span>:</div><div class="line"> Beep \Driver\Beep DriverObject <span class="number">89</span>e9a438</div><div class="line">Current Irp <span class="number">00000000</span> RefCount <span class="number">0</span> <span class="keyword">Type</span> <span class="number">00000001</span> Flags <span class="number">00000044</span></div><div class="line">Dacl e13bd73c DevExt <span class="number">89</span>e9a380 DevObjExt <span class="number">89</span>e9a3d8 </div><div class="line">ExtensionFlags (<span class="number">0000000000</span>)  </div><div class="line">Device queue <span class="keyword">is</span> <span class="keyword">not</span> busy.</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="蓝屏分析"><a href="#蓝屏分析" class="headerlink" title="蓝屏分析"></a>蓝屏分析</h1><ul>
+<li>!analyze -v：显示蓝屏相关信息，如蓝屏原因，系统上下文等</li>
+</ul>
+
+          
         
       
     </div>
@@ -1295,6 +1335,157 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/25/windbg学习笔记(5)--内核调试基本命令/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/病毒分析技术(11)---文件下载者变种1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/" itemprop="url">病毒分析技术(11) ---文件下载者病毒变种</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:02:11+08:00">
+                2018-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术上的总结
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/25/病毒分析技术(11)---文件下载者变种1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1633,152 +1824,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/19/windbg学习笔记(3)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/19/windbg学习笔记(3)/" itemprop="url">windbg学习笔记（3）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-19T15:02:11+08:00">
-                2018-07-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows内核/" itemprop="url" rel="index">
-                    <span itemprop="name">windows内核</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/19/windbg学习笔记(3)/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1829,7 +1874,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
