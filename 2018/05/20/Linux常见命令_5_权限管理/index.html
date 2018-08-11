@@ -81,37 +81,30 @@
 
 
 
-<meta name="description" content="第一部分 帮助 man [命令] /info / [查询的内容] 查询指定的字符串 man [配置文件名称] ：显示配置文件的作用。如果直接加绝对路径，显示的是配置文件的内容 有文件的帮助信息，也有配置文件的帮助信息。如果是man 5 [命令] 查看的是配置文件的帮助信息，如果是man 1 [命令] 显示的是命令的帮助信息【见linux(1) whereis命令】   whatis [命令] ：显">
+<meta name="description" content="第一部分 ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux常见命令&lt;2&gt;常用命令">
-<meta property="og:url" content="http://yoursite.com/2018/04/28/Linux常见命令(2)其他命令/index.html">
+<meta property="og:title" content="Linux常见命令&lt;5&gt;权限管理">
+<meta property="og:url" content="http://yoursite.com/2018/05/20/Linux常见命令_5_权限管理/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="第一部分 帮助 man [命令] /info / [查询的内容] 查询指定的字符串 man [配置文件名称] ：显示配置文件的作用。如果直接加绝对路径，显示的是配置文件的内容 有文件的帮助信息，也有配置文件的帮助信息。如果是man 5 [命令] 查看的是配置文件的帮助信息，如果是man 1 [命令] 显示的是命令的帮助信息【见linux(1) whereis命令】   whatis [命令] ：显">
+<meta property="og:description" content="第一部分 ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://i.imgur.com/Z4tFW44.png">
-<meta property="og:image" content="https://i.imgur.com/dzVbLlm.png">
-<meta property="og:image" content="https://i.imgur.com/eoAu5q7.png">
-<meta property="og:image" content="https://i.imgur.com/glgYvQ4.png">
-<meta property="og:image" content="https://i.imgur.com/D9fufqV.png">
-<meta property="og:image" content="https://i.imgur.com/FkdVmdl.png">
-<meta property="og:image" content="https://i.imgur.com/S2Mfc4m.png">
-<meta property="og:image" content="https://i.imgur.com/Gs5rCP3.png">
-<meta property="og:image" content="https://i.imgur.com/5NsHzrX.png">
-<meta property="og:image" content="https://i.imgur.com/v7PdOkl.png">
-<meta property="og:image" content="https://i.imgur.com/3e80H8u.png">
-<meta property="og:image" content="https://i.imgur.com/r5X4HCj.png">
-<meta property="og:image" content="https://i.imgur.com/lbO9Oro.png">
-<meta property="og:image" content="https://i.imgur.com/83BBAso.png">
-<meta property="og:image" content="https://i.imgur.com/W9i09Db.png">
-<meta property="og:image" content="https://i.imgur.com/cWxEZzb.png">
-<meta property="og:image" content="https://i.imgur.com/A2EtXfT.png">
-<meta property="og:image" content="https://i.imgur.com/cMEdqNr.png">
-<meta property="og:image" content="https://i.imgur.com/UlytG1f.png">
-<meta property="og:updated_time" content="2018-08-11T13:09:02.697Z">
+<meta property="og:image" content="https://i.imgur.com/xXz86iD.png">
+<meta property="og:image" content="https://i.imgur.com/cMxGQ1O.png">
+<meta property="og:image" content="https://i.imgur.com/UrVW9GN.png">
+<meta property="og:image" content="https://i.imgur.com/X11rr4S.png">
+<meta property="og:image" content="https://i.imgur.com/CkqerBj.png">
+<meta property="og:image" content="https://i.imgur.com/AsTl3ai.png">
+<meta property="og:image" content="https://i.imgur.com/WIXJEvL.png">
+<meta property="og:image" content="https://i.imgur.com/ia4oSEW.png">
+<meta property="og:image" content="https://i.imgur.com/Gl9v46W.png">
+<meta property="og:image" content="https://i.imgur.com/5pT77Td.png">
+<meta property="og:image" content="https://i.imgur.com/X11rr4S.png">
+<meta property="og:image" content="https://i.imgur.com/MQ73Vwj.png">
+<meta property="og:updated_time" content="2018-08-11T13:09:26.908Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux常见命令&lt;2&gt;常用命令">
-<meta name="twitter:description" content="第一部分 帮助 man [命令] /info / [查询的内容] 查询指定的字符串 man [配置文件名称] ：显示配置文件的作用。如果直接加绝对路径，显示的是配置文件的内容 有文件的帮助信息，也有配置文件的帮助信息。如果是man 5 [命令] 查看的是配置文件的帮助信息，如果是man 1 [命令] 显示的是命令的帮助信息【见linux(1) whereis命令】   whatis [命令] ：显">
-<meta name="twitter:image" content="https://i.imgur.com/Z4tFW44.png">
+<meta name="twitter:title" content="Linux常见命令&lt;5&gt;权限管理">
+<meta name="twitter:description" content="第一部分 ACL权限&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用dumpe2fs -h /dev/sda3这个命令即可查看。">
+<meta name="twitter:image" content="https://i.imgur.com/xXz86iD.png">
 
 
 
@@ -141,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/04/28/Linux常见命令(2)其他命令/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/20/Linux常见命令_5_权限管理/"/>
 
 
 
 
 
-  <title>Linux常见命令<2>常用命令 | findream's blog</title>
+  <title>Linux常见命令<5>权限管理 | findream's blog</title>
   
 
 
@@ -314,7 +307,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/Linux常见命令(2)其他命令/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/20/Linux常见命令_5_权限管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -331,7 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Linux常见命令<2>常用命令</h1>
+          <h1 class="post-title" itemprop="name headline">Linux常见命令<5>权限管理</h1>
         
 
         <div class="post-meta">
@@ -343,8 +336,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-28T15:02:11+08:00">
-                2018-04-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-20T15:02:11+08:00">
+                2018-05-20
               </time>
             
 
@@ -403,121 +396,45 @@
       
 
       
-        <h1 id="第一部分-帮助"><a href="#第一部分-帮助" class="headerlink" title="第一部分 帮助"></a>第一部分 帮助</h1><ul>
-<li>man [命令] /info<ul>
-<li>/ [查询的内容] 查询指定的字符串</li>
-<li>man [配置文件名称] ：显示配置文件的作用。如果直接加绝对路径，显示的是配置文件的内容</li>
-<li>有文件的帮助信息，也有配置文件的帮助信息。如果是man 5 [命令] 查看的是配置文件的帮助信息，如果是man 1 [命令] 显示的是命令的帮助信息【见linux(1) whereis命令】<br><img src="https://i.imgur.com/Z4tFW44.png" alt=""></li>
-</ul>
-</li>
-<li>whatis [命令] ：显示命令作用（简略）//whereis [命令]<br>   <img src="https://i.imgur.com/dzVbLlm.png" alt=""></li>
-<li>apropos [配置文件] ：显示配置文件的作用<br>   <img src="https://i.imgur.com/eoAu5q7.png" alt=""></li>
-<li>命令 -h(–help)</li>
-<li>help [命令] shell内置命令的帮助信息（shell编程中的命令）<ul>
-<li>也可以查看命令的路径<br><img src="https://i.imgur.com/glgYvQ4.png" alt=""><br><img src="https://i.imgur.com/D9fufqV.png" alt=""><a id="more"></a>
-<h1 id="第二部分-用户管理"><a href="#第二部分-用户管理" class="headerlink" title="第二部分 用户管理"></a>第二部分 用户管理</h1></li>
-</ul>
-</li>
-<li>useradd [用户名]  添加用户</li>
-<li>passwd [用户名]   为用户设置密码.</li>
-<li>who 查看当前用户名(tty 本地登录 pts 远程登录)<br>  <img src="https://i.imgur.com/FkdVmdl.png" alt=""></li>
-<li>w 登录用户和登录时间等具体信息<br>  <img src="https://i.imgur.com/S2Mfc4m.png" alt=""></li>
-<li>usermod [选项] [用户ID]<ul>
-<li>-g&lt;群组&gt;：修改用户所属的群组；</li>
-<li>-G&lt;群组&gt;；修改用户所属的附加群组；</li>
-<li>-l&lt;帐号名称&gt;：修改用户帐号名称；</li>
-<li>-L：锁定用户密码，使密码无效；</li>
-<li>-u<uid>：修改用户ID；</uid></li>
-<li></li>
-</ul>
-</li>
-</ul>
-<h1 id="第三部分-压缩解压"><a href="#第三部分-压缩解压" class="headerlink" title="第三部分 压缩解压"></a>第三部分 压缩解压</h1><ul>
-<li>gzip [文件名] ：压缩文件<strong>(只能压缩文件)，并且不保存源文件</strong><br>  <img src="https://i.imgur.com/Gs5rCP3.png" alt=""><ul>
-<li>gunzip /(gzip -d) [压缩文件]：解压缩<br><img src="https://i.imgur.com/5NsHzrX.png" alt=""></li>
-</ul>
-</li>
-<li>tar [选项] [压缩文件名] [目录]  <strong> 针对目录</strong><ul>
-<li>-c 打包    //zcf（选项有顺序关系）</li>
-<li>-v 显示详细信息</li>
-<li>-f 指定文件名</li>
-<li>-z 打包同时压缩<br><img src="https://i.imgur.com/v7PdOkl.png" alt=""></li>
-<li>-cjf 生成 tar.bz2文件</li>
-</ul>
-</li>
-<li>tar<ul>
-<li>-x 解包 [压缩文件]</li>
-<li>-z 解压缩</li>
-<li>其他和压缩一样<br><img src="https://i.imgur.com/3e80H8u.png" alt=""></li>
-<li>-xjf 解压tar.bz2压缩包</li>
-</ul>
-</li>
-<li>zip [选项] [压缩文件] [带压缩文件]<ul>
-<li>-r 压缩目录<br><img src="https://i.imgur.com/r5X4HCj.png" alt=""></li>
-<li>unzip [压缩文件]   解压缩<br><img src="https://i.imgur.com/lbO9Oro.png" alt=""></li>
-</ul>
-</li>
-<li>bzip2 [选项] [带压缩文件]<ul>
-<li>-k 保存源文件<br><img src="https://i.imgur.com/83BBAso.png" alt=""></li>
-<li>压缩比大</li>
-</ul>
-</li>
-<li>bunzip2 [选项] [压缩文件]<ul>
-<li>-k 是否保存压缩包</li>
-</ul>
-</li>
-</ul>
-<h1 id="第四部分-网络命令"><a href="#第四部分-网络命令" class="headerlink" title="第四部分 网络命令"></a>第四部分 网络命令</h1><ul>
-<li>ping 测试网络通畅性<ul>
-<li>-c 数量 ：ping的次数<br><img src="https://i.imgur.com/W9i09Db.png" alt=""></li>
-</ul>
-</li>
-<li>ifconfig <ul>
-<li>[网卡名称] [IP] ：网络配置信息</li>
-</ul>
-</li>
-<li>last 用户登录信息<br>  <img src="https://i.imgur.com/cWxEZzb.png" alt=""></li>
-<li>lastlog<ul>
-<li>-u [用户ID]   </li>
-</ul>
-</li>
-<li>traceroute [主机名]  追踪网络访问跃点<br>  <img src="https://i.imgur.com/A2EtXfT.png" alt=""></li>
-<li><p>netstat 查询网络状态</p>
+        <h1 id="第一部分-ACL权限"><a href="#第一部分-ACL权限" class="headerlink" title="第一部分 ACL权限"></a>第一部分 ACL权限</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;忽略所有者，所有组，其他人三个用户类型，只需要把用户对文件的权限分配给用户。ACL权限需要文件所在分区是否支持ACL机制。利用<strong>dumpe2fs -h /dev/sda3</strong>这个命令即可查看。<br><a id="more"></a></p>
 <ul>
-<li>-t ：查询TCP协议状态</li>
-<li>-u : UDP协议状态</li>
-<li>-l ：监听</li>
-<li>-r ：路由(网关)</li>
-<li>-n ：显示IP地址及端口 </li>
-<li>-a : 所有选项</li>
-<li>常用实例：<ul>
-<li>netstat -an: 查看本机所有的网络连接</li>
-<li>netstat -tlun:查看本机监听的端口</li>
-<li>netstat -rn:查看本机路由列表</li>
+<li>第一步：df -h :查看所有分区信息</li>
+<li>第二歩：dumpe2fs -h /dev/xxx<br>  <img src="https://i.imgur.com/xXz86iD.png" alt=""></li>
 </ul>
-</li>
-</ul>
-</li>
-<li><p>mount [设备文件名] [挂载点]挂载</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开启ACL</p>
 <ul>
-<li>1.创建一个挂载目录（/mnt下）</li>
-<li>2.mount<br><img src="https://i.imgur.com/cMEdqNr.png" alt=""></li>
-<li>3.umount [挂载点/设备文件名]卸载挂载点，但是不能在挂载点下卸载<br><img src="https://i.imgur.com/UlytG1f.png" alt=""></li>
+<li>临时开启ACL权限。mount -o remount,acl /<br>  <img src="https://i.imgur.com/cMxGQ1O.png" alt=""></li>
+<li>永久开启ACL权限：修改/etc/fstab文件，然后重启<br>   <img src="https://i.imgur.com/UrVW9GN.png" alt=""></li>
+</ul>
+<h1 id="第二部分-ACL权限管理"><a href="#第二部分-ACL权限管理" class="headerlink" title="第二部分 ACL权限管理"></a>第二部分 ACL权限管理</h1><ul>
+<li><p>getfacl [文件名]：获取文件ACL权限<br>  <img src="https://i.imgur.com/X11rr4S.png" alt=""></p>
+</li>
+<li><p>setfacl [选项] [u/g:username:权限] [文件名]：给用户/组设定ACL权限。</p>
+<ul>
+<li>-m:添加ACL权限</li>
+<li>-x:删除指定给的ACL权限</li>
+<li>-b：删除所有的ACL权限</li>
+<li>-d：设置默认的ACL权限</li>
+<li>-k：删除默认的ACL权限</li>
+<li>-R：递归设定ACL权限</li>
 </ul>
 </li>
 </ul>
-<h1 id="第五部分-关机与重启"><a href="#第五部分-关机与重启" class="headerlink" title="第五部分 关机与重启"></a>第五部分 关机与重启</h1><ul>
-<li>shotdown [选项] [参数]<ul>
-<li>-h：将系统关机</li>
-<li>-r：系统重新启动</li>
-<li>-c：中断关机操作</li>
-<li>-t：设置执行时间(s)</li>
-<li>xx:xx(表示时间):shutdown -h xx:xx 表示xx：xx时关机 </li>
-<li>now：参数表示立刻执行</li>
+<ul>
+<li>实例：添加一个文件ACL权限<ul>
+<li>首先创建3个用户test1,test2，st和一个组tgroup。<br><img src="https://i.imgur.com/CkqerBj.png" alt=""></li>
+<li>将两个用户添加到tgroud组中。<br><img src="https://i.imgur.com/AsTl3ai.png" alt=""></li>
+<li>修改文件的所有者和所属组<br><img src="https://i.imgur.com/WIXJEvL.png" alt=""></li>
+<li>修改权限<br><img src="https://i.imgur.com/ia4oSEW.png" alt=""></li>
+<li>设置ACL权限：setfacl -m u:st:rx /tmp/test<br><img src="https://i.imgur.com/Gl9v46W.png" alt=""><br><img src="https://i.imgur.com/5pT77Td.png" alt=""></li>
+<li>通过getfacl命令查看ACL权限<br><img src="https://i.imgur.com/X11rr4S.png" alt=""></li>
 </ul>
 </li>
-<li>reboot ：立刻重启</li>
 </ul>
+<h1 id="第三部分"><a href="#第三部分" class="headerlink" title="第三部分"></a>第三部分</h1><h1 id="第四部分"><a href="#第四部分" class="headerlink" title="第四部分"></a>第四部分</h1><h1 id="第五部分-sudo权限"><a href="#第五部分-sudo权限" class="headerlink" title="第五部分 sudo权限"></a>第五部分 sudo权限</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visduo命令通过修改/etc/sudoers文件，对用户进行赋权操作。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到以下字段：%admin ALL=(ALL) ALL，其中admin代表的是用户名，第一个all代表的是本地linux的地址，第二个ALL是代表可使用的身份，<strong>这个字段可写，可不写，</strong>第三个ALL是授权命令（绝对地址），命令写的短，则使用范围越长，如：shutdown 表示可以执行shutdown所有的命令。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用sudo -l 查看超级用户给我赋予了的命令情况。<br>    <img src="https://i.imgur.com/MQ73Vwj.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是其他用户在执行的时候，必须要写绝对路径。</p>
 
       
     </div>
@@ -542,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/26/《Windows Internals》第三章_映像加载器/" rel="next" title="第三章：系统机制-映像加载器">
-                <i class="fa fa-chevron-left"></i> 第三章：系统机制-映像加载器
+              <a href="/2018/05/17/Linux常见命令_4_用户和用户组管理/" rel="next" title="Linux常见命令<4>用户和用户组管理">
+                <i class="fa fa-chevron-left"></i> Linux常见命令<4>用户和用户组管理
               </a>
             
           </div>
@@ -552,8 +469,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/05/05/看雪CTF2017/" rel="prev" title="看雪2017CTF">
-                看雪2017CTF <i class="fa fa-chevron-right"></i>
+              <a href="/2018/05/22/XCTF嘉年华比赛试题/" rel="prev" title="XCTF嘉年华资格赛">
+                XCTF嘉年华资格赛 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -686,7 +603,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-帮助"><span class="nav-number">1.</span> <span class="nav-text">第一部分 帮助</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-用户管理"><span class="nav-number">2.</span> <span class="nav-text">第二部分 用户管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-压缩解压"><span class="nav-number">3.</span> <span class="nav-text">第三部分 压缩解压</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分-网络命令"><span class="nav-number">4.</span> <span class="nav-text">第四部分 网络命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分-关机与重启"><span class="nav-number">5.</span> <span class="nav-text">第五部分 关机与重启</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-ACL权限"><span class="nav-number">1.</span> <span class="nav-text">第一部分 ACL权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-ACL权限管理"><span class="nav-number">2.</span> <span class="nav-text">第二部分 ACL权限管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分"><span class="nav-number">3.</span> <span class="nav-text">第三部分</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分"><span class="nav-number">4.</span> <span class="nav-text">第四部分</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分-sudo权限"><span class="nav-number">5.</span> <span class="nav-text">第五部分 sudo权限</span></a></li></ol></div>
             
 
           </div>
