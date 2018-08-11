@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="病毒分析技术(7) ---初步分析[明日再战]">
+<meta property="og:url" content="http://yoursite.com/2018/03/29/病毒分析技术_7_/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/tMn0qQN.png">
+<meta property="og:image" content="https://i.imgur.com/sibx97U.png">
+<meta property="og:image" content="https://i.imgur.com/s4SkUhk.png">
+<meta property="og:image" content="https://i.imgur.com/Qpb4ukN.png">
+<meta property="og:image" content="https://i.imgur.com/HASEWpD.png">
+<meta property="og:image" content="https://i.imgur.com/GaXylPo.png">
+<meta property="og:image" content="https://i.imgur.com/AsBMgR9.png">
+<meta property="og:image" content="https://i.imgur.com/XiaBJEU.png">
+<meta property="og:image" content="https://i.imgur.com/XTzerMd.png">
+<meta property="og:image" content="https://i.imgur.com/YmXta3e.png">
+<meta property="og:image" content="https://i.imgur.com/z2Piv6M.png">
+<meta property="og:image" content="https://i.imgur.com/BUTucqx.png">
+<meta property="og:image" content="https://i.imgur.com/oanmmrf.png">
+<meta property="og:image" content="https://i.imgur.com/xfW2mBx.png">
+<meta property="og:image" content="https://i.imgur.com/QdAGewk.png">
+<meta property="og:image" content="https://i.imgur.com/SkXjqTu.png">
+<meta property="og:image" content="https://i.imgur.com/OvlEVqE.png">
+<meta property="og:image" content="https://i.imgur.com/WN3TcoO.png">
+<meta property="og:image" content="https://i.imgur.com/o5Q9zJ4.png">
+<meta property="og:image" content="https://i.imgur.com/u25eWFe.png">
+<meta property="og:image" content="https://i.imgur.com/NpUEYiM.png">
+<meta property="og:image" content="https://i.imgur.com/Yd6mfTF.png">
+<meta property="og:image" content="https://i.imgur.com/a6uQbvf.png">
+<meta property="og:updated_time" content="2018-03-31T05:59:27.576Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="病毒分析技术(7) ---初步分析[明日再战]">
+<meta name="twitter:description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析">
+<meta name="twitter:image" content="https://i.imgur.com/tMn0qQN.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/29/病毒分析技术_7_/"/>
+
+
+
+
+
+  <title>病毒分析技术(7) ---初步分析[明日再战] | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/病毒分析技术_7_/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(7) ---初步分析[明日再战]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-29T14:02:11+08:00">
+                2018-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
+<li>1.样本信息</li>
+<li>2.行为分析</li>
+<li>3.样本分析</li>
+<li>4.详细分析<a id="more"></a>
+<h1 id="二：样本信息："><a href="#二：样本信息：" class="headerlink" title="二：样本信息："></a>二：样本信息：</h1></li>
+<li>1.病毒名称：2E6682932F826269B0F84A93AAB9E609.85A681D7</li>
+<li>2.MD5：见下图</li>
+<li>3.是否加壳：是，一种安装型程序的加壳方法</li>
+<li>4.编写语言：未知</li>
+<li>5.来源：<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1" target="_blank" rel="external">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=387959&amp;extra=page%3D1%26filter%3Dtypeid%26typeid%3D62&amp;page=1</a><h1 id="三：行为分析："><a href="#三：行为分析：" class="headerlink" title="三：行为分析："></a>三：行为分析：</h1></li>
+<li>1）隐藏自身</li>
+<li>2）创建临时文件，判断系统是否被感染</li>
+<li>3) 复制文件到两个目录google/Update，实现隐藏</li>
+<li>3）利用run或者AppCertDll注册表来实现自启</li>
+<li>4）执行子程序，是个远控程序（未验证）<h1 id="四：详细分析："><a href="#四：详细分析：" class="headerlink" title="四：详细分析："></a>四：详细分析：</h1><h2 id="一：样本分析"><a href="#一：样本分析" class="headerlink" title="一：样本分析"></a>一：样本分析</h2></li>
+<li>1）查壳：发现这是一个Nullsoft Install System的东西。<br>  <img src="https://i.imgur.com/tMn0qQN.png" alt=""></li>
+<li>2）直接拖入IDA中，病毒首先做了一些初始化的工作，为以后的运行做准备。<br>  <img src="https://i.imgur.com/sibx97U.png" alt=""></li>
+<li>3）在各磁盘创建临时文件，然后删除文件，重新读取样本文件并重新创建一个新的tmp文件，做这一步的目的主要是隐藏自身<br>  <img src="https://i.imgur.com/s4SkUhk.png" alt=""><br>  <img src="https://i.imgur.com/Qpb4ukN.png" alt=""><br>  <img src="https://i.imgur.com/HASEWpD.png" alt=""></li>
+<li>5）获取了关于本地的一些基本设置之后，程序调用StartAddress，执行病毒的主体部分，这一步开始以为很简单，所以没有过多的静态分析，等到动态验证的时候，跟进去发现sub401389这个函数执行了很长时间（运行时间异常），打开火绒剑发现其进行了很多操作。<br>  <img src="https://i.imgur.com/GaXylPo.png" alt=""><br>  <img src="https://i.imgur.com/AsBMgR9.png" alt=""></li>
+<li>6）通过分析，出现一个很复杂的函数…….其中很多操作都用这个函数的身影，我们采用病毒分析最常见的方法，通过行为来分析代码，这样才能最快速的分析病毒。<br>  <img src="https://i.imgur.com/XiaBJEU.png" alt=""><br>  <img src="https://i.imgur.com/XTzerMd.png" alt=""></li>
+<li>7）在C:\Documents and Settings\hacky\Local Settings\Application Data\NVIDIA Corporation\Update\目录下创建病毒文件</li>
+<li>8）在AppCertDlls下写入本体文件路径，实现自启动。但是没有实现成功</li>
+<li>9）向<strong>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\</strong> 下面写入数据，关闭兼容性助手，可以是作者是想避免病毒因为兼容性问题导致被发现吧。</li>
+<li>10）执行第七步创建的文件，创建进程，远程恢复进程的执行。<br>  <img src="https://i.imgur.com/YmXta3e.png" alt=""><br>  <img src="https://i.imgur.com/z2Piv6M.png" alt=""></li>
+<li>11） 调用RegSetValueEx函数来设置开机启动项，因为其最后创建新的本体，把现在的启动项删除了，我们可以知道这两个也是病毒的启动项，因为他们的构造方法是一样的<br>   <img src="https://i.imgur.com/BUTucqx.png" alt=""><br>   <img src="https://i.imgur.com/oanmmrf.png" alt=""></li>
+<li>12）创建了文件，并实现了其自启动，<br>  <img src="https://i.imgur.com/xfW2mBx.png" alt=""><br>  <img src="https://i.imgur.com/QdAGewk.png" alt=""><br>  <img src="https://i.imgur.com/SkXjqTu.png" alt=""></li>
+<li>13）修改desktop.ini文件实现自身的隐藏<br>  <img src="https://i.imgur.com/OvlEVqE.png" alt=""></li>
+<li>14）启动寄宿文件<br>  <img src="https://i.imgur.com/WN3TcoO.png" alt=""></li>
+<li>15）最后删除之前创建的nsk6.tmp，我估计是用于识别病毒是否成功感染吧。<br>  <img src="https://i.imgur.com/o5Q9zJ4.png" alt=""><br>  <img src="https://i.imgur.com/u25eWFe.png" alt=""><h2 id="二：释放样本分析"><a href="#二：释放样本分析" class="headerlink" title="二：释放样本分析"></a>二：释放样本分析</h2></li>
+<li>1）这个样本只是做了隐藏，但是没有什么破坏行为，通过比较文件指纹信息，发现样本释放的文件和样本不一样。<br>  <img src="https://i.imgur.com/NpUEYiM.png" alt=""></li>
+<li>2）加壳文件什么鬼，关键是软件没查到壳，这个有点难受，IDA可以分析出导入表，但无法交叉引用。gg</li>
+<li>3）网上说这个病毒是个远控程序，搭建inetsim模拟网络，竟然没有查看到信息。<br>  <img src="https://i.imgur.com/Yd6mfTF.png" alt=""><br>  <img src="https://i.imgur.com/a6uQbvf.png" alt=""></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/25/病毒分析技术_6_熊猫烧香病毒/" rel="next" title="病毒分析技术(6) ---熊猫烧香">
+                <i class="fa fa-chevron-left"></i> 病毒分析技术(6) ---熊猫烧香
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/30/C++第四章_运算符/" rel="prev" title="C++Primer 第四章：运算符">
+                C++Primer 第四章：运算符 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">81</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一：目录"><span class="nav-number">1.</span> <span class="nav-text">一：目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二：样本信息："><span class="nav-number">2.</span> <span class="nav-text">二：样本信息：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三：行为分析："><span class="nav-number">3.</span> <span class="nav-text">三：行为分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四：详细分析："><span class="nav-number">4.</span> <span class="nav-text">四：详细分析：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一：样本分析"><span class="nav-number">4.1.</span> <span class="nav-text">一：样本分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二：释放样本分析"><span class="nav-number">4.2.</span> <span class="nav-text">二：释放样本分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

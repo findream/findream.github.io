@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windbg学习笔记（3）">
+<meta property="og:url" content="http://yoursite.com/2018/07/19/windbg学习笔记_3_/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/xq7KW1V.png">
+<meta property="og:image" content="https://i.imgur.com/iMygNk2.png">
+<meta property="og:image" content="https://i.imgur.com/snBzvbi.png">
+<meta property="og:image" content="https://i.imgur.com/tlmSTkN.png">
+<meta property="og:image" content="https://i.imgur.com/voVX6Ut.png">
+<meta property="og:image" content="https://i.imgur.com/NSAlWWv.png">
+<meta property="og:image" content="https://i.imgur.com/XPdCGi3.png">
+<meta property="og:image" content="https://i.imgur.com/FXiZyt1.png">
+<meta property="og:image" content="https://i.imgur.com/57u8vYS.png">
+<meta property="og:image" content="https://i.imgur.com/iwJQhhq.png">
+<meta property="og:image" content="https://i.imgur.com/BFIfI2o.png">
+<meta property="og:image" content="https://i.imgur.com/f6PjmmK.png">
+<meta property="og:image" content="https://i.imgur.com/XdiwG7f.png">
+<meta property="og:image" content="https://i.imgur.com/Dtwfc9f.png">
+<meta property="og:image" content="https://i.imgur.com/ZrYiG3g.png">
+<meta property="og:image" content="https://i.imgur.com/kuaFEce.png">
+<meta property="og:image" content="https://i.imgur.com/EM5w2Ww.png">
+<meta property="og:image" content="https://i.imgur.com/Ug5rUYz.png">
+<meta property="og:image" content="https://i.imgur.com/DEcHzCP.png">
+<meta property="og:image" content="https://i.imgur.com/67nJFsJ.png">
+<meta property="og:image" content="https://i.imgur.com/ju9KaFZ.png">
+<meta property="og:updated_time" content="2018-07-22T08:57:36.244Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windbg学习笔记（3）">
+<meta name="twitter:description" content="第一部分 事件处理调试事件与异常&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。">
+<meta name="twitter:image" content="https://i.imgur.com/xq7KW1V.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/19/windbg学习笔记_3_/"/>
+
+
+
+
+
+  <title>windbg学习笔记（3） | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/19/windbg学习笔记_3_/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">windbg学习笔记（3）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-19T15:02:11+08:00">
+                2018-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第一部分-事件处理"><a href="#第一部分-事件处理" class="headerlink" title="第一部分 事件处理"></a>第一部分 事件处理</h1><h2 id="调试事件与异常"><a href="#调试事件与异常" class="headerlink" title="调试事件与异常"></a>调试事件与异常</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows定义了九种调试事件，其中异常是其中的一种调试事件(EXCEPTION_DEBUG_EVENT)。异常也存在包括win32异常，调试器异常，编译器异常(VC异常)，托管异常(.net异常)，其他异常(主动调用RaiseException抛出异常)。<br><a id="more"></a></p>
+<h2 id="二次机会"><a href="#二次机会" class="headerlink" title="二次机会"></a>二次机会</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于每个异常，windows异常处理模块给与两次处理异常的机会，<strong>也就是说程序拥有两次处理机会，</strong>处理后调试器会向系统返回一直处理结果。如果最后一次无法处理完异常，windows本身会调用默认的异常处理(用户态下抛出默认提示框，内核下蓝屏)。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于第一次处理异常机会，调试器一般会放弃处理，让系统继续分发，交给自身的异常处理程序处理，对于第二次处理机会，调试器一般会断在产生异常的地方。(与原文表述不同)</p>
+<h2 id="GH和GN命令"><a href="#GH和GN命令" class="headerlink" title="GH和GN命令"></a>GH和GN命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在调试器中断异常后，可以使用G命令(go)恢复程序运行，我们可以指定程序关于异常处理的结果，也就是如果GH(go handle)表示此异常得到处理，如果是GN(go not handle)表示异常为处理.</p>
+<h1 id="第二部分-控制调试目标"><a href="#第二部分-控制调试目标" class="headerlink" title="第二部分 控制调试目标"></a>第二部分 控制调试目标</h1><h2 id="初始断点"><a href="#初始断点" class="headerlink" title="初始断点"></a>初始断点</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows进程加载器在完成了进程在用户态下最基本的初始化后，系统的进程初始化函数主动触发中断指令（int 3），这种断点称之为<strong>初始断点</strong>。<br>    <img src="https://i.imgur.com/xq7KW1V.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们使用kn命令来查看调用栈的情况，可以看到这个断点是调试器创建的。<br>    <img src="https://i.imgur.com/iMygNk2.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在调试选项的时候加入-g选项，以忽略初始断点，也就是不在将程序中断给用户。如果需要分析程序的入口函数，初始断点是非常有效的。</p>
+<h2 id="单步执行"><a href="#单步执行" class="headerlink" title="单步执行"></a>单步执行</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg提供两种单步执行的模式，一种是源码级单步和汇编级单步。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和ollydbg一样，windbg也提供两种单步的方式，一种是单步步入，另外一种是单步步入。区别和ollydbg是一致的。前者windbg称为单步(step)，后者称之为跟踪(trace)。</p>
+<ul>
+<li>p：单步步入(进入函数)<br>  <img src="https://i.imgur.com/snBzvbi.png" alt=""></li>
+<li>t：单步步过(不进入函数，只是执行完毕）<br>  <img src="https://i.imgur.com/tlmSTkN.png" alt=""></li>
+<li>完整用法：p|t [r：是否显示寄存器信息] [=startaddress] [count] [“command”]</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于步入操作，在CPU上都是通过置标志寄存器TF位来实现的，每当执行完一条程序(执行完TF为0)，置TF位为1，在下条指令执行前检查TF情况，以此判断是否需要单步。</p>
+<h2 id="单步执行到指定位置"><a href="#单步执行到指定位置" class="headerlink" title="单步执行到指定位置"></a>单步执行到指定位置</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>pa或者ta</strong>用来执行到指定代码。</p>
+<ul>
+<li>完整用法：pa|ta [r] [=startaddress] [endaddress]<br>  <img src="https://i.imgur.com/voVX6Ut.png" alt=""></li>
+</ul>
+<h2 id="执行到下一个函数调用"><a href="#执行到下一个函数调用" class="headerlink" title="执行到下一个函数调用"></a>执行到下一个函数调用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>pc或者tc命令</strong>用来执行到下一个函数调用，count指定执行的函数的个数，这也就是为什么可以选择pc或者tc的原因(如果只是在下一个函数调用前中断，t命令或者p命令是相同的功能)。而count数可以指定执行的函数个数，这就可以判断在count个函数调用前的count个函数的执行方式。</p>
+<ul>
+<li>完整用法：pc|tc [r] [=startaddress] [count]<br>  <img src="https://i.imgur.com/NSAlWWv.png" alt=""></li>
+</ul>
+<h2 id="单步执行到下一个分支"><a href="#单步执行到下一个分支" class="headerlink" title="单步执行到下一个分支"></a>单步执行到下一个分支</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>tb命令</strong>是单步执行到下一个分支,但是对于x86的机器只能用于内核调试，对于x64的可以用于内核和用户调试。</p>
+<ul>
+<li>完整命令：tb [r] [=startaddress] [count]<ul>
+<li>x86无法使用用户调试<br><img src="https://i.imgur.com/XPdCGi3.png" alt=""></li>
+<li>x64可以使用<br><img src="https://i.imgur.com/FXiZyt1.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="继续运行"><a href="#继续运行" class="headerlink" title="继续运行"></a>继续运行</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>g命令</strong>是最常用的恢复运行的命令。其中a是硬件断点，不含a为软件断点。如果没有任何参数则执行到已存在断点处。</p>
+<ul>
+<li>g[a] [=startaddress] [Breakaddress] [“breakcommand”]</li>
+<li>gh：处理异常</li>
+<li>gn：报告未处理异常</li>
+<li>gu：返回上一个函数<br>  <img src="https://i.imgur.com/57u8vYS.png" alt=""></li>
+<li>gc：使用条件断点</li>
+</ul>
+<h2 id="跟踪监视"><a href="#跟踪监视" class="headerlink" title="跟踪监视"></a>跟踪监视</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;跟踪是调试器的灵魂，<strong>wt命令</strong>是windbg跟踪的命令</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结如下：<br>    <img src="https://i.imgur.com/iwJQhhq.png" alt=""></p>
+<h1 id="第三部分-使用断点"><a href="#第三部分-使用断点" class="headerlink" title="第三部分 使用断点"></a>第三部分 使用断点</h1><h2 id="软件断点"><a href="#软件断点" class="headerlink" title="软件断点"></a>软件断点</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg一共有三种设置软件断点的命令：<strong>bp，bm，bu</strong>，最常见的就是bp命令</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>bp命令</strong>的格式如下：</p>
+<ul>
+<li>bp [ID] [Options] [Address[Passes]] [“Command”]<ul>
+<li>ID:设置断点号，没有什么重要作用</li>
+<li>Options：选项<ul>
+<li>/1:一次性断点，用完就从断点表中删去</li>
+<li>/p或者/t:只在当前进程或者线程中才触发此断点</li>
+<li>/c或者/C：中断给用户最大调用深度或者最小调用深度！！</li>
+</ul>
+</li>
+<li>Address：断点地址//可以是内存地址，也可以是符号函数地址(printf)</li>
+<li>Passes：限制中断次数，如果Passes==0，则放行程序，不中断！<br><img src="https://i.imgur.com/BFIfI2o.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>bu命令：</strong>设置延迟断点，也就是说windbg可以允许当程序模块没有加载，便可以提前设置断点，当模块加载执行的时候，断在目标断点处。</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>bm命令：</strong>批量设置断点，通常是设置模糊匹配断点或者成员函数断点，把MyClass 所有的成员函数都下断点： bu MyApp!MyClass::<em> ，或者把所有以CreateWindow开头的函数都下断点： bu user32!CreateWindow</em> 。但是在设置批量断点的时候，调试器需要确认匹配的符号是代码还是数据，也就是说bm命令执行的前提是需要知道一个符号的类型。这就可能造成以下的问题。<br>    <img src="https://i.imgur.com/f6PjmmK.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此问题的<strong>最佳解决方案</strong>是：首先设置一个空的符号目录(.sympath .)，然后.reload,然后执行bm命令。<br>    <img src="https://i.imgur.com/XdiwG7f.png" alt=""></p>
+<h2 id="硬件断点"><a href="#硬件断点" class="headerlink" title="硬件断点"></a>硬件断点</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>ba命令</strong>用于设置硬件断点。</p>
+<ul>
+<li>ba Access Size [ID] [Options] [Address[Passes]] [“Command”]<ul>
+<li>Access：表示设置硬件断点的类型<ul>
+<li>e：表示对指令进行读写时，触发断点，和软件中断类型，只是不修改指令</li>
+<li>w：对指定地址进行写入操作触发断点</li>
+<li>r：对指定地址进行读取操作触发断点</li>
+<li>i：对指定的地址执行IO操作触发断点<br><img src="https://i.imgur.com/Dtwfc9f.png" alt=""></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="条件断点"><a href="#条件断点" class="headerlink" title="条件断点"></a>条件断点</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;条件断点利用之前的断点命令加上调价判断合并而来，语法如下：</p>
+<ul>
+<li>bp|bm|ba|bu address “.if(Condition){Command}.else{gc}”<br>  <img src="https://i.imgur.com/ZrYiG3g.png" alt=""></li>
+</ul>
+<h2 id="地址表达式"><a href="#地址表达式" class="headerlink" title="地址表达式"></a>地址表达式</h2><ul>
+<li>模块名!函数符号：dbgee!WinMain</li>
+<li>内存地址：00401000:</li>
+<li>源代码调试：<code>module!SourceCodeFile:Line</code></li>
+<li>C++类方法：Class::ClassMethod</li>
+</ul>
+<h2 id="针对线程设置断点"><a href="#针对线程设置断点" class="headerlink" title="针对线程设置断点"></a>针对线程设置断点</h2><ul>
+<li>~ThreadId bp|bm|ba</li>
+</ul>
+<h2 id="管理断点"><a href="#管理断点" class="headerlink" title="管理断点"></a>管理断点</h2><ul>
+<li>bl：列举所有断点</li>
+<li>bc: 删除断点</li>
+<li>bd：禁止断点</li>
+<li>be：启用断点</li>
+</ul>
+<h1 id="第四部分-观察栈"><a href="#第四部分-观察栈" class="headerlink" title="第四部分 观察栈"></a>第四部分 观察栈</h1><h2 id="显示栈回溯"><a href="#显示栈回溯" class="headerlink" title="显示栈回溯"></a>显示栈回溯</h2><ul>
+<li><strong>k命令</strong>：基本的栈回溯<ul>
+<li>显示结果的第二列是：是函数的返回地址，这是在父函数中的指令地址(也就是说调用栈上面函数的指令的下一条指令)。<br><img src="https://i.imgur.com/kuaFEce.png" alt=""></li>
+</ul>
+</li>
+<li><strong>kb命令：</strong>显示存放在栈上面的前三个参数<ul>
+<li>需要注意的是这三个参数不一定是函数的参数，只是存放在栈上面三个值。</li>
+<li>kb命令仅仅显示三个参数，而且顺序固定 ebp+8，ebp+c ebp+10，如果需要查看第四个，可以使用dd ebp+14。<br><img src="https://i.imgur.com/EM5w2Ww.png" alt=""></li>
+</ul>
+</li>
+<li><strong>kp命令</strong>：显示堆栈函数原型<ul>
+<li>前提条件是：需要得到程序的私有符号，如果没有调试对象的私有符号，windbg不显示参数。<br><img src="https://i.imgur.com/Ug5rUYz.png" alt=""></li>
+</ul>
+</li>
+<li><strong>kv命令</strong>：显示栈指针省略(FPO)和函数调用约定<ul>
+<li>和kb前面保持一致，增加了上述的新内容<br><img src="https://i.imgur.com/DEcHzCP.png" alt=""></li>
+</ul>
+</li>
+<li>kn：显示序号</li>
+</ul>
+<h2 id="观察栈变量"><a href="#观察栈变量" class="headerlink" title="观察栈变量"></a>观察栈变量</h2><ul>
+<li><strong>dv命令：</strong>观察栈变量：dv /i/t/V<ul>
+<li>前提：拥有私有符号可以有效使用。<br><img src="https://i.imgur.com/67nJFsJ.png" alt=""><br><img src="https://i.imgur.com/ju9KaFZ.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;【重点】如果没有私有符号，可以有两种方法获取栈变量，第一种方法是直接观察内存窗口，以及使用内存显示页面，根据EBP的布局来显示数据。第二种方法是更具汇编指令提供的内存指令，获取对内存的引用。借此获取栈变量信息。</p>
+<ul>
+<li>.frame [栈帧号]：切换变量上下文</li>
+<li>!for_each_local:循环遍历所有的变量</li>
+<li>!for_each_frame:遍历所有栈帧</li>
+</ul>
+<h2 id="手工回溯栈"><a href="#手工回溯栈" class="headerlink" title="手工回溯栈"></a>手工回溯栈</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于一些原因，比如说溢出，异常，导致windbg对栈的判断是不准确的，所以此时不建议使用k命令来回溯栈，我们采用手工方式进行栈回溯。一般存在两种情况，第一种：EBP寄存器的数值是正确的，此时回溯栈相对容易，第二种：如果EBP的数值不可靠，我们使用!tab查看线程控制块和dds来分析栈。</p>
+<h3 id="EBP和ESP可靠"><a href="#EBP和ESP可靠" class="headerlink" title="EBP和ESP可靠"></a>EBP和ESP可靠</h3><ul>
+<li><p>第1步：确定当前函数名：<code>ln eip</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; ln eip</div><div class="line">(<span class="number">76f</span>5d470)   ntdll!LdrInitShimEngineDynamic+<span class="number">0x6af</span>   |  (<span class="number">76f</span>5ed00)   ntdll!NtCurrentTeb</div></pre></td></tr></table></figure>
+</li>
+<li><p>第2歩：如果ESP和EBP没有异常的情况下，<strong>EBP就是就是当前函数的ChildEbp（子帧栈的基址寄存器），EBP+4就是当前函数的返回地址(在父函数内部)。</strong>,</p>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; r ebp        <span class="comment">//ChildEBP</span></div><div class="line">ebp=<span class="number">0019f</span>a30</div><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd ebp+<span class="number">4</span> l1   <span class="comment">//函数返回地址</span></div><div class="line"><span class="number">0019f</span>a34  <span class="number">76f</span>58c37</div></pre></td></tr></table></figure>
+<ul>
+<li>第3步：得到一个函数信息：<code>0060fa30 76f58c37 ntdll!LdrInitShimEngineDynamic+0x6af</code></li>
+<li><p>第4步：接下来利用第2步获得的返回地址，得到调用函数的函数名，<code>ln 76f58c37</code></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ln <span class="number">76</span>f58c37</div><div class="line">(<span class="number">76</span>f3a1a0)   ntdll!RtlCaptureStackContext+<span class="number">0x1ea97</span>   |  (<span class="number">76</span>f58f20)   ntdll!LdrAppxHandleIntegrityFailure</div></pre></td></tr></table></figure>
+</li>
+<li><p>第5步：根据<strong>当前的EBP在内存里面的数值</strong>就是父函数的EBP，EBP+4是函数的返回地址，使用<code>dd ebp</code>来获取父函数的ChildPEB，使用<code>dd xxxx+4</code>获取父函数的返回地址(在外公函数里面)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd <span class="number">0019f</span>c90 l1   <span class="comment">//这一步使用dd ebp是一样的，下一步却不行</span></div><div class="line"><span class="number">0019f</span>c90  <span class="number">0019f</span>cf0</div><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd <span class="number">0019f</span>cf0+<span class="number">4</span> l1  <span class="comment">//函数返回地址</span></div><div class="line"><span class="number">0019f</span>cf4  <span class="number">76f</span>137be</div></pre></td></tr></table></figure>
+</li>
+<li><p>第6步：利用返回地址得到外公函数符号</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; ln <span class="number">76f</span>137be</div><div class="line">(<span class="number">76f</span>13750)   ntdll!LdrInitializeThunk+<span class="number">0x6e</span>   |  (<span class="number">76f</span>13ca0)   ntdll!RtlCharToInteger</div></pre></td></tr></table></figure>
+</li>
+<li><p>第7步：重复4-6：直到堆栈数据为0，达到边界。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd <span class="number">0019f</span>d00 l1</div><div class="line"><span class="number">0019f</span>d00  <span class="number">0019f</span>d10</div><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd <span class="number">0019f</span>d14 l1</div><div class="line"><span class="number">0019f</span>d14  <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="EBP和ESP不可靠"><a href="#EBP和ESP不可靠" class="headerlink" title="EBP和ESP不可靠"></a>EBP和ESP不可靠</h2><ul>
+<li><p>第1步：使用!tab获取线程栈空间数据</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0</span>:<span class="number">000</span>&gt; !teb</div><div class="line">TEB at <span class="number">0033</span>a000</div><div class="line">    <span class="attribute">ExceptionList</span>:        <span class="number">0019</span>fa20  </div><div class="line">    <span class="attribute">StackBase</span>:            <span class="number">001</span>a0000    <span class="comment">//栈基址</span></div><div class="line">    <span class="attribute">StackLimit</span>:           <span class="number">0019</span>d000    <span class="comment">//栈顶</span></div><div class="line">    <span class="attribute">SubSystemTib</span>:         <span class="number">00000000</span>    </div><div class="line">    <span class="attribute">FiberData</span>:            <span class="number">00001</span>e00</div></pre></td></tr></table></figure>
+</li>
+<li><p>第2步：使用dds命令</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dds esp     <span class="comment">//查看栈顶附近内存</span></div><div class="line"><span class="number">0019</span>fa04  f8f3a4be</div><div class="line"><span class="number">0019</span>fa08  <span class="number">76</span>eb69c4 ntdll!`string'</div><div class="line"><span class="number">0019</span>fa0c  <span class="number">00337000</span></div><div class="line"><span class="number">0019</span>fa10  <span class="number">00000010</span></div><div class="line"><span class="number">0019</span>fa14  00f3a496</div><div class="line"><span class="number">0019</span>fa18  <span class="number">0019</span>fa04</div><div class="line"><span class="number">0019</span>fa1c  76f001cf ntdll!LdrpPrepareModuleForExecution+0x61</div><div class="line"><span class="number">0019</span>fa20  <span class="number">0019</span>fc80</div><div class="line"><span class="number">0019</span>fa24  76f26b20 ntdll!_except_handler4</div><div class="line"><span class="number">0019</span>fa28  8e115e06</div><div class="line"><span class="number">0019</span>fa2c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa30  <span class="number">0019</span>fc90</div><div class="line"><span class="number">0019</span>fa34  76f58c37 ntdll!LdrpInitializeProcess+0x1b42</div><div class="line"><span class="number">0019</span>fa38  f8f3a21e</div><div class="line"><span class="number">0019</span>fa3c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa40  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa44  ffffffff</div><div class="line"><span class="number">0019</span>fa48  005c005a</div><div class="line"><span class="number">0019</span>fa4c  <span class="number">0257</span>1e7c</div><div class="line"><span class="number">0019</span>fa50  <span class="number">0019</span>fbb0</div><div class="line"><span class="number">0019</span>fa54  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa58  <span class="number">00000201</span></div><div class="line"><span class="number">0019</span>fa5c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa60  <span class="number">0019</span>fbac</div><div class="line"><span class="number">0019</span>fa64  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa68  <span class="number">02573040</span></div><div class="line"><span class="number">0019</span>fa6c  76fc7ba0 ntdll!LdrpWorkQueue</div><div class="line"><span class="number">0019</span>fa70  76fc7ba0 ntdll!LdrpWorkQueue</div><div class="line"><span class="number">0019</span>fa74  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa78  <span class="number">025777</span>a0</div><div class="line"><span class="number">0019</span>fa7c  <span class="number">00000008</span></div><div class="line"><span class="number">0019</span>fa80  <span class="number">00000000</span></div><div class="line">0:000&gt; dds ebp     //查看栈低附近的内存</div><div class="line"><span class="number">0019</span>fa30  <span class="number">0019</span>fc90</div><div class="line"><span class="number">0019</span>fa34  76f58c37 ntdll!LdrpInitializeProcess+0x1b42</div><div class="line"><span class="number">0019</span>fa38  f8f3a21e</div><div class="line"><span class="number">0019</span>fa3c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa40  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa44  ffffffff</div><div class="line"><span class="number">0019</span>fa48  005c005a</div><div class="line"><span class="number">0019</span>fa4c  <span class="number">0257</span>1e7c</div><div class="line"><span class="number">0019</span>fa50  <span class="number">0019</span>fbb0</div><div class="line"><span class="number">0019</span>fa54  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa58  <span class="number">00000201</span></div><div class="line"><span class="number">0019</span>fa5c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa60  <span class="number">0019</span>fbac</div><div class="line"><span class="number">0019</span>fa64  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa68  <span class="number">02573040</span></div><div class="line"><span class="number">0019</span>fa6c  76fc7ba0 ntdll!LdrpWorkQueue</div><div class="line"><span class="number">0019</span>fa70  76fc7ba0 ntdll!LdrpWorkQueue</div><div class="line"><span class="number">0019</span>fa74  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa78  <span class="number">025777</span>a0</div><div class="line"><span class="number">0019</span>fa7c  <span class="number">00000008</span></div><div class="line"><span class="number">0019</span>fa80  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa84  <span class="number">00403000</span> base32+0x<span class="number">3000</span></div><div class="line"><span class="number">0019</span>fa88  <span class="number">00001000</span></div><div class="line"><span class="number">0019</span>fa8c  <span class="number">00000008</span></div><div class="line"><span class="number">0019</span>fa90  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fa94  <span class="number">0040</span>3af4 base32+0x3af4</div><div class="line"><span class="number">0019</span>fa98  <span class="number">00000002</span></div><div class="line"><span class="number">0019</span>fa9c  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>faa0  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>faa4  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>faa8  <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>faac  <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="第五部分-分析内存"><a href="#第五部分-分析内存" class="headerlink" title="第五部分 分析内存"></a>第五部分 分析内存</h1><h2 id="显示内存"><a href="#显示内存" class="headerlink" title="显示内存"></a>显示内存</h2><ul>
+<li>d{a|b|c|d|D} [Options] [Range]</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大括号里面代表的是显示类型。</p>
+<ul>
+<li><p>da:显示ASCII码,du:显示Unicode</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">0<span class="selector-pseudo">:000</span>&gt; <span class="selector-tag">da</span></div><div class="line">0019<span class="selector-tag">fc84</span>  " <span class="selector-tag">k</span><span class="selector-class">.v</span>..........."</div></pre></td></tr></table></figure>
+</li>
+<li><p>db：显示字节和ASCII  //最常用</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">0:000&gt; db</div><div class="line">0019fc94  da<span class="number"> 38 </span>f1<span class="number"> 76 </span>7e a2 f3 f8-24 fd<span class="number"> 19 </span>00<span class="number"> 00 </span>00 eb<span class="number"> 76 </span> .8.v~...$......v</div><div class="line">0019fca4 <span class="number"> 00 </span>70<span class="number"> 33 </span>00<span class="number"> 00 </span>00<span class="number"> 00 </span>00-aa<span class="number"> 24 </span>f0<span class="number"> 56 </span>00 b0 fc<span class="number"> 76 </span> .p3......$.V...v</div><div class="line">0019fcb4 <span class="number"> 00 </span>00<span class="number"> 03 </span>00<span class="number"> 28 </span>70<span class="number"> 33 </span>00-01<span class="number"> 00 </span>00<span class="number"> 00 </span>00<span class="number"> 00 </span>eb<span class="number"> 76 </span> ....(p3........v</div><div class="line">0019fcc4 <span class="number"> 00 </span>00<span class="number"> 00 </span>00<span class="number"> 24 </span>fd<span class="number"> 19 </span>00-00<span class="number"> 70 </span>33<span class="number"> 00 </span>00<span class="number"> 00 </span>00<span class="number"> 00 </span> ....$....p3.....</div><div class="line">0019fcd4 <span class="number"> 00 </span>a0<span class="number"> 33 </span>00<span class="number"> 98 </span>fc<span class="number"> 19 </span>00-00<span class="number"> 00 </span>00<span class="number"> 00 </span>ff ff ff ff  ..3.............</div><div class="line">0019fce4 <span class="number"> 20 </span>6b f2<span class="number"> 76 </span>8e a5<span class="number"> 10 </span>8e-00<span class="number"> 00 </span>00<span class="number"> 00 </span>00 fd<span class="number"> 19 </span>00   k.v............</div><div class="line">0019fcf4  be<span class="number"> 37 </span>f1<span class="number"> 76 </span>00<span class="number"> 00 </span>00 00-00<span class="number"> 00 </span>00<span class="number"> 00 </span>10 fd<span class="number"> 19 </span>00  .7.v............</div><div class="line">0019fd04  6c<span class="number"> 37 </span>f1<span class="number"> 76 </span>00<span class="number"> 00 </span>00 00-5e 1b<span class="number"> 59 </span>bb<span class="number"> 00 </span>00<span class="number"> 00 </span>00  l7.v....^.Y.....</div></pre></td></tr></table></figure>
+</li>
+<li><p>dc：显示dword和ASCII编码</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dc</div><div class="line"><span class="number">0019</span>fd14  <span class="number">00000000</span> <span class="number">0019</span>fd24 <span class="number">76</span>eb0000 <span class="number">00000000</span>  ....$......v....</div><div class="line"><span class="number">0019</span>fd24  <span class="number">0001003</span>f <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ?...............</div><div class="line"><span class="number">0019</span>fd34  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0000027</span>f  ................</div><div class="line"><span class="number">0019</span>fd44  <span class="number">00000000</span> <span class="number">0000</span>ffff <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fd54  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fd64  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fd74  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fd84  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div></pre></td></tr></table></figure>
+</li>
+<li><p>dd:显示dword</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dd</div><div class="line"><span class="number">0019</span>fd94  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fda4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0000002</span>b</div><div class="line"><span class="number">0019</span>fdb4  <span class="number">00000053</span> <span class="number">0000002</span>b <span class="number">0000002</span>b <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fdc4  <span class="number">00000000</span> <span class="number">00337000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fdd4  <span class="number">00401d</span>f<span class="number">5 00000000</span> <span class="number">76</span>f20d<span class="number">90 00000023</span></div><div class="line"><span class="number">0019</span>fde4  <span class="number">00000202</span> <span class="number">0019</span>fff0 <span class="number">0000002</span>b <span class="number">0000027</span>f</div><div class="line"><span class="number">0019</span>fdf4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe04  <span class="number">00000000</span> <span class="number">00001f80</span> <span class="number">0000</span>ffff <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>dp:显示指针</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dp</div><div class="line"><span class="number">0019</span>fe14  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe24  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe34  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe44  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe54  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe64  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe74  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">0019</span>fe84  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>ds：显示String类型，dS：显示Unicode_String类型<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Range:表示需要显示内存的范围</p>
+</li>
+<li><p>dd startaddress endaddress(两个内存地址)</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dc <span class="number">0019</span>fd94 <span class="number">0019</span>fe04</div><div class="line"><span class="number">0019</span>fd94  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fda4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0000002</span>b  ............+...</div><div class="line"><span class="number">0019</span>fdb4  <span class="number">00000053</span> <span class="number">0000002</span>b <span class="number">0000002</span>b <span class="number">00000000</span>  S...+...+.......</div><div class="line"><span class="number">0019</span>fdc4  <span class="number">00000000</span> <span class="number">00337000</span> <span class="number">00000000</span> <span class="number">00000000</span>  .....p3.........</div><div class="line"><span class="number">0019</span>fdd4  <span class="number">00401</span>df5 <span class="number">00000000</span> <span class="number">76</span>f20d90 <span class="number">00000023</span>  ..@........v#...</div><div class="line"><span class="number">0019</span>fde4  <span class="number">00000202</span> <span class="number">0019</span>fff0 <span class="number">0000002</span>b <span class="number">0000027</span>f  ........+.......</div><div class="line"><span class="number">0019</span>fdf4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fe04  <span class="number">00000000</span>                             ....</div></pre></td></tr></table></figure>
+</li>
+<li><p>dd startaddress L(内存对象个数16进制)</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dc <span class="number">0019</span>fd94 L1D</div><div class="line"><span class="number">0019</span>fd94  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fda4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0000002</span>b  ............+...</div><div class="line"><span class="number">0019</span>fdb4  <span class="number">00000053</span> <span class="number">0000002</span>b <span class="number">0000002</span>b <span class="number">00000000</span>  S...+...+.......</div><div class="line"><span class="number">0019</span>fdc4  <span class="number">00000000</span> <span class="number">00337000</span> <span class="number">00000000</span> <span class="number">00000000</span>  .....p3.........</div><div class="line"><span class="number">0019</span>fdd4  <span class="number">00401</span>df5 <span class="number">00000000</span> <span class="number">76</span>f20d90 <span class="number">00000023</span>  ..@........v#...</div><div class="line"><span class="number">0019</span>fde4  <span class="number">00000202</span> <span class="number">0019</span>fff0 <span class="number">0000002</span>b <span class="number">0000027</span>f  ........+.......</div><div class="line"><span class="number">0019</span>fdf4  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fe04  <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>dd endaddress L-(内存对象个数16进制)</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dc <span class="number">0019</span>fe04 L<span class="number">-1</span>D</div><div class="line"><span class="number">0019</span>fd90  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fda0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fdb0  <span class="number">0000002</span>b <span class="number">00000053</span> <span class="number">0000002</span>b <span class="number">0000002</span>b  +...S...+...+...</div><div class="line"><span class="number">0019</span>fdc0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00337000</span> <span class="number">00000000</span>  .........p3.....</div><div class="line"><span class="number">0019</span>fdd0  <span class="number">00000000</span> <span class="number">00401</span>df5 <span class="number">00000000</span> <span class="number">76</span>f20d90  ......@........v</div><div class="line"><span class="number">0019</span>fde0  <span class="number">00000023</span> <span class="number">00000202</span> <span class="number">0019</span>fff0 <span class="number">0000002</span>b  #...........+...</div><div class="line"><span class="number">0019</span>fdf0  <span class="number">0000027</span>f <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  ................</div><div class="line"><span class="number">0019</span>fe00  <span class="number">00000000</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="显示数据类型"><a href="#显示数据类型" class="headerlink" title="显示数据类型"></a>显示数据类型</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>dt命令</strong>常用与显示数据类型，其第一种方法是显示一个数据结构：dt module！Typename,选项-b：显示所有子类型，-r0，不显示子类型，-r1：显示一层子类型<br><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0</span>:<span class="number">000</span>&gt; dt _UNICODE_STRING</div><div class="line">ntdll!_UNICODE_STRING</div><div class="line">   +<span class="number">0</span>x000 <span class="attribute">Length           </span>: Uint2B</div><div class="line">   +<span class="number">0</span>x002 <span class="attribute">MaximumLength    </span>: Uint2B</div><div class="line">   +<span class="number">0</span>x004 <span class="attribute">Buffer           </span>: Ptr32 Wchar</div></pre></td></tr></table></figure></p>
+<figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dt ntdll!*</div><div class="line">          ntdll!LIST_ENTRY64</div><div class="line">          ntdll!LIST_ENTRY64</div><div class="line">          ntdll!LIST_ENTRY32</div><div class="line">          ntdll!LIST_ENTRY32</div><div class="line">          ntdll!SE_WS_APPX_SIGNATURE_ORIGIN</div><div class="line">          ntdll!_PS_MITIGATION_OPTION</div><div class="line">          ntdll!_PS_MITIGATION_OPTIONS_MAP</div><div class="line">          ntdll!_PS_MITIGATION_OPTIONS_MAP</div><div class="line">          ntdll!_PS_MITIGATION_AUDIT_OPTIONS_MAP</div><div class="line">..........</div></pre></td></tr></table></figure>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0</span>:<span class="number">000</span>&gt; dt -b _TEB</div><div class="line">ntdll!_TEB</div><div class="line">      +<span class="number">0</span>x000 <span class="attribute">NtTib            </span>: _NT_TIB</div><div class="line">      +<span class="number">0</span>x000 <span class="attribute">ExceptionList    </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x004 <span class="attribute">StackBase        </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x008 <span class="attribute">StackLimit       </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x00c <span class="attribute">SubSystemTib     </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x010 <span class="attribute">FiberData        </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x010 <span class="attribute">Version          </span>: Uint4B</div><div class="line">      +<span class="number">0</span>x014 <span class="attribute">ArbitraryUserPointer </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x018 <span class="attribute">Self             </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x01c <span class="attribute">EnvironmentPointer </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x020 <span class="attribute">ClientId         </span>: _CLIENT_ID</div><div class="line">      +<span class="number">0</span>x000 <span class="attribute">UniqueProcess    </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x004 <span class="attribute">UniqueThread     </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x028 <span class="attribute">ActiveRpcHandle  </span>: Ptr32 </div><div class="line">      +<span class="number">0</span>x02c <span class="attribute">ThreadLocalStoragePointer </span>: Ptr32</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种方法是指定特定内存地址上的数据结构,其他和第一种用法一致.<br><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0</span>:<span class="number">000</span>&gt; dt _PEB <span class="number">7</span>ffdd000</div><div class="line">ntdll!_PEB</div><div class="line">   +<span class="number">0</span>x000 <span class="attribute">InheritedAddressSpace </span>: ??</div><div class="line">   +<span class="number">0</span>x001 <span class="attribute">ReadImageFileExecOptions </span>: ??</div><div class="line">   +<span class="number">0</span>x002 <span class="attribute">BeingDebugged    </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">BitField         </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">ImageUsesLargePages </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsProtectedProcess </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsImageDynamicallyRelocated </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">SkipPatchingUser32Forwarders </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsPackagedProcess </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsAppContainer   </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsProtectedProcessLight </span>: ??</div><div class="line">   +<span class="number">0</span>x003 <span class="attribute">IsLongPathAwareProcess </span>: ??</div><div class="line">   +<span class="number">0</span>x004 <span class="attribute">Mutant           </span>: ????</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三种方法是显示类型的实例，包括变量和函数。<br><figure class="highlight erlang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dt g_szGobal</div><div class="line">Symbol g_szGobal <span class="keyword">not</span> found.</div></pre></td></tr></table></figure></p>
+<h2 id="搜索内存"><a href="#搜索内存" class="headerlink" title="搜索内存"></a>搜索内存</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windbg使用<strong>s命令</strong>搜索内存。一共三个试用方式。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一种方法，搜索内存中指定的字符串。</p>
+<ul>
+<li>s [-Flags(b|w|d|q|a|u)] [Range] [Pattern]<pre><code>![](https://i.imgur.com/4VvAUdr.png)
+</code></pre></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种方法：在指定的内存空间中搜索与指定对象相同类型的对象。</p>
+<ul>
+<li>s [-v] Range ObjectAddress<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">011</span>&gt; s -v <span class="number">0</span>x12fc30 L1000 <span class="number">0</span>x12fe4c   <span class="comment">//0x12fe4c是类的地址，</span></div><div class="line">*** ERROR: Symbol <span class="keyword">file</span> could <span class="keyword">not</span> be found.  Defaulted <span class="keyword">to</span> <span class="keyword">export</span> symbols <span class="keyword">for</span> IEXPLORE.EXE - </div><div class="line">*** ERROR: Symbol <span class="keyword">file</span> could <span class="keyword">not</span> be found.  Defaulted <span class="keyword">to</span> <span class="keyword">export</span> symbols <span class="keyword">for</span> odbc32.dll - </div><div class="line">*** ERROR: Module load completed but symbols could <span class="keyword">not</span> be loaded <span class="keyword">for</span> odbcint.dll</div><div class="line">*** ERROR: Symbol <span class="keyword">file</span> could <span class="keyword">not</span> be found.  Defaulted <span class="keyword">to</span> <span class="keyword">export</span> symbols <span class="keyword">for</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<h2 id="修改内存数据"><a href="#修改内存数据" class="headerlink" title="修改内存数据"></a>修改内存数据</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用e命令来修改内存数据，可以修改字符型，也可以修改数据类型。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体用法如下：a:b表示以0结尾的ASCII，za表示不是以0结尾的ASCII，<strong>zu或者au保证在末尾加0，而a或者u不会</strong>。u，zu同理。</p>
+<ul>
+<li>e{a|u|za|zu}address “String”<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">0:000&gt; db</div><div class="line">76f5db9f  eb<span class="number"> 76 </span>c7<span class="number"> 44 </span>24<span class="number"> 68 </span>00 00-00<span class="number"> 01 </span>66<span class="number"> 89 </span>44<span class="number"> 24 </span>70<span class="number"> 85 </span> .v.D$h....f.D$p.</div><div class="line">76f5dbaf  f6<span class="number"> 74 </span>29 8b<span class="number"> 15 </span>30<span class="number"> 03 </span>fe-7f 8b c2 6a<span class="number"> 20 </span>83 e0 1f  .t)..0.....j ...</div><div class="line">76f5dbbf <span class="number"> 59 </span>2b c8 d3 ce<span class="number"> 33 </span>f2 89-37<span class="number"> 74 </span>07<span class="number"> 33 </span>f6 e9 1c<span class="number"> 01 </span> Y+...3..7t.3....</div><div class="line">76f5dbcf <span class="number"> 00 </span>00 be<span class="number"> 01 </span>00<span class="number"> 00 </span>c0 e9-12<span class="number"> 01 </span>00<span class="number"> 00 </span>8d<span class="number"> 54 </span>24<span class="number"> 10 </span> .............T$.</div><div class="line">76f5dbdf  8d 4c<span class="number"> 24 </span>68 e8 ed 5d f7-ff 8b f0<span class="number"> 85 </span>f6 0f<span class="number"> 88 </span>e8  .L$h..].........</div><div class="line">76f5dbef <span class="number"> 00 </span>00<span class="number"> 00 </span>8d<span class="number"> 44 </span>24<span class="number"> 18 </span>ba-01<span class="number"> 40 </span>00<span class="number"> 00 </span>50<span class="number"> 33 </span>c9 e8  ....D$...@..P3..</div><div class="line">76f5dbff <span class="number"> 59 </span>ae f8 ff 8d<span class="number"> 44 </span>24 0c-50 6a<span class="number"> 01 </span>6a<span class="number"> 00 </span>8d<span class="number"> 54 </span>24  Y....D$.Pj.j..T$</div><div class="line">76f5dc0f <span class="number"> 24 </span>8d 4c<span class="number"> 24 </span>74 e8 a3 d9-f9 ff<span class="number"> 80 </span>7c<span class="number"> 24 </span>64<span class="number"> 00 </span>8b  $.L$t......|$d..</div><div class="line">0:000&gt; ea 76f5db9f "strui"</div><div class="line">0:000&gt; db 76f5db9f</div><div class="line">76f5db9f <span class="number"> 73 </span>74<span class="number"> 72 </span>75<span class="number"> 69 </span>68<span class="number"> 00 </span>00-00<span class="number"> 01 </span>66<span class="number"> 89 </span>44<span class="number"> 24 </span>70<span class="number"> 85 </span> struih....f.D$p.</div><div class="line">76f5dbaf  f6<span class="number"> 74 </span>29 8b<span class="number"> 15 </span>30<span class="number"> 03 </span>fe-7f 8b c2 6a<span class="number"> 20 </span>83 e0 1f  .t)..0.....j ...</div><div class="line">76f5dbbf <span class="number"> 59 </span>2b c8 d3 ce<span class="number"> 33 </span>f2 89-37<span class="number"> 74 </span>07<span class="number"> 33 </span>f6 e9 1c<span class="number"> 01 </span> Y+...3..7t.3....</div><div class="line">76f5dbcf <span class="number"> 00 </span>00 be<span class="number"> 01 </span>00<span class="number"> 00 </span>c0 e9-12<span class="number"> 01 </span>00<span class="number"> 00 </span>8d<span class="number"> 54 </span>24<span class="number"> 10 </span> .............T$.</div><div class="line">76f5dbdf  8d 4c<span class="number"> 24 </span>68 e8 ed 5d f7-ff 8b f0<span class="number"> 85 </span>f6 0f<span class="number"> 88 </span>e8  .L$h..].........</div><div class="line">76f5dbef <span class="number"> 00 </span>00<span class="number"> 00 </span>8d<span class="number"> 44 </span>24<span class="number"> 18 </span>ba-01<span class="number"> 40 </span>00<span class="number"> 00 </span>50<span class="number"> 33 </span>c9 e8  ....D$...@..P3..</div><div class="line">76f5dbff <span class="number"> 59 </span>ae f8 ff 8d<span class="number"> 44 </span>24 0c-50 6a<span class="number"> 01 </span>6a<span class="number"> 00 </span>8d<span class="number"> 54 </span>24  Y....D$.Pj.j..T$</div><div class="line">76f5dc0f <span class="number"> 24 </span>8d 4c<span class="number"> 24 </span>74 e8 a3 d9-f9 ff<span class="number"> 80 </span>7c<span class="number"> 24 </span>64<span class="number"> 00 </span>8b  $.L$t......|$d..</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也可以修改数值类型的内存</p>
+<ul>
+<li>e{b|d|D|q|w} address “Value”<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">0:000&gt; ew 76f5dc1f<span class="number"> 41 </span>41<span class="number"> 41 </span>41 </div><div class="line">0:000&gt; db 76f5dc1f</div><div class="line">76f5dc1f <span class="number"> 41 </span>00<span class="number"> 41 </span>00<span class="number"> 41 </span>00<span class="number"> 41 </span>00-a5<span class="number"> 90 </span>f9 ff<span class="number"> 85 </span>f6<span class="number"> 79 </span>39  A.A.A.A.......y9</div><div class="line">76f5dc2f  a1<span class="number"> 90 </span>57 fc<span class="number"> 76 </span>a8<span class="number"> 03 </span>74-29<span class="number"> 56 </span>8d<span class="number"> 44 </span>24 6c<span class="number"> 50 </span>68  ..W.v..t)V.D$lPh</div><div class="line">76f5dc3f <span class="number"> 44 </span>f6 eb<span class="number"> 76 </span>6a<span class="number"> 00 </span>68 84-f6 eb<span class="number"> 76 </span>68 ee 0a<span class="number"> 00 </span>00  D..vj.h...vh....</div><div class="line">76f5dc4f <span class="number"> 68 </span>b0<span class="number"> 68 </span>eb<span class="number"> 76 </span>e8 f4 d1-ff ff<span class="number"> 83 </span>c4 1c a1<span class="number"> 90 </span>57  h.h.v..........W</div><div class="line">76f5dc5f  fc<span class="number"> 76 </span>a8<span class="number"> 10 </span>74<span class="number"> 75 </span>cc eb-72 8b<span class="number"> 44 </span>24 0c<span class="number"> 81 </span>48<span class="number"> 34 </span> .v..tu..r.D$..H4</div><div class="line">76f5dc6f <span class="number"> 00 </span>01<span class="number"> 00 </span>00 8b<span class="number"> 44 </span>24 0c-8b<span class="number"> 40 </span>18 a3 b8 7b fc<span class="number"> 76 </span> .....D$..@...&#123;.v</div><div class="line">76f5dc7f  e8<span class="number"> 71 </span>5a f7 ff 8b f0 85-f6<span class="number"> 79 </span>2a a1<span class="number"> 90 </span>57 fc<span class="number"> 76 </span> .qZ......y*..W.v</div><div class="line">76f5dc8f  a8<span class="number"> 03 </span>74 ce<span class="number"> 56 </span>68 6c f5-eb<span class="number"> 76 </span>6a<span class="number"> 00 </span>68<span class="number"> 84 </span>f6 eb  ..t.Vhl..vj.h...</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="观察内存属性"><a href="#观察内存属性" class="headerlink" title="观察内存属性"></a>观察内存属性</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用拓展命令！address来观察内存属性,如果指定内存地址，显示指定内存地址所在的块的信息，如果不指定，则显示所有的内存块的信息。<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; !address <span class="number">76</span>f5dc1f</div><div class="line"> PEB <span class="number">00329000</span> in range <span class="number">00328000</span> <span class="number">00336000</span></div><div class="line"> TEB <span class="number">0032c000</span> in range <span class="number">00328000</span> <span class="number">00336000</span></div><div class="line"> TEB <span class="number">0032f000</span> in range <span class="number">00328000</span> <span class="number">00336000</span></div><div class="line"> TEB <span class="number">00332000</span> in range <span class="number">00328000</span> <span class="number">00336000</span></div><div class="line"> TEB <span class="number">00335000</span> in range <span class="number">00328000</span> <span class="number">00336000</span></div><div class="line"> ProcessParametrs <span class="number">025819d0</span> in range <span class="number">02580000</span> <span class="number">02586000</span></div><div class="line"> Environment <span class="number">02580b70</span> in range <span class="number">02580000</span> <span class="number">02586000</span></div><div class="line">    <span class="number">76</span>eb0000 : <span class="number">76</span>eb1000 - <span class="number">00114000</span></div><div class="line">                    Type     <span class="number">01000000</span> MEM_IMAGE</div><div class="line">                    Protect  <span class="number">00000020</span> PAGE_EXECUTE_READ</div><div class="line">                    State    <span class="number">00001000</span> MEM_COMMIT</div><div class="line">                    Usage    RegionUsageImage</div><div class="line">                    FullPath ntdll.dll</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!pte命令显示指定地址的页表表项和页目录表项。</p>
+<h2 id="显示链表"><a href="#显示链表" class="headerlink" title="显示链表"></a>显示链表</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dt遍历链表(数据结构)和dl遍历链表(专门遍历链表)。<br><figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; dt ntdll!*List*</div><div class="line">          ntdll!LIST_ENTRY64</div><div class="line">          ntdll!LIST_ENTRY64</div><div class="line">          ntdll!LIST_ENTRY32</div><div class="line">          ntdll!LIST_ENTRY32</div><div class="line">          ntdll!_LIST_ENTRY</div><div class="line">          ntdll!_LIST_ENTRY</div><div class="line">          ntdll!_LIST_ENTRY</div><div class="line">          ntdll!_SINGLE_LIST_ENTRY</div><div class="line">          ntdll!_SINGLE_LIST_ENTRY</div><div class="line">          ntdll!_PP_LOOKASIDE_LIST</div><div class="line">          ntdll!_SLIST_HEADER</div><div class="line">          ntdll!_SINGLE_LIST_ENTRY</div><div class="line">          ntdll!_SLIST_HEADER</div><div class="line">          ntdll!_LOOKASIDE_LIST_EX</div><div class="line">          ntdll!_LOOKASIDE_LIST_EX</div><div class="line">          ntdll!_NPAGED_LOOKASIDE_LI</div></pre></td></tr></table></figure></p>
+<ul>
+<li>dl[b] startaddress counter size</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>拓展命令!list</strong>也可以遍历链表，但是这个较为复杂不建议使用</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/17/windbg学习笔记_2_/" rel="next" title="windbg学习笔记（2）">
+                <i class="fa fa-chevron-left"></i> windbg学习笔记（2）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/22/windbg学习笔记_4_/" rel="prev" title="windbg学习笔记 (4)">
+                windbg学习笔记 (4) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">81</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-事件处理"><span class="nav-number">1.</span> <span class="nav-text">第一部分 事件处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调试事件与异常"><span class="nav-number">1.1.</span> <span class="nav-text">调试事件与异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二次机会"><span class="nav-number">1.2.</span> <span class="nav-text">二次机会</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GH和GN命令"><span class="nav-number">1.3.</span> <span class="nav-text">GH和GN命令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-控制调试目标"><span class="nav-number">2.</span> <span class="nav-text">第二部分 控制调试目标</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始断点"><span class="nav-number">2.1.</span> <span class="nav-text">初始断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行"><span class="nav-number">2.2.</span> <span class="nav-text">单步执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行到指定位置"><span class="nav-number">2.3.</span> <span class="nav-text">单步执行到指定位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行到下一个函数调用"><span class="nav-number">2.4.</span> <span class="nav-text">执行到下一个函数调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单步执行到下一个分支"><span class="nav-number">2.5.</span> <span class="nav-text">单步执行到下一个分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#继续运行"><span class="nav-number">2.6.</span> <span class="nav-text">继续运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跟踪监视"><span class="nav-number">2.7.</span> <span class="nav-text">跟踪监视</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-使用断点"><span class="nav-number">3.</span> <span class="nav-text">第三部分 使用断点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#软件断点"><span class="nav-number">3.1.</span> <span class="nav-text">软件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件断点"><span class="nav-number">3.2.</span> <span class="nav-text">硬件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件断点"><span class="nav-number">3.3.</span> <span class="nav-text">条件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#地址表达式"><span class="nav-number">3.4.</span> <span class="nav-text">地址表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#针对线程设置断点"><span class="nav-number">3.5.</span> <span class="nav-text">针对线程设置断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理断点"><span class="nav-number">3.6.</span> <span class="nav-text">管理断点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四部分-观察栈"><span class="nav-number">4.</span> <span class="nav-text">第四部分 观察栈</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示栈回溯"><span class="nav-number">4.1.</span> <span class="nav-text">显示栈回溯</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察栈变量"><span class="nav-number">4.2.</span> <span class="nav-text">观察栈变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手工回溯栈"><span class="nav-number">4.3.</span> <span class="nav-text">手工回溯栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EBP和ESP可靠"><span class="nav-number">4.3.1.</span> <span class="nav-text">EBP和ESP可靠</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EBP和ESP不可靠"><span class="nav-number">4.4.</span> <span class="nav-text">EBP和ESP不可靠</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五部分-分析内存"><span class="nav-number">5.</span> <span class="nav-text">第五部分 分析内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示内存"><span class="nav-number">5.1.</span> <span class="nav-text">显示内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示数据类型"><span class="nav-number">5.2.</span> <span class="nav-text">显示数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搜索内存"><span class="nav-number">5.3.</span> <span class="nav-text">搜索内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改内存数据"><span class="nav-number">5.4.</span> <span class="nav-text">修改内存数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察内存属性"><span class="nav-number">5.5.</span> <span class="nav-text">观察内存属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示链表"><span class="nav-number">5.6.</span> <span class="nav-text">显示链表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
