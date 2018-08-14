@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="RE题Easy_vb&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;OD中查看字符串：得MCTF{_N3t_Rev_1sE4ay}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BugKu_CTF">
+<meta property="og:url" content="http://yoursite.com/2018/08/14/BugKu_CTF/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="RE题Easy_vb&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;OD中查看字符串：得MCTF{_N3t_Rev_1sE4ay}">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/NMumWx8.png">
+<meta property="og:image" content="https://i.imgur.com/Tr3T2mz.png">
+<meta property="og:image" content="https://i.imgur.com/bGs02Ka.png">
+<meta property="og:image" content="https://i.imgur.com/z9WDolU.png">
+<meta property="og:image" content="https://i.imgur.com/XScdgu1.png">
+<meta property="og:image" content="https://i.imgur.com/A17mFWl.png">
+<meta property="og:image" content="https://i.imgur.com/OewRG90.png">
+<meta property="og:image" content="https://i.imgur.com/tARfNHd.png">
+<meta property="og:image" content="https://i.imgur.com/icC2gDA.png">
+<meta property="og:image" content="https://i.imgur.com/4AKLJ58.png">
+<meta property="og:image" content="https://i.imgur.com/EbHfbtl.png">
+<meta property="og:image" content="https://i.imgur.com/lYsFfYd.png">
+<meta property="og:image" content="https://i.imgur.com/JyknrwM.png">
+<meta property="og:image" content="https://i.imgur.com/6qvmK6I.png">
+<meta property="og:image" content="https://i.imgur.com/jNEiEKf.png">
+<meta property="og:image" content="https://i.imgur.com/2c0NkKN.png">
+<meta property="og:image" content="https://i.imgur.com/obezW0p.png">
+<meta property="og:image" content="https://i.imgur.com/4rKFuhw.png">
+<meta property="og:image" content="https://i.imgur.com/axNVUZ1.png">
+<meta property="og:image" content="https://i.imgur.com/Kdnz6Ha.png">
+<meta property="og:image" content="https://i.imgur.com/KW4Bppp.png">
+<meta property="og:image" content="https://i.imgur.com/4bmRMPy.png">
+<meta property="og:image" content="https://i.imgur.com/1uVzuEs.png">
+<meta property="og:image" content="https://i.imgur.com/MjjDiIr.png">
+<meta property="og:image" content="https://i.imgur.com/qiTACde.png">
+<meta property="og:image" content="https://i.imgur.com/wZWhZMH.png">
+<meta property="og:image" content="https://i.imgur.com/mjueQL1.png">
+<meta property="og:image" content="https://i.imgur.com/0MKIaRI.png">
+<meta property="og:image" content="https://i.imgur.com/8z3M9Ws.png">
+<meta property="og:image" content="https://i.imgur.com/l8aH3KQ.png">
+<meta property="og:image" content="https://i.imgur.com/7EB5gA3.png">
+<meta property="og:image" content="https://i.imgur.com/Gu5cOw4.png">
+<meta property="og:updated_time" content="2018-08-14T08:26:12.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BugKu_CTF">
+<meta name="twitter:description" content="RE题Easy_vb&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;OD中查看字符串：得MCTF{_N3t_Rev_1sE4ay}">
+<meta name="twitter:image" content="https://i.imgur.com/NMumWx8.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/14/BugKu_CTF/"/>
+
+
+
+
+
+  <title>BugKu_CTF | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/BugKu_CTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">BugKu_CTF</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T15:02:11+08:00">
+                2018-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RE题"><a href="#RE题" class="headerlink" title="RE题"></a>RE题</h1><h2 id="Easy-vb"><a href="#Easy-vb" class="headerlink" title="Easy_vb"></a>Easy_vb</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OD中查看字符串：得MCTF{_N3t_Rev_1s<em>E4ay</em>}<br>    <img src="https://i.imgur.com/NMumWx8.png" alt=""><br><a id="more"></a></p>
+<h2 id="Re-1"><a href="#Re-1" class="headerlink" title="Re_1"></a>Re_1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查壳，检查地址随机化，拖入IDA中唯一的验证是一个比较字符串的操作，利用OD动态调试得到flag：<br>    <img src="https://i.imgur.com/Tr3T2mz.png" alt=""><br>    <img src="https://i.imgur.com/bGs02Ka.png" alt=""></p>
+<h2 id="游戏过关"><a href="#游戏过关" class="headerlink" title="游戏过关"></a>游戏过关</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这种题就是给你dump用的，根据流程在下图中，标记为0的nop掉，标记为1的jmp。就可以了。<br>    <img src="https://i.imgur.com/z9WDolU.png" alt=""><br>    <img src="https://i.imgur.com/XScdgu1.png" alt=""><br>    <img src="https://i.imgur.com/A17mFWl.png" alt=""><br>    <img src="https://i.imgur.com/OewRG90.png" alt=""><br>    <img src="https://i.imgur.com/tARfNHd.png" alt=""><br>    <img src="https://i.imgur.com/icC2gDA.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也可以直接修改跳转地址。再次不做赘述。</p>
+<h2 id="逆向入门"><a href="#逆向入门" class="headerlink" title="逆向入门"></a>逆向入门</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;吐槽一句，这和逆向好像并没有关系，就是在<code>&lt;img src=&quot;&quot;/&gt;</code>引号中间填写原内容。还以为文件被加密了呢。<br>     <img src="https://i.imgur.com/4AKLJ58.png" alt=""></p>
+<h2 id="Love"><a href="#Love" class="headerlink" title="Love"></a>Love</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;准备工作不赘述，拖入IDA 观察流程，先接受Inpuut，然后经过Base64加密，最后经过位移变换(在原基础上加上其在数组中的索引的值)，最后和<code>e3nifIH9b_C@n@dH</code>比较。<br>     <img src="https://i.imgur.com/EbHfbtl.png" alt=""><br>     <img src="https://i.imgur.com/lYsFfYd.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;解密如下：e3nifIH9b_C@n@dH–&gt;e2lfbDB2ZV95b3V9–&gt;{i_l0ve_you}</p>
+<h2 id="Mountain-climbing"><a href="#Mountain-climbing" class="headerlink" title="Mountain climbing"></a>Mountain climbing</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;准备工作不做赘述，观察程序流程，首先，程序先是利用伪随机数创建了二维数组。然后接收Input，检查Input长度等于19，加密Input。然后在刚刚生成的二维随机数组里面，找出一队和最大的数值。<br>    <img src="https://i.imgur.com/JyknrwM.png" alt=""><br>    <img src="https://i.imgur.com/6qvmK6I.png" alt=""><br>    <img src="https://i.imgur.com/jNEiEKf.png" alt=""><br>    <img src="https://i.imgur.com/2c0NkKN.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用srand和rand，产生的都是伪随机数，我们在dword_423D78 = dword_41A138[101]下断，可以得到整个随机数数组。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[<span class="number">77</span>],</div><div class="line">[<span class="number">5628</span>, <span class="number">6232</span>],</div><div class="line">[<span class="number">29052</span>,<span class="number">1558</span>, <span class="number">26150</span>],</div><div class="line">[<span class="number">12947</span>,<span class="number">29926</span>,<span class="number">11981</span>,<span class="number">22371</span>],</div><div class="line">[<span class="number">4078</span>, <span class="number">28629</span>,<span class="number">4665</span>, <span class="number">2229</span>, <span class="number">24699</span>],</div><div class="line">[<span class="number">27370</span>,<span class="number">3081</span>, <span class="number">18012</span>,<span class="number">24965</span>,<span class="number">2064</span>, <span class="number">26890</span>],</div><div class="line">[<span class="number">21054</span>,<span class="number">5225</span>, <span class="number">11777</span>,<span class="number">29853</span>,<span class="number">2956</span>, <span class="number">22439</span>,<span class="number">3341</span>],</div><div class="line">[<span class="number">31337</span>,<span class="number">14755</span>,<span class="number">5689</span>, <span class="number">24855</span>,<span class="number">4173</span>, <span class="number">32304</span>,<span class="number">292</span>,  <span class="number">5344</span>],</div><div class="line">[<span class="number">15512</span>,<span class="number">12952</span>,<span class="number">1868</span>, <span class="number">10888</span>,<span class="number">19581</span>,<span class="number">13463</span>,<span class="number">32652</span>,<span class="number">3409</span>, <span class="number">28353</span>],</div><div class="line">[<span class="number">26151</span>,<span class="number">14598</span>,<span class="number">12455</span>,<span class="number">26295</span>,<span class="number">25763</span>,<span class="number">26040</span>,<span class="number">8285</span>, <span class="number">27502</span>,<span class="number">15148</span>,<span class="number">4945</span>],</div><div class="line">[<span class="number">26170</span>,<span class="number">1833</span>, <span class="number">5196</span>, <span class="number">9794</span>, <span class="number">26804</span>,<span class="number">2831</span>, <span class="number">11993</span>,<span class="number">2839</span>, <span class="number">9979</span>, <span class="number">27428</span>,<span class="number">6684</span>],</div><div class="line">[<span class="number">4616</span>, <span class="number">30265</span>,<span class="number">5752</span>, <span class="number">32051</span>,<span class="number">10443</span>,<span class="number">9240</span>, <span class="number">8095</span>, <span class="number">28084</span>,<span class="number">26285</span>,<span class="number">8838</span>, <span class="number">18784</span>,<span class="number">6547</span>],</div><div class="line">[<span class="number">7905</span>, <span class="number">8373</span>, <span class="number">19377</span>,<span class="number">18502</span>,<span class="number">27928</span>,<span class="number">13669</span>,<span class="number">25828</span>,<span class="number">30502</span>,<span class="number">28754</span>,<span class="number">32357</span>,<span class="number">2843</span>, <span class="number">5401</span>, <span class="number">10227</span>],</div><div class="line">[<span class="number">22871</span>,<span class="number">20993</span>,<span class="number">8558</span>, <span class="number">10009</span>,<span class="number">6581</span>, <span class="number">22716</span>,<span class="number">12808</span>,<span class="number">4653</span>, <span class="number">24593</span>,<span class="number">21533</span>,<span class="number">9407</span>, <span class="number">6840</span>, <span class="number">30369</span>,<span class="number">2330</span>],</div><div class="line">[<span class="number">3</span>,    <span class="number">28024</span>,<span class="number">22266</span>,<span class="number">19327</span>,<span class="number">18114</span>,<span class="number">18100</span>,<span class="number">15644</span>,<span class="number">21728</span>,<span class="number">17292</span>,<span class="number">8396</span>, <span class="number">27567</span>,<span class="number">2002</span>, <span class="number">3830</span>, <span class="number">12564</span>,<span class="number">1420</span>],</div><div class="line">[<span class="number">29531</span>,<span class="number">21820</span>,<span class="number">9954</span>, <span class="number">8319</span>, <span class="number">10918</span>,<span class="number">7978</span>, <span class="number">24806</span>,<span class="number">30027</span>,<span class="number">17659</span>,<span class="number">8764</span>, <span class="number">3258</span>, <span class="number">20719</span>,<span class="number">6639</span>, <span class="number">23556</span>,<span class="number">25786</span>,<span class="number">11048</span>],</div><div class="line">[<span class="number">3544</span>, <span class="number">31948</span>,<span class="number">22</span>,   <span class="number">1591</span>, <span class="number">644</span>,  <span class="number">25981</span>,<span class="number">26918</span>,<span class="number">31716</span>,<span class="number">16427</span>,<span class="number">15551</span>,<span class="number">28157</span>,<span class="number">7107</span>, <span class="number">27297</span>,<span class="number">24418</span>,<span class="number">24384</span>,<span class="number">32438</span>,<span class="number">22224</span>],</div><div class="line">[<span class="number">12285</span>,<span class="number">12601</span>,<span class="number">13235</span>,<span class="number">21606</span>,<span class="number">2516</span>, <span class="number">13095</span>,<span class="number">27080</span>,<span class="number">16331</span>,<span class="number">23295</span>,<span class="number">20696</span>,<span class="number">31580</span>,<span class="number">28758</span>,<span class="number">10697</span>,<span class="number">4730</span>, <span class="number">16055</span>,<span class="number">22208</span>,<span class="number">2391</span>, <span class="number">20143</span>],</div><div class="line">[<span class="number">16325</span>,<span class="number">24537</span>,<span class="number">16778</span>,<span class="number">17119</span>,<span class="number">18198</span>,<span class="number">28537</span>,<span class="number">11813</span>,<span class="number">1490</span>, <span class="number">21034</span>,<span class="number">1978</span>, <span class="number">6451</span>, <span class="number">2174</span>, <span class="number">24812</span>,<span class="number">28772</span>,<span class="number">5283</span>, <span class="number">6429</span>, <span class="number">15484</span>,<span class="number">29353</span>,<span class="number">5942</span>],</div><div class="line">[<span class="number">7299</span>, <span class="number">6961</span>, <span class="number">32019</span>,<span class="number">24731</span>,<span class="number">29103</span>,<span class="number">17887</span>,<span class="number">17338</span>,<span class="number">26840</span>,<span class="number">13216</span>,<span class="number">8789</span>, <span class="number">12474</span>,<span class="number">24299</span>,<span class="number">19818</span>,<span class="number">18218</span>,<span class="number">14564</span>,<span class="number">31409</span>,<span class="number">5256</span>, <span class="number">31930</span>,<span class="number">26804</span>,<span class="number">9736</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后从中找和最大的，哈哈，广度优先搜索。可是我不会啊！！！接下来讲讲思路吧。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;假设得到了xxxxx是我们的flag，然后要带到加密函数里面，其实这个加密函数是可以不需要了解算法的。反正我当初就没了解算法，带入两组测试码:RVRVRVRVRVRVRVRVRVR LHLHLHLHLHLHLHLHLHL,<strong>可以知道V在偶数位上可以转化为R，L在奇数位上可以转化为H。</strong></p>
+<h2 id="Take-the-maze"><a href="#Take-the-maze" class="headerlink" title="Take the maze"></a>Take the maze</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先查壳，发现是VC，然后检查地址随机化，存在修改字节码即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拖入IDA中，浏览一下程序的主体流程：如下，首先接收输入，然后判断输入的长度，字符串长度必须要为24.接下来，对字符串的第16位与1进行异或，然后加密Input。加密方法暂时不做分析，我们往下看，验证加密后的Input的格式为数字<code>0-9,a-f</code>。最后调用<code>check函数</code>做最后一遍约束。然后打印png。<br>    <img src="https://i.imgur.com/obezW0p.png" alt=""><br>    <img src="https://i.imgur.com/4rKFuhw.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据题目maze，我们知道这是一道迷宫问题。首先查看check的信息。首先将input的奇数位存入v7，然后利用switch，分派给v11，其实我们可以发现v11作为数组byte_541168的索引，我们还发现byte_541168的数值又被swich分派出去了，考虑这是一个maze问题，又因为switch分支有四个，可以推测这四个函数是关于控制移动方向的函数。<br>     <img src="https://i.imgur.com/axNVUZ1.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来我们来验证猜测是否正确。在循环的循环增量可以看到迷宫的列数为26，方向是向下。if判断可以看出来，移动的范围&lt;=10。如果需要移动需要满足3个条件。最重要的是<code>dword_540548[1]^dword_540068[i]==0</code>。<br>     <img src="https://i.imgur.com/Kdnz6Ha.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结合控制四个方向的函数，可以知道：迷宫范围是26*x(x暂时未知)。每步移动的范围是：上下：1-10，左右：1-24。<br>    <img src="https://i.imgur.com/KW4Bppp.png" alt=""><br>    <img src="https://i.imgur.com/4bmRMPy.png" alt=""><br>    <img src="https://i.imgur.com/1uVzuEs.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上述分析，我们知道四个函数表示迷宫中四个方向的路线图，只需要满足上述三个条件即可移动，到这里需要写个IDC脚本，来dump我们需要知道的路径。<strong>好好学IDC，感觉这玩意很厉害</strong><br>    <img src="https://i.imgur.com/MjjDiIr.png" alt=""><br>    <img src="https://i.imgur.com/qiTACde.png" alt=""><br>    <img src="https://i.imgur.com/wZWhZMH.png" alt=""><br>    <img src="https://i.imgur.com/mjueQL1.png" alt=""><br>    <img src="https://i.imgur.com/0MKIaRI.png" alt=""><br>    <img src="https://i.imgur.com/8z3M9Ws.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来确定迷宫出口，我们知道迷宫宽26，311=11X26+25，<strong>也就说是从迷宫左上角到右下角</strong><br>    <img src="https://i.imgur.com/l8aH3KQ.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据四个方向的路径，我们结合迷宫出入口，画出路线图。<br>    <img src="https://i.imgur.com/7EB5gA3.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结合1之前提到的，方向：0:下 2:左  3:右  4:上。移动范围：56789abcdef:表示每个方向重复的次数0123456789。得到<code>06360836063b0839073e0639</code>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考虑到输入之后存在一个加密函数，所以，刚刚我们得到的并不是flag。我们输入伪码<code>0123456789ABCDEFGabcdefg</code>，经过Encode函数。加密之后<code>0123456789</code>得到的是<code>0000000000</code>，为什么会这样，思考一下，为啥两个数运算之后为0，答案是在两个相同的数(字符)异或后得0，所以加密方法是<code>^auto(i)[0-22]</code>。<br>     <img src="https://i.imgur.com/Gu5cOw4.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;写出脚本，如下：得到flag：<code>07154=518?9i&lt;5=6!&amp;!v$#%.</code><br><figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> main(<span class="keyword">void</span>)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">char</span> <span class="keyword">str</span>[]=<span class="string">"06360836063b0839073e0639"</span>;</div><div class="line">	<span class="keyword">str</span>[<span class="number">16</span>]^=<span class="number">1</span>;</div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;strlen(<span class="keyword">str</span>);i++)</div><div class="line">		<span class="keyword">str</span>[i]^=i;</div><div class="line">	puts(<span class="keyword">str</span>);	</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>; </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输入刚刚得到input，程序打印出来一个二维码，扫扫得到：(反正就是提示你，在flag后面加上“Docupa”)，最后得到flag：07154=518?9i&lt;5=6!&amp;!v$#%.Docupa</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/12/《格蠹汇编》_第九章_经典阅读器的经典死锁/" rel="next" title="<格蠹汇编>_第九章_经典阅读器的经典死锁">
+                <i class="fa fa-chevron-left"></i> <格蠹汇编>_第九章_经典阅读器的经典死锁
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2099/12/31/博客总览/" rel="prev" title="博客总览">
+                博客总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RE题"><span class="nav-number">1.</span> <span class="nav-text">RE题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Easy-vb"><span class="nav-number">1.1.</span> <span class="nav-text">Easy_vb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Re-1"><span class="nav-number">1.2.</span> <span class="nav-text">Re_1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#游戏过关"><span class="nav-number">1.3.</span> <span class="nav-text">游戏过关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逆向入门"><span class="nav-number">1.4.</span> <span class="nav-text">逆向入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Love"><span class="nav-number">1.5.</span> <span class="nav-text">Love</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mountain-climbing"><span class="nav-number">1.6.</span> <span class="nav-text">Mountain climbing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Take-the-maze"><span class="nav-number">1.7.</span> <span class="nav-text">Take the maze</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
