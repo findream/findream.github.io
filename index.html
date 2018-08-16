@@ -440,6 +440,301 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/" itemprop="url"><格蠹汇编>_第14章_是谁动了我的句柄</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T17:02:11+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows系统的用户态转储文件专门定义了一种记录异常信息的数据块。称为<strong>异常数据流</strong>，数据结构为MINIDUMP_EXCEPTION_STREAM。使用<code>.ecxr命令</code>可以读取异常数据流，从而回到异常现场。可以看到当前函数为<code>RtlRaiseStatus</code>。这是一个抛出异常的函数</p>
+<h2 id="何人触雷"><a href="#何人触雷" class="headerlink" title="何人触雷"></a>何人触雷</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>kn</code>查看是和调用了上述函数，发现01号栈帧无法识别函数。为什么无法识别呢？？下一节解释，既然我们无法由栈顶到栈底分析，我们反向分析，也就是说<strong>从函数的调用者分析。</strong><br>    <img src="https://i.imgur.com/uqZcgPS.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道函数的返回地址一个在函数调用处的下5个字节(call一般长5字节)。也就是说函数的返回地址一定在父函数内部。由此，我们利用函数的返回值，去反向反汇编<strong>向前反汇编出函数的调用处。</strong>利用<code>ub retaddr</code>命令即可完成。</p>
+<h2 id="代码流放"><a href="#代码流放" class="headerlink" title="代码流放"></a>代码流放</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为什么利用kn无法完全识别函数呢？原因在于编译器优化将执行概率高的代码尽可能放在一起，这样可以减少页面置换的发生，而需要移动其他代码才能放置这些高概率发生的代码。这些被移动的代码就是一些异常处理的函数代码，因为他们不经常被使用。优化器移动代码却不移动符号，这样调试器无法识别原本函数。</p>
+<h2 id="事出何因"><a href="#事出何因" class="headerlink" title="事出何因"></a>事出何因</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>uf [funname]</code>可以反汇编出函数所有代码。通过搜索地址的方式，将问题定位到了ZwSetEvent。如果函数返回失败，经过两次跳转，调用RtlRaiseStatus函数。抛出异常。</p>
+<h2 id="那个句柄"><a href="#那个句柄" class="headerlink" title="那个句柄"></a>那个句柄</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看参数传递的情况，判断问题所在。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/16/《格蠹汇编》_第13章_SDK安装程序卡壳之谜/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/16/《格蠹汇编》_第13章_SDK安装程序卡壳之谜/" itemprop="url"><格蠹汇编>_第13章_SDK安装程序卡壳之谜</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T15:02:11+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="上调试器"><a href="#上调试器" class="headerlink" title="上调试器"></a>上调试器</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>~*e ？ @$tid;!gle</code>命令，去显示进程中每个线程的TID和LastError值。其中<code>~*</code>查看所有线程，<code>e</code>选项是支持多条命令，不然只是显示最后一条。<code>@$tid</code>显示tid，<code>!gle</code>:显示LastError。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LastErrorValue，最后一次错误码，是一个很小的数，LastStatusValue，最后一次系统状态码，是一个很大的数。一般的，调用系统服务失败，会把状态码传递给RtlNtStatusToError函数，在函数内部修改LastStatusValue，然后将LastStatusValue转化为LastErrorValue。</p>
+<h2 id="细看14d8线程"><a href="#细看14d8线程" class="headerlink" title="细看14d8线程"></a>细看14d8线程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在windbg，切换线程使用~ 线程序号 s。如果需要使用TID切换线程，可以使用<code>~~ TID s</code>。</p>
+<h2 id="细看现场"><a href="#细看现场" class="headerlink" title="细看现场"></a>细看现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于某些.NET托管代码，windbg由于没有私有符号，所以在栈回溯的时候没有办法显示名称，使用<strong>SOS扩展模块</strong>可以解析托管代码。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>.loadby sos mscorwks</code>加载模块，使用<code>!clrstack</code>回溯栈，发现WinIoError函数，说明出现异常，产生异常的是该函数的下面一个函数。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>!thread</code>命令查看线程信息，可以发现存在一次异常信息。<strong>异常名称的后面显示的是异常对象的地址。</strong>利用<code>!do [异常对象地址]</code>可以查看异常的详细信息。或者使用<code>!Printexception</code>打印所有异常。</p>
+<h2 id="追本溯源"><a href="#追本溯源" class="headerlink" title="追本溯源"></a>追本溯源</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;判断某个函数的父函数，可以利用函数的返回地址是否在父函数内部来判断。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/BugKu_CTF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -540,6 +835,168 @@
             </a>
           </div>
           <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/《格蠹汇编》_第十章_转储分析双误谜团/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/13/《格蠹汇编》_第十章_转储分析双误谜团/" itemprop="url"><格蠹汇编>_第十章_转储分析双误谜团</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-13T15:02:11+08:00">
+                2018-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="何谓双误"><a href="#何谓双误" class="headerlink" title="何谓双误"></a>何谓双误</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。</p>
+<h2 id="蛛丝马迹"><a href="#蛛丝马迹" class="headerlink" title="蛛丝马迹"></a>蛛丝马迹</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>!process</code>查看当前进程的信息，其中有一项为<code>DirBase(页目录基地址)</code>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>r CR3</code>命令来查看CR3寄存器内容，CR寄存器一共存在四个：CR0-CR3。保存着全局性和任务无关性。其中CR3保存的内容是进程的<strong>页目录物理地址</strong>。理论上CR3的值和DirBase是一致的，在切换任务时，CR3寄存器的内容随之改变。</p>
+<h2 id="初现端倪"><a href="#初现端倪" class="headerlink" title="初现端倪"></a>初现端倪</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们在接到警告的时候，发现CR3寄存器的值和通过<code>!process</code>查看的DirBase的值不一样，在理论上这是不应该发生的。但是怎么就发生了呢？</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在发生异常之后，CPU在内部，使用硬件相关的线程切换技术，切换CR3寄存器，但是系统却没有来得及及时更新已经发生改变的页目录基地址。造成CR3和DirBase数值不同。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在CPU控制区(FS指向的段)，保存着每个CPU的当前线程结构。在那个线程结构中，保存的是所属进程的进程信息。利用如下方法获取当前进程信息<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">00000124H</span>]</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>+<span class="number">1E0H</span>]</div></pre></td></tr></table></figure></p>
+<h2 id="时光倒流"><a href="#时光倒流" class="headerlink" title="时光倒流"></a>时光倒流</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任务门,就是登记在IDT表中的一种特殊地址。CPU可以根据这个门所指向的任务状态段（TSS）来切换指定的任务线程。例如IDT中的8号表项处的任务门来切换处理双误的新线程。利用<code>!pcr命令</code>得到当前线程的TSS，观察其内容。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Backlink成员是前一个任务的段选择子。利用<code>.tts [序号]</code>可以切换到前一个线程了。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">ntdll!_KTSS</div><div class="line">   +<span class="number">0x000</span> Backlink         : <span class="number">0xc45</span>                 &lt;---- 为前一个任务的TSS段选择子</div><div class="line">   +<span class="number">0x002</span> Reserved0        : <span class="number">0x4d8a</span></div><div class="line">   +<span class="number">0x004</span> Esp0             : <span class="number">0xf649bde0</span>            &lt;---- <span class="number">0</span> 级的 <span class="built_in">Esp</span> 值，这指向一个 KTRAP_FRAME 结构 V86Es 成员</div><div class="line">   +<span class="number">0x008</span> Ss0              : <span class="number">0x10</span></div><div class="line">   +<span class="number">0x00a</span> Reserved1        : <span class="number">0xb70f</span></div><div class="line">   +<span class="number">0x00c</span> NotUsed1         : [<span class="number">4</span>] <span class="number">0x5031ff00</span></div><div class="line">   +<span class="number">0x01c</span> <span class="built_in">CR3</span>              : <span class="number">0x8b55ff8b</span></div><div class="line">   +<span class="number">0x020</span> <span class="built_in">Eip</span>              : <span class="number">0xc75ffec</span></div><div class="line">   +<span class="number">0x024</span> EFlags           : <span class="number">0xe80875ff</span></div><div class="line">   +<span class="number">0x028</span> <span class="built_in">Eax</span>              : <span class="number">0xfffffbdd</span></div><div class="line">   +<span class="number">0x02c</span> <span class="built_in">Ecx</span>              : <span class="number">0x1b75c084</span></div><div class="line">   +<span class="number">0x030</span> <span class="built_in">Edx</span>              : <span class="number">0x8b184d8b</span></div><div class="line">   +<span class="number">0x034</span> <span class="built_in">Ebx</span>              : <span class="number">0x7d8b57d1</span></div><div class="line">   +<span class="number">0x038</span> <span class="built_in">Esp</span>              : <span class="number">0x2e9c110</span></div><div class="line">   +<span class="number">0x03c</span> <span class="built_in">Ebp</span>              : <span class="number">0xf3ffc883</span></div><div class="line">   +<span class="number">0x040</span> <span class="built_in">Esi</span>              : <span class="number">0x83ca8bab</span></div><div class="line">   +<span class="number">0x044</span> <span class="built_in">Edi</span>              : <span class="number">0xaaf303e1</span></div><div class="line">   +<span class="number">0x048</span> <span class="built_in">Es</span>               : <span class="number">0xeb5f</span></div><div class="line">   +<span class="number">0x04a</span> Reserved2        : <span class="number">0x6819</span></div><div class="line">   +<span class="number">0x04c</span> <span class="built_in">Cs</span>               : <span class="number">0x24fc</span></div><div class="line">   +<span class="number">0x04e</span> Reserved3        : <span class="number">0x44</span></div><div class="line">   +<span class="number">0x050</span> <span class="built_in">Ss</span>               : <span class="number">0x75ff</span></div><div class="line">   +<span class="number">0x052</span> Reserved4        : <span class="number">0xff18</span></div><div class="line">   +<span class="number">0x054</span> <span class="built_in">Ds</span>               : <span class="number">0x1475</span></div><div class="line">   +<span class="number">0x056</span> Reserved5        : <span class="number">0x75ff</span></div><div class="line">   +<span class="number">0x058</span> <span class="built_in">Fs</span>               : <span class="number">0xff10</span></div><div class="line">   +<span class="number">0x05a</span> Reserved6        : <span class="number">0xc75</span></div><div class="line">   +<span class="number">0x05c</span> <span class="built_in">Gs</span>               : <span class="number">0x75ff</span></div><div class="line">   +<span class="number">0x05e</span> Reserved7        : <span class="number">0xe808</span></div><div class="line">   +<span class="number">0x060</span> LDT              : <span class="number">0</span></div><div class="line">   +<span class="number">0x062</span> Reserved8        : <span class="number">0xffff</span></div><div class="line">   +<span class="number">0x064</span> Flags            : <span class="number">0</span></div><div class="line">   +<span class="number">0x066</span> IoMapBase        : <span class="number">0x20ac</span></div><div class="line">   +<span class="number">0x068</span> IoMaps           : [<span class="number">1</span>] _KiIoAccessMap</div><div class="line">   +<span class="number">0x208c</span> IntDirectionMap  : [<span class="number">32</span>]  <span class="string">"???"</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">3</span>: kd&gt; !pcr</div><div class="line">KPCR for Processor <span class="number">3</span> at <span class="number">8</span><span class="attribute">ae9f000</span>:</div><div class="line">    Major <span class="number">1</span> Minor <span class="number">1</span></div><div class="line">	NtTib.<span class="attribute">ExceptionList</span>: <span class="number">8</span>aea81a0</div><div class="line">	    NtTib.<span class="attribute">StackBase</span>: <span class="number">00000000</span></div><div class="line">	   NtTib.<span class="attribute">StackLimit</span>: <span class="number">00000000</span></div><div class="line">	 NtTib.<span class="attribute">SubSystemTib</span>: <span class="number">8</span>aea3270</div><div class="line">	      NtTib.<span class="attribute">Version</span>: <span class="number">00</span>ab16c4</div><div class="line">	  NtTib.<span class="attribute">UserPointer</span>: <span class="number">00000008</span></div><div class="line">	      NtTib.<span class="attribute">SelfTib</span>: <span class="number">7</span>fb4f000</div><div class="line"></div><div class="line">	            <span class="attribute">SelfPcr</span>: <span class="number">8</span>ae9f000</div><div class="line">	               <span class="attribute">Prcb</span>: <span class="number">8</span>ae9f120</div><div class="line">	               <span class="attribute">Irql</span>: <span class="number">0000001</span>f</div><div class="line">	                <span class="attribute">IRR</span>: <span class="number">00000000</span></div><div class="line">	                <span class="attribute">IDR</span>: <span class="number">00000000</span></div><div class="line">	      <span class="attribute">InterruptMode</span>: <span class="number">00000000</span></div><div class="line">	                <span class="attribute">IDT</span>: <span class="number">8</span>aea8d00</div><div class="line">	                <span class="attribute">GDT</span>: <span class="number">8</span>aea8900</div><div class="line">	                <span class="attribute">TSS</span>: <span class="number">8</span>aea55e0</div><div class="line"></div><div class="line">	      <span class="attribute">CurrentThread</span>: <span class="number">87</span>de6140</div><div class="line">	         <span class="attribute">NextThread</span>: <span class="number">00000000</span></div><div class="line">	         <span class="attribute">IdleThread</span>: <span class="number">8</span>aea5320</div><div class="line"></div><div class="line">	          <span class="attribute">DpcQueue</span>: </div><div class="line"><span class="number">3</span>: kd&gt; dt _KTSS <span class="number">8</span>aea55e0</div><div class="line">nt!_KTSS</div><div class="line">   +<span class="number">0</span>x000 <span class="attribute">Backlink         </span>: <span class="number">0</span>x28</div><div class="line">   +<span class="number">0</span>x002 <span class="attribute">Reserved0        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x004 <span class="attribute">Esp0             </span>: <span class="number">0</span>x8aea86c0</div><div class="line">   +<span class="number">0</span>x008 <span class="attribute">Ss0              </span>: <span class="number">0</span>x10</div><div class="line">   +<span class="number">0</span>x00a <span class="attribute">Reserved1        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x00c <span class="attribute">NotUsed1         </span>: [<span class="number">4</span>] <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x01c <span class="attribute">CR3              </span>: <span class="number">0</span>x185000</div><div class="line">   +<span class="number">0</span>x020 <span class="attribute">Eip              </span>: <span class="number">0</span>x81f223bb</div><div class="line">   +<span class="number">0</span>x024 <span class="attribute">EFlags           </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x028 <span class="attribute">Eax              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x02c <span class="attribute">Ecx              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x030 <span class="attribute">Edx              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x034 <span class="attribute">Ebx              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x038 <span class="attribute">Esp              </span>: <span class="number">0</span>x8aea86c0</div><div class="line">   +<span class="number">0</span>x03c <span class="attribute">Ebp              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x040 <span class="attribute">Esi              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x044 <span class="attribute">Edi              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x048 <span class="attribute">Es               </span>: <span class="number">0</span>x23</div><div class="line">   +<span class="number">0</span>x04a <span class="attribute">Reserved2        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x04c <span class="attribute">Cs               </span>: <span class="number">8</span></div><div class="line">   +<span class="number">0</span>x04e <span class="attribute">Reserved3        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x050 <span class="attribute">Ss               </span>: <span class="number">0</span>x10</div><div class="line">   +<span class="number">0</span>x052 <span class="attribute">Reserved4        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x054 <span class="attribute">Ds               </span>: <span class="number">0</span>x23</div><div class="line">   +<span class="number">0</span>x056 <span class="attribute">Reserved5        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x058 <span class="attribute">Fs               </span>: <span class="number">0</span>x30</div><div class="line">   +<span class="number">0</span>x05a <span class="attribute">Reserved6        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x05c <span class="attribute">Gs               </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x05e <span class="attribute">Reserved7        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x060 <span class="attribute">LDT              </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x062 <span class="attribute">Reserved8        </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x064 <span class="attribute">Flags            </span>: <span class="number">0</span></div><div class="line">   +<span class="number">0</span>x066 <span class="attribute">IoMapBase        </span>: <span class="number">0</span>x20ac</div><div class="line">   +<span class="number">0</span>x068 <span class="attribute">IoMaps           </span>: [<span class="number">1</span>] _KiIoAccessMap</div><div class="line">   +<span class="number">0</span>x208c <span class="attribute">IntDirectionMap  </span>: [<span class="number">32</span>]  <span class="string">"@???"</span></div></pre></td></tr></table></figure>
+<h2 id="宝贵的内核态栈"><a href="#宝贵的内核态栈" class="headerlink" title="宝贵的内核态栈"></a>宝贵的内核态栈</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;多数线程都有两个栈，一个用户态栈，一个内核态栈，用户态栈大小为1M，一般不会造成溢出，但是内核态栈只有十几千字节到几十千字节，相对来说也是比较容易造成溢出的。</p>
+<h2 id="课后实验"><a href="#课后实验" class="headerlink" title="课后实验"></a>课后实验</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;是一个dump文件，我们使用命令<code>!analyse -v</code>分析一下蓝屏产生的原因。可见注释的地方，产生了一个停止码。而带来的异常是double_fault。<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">3: kd&gt; !analyze -v</div><div class="line">******************************************************************************<span class="strong">*</span></div><div class="line"><span class="strong">*</span>                                                                             <span class="strong">*</span></div><div class="line"><span class="strong">*</span>                        Bugcheck Analysis                                    <span class="strong">*</span></div><div class="line"><span class="strong">*</span>                                                                             <span class="strong">*</span></div><div class="line"><span class="strong">*</span>*****************************************************************************<span class="strong">*</span></div><div class="line"><span class="strong"></span></div><div class="line"><span class="strong">UNEXPECTED_KERNEL_MODE_TRAP (7f)    //停止码</span></div><div class="line"><span class="strong">This means a trap occurred in kernel mode, and it's a trap of a kind</span></div><div class="line"><span class="strong">that the kernel isn't allowed to have/catch (bound trap) or that</span></div><div class="line"><span class="strong">is always instant death (double fault).  The first number in the</span></div><div class="line"><span class="strong">bugcheck params is the number of the trap (8 = double fault, etc)</span></div><div class="line"><span class="strong">Consult an Intel x86 family manual to learn more about what these</span></div><div class="line"><span class="strong">traps are. Here is a *</span>portion* of those codes:</div><div class="line">If kv shows a taskGate</div><div class="line"><span class="code">        use .tss on the part before the colon, then kv.</span></div><div class="line">Else if kv shows a trapframe</div><div class="line"><span class="code">        use .trap on that value</span></div><div class="line">Else</div><div class="line"><span class="code">        .trap on the appropriate frame will show where the trap was taken</span></div><div class="line"><span class="code">        (on x86, this will be the ebp that goes with the procedure KiTrap)</span></div><div class="line">Endif</div><div class="line">kb will then show the corrected stack.</div><div class="line">Arguments:</div><div class="line">Arg1: 00000008, EXCEPTION<span class="emphasis">_DOUBLE_</span>FAULT    //双误异常</div><div class="line">Arg2: 8aea3270</div><div class="line">Arg3: 00000000</div><div class="line">Arg4: 00000000</div><div class="line"></div><div class="line">Debugging Details:</div><div class="line">------------------</div><div class="line"><span class="symbol">WARNING: </span>Process directory table base C7F45840 doesn't match CR3 00185000   //不同</div><div class="line"><span class="symbol">WARNING: </span>Process directory table base C7F45840 doesn't match CR3 00185000</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于windbg给出的警告说明了CR3和DirBase值不相同，利用<code>r CR3</code>和<code>!prcess 0 0</code>查看对应的数据。发现两者数据确实不同。原因见&lt;<strong>初见端倪</strong>&gt;一节。<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span><span class="string">:</span> <span class="string">kd&gt;</span> <span class="string">r</span> <span class="string">CR3</span></div><div class="line"><span class="string">cr3=00185000</span></div><div class="line"></div><div class="line"><span class="number">3</span><span class="string">:</span> <span class="string">kd&gt;</span> <span class="string">!process</span></div><div class="line"><span class="string">PROCESS</span> <span class="number">85</span><span class="string">ad72c0</span>  <span class="attr">SessionId:</span> <span class="number">1</span>  <span class="attr">Cid:</span> <span class="number">0</span><span class="string">cfc</span>    <span class="attr">Peb:</span> <span class="number">7</span><span class="string">fb4c000</span>  <span class="attr">ParentCid:</span> <span class="number">08</span><span class="string">ac</span></div><div class="line"><span class="attr">    DirBase:</span> <span class="string">c7f45840</span>  <span class="attr">ObjectTable:</span> <span class="number">8</span><span class="string">a127040</span>  <span class="attr">HandleCount:</span> <span class="string">&lt;Data</span> <span class="string">Not</span> <span class="string">Accessible&gt;</span></div><div class="line"><span class="attr">    Image:</span> <span class="string">ImBuggy.exe</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当使用<code>!process 0 0</code>遍历系统所有进程，发现system进程的Dirbase数据为00185000。这时候，我们大致了解到了事情的经过，程序ImBuggy.exe是发生双误异常后，CPU内部利用硬件机制将页目录基地址改变为00185000，但是OS并没有及时作出调整，产生了error，但是双误是如何产生的呢？<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span>: kd&gt; !process <span class="number">4</span> <span class="number">0</span>          //!process <span class="number">0</span> <span class="number">0</span> <span class="built_in">system</span></div><div class="line">Searching <span class="keyword">for</span> Process with Cid == <span class="number">4</span></div><div class="line">PROCESS 84ad78c0  SessionId: none  Cid: <span class="number">0004</span>    Peb: <span class="number">00000000</span>  ParentCid: <span class="number">0000</span></div><div class="line">    DirBase: <span class="number">00185000</span>  ObjectTable: <span class="number">8b203000</span>  HandleCount: &lt;Data Not Accessible&gt;</div><div class="line">    Image: System</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;先使用<code>.sympath c:\gedu\xxx</code>设置符号路径，然后加载符号(提前需要设置系统符号命令)。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>knvL</code>命令回溯栈。<strong>n：显示行号，v:显示调用约定，L:省略源代码。</strong>0号栈是产生蓝屏的系统函数，1号栈是处理双误异常的异常处理函数KiTrap08(陷阱处理函数，08代表双误异常)。剩下的是RealBug!StackOverflow是产生双误的函数。<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span>: kd&gt; kvnL</div><div class="line"> # ChildEBP RetAddr  Args to Child              </div><div class="line"><span class="number">00</span> <span class="number">8</span>aea869c <span class="number">81f22433</span> <span class="number">0000007</span>f <span class="number">00000008</span> <span class="number">8</span>aea3270 nt!KiBugCheck2</div><div class="line"><span class="number">01</span> <span class="number">8</span>aea869c b<span class="number">0e013e4</span> <span class="number">0000007</span>f <span class="number">00000008</span> <span class="number">8</span>aea3270 nt!KiTrap08+<span class="number">0</span>x78 (FPO: TSS <span class="number">28</span>:<span class="number">0</span>)</div><div class="line"><span class="number">02</span> cf6ce004 b<span class="number">0e013e9</span> <span class="number">0000065</span>e cf6ce01c b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x14 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">03</span> cf6ce010 b<span class="number">0e013e9</span> <span class="number">0000065</span>f cf6ce028 b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">04</span> cf6ce01c b<span class="number">0e013e9</span> <span class="number">00000660</span> cf6ce034 b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">05</span> cf6ce028 b<span class="number">0e013e9</span> <span class="number">00000661</span> cf6ce040 b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">06</span> cf6ce034 b<span class="number">0e013e9</span> <span class="number">00000662</span> cf6ce04c b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line">.......</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是，windbg并没有显示完全栈回溯，使用<code>kvnL 1000</code>回溯1000次调用。<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span>c9 cf6d0d58 b<span class="number">0e013e9</span> <span class="number">00000a25</span> cf6d0d70 b<span class="number">0e013e9</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">3</span>ca cf6d0d64 b<span class="number">0e013e9</span> <span class="number">00000a26</span> cf6d0d98 b0e01b16 RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">3</span>cb cf6d0d70 b0e01b<span class="number">16 00000a27</span> cf6d0f24 a<span class="number">8e2e888</span> RealBug!StackOverflow+<span class="number">0</span>x19 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">3</span>cc cf6d0d98 b0e01d50 <span class="number">85</span>cc2b<span class="number">68 00000001</span> <span class="number">87</span>ab4780 RealBug!RealBugDeviceControl+<span class="number">0</span>xb6 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">3</span>cd cf6d0de4 <span class="number">81</span>fa807d <span class="number">84</span>ee91f<span class="number">8 85994f68</span> <span class="number">00000100</span> RealBug!RealBugDispatch+<span class="number">0</span>x90 (FPO: [Non-Fpo]) (CONV: stdcall)</div><div class="line"><span class="number">3</span>ce cf6d0dfc <span class="number">82066</span>baf <span class="number">85994</span>ffc <span class="number">85994f68</span> <span class="number">00000004</span> nt!IofCallDriver+<span class="number">0</span>x3d (FPO: [Non-Fpo])</div><div class="line"><span class="number">3</span>cf cf6d0e<span class="number">50 82066622</span> <span class="number">84</span>ee91f<span class="number">8 00000000</span> a<span class="number">8e31901</span> nt!IopSynchronousServiceTail+<span class="number">0</span>x10a (FPO: [Non-Fpo])</div><div class="line"><span class="number">3d</span>0 cf6d0ef0 <span class="number">8206624</span>f <span class="number">00000001</span> <span class="number">85994f68</span> <span class="number">00000000</span> nt!IopXxxControlFile+<span class="number">0</span>x3b7 (FPO: [Non-Fpo])</div><div class="line"><span class="number">3d</span>1 cf6d0f24 <span class="number">81</span>f200bc <span class="number">000000b4</span> <span class="number">00000000</span> <span class="number">00000000</span> nt!NtDeviceIoControlFile+<span class="number">0</span>x2a (FPO: [Non-Fpo])</div><div class="line"><span class="number">3d</span>2 cf6d0f24 <span class="number">77</span>c85ee4 <span class="number">000000b4</span> <span class="number">00000000</span> <span class="number">00000000</span> nt!KiFastCallEntry+<span class="number">0</span>x12c (FPO: [<span class="number">0</span>,<span class="number">3</span>] TrapFrame @ cf6d0f54)</div><div class="line">WARNING: Frame IP not in any known module. Following frames may be wrong.</div><div class="line"><span class="number">3d</span>3 <span class="number">0013f568</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0</span>x77c85ee4</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在上面的栈回溯，可以得出，1.#3d2的返回地址接近用户态。2.根据栈回溯：程序递归调用了StackOverflow。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在栈回溯，可以看到双误处理函数的TSS：28，TSS:28表示的是<strong>前一个线程</strong>的TSS段选择子是28，利用<code>.tss 28</code>可以查看蓝屏前的线程信息。可以发生是StackOverflow函数发生了双误异常。接下来，我们看一下发生异常的原因是什么。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">3: kd&gt; .tss 28</div><div class="line"><span class="attribute">eax</span>=0000065e <span class="attribute">ebx</span>=0000010e <span class="attribute">ecx</span>=0000065e <span class="attribute">edx</span>=00000a28 <span class="attribute">esi</span>=84ee91f8 <span class="attribute">edi</span>=85cc2b68</div><div class="line"><span class="attribute">eip</span>=b0e013e4 <span class="attribute">esp</span>=cf6ce000 <span class="attribute">ebp</span>=cf6ce004 <span class="attribute">iopl</span>=0         nv up ei pl nz na po nc</div><div class="line"><span class="attribute">cs</span>=0008  <span class="attribute">ss</span>=0010  <span class="attribute">ds</span>=0023  <span class="attribute">es</span>=0023  <span class="attribute">fs</span>=0030  <span class="attribute">gs</span>=0000             <span class="attribute">efl</span>=00010202</div><div class="line">RealBug!StackOverflow+0x14:</div><div class="line">b0e013e4 e8e7ffffff      call    RealBug!StackOverflow (b0e013d0)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图，在StackOverflow中递归调用了StackOverflow函数，会开辟处12个字节的栈空间。<br>     <img src="https://i.imgur.com/GwffPg7.png" alt=""><br>     <img src="https://i.imgur.com/6yhyY7k.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据栈回溯信息，发现从#002到#3CB一共调用了969次。产生了969*12=11628个字节大小栈空间。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>!thread</code>查看线程的栈空间信息。最后一行：栈空间大小：cf6d1000-cfce000=3000，所需空间不够，在看current：cf6d0d8c明显不在cf6d1000-cfce000区间内，判断是栈溢出。<br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span>: kd&gt; !thread</div><div class="line">THREAD <span class="number">87</span>de6140  Cid <span class="number">0</span>cfc<span class="number">.1778</span>  Teb: <span class="number">7</span>fb4f000 Win32Thread: <span class="number">80</span>cb9008 RUNNING on processor <span class="number">3</span></div><div class="line">IRP <span class="keyword">List</span>:</div><div class="line">    <span class="number">85994</span>f68: (<span class="number">0006</span>,<span class="number">0094</span>) Flags: <span class="number">00060030</span>  Mdl: <span class="number">00000000</span></div><div class="line"><span class="keyword">Not</span> impersonating</div><div class="line">DeviceMap                 ba46c160</div><div class="line">Owning Process            <span class="number">85</span>ad72c0       <span class="keyword">Image</span>:         ImBuggy.exe</div><div class="line">Attached Process          <span class="keyword">N</span>/A            <span class="keyword">Image</span>:         <span class="keyword">N</span>/A</div><div class="line">Wait Start TickCount      <span class="number">304716315</span>      <span class="keyword">Ticks</span>: <span class="number">0</span></div><div class="line"><span class="keyword">Context</span> <span class="keyword">Switch</span> <span class="keyword">Count</span>      <span class="number">1554</span>           IdealProcessor: <span class="number">0</span>             </div><div class="line">UserTime                  <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.078</span></div><div class="line">KernelTime                <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.093</span></div><div class="line">Win32 Start Address <span class="number">0x0040285e</span></div><div class="line"><span class="keyword">Stack</span> Init cf6d0fe0 Current cf6d0d8c Base cf6d1000 <span class="keyword">Limit</span> cf6ce000 Call <span class="number">00000000</span></div></pre></td></tr></table></figure></p>
+
+          
         
       
     </div>
@@ -1321,450 +1778,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/28/巅峰极客CTF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/28/巅峰极客CTF/" itemprop="url">巅峰极客CTF(成都)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-28T14:02:11+08:00">
-                2018-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index">
-                    <span itemprop="name">CTF</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="前记："><a href="#前记：" class="headerlink" title="前记："></a>前记：</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21号，陪朋友参加了巅峰极客的CTF线上赛，也只是签了个到，其实题目并不是很难。所以这次的比赛我们打的并不是很好，这次写一下关于这次CTF的逆向和杂项的wp，参考的是<a href="https://www.colabug.com/3667674.html" target="_blank" rel="external">https://www.colabug.com/3667674.html</a><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/28/巅峰极客CTF/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/26/windbg学习笔记_6_/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/26/windbg学习笔记_6_/" itemprop="url">windbg学习笔记(6) --内核调试常用命令(2)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T14:02:11+08:00">
-                2018-07-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-内核/" itemprop="url" rel="index">
-                    <span itemprop="name">windows 内核</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="内存相关"><a href="#内存相关" class="headerlink" title="内存相关"></a>内存相关</h2><ul>
-<li><strong>!address命令：</strong>显示内存信范围和权限的命令，命令在用户态下也可以使用。如果不带参数，可以显示内存所有信息。
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/26/windbg学习笔记_6_/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/25/病毒分析技术_11_文件下载者变种1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/25/病毒分析技术_11_文件下载者变种1/" itemprop="url">病毒分析技术(11) ---文件下载者病毒变种</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:02:11+08:00">
-                2018-07-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
-<li>1.目录</li>
-<li>2.样本信息</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术上的总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/25/病毒分析技术_11_文件下载者变种1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1815,7 +1828,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">86</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
