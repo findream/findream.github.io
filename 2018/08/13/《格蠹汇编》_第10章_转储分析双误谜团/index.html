@@ -81,19 +81,19 @@
 
 
 
-<meta name="description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。 蛛丝马迹&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用!process查看当前进程的信息，其中有一项为DirBas">
+<meta name="description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="&lt;格蠹汇编&gt;_第十章_转储分析双误谜团">
-<meta property="og:url" content="http://yoursite.com/2018/08/13/《格蠹汇编》_第十章_转储分析双误谜团/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/08/13/《格蠹汇编》_第10章_转储分析双误谜团/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。 蛛丝马迹&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用!process查看当前进程的信息，其中有一项为DirBas">
+<meta property="og:description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/GwffPg7.png">
 <meta property="og:image" content="https://i.imgur.com/6yhyY7k.png">
-<meta property="og:updated_time" content="2018-08-15T02:54:51.145Z">
+<meta property="og:updated_time" content="2018-08-16T10:30:38.346Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="&lt;格蠹汇编&gt;_第十章_转储分析双误谜团">
-<meta name="twitter:description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。 蛛丝马迹&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用!process查看当前进程的信息，其中有一项为DirBas">
+<meta name="twitter:description" content="何谓双误&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。">
 <meta name="twitter:image" content="https://i.imgur.com/GwffPg7.png">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/13/《格蠹汇编》_第十章_转储分析双误谜团/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/13/《格蠹汇编》_第10章_转储分析双误谜团/"/>
 
 
 
@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/《格蠹汇编》_第十章_转储分析双误谜团/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/13/《格蠹汇编》_第10章_转储分析双误谜团/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -386,7 +386,7 @@
       
 
       
-        <h2 id="何谓双误"><a href="#何谓双误" class="headerlink" title="何谓双误"></a>何谓双误</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。</p>
+        <h2 id="何谓双误"><a href="#何谓双误" class="headerlink" title="何谓双误"></a>何谓双误</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;双误就是CPU是报告一个比较严重的异常后，在异常处理过程中，又发生了一个严重的异常(CPU无法处理)。<br><a id="more"></a></p>
 <h2 id="蛛丝马迹"><a href="#蛛丝马迹" class="headerlink" title="蛛丝马迹"></a>蛛丝马迹</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>!process</code>查看当前进程的信息，其中有一项为<code>DirBase(页目录基地址)</code>。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>r CR3</code>命令来查看CR3寄存器内容，CR寄存器一共存在四个：CR0-CR3。保存着全局性和任务无关性。其中CR3保存的内容是进程的<strong>页目录物理地址</strong>。理论上CR3的值和DirBase是一致的，在切换任务时，CR3寄存器的内容随之改变。</p>
 <h2 id="初现端倪"><a href="#初现端倪" class="headerlink" title="初现端倪"></a>初现端倪</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们在接到警告的时候，发现CR3寄存器的值和通过<code>!process</code>查看的DirBase的值不一样，在理论上这是不应该发生的。但是怎么就发生了呢？</p>
@@ -431,7 +431,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/12/《格蠹汇编》_第九章_经典阅读器的经典死锁/" rel="next" title="<格蠹汇编>_第九章_经典阅读器的经典死锁">
+              <a href="/2018/08/12/《格蠹汇编》_第9章_经典阅读器的经典死锁/" rel="next" title="<格蠹汇编>_第九章_经典阅读器的经典死锁">
                 <i class="fa fa-chevron-left"></i> <格蠹汇编>_第九章_经典阅读器的经典死锁
               </a>
             

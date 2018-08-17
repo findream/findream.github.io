@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
+<meta name="description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="&lt;格蠹汇编&gt;_第13章_SDK安装程序卡壳之谜">
 <meta property="og:url" content="http://yoursite.com/2018/08/16/《格蠹汇编》_第13章_SDK安装程序卡壳之谜/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
+<meta property="og:description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-16T08:18:09.552Z">
+<meta property="og:updated_time" content="2018-08-16T10:30:36.741Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="&lt;格蠹汇编&gt;_第13章_SDK安装程序卡壳之谜">
-<meta name="twitter:description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
+<meta name="twitter:description" content="上调试器&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;利用~*e ？ @$tid;!gle命令，去显示进程中每个线程的TID和LastError值。其中~*查看所有线程，e选项是支持多条命令，不然只是显示最后一条。@$tid显示tid，!gle:显示LastError。">
 
 
 
@@ -383,7 +383,7 @@
       
 
       
-        <h2 id="上调试器"><a href="#上调试器" class="headerlink" title="上调试器"></a>上调试器</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>~*e ？ @$tid;!gle</code>命令，去显示进程中每个线程的TID和LastError值。其中<code>~*</code>查看所有线程，<code>e</code>选项是支持多条命令，不然只是显示最后一条。<code>@$tid</code>显示tid，<code>!gle</code>:显示LastError。</p>
+        <h2 id="上调试器"><a href="#上调试器" class="headerlink" title="上调试器"></a>上调试器</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<code>~*e ？ @$tid;!gle</code>命令，去显示进程中每个线程的TID和LastError值。其中<code>~*</code>查看所有线程，<code>e</code>选项是支持多条命令，不然只是显示最后一条。<code>@$tid</code>显示tid，<code>!gle</code>:显示LastError。<br><a id="more"></a></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LastErrorValue，最后一次错误码，是一个很小的数，LastStatusValue，最后一次系统状态码，是一个很大的数。一般的，调用系统服务失败，会把状态码传递给RtlNtStatusToError函数，在函数内部修改LastStatusValue，然后将LastStatusValue转化为LastErrorValue。</p>
 <h2 id="细看14d8线程"><a href="#细看14d8线程" class="headerlink" title="细看14d8线程"></a>细看14d8线程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在windbg，切换线程使用~ 线程序号 s。如果需要使用TID切换线程，可以使用<code>~~ TID s</code>。</p>
 <h2 id="细看现场"><a href="#细看现场" class="headerlink" title="细看现场"></a>细看现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于某些.NET托管代码，windbg由于没有私有符号，所以在栈回溯的时候没有办法显示名称，使用<strong>SOS扩展模块</strong>可以解析托管代码。</p>
