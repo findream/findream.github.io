@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;第一次和博雅他们参加全国性的CTF比赛，学到了很多。算了算了，我就是想凑个前言出来，不编了不编了。Z3和angr这两个工具要好好学。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网鼎杯CTF">
+<meta property="og:url" content="http://yoursite.com/2018/08/21/网鼎杯CTF/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;第一次和博雅他们参加全国性的CTF比赛，学到了很多。算了算了，我就是想凑个前言出来，不编了不编了。Z3和angr这两个工具要好好学。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/7ewbzDQ.png">
+<meta property="og:image" content="https://i.imgur.com/aupJEjr.png">
+<meta property="og:image" content="https://i.imgur.com/zCWu7qp.png">
+<meta property="og:image" content="https://i.imgur.com/pZNtdcJ.png">
+<meta property="og:image" content="https://i.imgur.com/og06XBi.png">
+<meta property="og:image" content="https://i.imgur.com/DGj8mRg.png">
+<meta property="og:image" content="https://i.imgur.com/gId4j2G.png">
+<meta property="og:image" content="https://i.imgur.com/ZKnNESV.png">
+<meta property="og:image" content="https://i.imgur.com/6wJ0dRz.png">
+<meta property="og:image" content="https://i.imgur.com/1VA7Mpq.png">
+<meta property="og:image" content="https://i.imgur.com/JseeXDr.png">
+<meta property="og:image" content="https://i.imgur.com/C0dJ6YB.png">
+<meta property="og:image" content="https://i.imgur.com/R3kSvVP.png">
+<meta property="og:image" content="https://i.imgur.com/9RhNItW.png">
+<meta property="og:image" content="https://i.imgur.com/PRaHGlk.png">
+<meta property="og:image" content="https://i.imgur.com/8hvcLwH.png">
+<meta property="og:image" content="https://i.imgur.com/3mhJ4Aa.png">
+<meta property="og:image" content="https://i.imgur.com/FS3gHRV.png">
+<meta property="og:image" content="https://i.imgur.com/BpYlc5q.png">
+<meta property="og:image" content="https://i.imgur.com/bdBuJCf.png">
+<meta property="og:image" content="https://i.imgur.com/Ce4exDV.png">
+<meta property="og:image" content="https://i.imgur.com/f0VlFF8.png">
+<meta property="og:image" content="https://i.imgur.com/o1r8cow.png">
+<meta property="og:image" content="https://i.imgur.com/QJDK0KT.png">
+<meta property="og:image" content="https://i.imgur.com/YxB1Yix.png">
+<meta property="og:updated_time" content="2018-08-23T09:00:31.642Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网鼎杯CTF">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;第一次和博雅他们参加全国性的CTF比赛，学到了很多。算了算了，我就是想凑个前言出来，不编了不编了。Z3和angr这两个工具要好好学。">
+<meta name="twitter:image" content="https://i.imgur.com/7ewbzDQ.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/21/网鼎杯CTF/"/>
+
+
+
+
+
+  <title>网鼎杯CTF | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/21/网鼎杯CTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">网鼎杯CTF</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-21T14:02:11+08:00">
+                2018-08-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一次和博雅他们参加全国性的CTF比赛，学到了很多。算了算了，我就是想凑个前言出来，不编了不编了。<strong>Z3和angr这两个工具要好好学。</strong><br><a id="more"></a></p>
+<h1 id="第一场——青龙之战"><a href="#第一场——青龙之战" class="headerlink" title="第一场——青龙之战"></a>第一场——青龙之战</h1><h2 id="Re题"><a href="#Re题" class="headerlink" title="Re题"></a>Re题</h2><h3 id="beijing"><a href="#beijing" class="headerlink" title="beijing"></a>beijing</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这道题就是在考脑洞的，elf，定位到函数主函数。流程很简单，将全局变量传入sub_8048460中，然后打印。<br>    <img src="https://i.imgur.com/7ewbzDQ.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看sub_4048460,流程也很简单，根据传入参数的不同利用switch进行不同的分支处理，每个分支都是异或运算。<br>    <img src="https://i.imgur.com/aupJEjr.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们可以看到在异或的右侧对应的变量是a,g,…..，懒得计算顺序，根据单词拼起来就是flag{amazing_beijing}.</p>
+<h3 id="Advance"><a href="#Advance" class="headerlink" title="Advance"></a>Advance</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行程序，依然没有输入，可以看到一些hex数值。可以猜测应该是解密先是的hex数据。<br>     <img src="https://i.imgur.com/zCWu7qp.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，将hex转化为ASCII编码。得到如下数据<code>K@LKVHr[DXEsLsYI@\AMYIr\EIZQ</code>.<br>     <img src="https://i.imgur.com/pZNtdcJ.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对前面的数交叉引用，发现TLS函数。得到加密逻辑<br>    <img src="https://i.imgur.com/og06XBi.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编写如下脚本,得到flag：flag{d_with_a_template_phew}<br>    <img src="https://i.imgur.com/DGj8mRg.png" alt=""></p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">tmp = <span class="string">'K@LKVHr[DXEsLsYI@\AMYIr\EIZQ'</span></div><div class="line">flag = <span class="string">""</span></div><div class="line"><span class="keyword">for</span> i in range(len(tmp)):</div><div class="line">    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</div><div class="line">        flag += <span class="keyword">chr</span>(<span class="keyword">ord</span>(tmp[i])^<span class="number">0x2D</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        flag += <span class="keyword">chr</span>(<span class="keyword">ord</span>(tmp[i])^<span class="number">0x2C</span>)</div><div class="line"><span class="keyword">print</span> flag</div></pre></td></tr></table></figure>
+<h2 id="Misc题"><a href="#Misc题" class="headerlink" title="Misc题"></a>Misc题</h2><h3 id="minified"><a href="#minified" class="headerlink" title="minified"></a>minified</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一看就知道是一道隐写题。利用Stego打开，测试一下不同的通道的图像。可以发现在A0处无正常图片，可以判断是0通道有问题。<br>     <img src="https://i.imgur.com/gId4j2G.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分别提取0通道的四张图片。这里提取通道是<strong>在主页面提取的，而不是在Analyse处提取</strong>。利用file–&gt; save as保存。<br>     <img src="https://i.imgur.com/ZKnNESV.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后将打开A0.png，然后Analyse–&gt;Image Combiner,在异或显示出flag。<br>    <img src="https://i.imgur.com/6wJ0dRz.png" alt=""></p>
+<h1 id="第二场——白虎之战"><a href="#第二场——白虎之战" class="headerlink" title="第二场——白虎之战"></a>第二场——白虎之战</h1><h2 id="Re题-1"><a href="#Re题-1" class="headerlink" title="Re题"></a>Re题</h2><h3 id="give-a-try"><a href="#give-a-try" class="headerlink" title="give a try"></a>give a try</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE文件，查壳，查看地址随机化并没有发现异常。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拖入IDA中，发现主流程函数如下：首先判断字符串长度是否为42，接着利用随机数与输入进行乘积取模运算，最后与特定值进行比较。<br>    <img src="https://i.imgur.com/1VA7Mpq.png" alt=""><br>    <img src="https://i.imgur.com/JseeXDr.png" alt=""><br>    <img src="https://i.imgur.com/C0dJ6YB.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，我们知道利用srand和rand产生的随机数并不是真正的随机数，只要传递给srand的随机数种子是确定的，所产生的随机数在每次运行时都是确定的，这个叫做<strong>伪随机数。</strong>这就奠定了可以使用爆破的方式求解</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二点，我们知道dword_40406c处是作为随机数种子传入srand，做交叉引用，发现两处写入操作，判断是使用了<strong>TLS技术</strong>，tls在函数线程执行之前可以获得优先执行的权利，一般用于反调试，也可以用于数据的保护。这里利用CE查的原始数据为：<strong>0x31333359 ^ 3681</strong><br>     <img src="https://i.imgur.com/R3kSvVP.png" alt=""><br>     <img src="https://i.imgur.com/9RhNItW.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后一点是：由于IDA的f5反编译的差距较大，关于这道题利用内联汇编的形式写脚本。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div></pre></td><td class="code"><pre><div class="line">unsigned <span class="keyword">int</span> fun(<span class="keyword">int</span> a1,<span class="keyword">int</span> a2)<span class="comment">;</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main(void)</div><div class="line">&#123;</div><div class="line">	srand(<span class="number">0x31333359</span> ^ <span class="number">3681</span>)<span class="comment">;    //初始化随机数种子</span></div><div class="line">	<span class="keyword">int</span> dword_4030B4[<span class="number">42</span>] = &#123;<span class="number">0x63B25AF1</span>,<span class="number">0x0C5659BA5</span>,<span class="number">0x4C7A3C33</span>,<span class="number">0x0E4E4267</span>, <span class="number">0x0B611769B</span>,</div><div class="line">		<span class="number">0x3DE6438C</span>, <span class="number">0x84DBA61F</span>,<span class="number">0x0A97497E6</span>, <span class="number">0x650F0FB3</span>, <span class="number">0x84EB507C</span>,</div><div class="line">		<span class="number">0x0D38CD24C</span>,<span class="number">0x0E7B912E0</span>, <span class="number">0x7976CD4F</span>, <span class="number">0x84100010</span>, <span class="number">0x7FD66745</span>,</div><div class="line">		<span class="number">0x711D4DBF</span>, <span class="number">0x5402A7E5</span>, <span class="number">0x0A3334351</span>, <span class="number">0x1EE41BF8</span>, <span class="number">0x22822EBE</span>,</div><div class="line">		<span class="number">0x0DF5CEE48</span>, <span class="number">0x0A8180D59</span>, <span class="number">0x1576DEDC</span>, <span class="number">0x0F0D62B3B</span>, <span class="number">0x32AC1F6E</span>,</div><div class="line">		<span class="number">0x9364A640</span>, <span class="number">0x0C282DD35</span>, <span class="number">0x14C5FC2E</span>, <span class="number">0x0A765E438</span>, <span class="number">0x7FCF345A</span>,</div><div class="line">		<span class="number">0x59032BAD</span>, <span class="number">0x9A5600BE</span>, <span class="number">0x5F472DC5</span>, <span class="number">0x5DDE0D84</span>, <span class="number">0x8DF94ED5</span>,</div><div class="line">		<span class="number">0x0BDF826A6</span>, <span class="number">0x515A737A</span>, <span class="number">0x4248589E</span>, <span class="number">0x38A96C20</span>, <span class="number">0x0CC7F61D9</span>,</div><div class="line">		<span class="number">0x2638C417</span>, <span class="number">0x0D9BEB996</span> &#125;<span class="comment">;</span></div><div class="line">	<span class="keyword">int</span> rand_table[<span class="number">42</span>] = &#123; <span class="number">0</span> &#125;<span class="comment">;        //初始化随机数表</span></div><div class="line">	for (<span class="keyword">int</span> i = <span class="number">0</span><span class="comment">; i &lt; 42; i++)</span></div><div class="line">	&#123;</div><div class="line">		rand_table[i] = rand()<span class="comment">;        //生成随机数表</span></div><div class="line">		printf_s(<span class="string">"%d\n"</span>, rand_table[i])<span class="comment">;</span></div><div class="line">		printf_s(<span class="string">"--------\n"</span>)<span class="comment">;</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	for (<span class="keyword">int</span> j = <span class="number">0</span><span class="comment">; j &lt; 42; j++)      //遍历次数</span></div><div class="line">	&#123;</div><div class="line">		for (<span class="keyword">int</span> i = <span class="number">32</span><span class="comment">; i &lt; 128; i++)     //遍历数值</span></div><div class="line">		&#123;</div><div class="line">		//	printf_s(<span class="string">"%d\n"</span>, fun(rand_table[j], i))<span class="comment">;			</span></div><div class="line">			if (fun(rand_table[j], i) == dword_4030B4[j])</div><div class="line">				printf(<span class="string">"%c"</span>, i)<span class="comment">;</span></div><div class="line">		&#125;</div><div class="line">			</div><div class="line">	&#125;</div><div class="line">	system(<span class="string">"pause"</span>)<span class="comment">;</span></div><div class="line">	return <span class="number">0</span><span class="comment">;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">unsigned <span class="keyword">int</span> fun(<span class="keyword">int</span> a1, <span class="keyword">int</span> a2)</div><div class="line">&#123;</div><div class="line">	__asm &#123;</div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span>[<span class="built_in">ebp</span> + <span class="number">8</span>]      //第一个参数</div><div class="line">		<span class="keyword">movzx</span>   <span class="built_in">ecx</span>, <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebp</span> + <span class="number">12</span>]      //第二个参数</div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">ecx</span>, <span class="number">0FAC96621h</span></div><div class="line">		<span class="keyword">push</span>    <span class="built_in">eax</span></div><div class="line">		<span class="keyword">xor</span>     <span class="built_in">edx</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">pop</span>     <span class="built_in">eax</span></div><div class="line">		<span class="keyword">push</span>    <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">eax</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">		<span class="keyword">pop</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">mul</span>     <span class="built_in">edx</span></div><div class="line">		<span class="keyword">div</span>     <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="built_in">edx</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的结果如下：flag{h3r3_th3r3<em>i5</em>@_w1ll-th3r3<em>i5</em>@_w4y}<br>     <img src="https://i.imgur.com/PRaHGlk.png" alt=""></p>
+<h3 id="Martricks"><a href="#Martricks" class="headerlink" title="Martricks"></a>Martricks</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;nbsp利用IDA，可以看到流程。如图，我们可以发现存在两个提示，一个正确一个错误，输入可以被限制是字符串(根据scanf格式就可以知道了)。既然是字符串，就可以使用angr暴力求解得到flag.<br>     <img src="https://i.imgur.com/8hvcLwH.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;nbsp成功路径find=0x400A84,失败路径：avoid=0x400A90,利用angr爆破代码如下：<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> angr</div><div class="line"></div><div class="line"><span class="keyword">def</span> main():</div><div class="line">    p = angr.<span class="keyword">Project</span>(<span class="string">"martricks"</span>)   <span class="comment">//导入项目</span></div><div class="line">    simgr = p.factory.simulation_manager(p.factory.full_init_state())</div><div class="line">    simgr.explore(<span class="keyword">find</span>=<span class="number">0</span>x400A84, avoid=<span class="number">0</span>x400A90)</div><div class="line"></div><div class="line">    <span class="keyword">return</span> simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>).strip(<span class="string">'\0\n'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line"><span class="keyword">print</span> main()</div></pre></td></tr></table></figure></p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><h3 id="套娃"><a href="#套娃" class="headerlink" title="套娃"></a>套娃</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;直接定位到最后一张图片，利用Stego查看，Alpha通道是白色的，说明可能是LSB隐写，我们利用Data Extract查看一下各个通道。<br>    <img src="https://i.imgur.com/3mhJ4Aa.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为之前在A通道是白色的，所以判断可能是RGB存在LSB隐写的可能性。先是进行如下设置。<br>    <img src="https://i.imgur.com/FS3gHRV.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没有发现线索，修改一下Bit Plane Order(瞎试)。可以在BGR处发现flag<br>    <img src="https://i.imgur.com/BpYlc5q.png" alt=""></p>
+<h3 id="虚幻"><a href="#虚幻" class="headerlink" title="虚幻"></a>虚幻</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据提示，这是一个汉信码，果然是官方的比赛就是这样任性。科普一下汉信码的图，以后要用到。<br>    <img src="https://i.imgur.com/bdBuJCf.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先题目给的和汉信码差距很大，binwalk(foremost)得到九张图片。按照foremost的命名顺序拼好。<br>    <img src="https://i.imgur.com/Ce4exDV.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在利用Stego在R7处形成黑白图片。<br>    <img src="https://i.imgur.com/f0VlFF8.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发现和汉信码还是有点差距(这个真的不好想)，对上述图片反色一下，得到<br>    <img src="https://i.imgur.com/o1r8cow.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对比一下正常的汉信码，发现缺少4个角，PPT补上。<br>     <img src="https://i.imgur.com/QJDK0KT.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用<a href="http://www.efittech.com/hxdec.aspx" target="_blank" rel="external">http://www.efittech.com/hxdec.aspx</a>扫一下得到flag。<br>     <img src="https://i.imgur.com/YxB1Yix.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/" rel="next" title="<格蠹汇编>_第14章_是谁动了我的句柄">
+                <i class="fa fa-chevron-left"></i> <格蠹汇编>_第14章_是谁动了我的句柄
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2099/12/31/博客总览/" rel="prev" title="博客总览">
+                博客总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第一场——青龙之战"><span class="nav-number">2.</span> <span class="nav-text">第一场——青龙之战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Re题"><span class="nav-number">2.1.</span> <span class="nav-text">Re题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#beijing"><span class="nav-number">2.1.1.</span> <span class="nav-text">beijing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Advance"><span class="nav-number">2.1.2.</span> <span class="nav-text">Advance</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Misc题"><span class="nav-number">2.2.</span> <span class="nav-text">Misc题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#minified"><span class="nav-number">2.2.1.</span> <span class="nav-text">minified</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二场——白虎之战"><span class="nav-number">3.</span> <span class="nav-text">第二场——白虎之战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Re题-1"><span class="nav-number">3.1.</span> <span class="nav-text">Re题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#give-a-try"><span class="nav-number">3.1.1.</span> <span class="nav-text">give a try</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Martricks"><span class="nav-number">3.1.2.</span> <span class="nav-text">Martricks</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Misc"><span class="nav-number">3.2.</span> <span class="nav-text">Misc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#套娃"><span class="nav-number">3.2.1.</span> <span class="nav-text">套娃</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚幻"><span class="nav-number">3.2.2.</span> <span class="nav-text">虚幻</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
