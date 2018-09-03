@@ -81,16 +81,17 @@
 
 
 
-<meta name="description" content="Apes--change the world&apos;s animals">
-<meta property="og:type" content="website">
-<meta property="og:title" content="findream&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/archives/2017/12/index.html">
+<meta name="description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;格蠹汇编&gt;_第9章_趣谈托管程序的辅助调试线程">
+<meta property="og:url" content="http://yoursite.com/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="Apes--change the world&apos;s animals">
+<meta property="og:description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-03T03:43:30.221Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="findream&#39;s blog">
-<meta name="twitter:description" content="Apes--change the world&apos;s animals">
+<meta name="twitter:title" content="&lt;格蠹汇编&gt;_第9章_趣谈托管程序的辅助调试线程">
+<meta name="twitter:description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
 
 
 
@@ -120,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2017/12/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/"/>
 
 
 
 
 
-  <title>归档 | findream's blog</title>
+  <title><格蠹汇编>_第9章_趣谈托管程序的辅助调试线程 | findream's blog</title>
   
 
 
@@ -145,7 +146,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -279,147 +280,184 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
-         
+          <h1 class="post-title" itemprop="name headline"><格蠹汇编>_第9章_趣谈托管程序的辅助调试线程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-27T15:02:11+08:00">
+                2018-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        很好! 目前共计 93 篇日志。 继续努力。
-      </span>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
 
-        
+          
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/24/浅谈Base64的加密与解密/" itemprop="url">
-              
-                <span itemprop="name">浅谈Base64的加密原理及其应用</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-24T14:02:11+08:00"
-              content="2017-12-24" >
-          12-24
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/09/给逆向分析人员的忠告/" itemprop="url">
-              
-                <span itemprop="name">给逆向工作者的忠告</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-09T17:02:11+08:00"
-              content="2017-12-09" >
-          12-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/12/02/线程局部存储技术/" itemprop="url">
-              
-                <span itemprop="name">线程局部存储技术</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-02T13:45:11+08:00"
-              content="2017-12-02" >
-          12-02
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做<strong>初始线程</strong>，应用程序的主函数都是在这个线程里面执行的。<br><a id="more"></a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是对于托管程序来说，在托管程序初始化期间，.Net运行时还会自动创建两个工作线程，一个是系统创建的初始化线程，另外两个是.Net运行时创建的工作线程，一个是与内存回收相关的<strong>终结器线程</strong>，另外一个是支持调试的<strong>辅助调试进程</strong>。</p>
+<h2 id="托管调试模型"><a href="#托管调试模型" class="headerlink" title="托管调试模型"></a>托管调试模型</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;托管程序的调试一共有三种：</p>
+<ul>
+<li>使用非托管调试器调试程序中的非托管代码。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道Net程序一共有三部分组成，第一个是非托管代码和数据，第二个是托管代码和数据，第三个是支持托管调试的<strong>运行时控制器[CRThread]。</strong>对于调试程序也分为三部分：本地代码调试器，托管调试器，托管API。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为托管代码最终也是要编译为本地代码，所以利用这个调试模式可以调试本地代码也是调试托管代码。但是需要使用特定插件才可查看托管代码的数据结构</p>
+<ul>
+<li>使用托管调试器调试托管代码</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;托管调试器通过调试器API和被调试进程运行时控制器通信来访问要调试的托管代码和数据。这种模式不会跟踪本地代码。</p>
+<ul>
+<li>混合调试</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;速度慢</p>
+<h2 id="联系纽带"><a href="#联系纽带" class="headerlink" title="联系纽带"></a>联系纽带</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RCThread作为调试器与被调试程序通讯的纽带。当我们使用<code>~*命令</code>打印被调试进程所有线程的时候，发现第二个(1号线程)是RcThread，任何利用<code>~ 1n命令</code>挂起该线程，然后再利用VS调试，发现VS失去响应调试失败。</p>
+<h2 id="刺探线程、"><a href="#刺探线程、" class="headerlink" title="刺探线程、"></a>刺探线程、</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当调试器右端需要访问托管程序资源时候，首先需要先获取这些资源的保护锁，如果这个保护锁是由托管程序普通线程拥有的，那么将导致死锁，所以RcThread会创建一个新县城用于帮助Rcthread刺探信息</p>
 
       
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/27/二进制分析工具angr使用笔记/" rel="next" title="angr使用笔记">
+                <i class="fa fa-chevron-left"></i> angr使用笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/28/《格蠹汇编》_第25章_如何调试窗口大总管/" rel="prev" title="<格蠹汇编>_第25章_如何调试窗口大总管">
+                <格蠹汇编>_第25章_如何调试窗口大总管 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -427,6 +465,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -447,8 +489,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -508,6 +559,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前置知识"><span class="nav-number">1.</span> <span class="nav-text">前置知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#托管调试模型"><span class="nav-number">2.</span> <span class="nav-text">托管调试模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#联系纽带"><span class="nav-number">3.</span> <span class="nav-text">联系纽带</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#刺探线程、"><span class="nav-number">4.</span> <span class="nav-text">刺探线程、</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -634,6 +701,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
