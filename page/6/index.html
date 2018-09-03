@@ -439,6 +439,160 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/C++第五章_语句/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/08/C++第五章_语句/" itemprop="url">C++Primer 第五章：语句</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T15:02:11+08:00">
+                2018-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li><p>例5.16：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; VectNum1 = &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> &#125;;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; VectNum2 = &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;;</div><div class="line">	<span class="keyword">int</span> flag = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> SmallSize = (VectNum1.size() &gt; VectNum2.size() ? VectNum2.size() : VectNum1.size());</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i != SmallSize; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (VectNum1[i] != VectNum2[i])</div><div class="line">			flag = <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (flag == <span class="number">0</span>)</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"YES"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>例5.19：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">	<span class="built_in">string</span> MyString1, MyString2;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"输入两个字符串"</span>;</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cin</span> &gt;&gt; MyString1 &gt;&gt; MyString2;</div><div class="line">		MyString1.size() &gt; MyString2.size() ? <span class="built_in">cout</span> &lt;&lt; MyString2 &lt;&lt;<span class="built_in">endl</span>: <span class="built_in">cout</span> &lt;&lt; MyString1&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"输入两个字符串"</span>;</div><div class="line">		i++;</div><div class="line">	&#125; <span class="keyword">while</span> (i != <span class="number">10</span>);</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>例5.20</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="built_in">string</span> MyString1, MyString2;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"连续输入两个字符串"</span>;</div><div class="line">	<span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; MyString1 &gt;&gt; MyString2)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> ((MyString1 == MyString2) &amp;&amp; MyString1[<span class="number">0</span>] &gt;= <span class="string">'A'</span>&amp;&amp;MyString1[<span class="number">0</span>] &lt;= <span class="string">'Z'</span>&amp;&amp;MyString2[<span class="number">0</span>] &gt;= <span class="string">'A'</span>&amp;&amp;MyString2[<span class="number">0</span>] &lt;= <span class="string">'Z'</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">cout</span> &lt;&lt; MyString1;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"NO"</span>;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"连续输入两个字符串"</span>;</div><div class="line">	&#125;</div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>例5.24</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span>  </span></div><div class="line"><span class="function"></span>&#123;     </div><div class="line">    <span class="keyword">int</span> a,b;  </div><div class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"请输入相除的两个整数："</span>;  </div><div class="line">    <span class="keyword">while</span>(<span class="built_in">cin</span>&gt;&gt;a&gt;&gt;b)  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">try</span>  </div><div class="line">        &#123;  </div><div class="line">            <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">throw</span> <span class="built_in">std</span>::runtime_error(<span class="string">"被除数不能为0"</span>);<span class="comment">//runtime_error异常类:只有在运行时才能检测出的问题  </span></div><div class="line">            <span class="built_in">cout</span>&lt;&lt;<span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(a)/b&lt;&lt;<span class="built_in">endl</span>;<span class="comment">//考虑到不可以整除产生小数的情况,先将a强制转化为double类型  </span></div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">catch</span> (runtime_error err)<span class="comment">//err是runtime_error类的一个实例  </span></div><div class="line">        &#123;  </div><div class="line">            <span class="built_in">cout</span> &lt;&lt; err.what() ;实例的成员函数，返回内容由编译其决定  </div><div class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">"\n是否需要重新输入? Enter y or n:"</span> &lt;&lt; <span class="built_in">endl</span>;  </div><div class="line">            <span class="keyword">char</span> c;  </div><div class="line">            <span class="built_in">cin</span> &gt;&gt; c;  </div><div class="line">            <span class="keyword">if</span> (!<span class="built_in">cin</span> || c == <span class="string">'n'</span>)  </div><div class="line">                <span class="keyword">break</span>;<span class="comment">//break只能用在开关体或者循环体中  </span></div><div class="line">        &#125;<span class="comment">//简单来说try是检测异常的，如果产生了异常，就throw(抛出)一个异常，然后被catch到，进行异常的处理  </span></div><div class="line">        <span class="comment">//如果没有catch部分，仅有try，仍然会报错  </span></div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/05/windbg学习笔记_1_/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1611,157 +1765,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/15/病毒分析技术_5_骷髅病毒/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/15/病毒分析技术_5_骷髅病毒/" itemprop="url">病毒分析技术(5)----骷髅病毒分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T15:02:11+08:00">
-                2018-03-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
-<li>1.样本信息</li>
-<li>2.行为分析</li>
-<li>3.样本分析</li>
-<li>4.详细分析</li>
-<li>5.博客数据：<a href="https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg" target="_blank" rel="external">https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg</a>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/03/15/病毒分析技术_5_骷髅病毒/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1812,7 +1815,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">91</span>
+                  <span class="site-state-item-count">92</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
