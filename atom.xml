@@ -137,6 +137,26 @@
   </entry>
   
   <entry>
+    <title>&lt;格蠹汇编&gt;_第14章_是谁动了我的句柄</title>
+    <link href="http://yoursite.com/2018/08/16/%E3%80%8A%E6%A0%BC%E8%A0%B9%E6%B1%87%E7%BC%96%E3%80%8B_%E7%AC%AC14%E7%AB%A0_%E6%98%AF%E8%B0%81%E5%8A%A8%E4%BA%86%E6%88%91%E7%9A%84%E5%8F%A5%E6%9F%84/"/>
+    <id>http://yoursite.com/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/</id>
+    <published>2018-08-16T09:02:11.000Z</published>
+    <updated>2018-08-16T10:30:42.084Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong><br><a id="more"></a></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows系统的用户态转储文件专门定义了一种记录异常信息的数据块。称为<strong>异常数据流</strong>，数据结构为MINIDUMP_EXCEPTION_STREAM。使用<code>.ecxr命令</code>可以读取异常数据流，从而回到异常现场。可以看到当前函数为<code>RtlRaiseStatus</code>。这是一个抛出异常的函数</p><h2 id="何人触雷"><a href="#何人触雷" class="headerlink" title="何人触雷"></a>何人触雷</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>kn</code>查看是和调用了上述函数，发现01号栈帧无法识别函数。为什么无法识别呢？？下一节解释，既然我们无法由栈顶到栈底分析，我们反向分析，也就是说<strong>从函数的调用者分析。</strong><br>    <img src="https://i.imgur.com/uqZcgPS.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道函数的返回地址一个在函数调用处的下5个字节(call一般长5字节)。也就是说函数的返回地址一定在父函数内部。由此，我们利用函数的返回值，去反向反汇编<strong>向前反汇编出函数的调用处。</strong>利用<code>ub retaddr</code>命令即可完成。</p><h2 id="代码流放"><a href="#代码流放" class="headerlink" title="代码流放"></a>代码流放</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为什么利用kn无法完全识别函数呢？原因在于编译器优化将执行概率高的代码尽可能放在一起，这样可以减少页面置换的发生，而需要移动其他代码才能放置这些高概率发生的代码。这些被移动的代码就是一些异常处理的函数代码，因为他们不经常被使用。优化器移动代码却不移动符号，这样调试器无法识别原本函数。</p><h2 id="事出何因"><a href="#事出何因" class="headerlink" title="事出何因"></a>事出何因</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>uf [funname]</code>可以反汇编出函数所有代码。通过搜索地址的方式，将问题定位到了ZwSetEvent。如果函数返回失败，经过两次跳转，调用RtlRaiseStatus函数。抛出异常。</p><h2 id="那个句柄"><a href="#那个句柄" class="headerlink" title="那个句柄"></a>那个句柄</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看参数传递的情况，判断问题所在。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;回到异常现场&quot;&gt;&lt;a href=&quot;#回到异常现场&quot; class=&quot;headerlink&quot; title=&quot;回到异常现场&quot;&gt;&lt;/a&gt;回到异常现场&lt;/h2&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先&lt;strong&gt;需要想办法切换到发生异常的时候的上下文。&lt;/strong&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="&lt;格蠹汇编&gt;" scheme="http://yoursite.com/categories/%E6%A0%BC%E8%A0%B9%E6%B1%87%E7%BC%96/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>&lt;格蠹汇编&gt;_第16章_探寻唤醒失败的原因</title>
     <link href="http://yoursite.com/2018/08/16/%E3%80%8A%E6%A0%BC%E8%A0%B9%E6%B1%87%E7%BC%96%E3%80%8B_%E7%AC%AC16%E7%AB%A0_%E6%8E%A2%E5%AF%BB%E5%94%A4%E9%86%92%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%8E%9F%E5%9B%A0/"/>
     <id>http://yoursite.com/2018/08/16/《格蠹汇编》_第16章_探寻唤醒失败的原因/</id>
@@ -151,26 +171,6 @@
       
         &lt;h2 id=&quot;寻找突破口&quot;&gt;&lt;a href=&quot;#寻找突破口&quot; class=&quot;headerlink&quot; title=&quot;寻找突破口&quot;&gt;&lt;/a&gt;寻找突破口&lt;/h2&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒
       
-    
-    </summary>
-    
-      <category term="&lt;格蠹汇编&gt;" scheme="http://yoursite.com/categories/%E6%A0%BC%E8%A0%B9%E6%B1%87%E7%BC%96/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>&lt;格蠹汇编&gt;_第14章_是谁动了我的句柄</title>
-    <link href="http://yoursite.com/2018/08/16/%E3%80%8A%E6%A0%BC%E8%A0%B9%E6%B1%87%E7%BC%96%E3%80%8B_%E7%AC%AC14%E7%AB%A0_%E6%98%AF%E8%B0%81%E5%8A%A8%E4%BA%86%E6%88%91%E7%9A%84%E5%8F%A5%E6%9F%84/"/>
-    <id>http://yoursite.com/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/</id>
-    <published>2018-08-16T09:02:11.000Z</published>
-    <updated>2018-08-16T10:30:42.084Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong><br><a id="more"></a></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows系统的用户态转储文件专门定义了一种记录异常信息的数据块。称为<strong>异常数据流</strong>，数据结构为MINIDUMP_EXCEPTION_STREAM。使用<code>.ecxr命令</code>可以读取异常数据流，从而回到异常现场。可以看到当前函数为<code>RtlRaiseStatus</code>。这是一个抛出异常的函数</p><h2 id="何人触雷"><a href="#何人触雷" class="headerlink" title="何人触雷"></a>何人触雷</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>kn</code>查看是和调用了上述函数，发现01号栈帧无法识别函数。为什么无法识别呢？？下一节解释，既然我们无法由栈顶到栈底分析，我们反向分析，也就是说<strong>从函数的调用者分析。</strong><br>    <img src="https://i.imgur.com/uqZcgPS.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道函数的返回地址一个在函数调用处的下5个字节(call一般长5字节)。也就是说函数的返回地址一定在父函数内部。由此，我们利用函数的返回值，去反向反汇编<strong>向前反汇编出函数的调用处。</strong>利用<code>ub retaddr</code>命令即可完成。</p><h2 id="代码流放"><a href="#代码流放" class="headerlink" title="代码流放"></a>代码流放</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为什么利用kn无法完全识别函数呢？原因在于编译器优化将执行概率高的代码尽可能放在一起，这样可以减少页面置换的发生，而需要移动其他代码才能放置这些高概率发生的代码。这些被移动的代码就是一些异常处理的函数代码，因为他们不经常被使用。优化器移动代码却不移动符号，这样调试器无法识别原本函数。</p><h2 id="事出何因"><a href="#事出何因" class="headerlink" title="事出何因"></a>事出何因</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>uf [funname]</code>可以反汇编出函数所有代码。通过搜索地址的方式，将问题定位到了ZwSetEvent。如果函数返回失败，经过两次跳转，调用RtlRaiseStatus函数。抛出异常。</p><h2 id="那个句柄"><a href="#那个句柄" class="headerlink" title="那个句柄"></a>那个句柄</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看参数传递的情况，判断问题所在。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;回到异常现场&quot;&gt;&lt;a href=&quot;#回到异常现场&quot; class=&quot;headerlink&quot; title=&quot;回到异常现场&quot;&gt;&lt;/a&gt;回到异常现场&lt;/h2&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先&lt;strong&gt;需要想办法切换到发生异常的时候的上下文。&lt;/strong&gt;&lt;br&gt;
     
     </summary>
     
