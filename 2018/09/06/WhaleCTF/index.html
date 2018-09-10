@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;根据上述很简单的写出一个脚本，但">
+<meta name="description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WhaleCTF">
 <meta property="og:url" content="http://yoursite.com/2018/09/06/WhaleCTF/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;根据上述很简单的写出一个脚本，但">
+<meta property="og:description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/ymjsE1T.png">
 <meta property="og:image" content="https://i.imgur.com/6MtEjya.png">
@@ -95,10 +95,10 @@
 <meta property="og:image" content="https://i.imgur.com/52Mk2VA.png">
 <meta property="og:image" content="https://i.imgur.com/bjvlLEC.png">
 <meta property="og:image" content="https://i.imgur.com/0a7UjD2.png">
-<meta property="og:updated_time" content="2018-09-06T09:49:00.108Z">
+<meta property="og:updated_time" content="2018-09-10T03:31:45.894Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WhaleCTF">
-<meta name="twitter:description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。    &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;根据上述很简单的写出一个脚本，但">
+<meta name="twitter:description" content="ReWarmup&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s比较。">
 <meta name="twitter:image" content="https://i.imgur.com/ymjsE1T.png">
 
 
@@ -392,6 +392,7 @@
 
       
         <h1 id="Re"><a href="#Re" class="headerlink" title="Re"></a>Re</h1><h2 id="Warmup"><a href="#Warmup" class="headerlink" title="Warmup"></a>Warmup</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程非常简单，接收输入，然后与0xE进行异或，最后与<code>LDYVLQMZHuY:|cQ[^Qyo|cQ{~QYO\CQ[^/s</code>比较。<br>   <img src="https://i.imgur.com/ymjsE1T.png" alt=""></p>
+<a id="more"></a>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上述很简单的写出一个脚本，但是有一个字符有点文件，如果直接复制上述字符串“\”，编译器可能将它识别成转义字符，所以我们需要将它提出来重新运算。<br>    <img src="https://i.imgur.com/6MtEjya.png" alt=""></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重运算结果上，明显看到这个“\”符号没有参与运算。最后利用ASCII编码运算，以下是脚本<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">char</span> str[]=<span class="string">"LDYVLQMZHuY:|cQ[^Qyo|cQ&#123;~QYO\CQ[^/s\0"</span>;</div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="built_in">strlen</span>(str);i++)</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"%c"</span>,str[i]^<span class="number">0xE</span>);</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"\n%c"</span>,<span class="number">0X5c</span>^<span class="number">0xE</span>);   <span class="comment">//补倒数第七位字符	</span></div><div class="line">&#125; </div><div class="line"></div><div class="line"><span class="comment">//BJWXB_CTF&#123;W4rm_UP_warm_up_WARM_UP!&#125;</span></div></pre></td></tr></table></figure></p>
 <h2 id="R100"><a href="#R100" class="headerlink" title="R100"></a>R100</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elf文件，查壳没有发现异常。</p>
@@ -400,7 +401,7 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;写出脚本即可<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">char</span> v3[<span class="number">3</span>][<span class="number">7</span>]=</div><div class="line">		&#123;&#123;<span class="string">'D'</span>,<span class="string">'u'</span>,<span class="string">'f'</span>,<span class="string">'h'</span>,<span class="string">'b'</span>,<span class="string">'m'</span>,<span class="string">'f'</span>&#125;,</div><div class="line">         &#123;<span class="string">'p'</span>,<span class="string">'G'</span>,<span class="number">0x60</span>,<span class="string">'i'</span>,<span class="string">'m'</span>,<span class="string">'o'</span>,<span class="string">'s'</span>&#125;,</div><div class="line">		 &#123;<span class="string">'e'</span>,<span class="string">'w'</span>,<span class="string">'U'</span>,<span class="string">'g'</span>,<span class="string">'l'</span>,<span class="string">'p'</span>,<span class="string">'t'</span>&#125;&#125;;</div><div class="line"> 	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=<span class="number">11</span>;i++)</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"%c"</span>,v3[i % <span class="number">3</span>][<span class="number">2</span> * (i / <span class="number">3</span>)] <span class="number">-1</span>);</div><div class="line">	</div><div class="line">&#125;</div><div class="line"><span class="comment">//Code_Talkers</span></div></pre></td></tr></table></figure></p>
 <h2 id="逆向练习"><a href="#逆向练习" class="headerlink" title="逆向练习"></a>逆向练习</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查壳。未发现异常</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看流程如下：接收输入，然后进入sub_411136编码，但是经过动态调试，发现这个函数返回原输入。然后打印输入，接着和一个全局变量<code>KfxEeft}f{gyrYgthtyhifsjei53UUrrr_t2cdsef66246087138\0087138</code>前17位比较，最后加上1204}即可，这是IDA分析的结果。<br>    <img src="https://i.imgur.com/52Mk2VA.png" alt=""><br>    <img src="https://i.imgur.com/bjvlLEC.png" alt=""></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是，进过动态调式发现，上述的字符串只是取其中的一部分，而且这部分没有规律。一步一步调试，最终发现flag。这道题关键是如何下断点是比较困难的。<br>    <img src="https://i.imgur.com/0a7UjD2.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是，进过动态调式发现，上述的字符串只是取其中的一部分，而且这部分没有规律。一步一步调试，最终发现flag。这道题关键是如何下断点是比较困难的。<br>    <img src="https://i.imgur.com/0a7UjD2.png" alt=""><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后加上<code>1024}</code>即可。</p>
 
       
     </div>
@@ -435,8 +436,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2099/12/31/博客总览/" rel="prev" title="博客总览">
-                博客总览 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/10/病毒分析技术_15_sata勒索病毒/" rel="prev" title="病毒分析技术_15_sata勒索病毒">
+                病毒分析技术_15_sata勒索病毒 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -514,7 +515,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">96</span>
+                  <span class="site-state-item-count">97</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
