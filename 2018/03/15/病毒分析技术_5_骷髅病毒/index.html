@@ -124,7 +124,7 @@
 <meta property="og:image" content="https://i.imgur.com/kKsDusN.png">
 <meta property="og:image" content="https://i.imgur.com/AdRzUDw.png">
 <meta property="og:image" content="https://i.imgur.com/648N38P.png">
-<meta property="og:updated_time" content="2018-03-15T10:50:28.529Z">
+<meta property="og:updated_time" content="2018-09-19T04:58:51.270Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="病毒分析技术(5)----骷髅病毒分析">
 <meta name="twitter:description" content="一：目录 1.样本信息 2.行为分析 3.样本分析 4.详细分析 5.博客数据：https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg">
@@ -426,16 +426,22 @@
 <li>3.样本分析</li>
 <li>4.详细分析</li>
 <li>5.博客数据：<a href="https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg" target="_blank" rel="external">https://pan.baidu.com/s/1EUIguu7YV3pS7F7ej7aDNg</a><a id="more"></a>
-<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1></li>
+</li>
+</ul>
+<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1><ul>
 <li>1.样本名称：样本.exe（脱壳后为样本dump.exe）</li>
 <li>2.md5：5b8bc92296c2fa60fecc6316ad73f1e2</li>
 <li>3.是否加壳：加壳UPX</li>
-<li>4.编译语言：visual C++<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1></li>
+<li>4.编译语言：visual C++</li>
+</ul>
+<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1><ul>
 <li>1）通过注册表判断系统是否被感染</li>
 <li>2）获取windows目录，利用计时器实现随机命名，把病毒copy到windows目录实现隐藏</li>
 <li>3）删除样本文件</li>
 <li>4）创建服务，实现自启<br>  <img src="https://i.imgur.com/CyMYcoK.png" alt=""></li>
-<li>5）链接指定url，执行后门行为。<h1 id="四：详细分析"><a href="#四：详细分析" class="headerlink" title="四：详细分析"></a>四：详细分析</h1></li>
+<li>5）链接指定url，执行后门行为。</li>
+</ul>
+<h1 id="四：详细分析"><a href="#四：详细分析" class="headerlink" title="四：详细分析"></a>四：详细分析</h1><ul>
 <li>1.PEID查壳，发现是UPX加壳，ESP定律法脱去</li>
 <li>2.病毒先将currentcontrol\services\和15654656链接起来，并且利用RegOpenKey来打开这个注册表。<strong>目的是：判断这个服务是否被创建，换句话说看病毒是否在系统内存在</strong><br>  <img src="https://i.imgur.com/TDe2PVo.png" alt=""><br>  <img src="https://i.imgur.com/nmYnFHu.png" alt=""></li>
 <li>3.如果这个服务不存在，病毒执行405A25，打开服务管理器。然后获取windows目录，比较c://windows，接着通过GetTick来获取计数器，复制那个exe文件到windows目录。<strong>目的是实现自身的隐藏</strong>接着调用CreateService来创建病毒服务。判断服务是否开启，然后开启服务，最后，先获取获取目录信息，接着获取当前进程信息，<strong>目的是获取样本文件的信息，以便为删除做准备</strong>然后调用shellEx利用cmd执行/c del &gt;nul删除样本文件，设置进程的优先级。<strong>以便后续为破坏做准备</strong><br>  <img src="https://i.imgur.com/1HaXven.png" alt=""><br>  <img src="https://i.imgur.com/vrJSZph.png" alt=""><br>  <img src="https://i.imgur.com/Xbdu0Ib.png" alt=""><br>  <img src="https://i.imgur.com/i3Pfono.png" alt=""><br>  <img src="https://i.imgur.com/jZeBk3i.png" alt=""><br>  <img src="https://i.imgur.com/0biAe66.png" alt=""><br>  <img src="https://i.imgur.com/lxmX9bn.png" alt=""><br>  <img src="https://i.imgur.com/M9HE1vi.png" alt=""><br>  <img src="https://i.imgur.com/5qOMwiI.png" alt=""><br>  <img src="https://i.imgur.com/mhuZm92.png" alt=""></li>
