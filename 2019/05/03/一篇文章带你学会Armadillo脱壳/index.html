@@ -93,7 +93,7 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/01/5cc930d294e58.png">
 <meta property="og:image" content="https://i.loli.net/2019/05/01/5cc93414c84c5.png">
 <meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9396eea356.png">
-<meta property="og:updated_time" content="2019-05-03T06:25:29.803Z">
+<meta property="og:updated_time" content="2019-07-01T07:41:01.181Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一篇文章带你学会Armadillo脱壳">
 <meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在跟进一个APT组织的一次攻击，其中有一个样本使用了Arm加壳，所以花了差不多10多天的时间看看这方面的东西。并总结一下。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的">
@@ -393,7 +393,7 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的文章。和录制的视频。以及jcyhlh大侠在2008年写下的总结帖。那时候我估计还在玩泥巴呢。这是我写这篇文章的主要参考来源。前人栽树后人乘凉。此外还看了<strong>看雪的知识库</strong>。基本看了3.x和4.x所有师傅的文章。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这篇文章的架构，文章架构主要参照了网上下载的视频教程的架构。并对此作出小小修改和注释以及归纳总结。更加方便我等小白学习成长。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于文章主要脱去的是3.x和4.x的Arm，可能有一些<strong>伪大佬</strong>又要说都发了几百遍了还在发。这篇文章适合我等小白，所以伪大佬勿扰。真大佬可以daidaiwo。<strong>对此我的处理意见是，把其直接挂在文章起始部分</strong>。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，加油吧，小伙伴们。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，加油吧，小伙伴们。<br><a id="more"></a></p>
 <h2 id="0x1-Armadillo"><a href="#0x1-Armadillo" class="headerlink" title="0x1 Armadillo"></a>0x1 Armadillo</h2><h3 id="0x1-1-保护机制"><a href="#0x1-1-保护机制" class="headerlink" title="0x1.1 保护机制"></a>0x1.1 保护机制</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Armadillo，中文名穿山甲，本意为犰狳，就是下面那个有点可爱的家伙。<br>    <img src="https://i.loli.net/2019/05/02/5ccaefb30fa36.jpg" alt=""></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Armadillo主要采用了Debug-Blocker，CopyMem-II， Enable Import Table Elimination，Enable Nanomites Processing，Enable Memory-Patching Protections保护手段。同时也有单双进程之分，造成了保护手段的多样性。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug-Blocker，称为阻止调试器，所谓反调试，基本只要开插件都可以过，所以这也是为什么大家脱穿山甲的时候打开IsProcessDebug去反调试选项和忽略异常的原因。</p>
@@ -542,8 +542,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/18/一篇文章带你理解HOOK技术/" rel="next" title="一篇文章带你理解HOOK技术">
-                <i class="fa fa-chevron-left"></i> 一篇文章带你理解HOOK技术
+              <a href="/2019/04/18/病毒分析技术_20_贪吃蛇”挖矿木马团伙/" rel="next" title="贪吃蛇挖矿木马团伙分析报告">
+                <i class="fa fa-chevron-left"></i> 贪吃蛇挖矿木马团伙分析报告
               </a>
             
           </div>

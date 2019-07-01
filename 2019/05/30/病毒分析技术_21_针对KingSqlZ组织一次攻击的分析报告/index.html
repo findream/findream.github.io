@@ -174,7 +174,7 @@
 <meta property="og:image" content="http://hacky.wang/blog/20190531/KXFIlim7xvcJ.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20190531/MCoNO1kE6J0A.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20190601/YxECxIiG24Nw.png?imageslim">
-<meta property="og:updated_time" content="2019-05-31T16:02:09.845Z">
+<meta property="og:updated_time" content="2019-07-01T07:38:58.942Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="针对KingSqlZ组织一次攻击的分析报告">
 <meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，启明星辰ADLab监测到一批疑似针对西班牙语地区的政府机构及能源企业等部门的定向攻击活动。通过对攻击者的行为和所用服务器相关信息的分析和追踪，确定该次攻击来源于一批隐秘多年的土耳其黑客组织-KingSqlZ组织。该组织是一个民族主义色彩非常浓厚的黑客组织，曾攻下其他国家的3">
@@ -470,14 +470,14 @@
       
 
       
-        <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，启明星辰ADLab监测到一批疑似针对西班牙语地区的政府机构及能源企业等部门的定向攻击活动。通过对攻击者的行为和所用服务器相关信息的分析和追踪，确定该次攻击来源于一批隐秘多年的土耳其黑客组织-KingSqlZ组织。该组织是一个民族主义色彩非常浓厚的黑客组织，曾攻下其他国家的3千多个网站服务器，并高调的在被攻击网站上留下其组织的名称，随后消失了多年。 如今通过研究人员的追踪再次挖出该黑客组织的活动迹象。此次攻击活动通过构造恶意Office Word文档并配合鱼叉邮件发起定向攻击，以“简历更新”作为诱饵文档向攻击目标植入间谍木马，从事情报收集、远控监视及系统破坏等恶意行动。在本次攻击过程中，该组织采用渗透手段攻下多台服务器并将其作为存放攻击代码的跳板。【转】</p>
+        <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，启明星辰ADLab监测到一批疑似针对西班牙语地区的政府机构及能源企业等部门的定向攻击活动。通过对攻击者的行为和所用服务器相关信息的分析和追踪，确定该次攻击来源于一批隐秘多年的土耳其黑客组织-KingSqlZ组织。该组织是一个民族主义色彩非常浓厚的黑客组织，曾攻下其他国家的3千多个网站服务器，并高调的在被攻击网站上留下其组织的名称，随后消失了多年。 如今通过研究人员的追踪再次挖出该黑客组织的活动迹象。此次攻击活动通过构造恶意Office Word文档并配合鱼叉邮件发起定向攻击，以“简历更新”作为诱饵文档向攻击目标植入间谍木马，从事情报收集、远控监视及系统破坏等恶意行动。在本次攻击过程中，该组织采用渗透手段攻下多台服务器并将其作为存放攻击代码的跳板。[转]<br><a id="more"></a></p>
 <h1 id="0x1-目录"><a href="#0x1-目录" class="headerlink" title="0x1 目录"></a>0x1 目录</h1><ul>
 <li>1.目录</li>
 <li>2.IoC</li>
 <li>3.行为分析</li>
 <li>4.样本分析</li>
 <li>5.yara规则</li>
-<li>6.后记<a id="more"></a>
+<li>6.后记<!-- more -->
 </li>
 </ul>
 <h1 id="0x2-IoC"><a href="#0x2-IoC" class="headerlink" title="0x2 IoC"></a>0x2 IoC</h1><h2 id="0x2-1-Hash"><a href="#0x2-1-Hash" class="headerlink" title="0x2.1 Hash"></a>0x2.1 Hash</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本次一共截获了两个和<code>KingSqlZ</code>组织有关的可疑样本，其中有一个是一个doc样本，通过使用宏进行文件传播，IOC如下：</p>

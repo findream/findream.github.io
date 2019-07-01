@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII  0x2 勒索软件 解混淆能清除发现是AES加密    0x">
+<meta name="description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
 <meta property="og:type" content="article">
 <meta property="og:title" content="样本分析之Powershell">
 <meta property="og:url" content="http://yoursite.com/2019/07/01/样本分析之Powershell/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII  0x2 勒索软件 解混淆能清除发现是AES加密    0x">
+<meta property="og:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20190626/0rstQItBCLi5.png?imageslim">
@@ -95,10 +95,10 @@
 <meta property="og:image" content="http://hacky.wang/blog/20190629/7Vgnc0a8TVuQ.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20190629/uGmvm4Po1BuL.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20190629/FHPzGfssxIKj.png?imageslim">
-<meta property="og:updated_time" content="2019-07-01T07:33:14.534Z">
+<meta property="og:updated_time" content="2019-07-01T07:39:00.573Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="样本分析之Powershell">
-<meta name="twitter:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII  0x2 勒索软件 解混淆能清除发现是AES加密    0x">
+<meta name="twitter:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
 <meta name="twitter:image" content="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim">
 
 
@@ -391,14 +391,14 @@
       
 
       
-        <a id="more"></a>
-<h1 id="0x1-常见混淆"><a href="#0x1-常见混淆" class="headerlink" title="0x1 常见混淆"></a>0x1 常见混淆</h1><ul>
+        <h1 id="0x1-常见混淆"><a href="#0x1-常见混淆" class="headerlink" title="0x1 常见混淆"></a>0x1 常见混淆</h1><ul>
 <li>基于大小写 ：hacky—&gt;HaCky</li>
 <li>基于字符分割：’Ha’+’Cky’—&gt;HaCky</li>
 <li>插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&gt;HaCky</li>
 <li>反引号：H`aCky—&gt;HaCky</li>
 <li>基于命令转换(字符串转化为命令)&amp;(HaCky)—&gt;HaCky</li>
-<li>基于空格或者ASCII</li>
+<li>基于空格或者ASCII<a id="more"></a>
+</li>
 </ul>
 <h1 id="0x2-勒索软件"><a href="#0x2-勒索软件" class="headerlink" title="0x2 勒索软件"></a>0x2 勒索软件</h1><ul>
 <li>解混淆能清除发现是AES加密<br>  <img src="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim" alt="mark"></li>

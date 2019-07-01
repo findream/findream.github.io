@@ -90,7 +90,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpgly1g26qg7gjykj30ik01rq2p.jpg">
 <meta property="og:image" content="https://i.loli.net/2019/04/18/5cb8139b7a014.png">
-<meta property="og:updated_time" content="2019-04-21T07:10:33.664Z">
+<meta property="og:updated_time" content="2019-07-01T07:40:40.317Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一篇文章带你理解PE三表">
 <meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;刚刚结束春招，投了好几家公司，结果不是很理想，原因无外乎自身实力和行业寒冬。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这次春招面试题主要集中在PE相关，HOOK技术和DLL注入技术，还有一些杂七杂八的问题上面。从">
@@ -391,7 +391,7 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;四月初就开始谋划写一系列的文章，但是加上在校实习比较忙碌，所以进展很慢，这些文章主要面向受众是那些入坑新人，借此希望能够让那些小伙伴能够少走弯路。同时也能多多总结自身的不足，共同进步。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列文章取啥名？想了很久，决定参考某一师傅的系列文章—&lt;一篇文章带你·····&gt;,主要希望总结PE文件，HOOK,DLL注入，以及其他方面的知识，主要的参考文献是看雪<strong>加密解密第四版</strong>，以及其他资料。(打了广告，希望相关师傅记得打点广告费)</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列是我边总结技术边写文章，可能部分内容会以后补全技能栈，例如R0下的DLL注入等。<strong>但是尽量做到不鸽</strong>，关于代码，不提供自己写的代码，原因有二，第一，这些代码网上都有现成的，我只是理解修改部分罢了，也怕自己的代码误导小伙伴们。<strong>第二，拒绝伸手党</strong>。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于自身能力有限，文章中难免出现错误，希望各位师傅少喷我。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于自身能力有限，文章中难免出现错误，希望各位师傅少喷我。<br><a id="more"></a></p>
 <h1 id="0x1-PE导入表"><a href="#0x1-PE导入表" class="headerlink" title="0x1 PE导入表"></a>0x1 PE导入表</h1><h2 id="0x1-1-输入函数的调用"><a href="#0x1-1-输入函数的调用" class="headerlink" title="0x1.1 输入函数的调用"></a>0x1.1 输入函数的调用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL动态链接库文件主要实现代码的复用。当一个程序调用DLL文件中的数据和代码的时候，有两种链接方式，第一种是<strong>隐式链接</strong>，这个过程是由windows装载器完成的，另外一种是<strong>显式链接</strong>，通过使用LoadLibrary和GetProcAddress这两个API函数实现的。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当隐式的调用一个API函数的时候，同样也存在类似于LoadLibrary和GetProcAddress函数的功能实现，但是，这个操作是由windows装载器完成的，所以称为<strong>隐式链接</strong>，当程序使用隐式链接调用DLL代码的时候，装载器需要完成以下几个步骤(IAT填充):</p>
 <ul>
@@ -459,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/18/病毒分析技术_20_贪吃蛇”挖矿木马团伙/" rel="next" title="贪吃蛇挖矿木马团伙分析报告">
-                <i class="fa fa-chevron-left"></i> 贪吃蛇挖矿木马团伙分析报告
+              <a href="/2019/03/09/一篇短文带你了解蓝屏分析/" rel="next" title="《windows PE》导入表">
+                <i class="fa fa-chevron-left"></i> 《windows PE》导入表
               </a>
             
           </div>

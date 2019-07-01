@@ -81,21 +81,21 @@
 
 
 
-<meta name="description" content="引用反汇编1234void add(int &amp;amp;nVar)&amp;#123;	nVar++;&amp;#125; 12345mov eax,dword ptr [ebp+4]mov ecx,dword ptr [eax]add ecx,1mov edx,dword ptr [ebp+8]    ;解引用mov dword ptr [edx],ecx      ;赋值 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;C++反汇编及逆向分析技术">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++反汇编及逆向分析技术">
 <meta property="og:url" content="http://yoursite.com/2019/01/31/C++反汇编及逆向分析技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="引用反汇编1234void add(int &amp;amp;nVar)&amp;#123;	nVar++;&amp;#125; 12345mov eax,dword ptr [ebp+4]mov ecx,dword ptr [eax]add ecx,1mov edx,dword ptr [ebp+8]    ;解引用mov dword ptr [edx],ecx      ;赋值 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;C++反汇编及逆向分析技术">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/Lfz0auh.png">
 <meta property="og:image" content="https://i.imgur.com/O4yT4Uc.png">
 <meta property="og:image" content="https://i.imgur.com/qoDhJte.png">
 <meta property="og:image" content="https://i.imgur.com/yrpbC9Y.png">
-<meta property="og:updated_time" content="2019-01-31T04:13:11.520Z">
+<meta property="og:updated_time" content="2019-07-01T07:44:50.636Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++反汇编及逆向分析技术">
-<meta name="twitter:description" content="引用反汇编1234void add(int &amp;amp;nVar)&amp;#123;	nVar++;&amp;#125; 12345mov eax,dword ptr [ebp+4]mov ecx,dword ptr [eax]add ecx,1mov edx,dword ptr [ebp+8]    ;解引用mov dword ptr [edx],ecx      ;赋值 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;C++反汇编及逆向分析技术">
 <meta name="twitter:image" content="https://i.imgur.com/Lfz0auh.png">
 
 
@@ -388,7 +388,8 @@
       
 
       
-        <h2 id="引用反汇编"><a href="#引用反汇编" class="headerlink" title="引用反汇编"></a>引用反汇编</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> &amp;nVar)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	nVar++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++反汇编及逆向分析技术<br><a id="more"></a></p>
+<h2 id="引用反汇编"><a href="#引用反汇编" class="headerlink" title="引用反汇编"></a>引用反汇编</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> &amp;nVar)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	nVar++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+<span class="number">4</span>]</div><div class="line"><span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>]</div><div class="line"><span class="keyword">add</span> <span class="built_in">ecx</span>,<span class="number">1</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+<span class="number">8</span>]    <span class="comment">;解引用</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>],<span class="built_in">ecx</span>      <span class="comment">;赋值</span></div></pre></td></tr></table></figure>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于C++使用引用的情况，对于引用变量的修改是修改实参类型本身，第二：此时使用引用本身也会占据内存。</p>
 <h2 id="常数"><a href="#常数" class="headerlink" title="常数"></a>常数</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;常量保存在常量数据区，一般在编译的时候就确定了数值，不可进行修改，<strong>常量首地址-基地址=Offset</strong>，这对应于在文件中的地址。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>#define和const的区别在于</strong>const是依赖于编译器在编译时期做检查，是一个伪常量。可以在运行时期利用指针做修改。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> a=<span class="number">5</span>;</div><div class="line"><span class="keyword">int</span> *Pa=&amp;a;   <span class="comment">//指针</span></div><div class="line">*Pa=<span class="number">6</span>;        <span class="comment">//修改</span></div></pre></td></tr></table></figure></p>
@@ -429,8 +430,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/01/13/病毒分析技术_18_Criakl勒索病毒/" rel="next" title="病毒分析技术18) ---Criakl勒索病毒">
-                <i class="fa fa-chevron-left"></i> 病毒分析技术18) ---Criakl勒索病毒
+              <a href="/2019/01/13/病毒分析技术_19_Ghost后门程序分析/" rel="next" title="病毒分析技术18) ---Ghost后门病毒">
+                <i class="fa fa-chevron-left"></i> 病毒分析技术18) ---Ghost后门病毒
               </a>
             
           </div>
@@ -573,7 +574,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引用反汇编"><span class="nav-number">1.</span> <span class="nav-text">引用反汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常数"><span class="nav-number">2.</span> <span class="nav-text">常数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件表达式"><span class="nav-number"></span> <span class="nav-text">条件表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#if—else-switch"><span class="nav-number">1.</span> <span class="nav-text">if—else/switch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for循环"><span class="nav-number">2.</span> <span class="nav-text">for循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数对象"><span class="nav-number">2.1.</span> <span class="nav-text">参数对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#析构函数"><span class="nav-number">3.</span> <span class="nav-text">析构函数</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用反汇编"><span class="nav-number">2.</span> <span class="nav-text">引用反汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常数"><span class="nav-number">3.</span> <span class="nav-text">常数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件表达式"><span class="nav-number"></span> <span class="nav-text">条件表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#if—else-switch"><span class="nav-number">1.</span> <span class="nav-text">if—else/switch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for循环"><span class="nav-number">2.</span> <span class="nav-text">for循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数对象"><span class="nav-number">2.1.</span> <span class="nav-text">参数对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#析构函数"><span class="nav-number">3.</span> <span class="nav-text">析构函数</span></a></li></ol></div>
             
 
           </div>
