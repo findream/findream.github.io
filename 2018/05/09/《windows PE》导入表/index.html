@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://i.imgur.com/3US7VdD.png">
 <meta property="og:image" content="https://i.imgur.com/5hhgfTG.png">
 <meta property="og:image" content="https://i.imgur.com/pNn2oXb.png">
-<meta property="og:updated_time" content="2018-05-28T10:00:41.321Z">
+<meta property="og:updated_time" content="2019-03-03T02:47:37.477Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《windows PE》导入表">
 <meta name="twitter:description" content="第一部分 预备知识1.函数导入流程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;程序在引用dll库函数的时候，需要从dll里面对所需要的函数进行导入，该导入过程如下：">
@@ -424,6 +424,7 @@
 <h2 id="2-绑定导入表的定位和其数据结构"><a href="#2-绑定导入表的定位和其数据结构" class="headerlink" title="2.绑定导入表的定位和其数据结构"></a>2.绑定导入表的定位和其数据结构</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;绑定地址表位于数据目录的第十二的项目，利用RVA-FOA转化，可以定位到文件在绑定导入表的地址。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;绑定导入数据由IMAGE_BOUND_IMPORT_DESCRIPTOR结构组成，每个模块拥有一个该结构。<br><figure class="highlight abnf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">IMAGE_BOUND_IMPORT_DESCRIPTOR struct</div><div class="line">&#123;</div><div class="line">	TimeDateStamp <span class="comment">;时间戳</span></div><div class="line">    OffsetDllNmae  <span class="comment">;指向dll'的名称，</span></div><div class="line">    NumberOfModuleForWarderRefs   <span class="comment">;ModuleForWarderRefs数目</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <ul>
 <li>NumberOfModuleForWarderRefs描述的是IMAGE_BOUND_ModuleForWarderRefs结构体的数目，该结构体存在的原因是<strong>为了让dll模块保持向前兼容，使得模块继续保持原来函数的定义</strong></li>
+<li><a href="https://blog.csdn.net/evileagle/article/details/12357155" target="_blank" rel="external">https://blog.csdn.net/evileagle/article/details/12357155</a></li>
 </ul>
 
       
@@ -538,7 +539,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">97</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -549,7 +550,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -613,7 +614,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

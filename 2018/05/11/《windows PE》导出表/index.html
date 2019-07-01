@@ -89,7 +89,8 @@
 <meta property="og:description" content="第一部分 预备知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://i.imgur.com/oF80lie.png">
-<meta property="og:updated_time" content="2018-05-28T09:46:11.291Z">
+<meta property="og:image" content="https://i.imgur.com/337LK41.png">
+<meta property="og:updated_time" content="2019-03-03T04:56:51.158Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《windows PE》导出表">
 <meta name="twitter:description" content="第一部分 预备知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，通过在INT获得的函数地址覆盖到IAT中，此时，导出表起到了参照和指引的作用。">
@@ -402,7 +403,16 @@
 <li>修改导出表里面函数的地址。</li>
 <li>覆盖函数地址部分函数代码。</li>
 </ul>
-<h3 id="3-2-导出私有函数"><a href="#3-2-导出私有函数" class="headerlink" title="3.2.导出私有函数"></a>3.2.导出私有函数</h3>
+<h3 id="3-2-导出私有函数"><a href="#3-2-导出私有函数" class="headerlink" title="3.2.导出私有函数"></a>3.2.导出私有函数</h3><ul>
+<li>获取导出函数地址时<ul>
+<li>在AddressOfNames中找到对应的名字，比如Func2，他在AddressOfNames中是第二项</li>
+<li>然后从AddressOfNameOrdinals中取出第二项的值，这里是2，表示函数入口保存在AddressOfFunctions这个数组中下标为2的项里,</li>
+<li>取出AddressOfFunctions里面对应AddressOfNameOrdinals的索引值。</li>
+<li>加上模块基地址便是导出函数的地址。<br><img src="https://i.imgur.com/337LK41.png" alt=""><br><a href="https://blog.csdn.net/evileagle/article/details/12176797" target="_blank" rel="external">https://blog.csdn.net/evileagle/article/details/12176797</a><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">DWORD* CEAT::SearchEAT( <span class="keyword">const</span> <span class="keyword">char</span>* szName)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (IS_VALID_PTR(m_pTable))</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">bool</span> bByOrdinal = HIWORD(szName) == <span class="number">0</span>;</div><div class="line">        DWORD* pProcs = (DWORD*)((<span class="keyword">char</span>*)RVA2VA(m_pTable-&gt;AddressOfFunctions));</div><div class="line">        <span class="keyword">if</span> (bByOrdinal)</div><div class="line">        &#123;</div><div class="line">            DWORD dwOrdinal = (DWORD)szName; </div><div class="line">            <span class="keyword">if</span> (dwOrdinal &lt; m_pTable-&gt;NumberOfFunctions &amp;&amp; dwOrdinal &gt;= m_pTable-&gt;Base)</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">return</span> &amp;pProcs[dwOrdinal-m_pTable-&gt;Base];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span></div><div class="line">        &#123;</div><div class="line">            WORD* pOrdinals = (WORD*)((<span class="keyword">char</span>*)RVA2VA(m_pTable-&gt;AddressOfNameOrdinals));</div><div class="line">            DWORD* pNames = (DWORD*)((<span class="keyword">char</span>*)RVA2VA(m_pTable-&gt;AddressOfNames));</div><div class="line">            <span class="keyword">for</span> (unsigned <span class="keyword">int</span> i=<span class="number">0</span>; i&lt;m_pTable-&gt;NumberOfNames; ++i)</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">char</span>* pNameVA = (<span class="keyword">char</span>*)RVA2VA(pNames[i]);</div><div class="line">                <span class="keyword">if</span> (strcmp(szName, pNameVA) != <span class="number">0</span>)</div><div class="line">                &#123;</div><div class="line">                    <span class="keyword">continue</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> &amp;pProcs[pOrdinals[i]];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">NULL</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
       
     </div>
     
@@ -515,7 +525,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">97</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -526,7 +536,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -590,7 +600,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

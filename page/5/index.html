@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/14/《windows PE》延迟加载表/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/常见壳的脱壳思路/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -313,7 +313,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/05/14/《windows PE》延迟加载表/" itemprop="url">《windows PE》延迟加载导入表</a></h1>
+                <a class="post-title-link" href="/2018/07/15/常见壳的脱壳思路/" itemprop="url">常见的脱壳思路</a></h1>
         
 
         <div class="post-meta">
@@ -325,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-14T19:02:11+08:00">
-                2018-05-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T14:02:11+08:00">
+                2018-07-15
               </time>
             
 
@@ -386,10 +386,10 @@
 
       
         
-          <h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="1-延迟加载导入的概念及作用"><a href="#1-延迟加载导入的概念及作用" class="headerlink" title="1.延迟加载导入的概念及作用"></a>1.延迟加载导入的概念及作用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;延迟加载导入表和导入表示相互分离的，延迟加载导入表是特殊的导入表，和导入表不同的是，延迟加载导入表所记录的dll不会被操作系统加载，只有在函数被应用程序调用的时候，PE中注册的延迟加载函数才会根据延迟加载导入表的记录，动态加载dll，以及修正导入函数的VA。<br>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/14/《windows PE》延迟加载表/#more" rel="contents">
+            <a class="btn" href="/2018/07/15/常见壳的脱壳思路/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -440,7 +440,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/14/《windows PE》重定位表/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/病毒分析技术_9_文件下载者/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -459,7 +459,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/05/14/《windows PE》重定位表/" itemprop="url">《windows PE》重定位表</a></h1>
+                <a class="post-title-link" href="/2018/07/08/病毒分析技术_9_文件下载者/" itemprop="url">病毒分析技术(9) ---文件下载者病毒</a></h1>
         
 
         <div class="post-meta">
@@ -471,748 +471,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-14T14:02:11+08:00">
-                2018-05-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="预备知识：代码重定位"><a href="#预备知识：代码重定位" class="headerlink" title="预备知识：代码重定位"></a>预备知识：代码重定位</h1><h2 id="重定位的提出"><a href="#重定位的提出" class="headerlink" title="重定位的提出"></a>重定位的提出</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;代码重定位是把可执行代码从内存的一块区域移动到另外一块地方。但是如果指令中某些操作数没有随着地址的改变而改变，这样势必导致运行出错。如下代码：我们发现全局变量的地址包含在机器码中，而局部变量没有包含绝对地址。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line"><span class="keyword">add</span> <span class="built_in">esp</span>,ffffffc</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [00400FFC]   //全局变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">04</span>]     //局部变量</div><div class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [evp+<span class="number">08</span>]     //局部变量</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位信息是在编译时期由编译器生成，并且保存在应用程序中，在程序执行的时候由操作系统予以修正。如果在装载时该位置已经被别的应用程序使用，操作系统会<strong>重新选择一个新的基地址</strong>。此时，就需要对所有重定位信息进行纠正，纠正的依据就是<strong>PE中的重定位表</strong>。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/14/《windows PE》重定位表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/11/《windows PE》导出表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/11/《windows PE》导出表/" itemprop="url">《windows PE》导出表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T14:02:11+08:00">
-                2018-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;导入表主要存在于动态链接库文件中，用于将dll文件中的函数导入到外部，给其他的exe或者dll文件调用。我们在导入表一章中知道了程序在装载过程中，<strong>通过在INT获得的函数地址覆盖到IAT中，</strong>此时，导出表起到了参照和指引的作用。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/11/《windows PE》导出表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/09/《windows PE》导入表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/09/《windows PE》导入表/" itemprop="url">《windows PE》导入表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-09T14:02:11+08:00">
-                2018-05-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><h2 id="1-函数导入流程"><a href="#1-函数导入流程" class="headerlink" title="1.函数导入流程"></a>1.函数导入流程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序在引用dll库函数的时候，需要从dll里面对所需要的函数进行导入，该导入过程如下：<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/09/《windows PE》导入表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/07/Linux常见命令_3_软件包管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/07/Linux常见命令_3_软件包管理/" itemprop="url">Linux常见命令<3>软件包管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-07T15:02:11+08:00">
-                2018-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-软件包管理简介"><a href="#第一部分-软件包管理简介" class="headerlink" title="第一部分 软件包管理简介"></a>第一部分 软件包管理简介</h1><h2 id="apt-管理软件包"><a href="#apt-管理软件包" class="headerlink" title="apt :管理软件包"></a>apt :管理软件包</h2><ul>
-<li>apt [选项] [packagename]、<ul>
-<li>apt-cache search packagename:搜索软件包<br><img src="https://i.imgur.com/18SSiEf.png" alt=""></li>
-<li>apt-cache show packagename：显示软件包的信息<br><img src="https://i.imgur.com/7wW91NW.png" alt=""></li>
-<li>sudo apt-get install packagename :安装软件<br><img src="https://i.imgur.com/XBO502b.png" alt=""></li>
-<li>sudo apt-get install –reinstall packagename:重新安装软件
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/07/Linux常见命令_3_软件包管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/07/《windows PE》PE文件头/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/07/《windows PE》PE文件头/" itemprop="url">《windows PE》PE文件头</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-07T14:02:11+08:00">
-                2018-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
-                    <span itemprop="name">windows PE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><h2 id="四类地址"><a href="#四类地址" class="headerlink" title="四类地址"></a>四类地址</h2><ul>
-<li>虚拟地址（VA）</li>
-<li>相对虚拟内存地址（RVA）</li>
-<li>文件偏移地址（FOA）</li>
-<li>特殊地址
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/07/《windows PE》PE文件头/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/05/看雪CTF2017/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/05/看雪CTF2017/" itemprop="url">看雪2017CTF</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T11:00:11+08:00">
-                2018-05-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T14:02:11+08:00">
+                2018-07-08
               </time>
             
 
@@ -1272,10 +532,15 @@
 
       
         
-          <p>这是看雪2017的CTF的题目，这套题目当时只做出了一题，现在继续做，同样还是根据WP，不断的学习，不断的进步，在现在安全圈子里面浮躁的大背景下，感谢看雪论坛仍然不忘初心，为我们保留了这一块儿净土。<br>
+          <h1 id="一-目录："><a href="#一-目录：" class="headerlink" title="一 目录："></a>一 目录：</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术上的总结
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/05/看雪CTF2017/#more" rel="contents">
+            <a class="btn" href="/2018/07/08/病毒分析技术_9_文件下载者/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1326,7 +591,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/Linux常见命令_2_其他命令/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/22/Linux常见命令_8_进程管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -1345,7 +610,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/28/Linux常见命令_2_其他命令/" itemprop="url">Linux常见命令<2>常用命令</a></h1>
+                <a class="post-title-link" href="/2018/06/22/Linux常见命令_8_进程管理/" itemprop="url">Linux常见命令<8>进程管理</a></h1>
         
 
         <div class="post-meta">
@@ -1357,8 +622,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-28T15:02:11+08:00">
-                2018-04-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T15:02:11+08:00">
+                2018-06-22
               </time>
             
 
@@ -1418,21 +683,10 @@
 
       
         
-          <h1 id="第一部分-帮助"><a href="#第一部分-帮助" class="headerlink" title="第一部分 帮助"></a>第一部分 帮助</h1><ul>
-<li>man [命令] /info<ul>
-<li>/ [查询的内容] 查询指定的字符串</li>
-<li>man [配置文件名称] ：显示配置文件的作用。如果直接加绝对路径，显示的是配置文件的内容</li>
-<li>有文件的帮助信息，也有配置文件的帮助信息。如果是man 5 [命令] 查看的是配置文件的帮助信息，如果是man 1 [命令] 显示的是命令的帮助信息【见linux(1) whereis命令】<br><img src="https://i.imgur.com/Z4tFW44.png" alt=""></li>
-</ul>
-</li>
-<li>whatis [命令] ：显示命令作用（简略）//whereis [命令]<br>   <img src="https://i.imgur.com/dzVbLlm.png" alt=""></li>
-<li>apropos [配置文件] ：显示配置文件的作用<br>   <img src="https://i.imgur.com/eoAu5q7.png" alt=""></li>
-<li>命令 -h(–help)</li>
-<li>help [命令] shell内置命令的帮助信息（shell编程中的命令）<ul>
-<li>也可以查看命令的路径<br><img src="https://i.imgur.com/glgYvQ4.png" alt=""><br><img src="https://i.imgur.com/D9fufqV.png" alt="">
+          <h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/04/28/Linux常见命令_2_其他命令/#more" rel="contents">
+            <a class="btn" href="/2018/06/22/Linux常见命令_8_进程管理/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1483,7 +737,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/16/看雪CTF2018/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -1502,7 +756,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/" itemprop="url">第三章：系统机制-全局标志和内核事件跟踪</a></h1>
+                <a class="post-title-link" href="/2018/06/16/看雪CTF2018/" itemprop="url">看雪2018CTF</a></h1>
         
 
         <div class="post-meta">
@@ -1514,8 +768,300 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T15:02:11+08:00">
-                2018-04-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-16T15:02:11+08:00">
+                2018-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和以前一样，本届CTF只是做了签到题，有点可怜，实习期间，多看看本次大赛的wp，多学习点<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/06/16/看雪CTF2018/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/10/Linux常见命令_7_shell编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/10/Linux常见命令_7_shell编程/" itemprop="url">Linux常见命令<7>shell</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T15:02:11+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="1-shell中的正则表达式"><a href="#1-shell中的正则表达式" class="headerlink" title="1 shell中的正则表达式"></a>1 shell中的正则表达式</h1><h1 id="2-字符截取命令"><a href="#2-字符截取命令" class="headerlink" title="2 字符截取命令"></a>2 字符截取命令</h1>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/06/10/Linux常见命令_7_shell编程/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/04/《Windows Internals》第四章_注册表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/04/《Windows Internals》第四章_注册表/" itemprop="url">注册表</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-04T15:02:11+08:00">
+                2018-06-04
               </time>
             
 
@@ -1575,161 +1121,603 @@
 
       
         
-          <h1 id="3-5-Windows全局标志"><a href="#3-5-Windows全局标志" class="headerlink" title="3.5 Windows全局标志"></a>3.5 Windows全局标志</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows全局标志用于打开windows系统的内部调试，跟踪和验证，保存在HKLM\SYSTEM\CurrentControlSet\Control\Session Manage中的GlobalFlag中，默认值为0。如下是利用windbg查看的GlobalFlag情况<br>      <img src="https://i.imgur.com/pg5gK68.png" alt=""><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/26/《Windows Internals》第三章_全局标志和内核事件跟踪/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/《Windows Internals》第三章_映像加载器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/26/《Windows Internals》第三章_映像加载器/" itemprop="url">第三章：系统机制-映像加载器</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T15:02:11+08:00">
-                2018-04-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows系统/" itemprop="url" rel="index">
-                    <span itemprop="name">windows系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="映像加载器"><a href="#映像加载器" class="headerlink" title="映像加载器"></a>映像加载器</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当系统中的进程被启动的时候，内核创建一个内核对象表示该进程，并执行各种和内核相关的初始化任务。绝大部分的初始化任务是在内核之外完成的，这些工作是由<strong>映像加载器</strong>完成的。映像加载器驻留在用户模式下的<strong>Ntdll.dll</strong>中，映像加载器完成以下的初始化工作：</p>
+          <h2 id="注册表用法"><a href="#注册表用法" class="headerlink" title="注册表用法"></a>注册表用法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注册表的配置数据主要在四个时间点被修改。</p>
 <ul>
-<li>1.初始化其他用户模式，包括堆栈的初始化，TLS和FLS的初始化</li>
-<li>2.解析执行文件的IAT，DLL的导出表</li>
-<li>3.加载卸载DLL，维护模块数据库</li>
-<li>4.启用API集和API重定向
+<li>由于引导配置数据库(BCD)存在于注册表储巢中，所以在初始化引导过程中，引导加载器需要读入配置信息和引导设备驱动程序的列表。</li>
+<li>在内核引导的过程中，内核要读取系统的相关设置信息(存放在注册表中)，这些信息包含了加载的驱动程序，系统组件，已经系统行为的配置。</li>
+<li>在windows登录过程中，Explorer和windows组件读取用户配置信息。</li>
+<li>应用程序启动过程中，读取系统全局配置信息。</li>
+<li>其他时间：在调用API修改注册表的时候，注册表也提供异步回调机制，这是优先接收注册表变化的方法。<strong>系统不建议使用轮询的方法检测注册表的修改。</strong>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/04/26/《Windows Internals》第三章_映像加载器/#more" rel="contents">
+            <a class="btn" href="/2018/06/04/《Windows Internals》第四章_注册表/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/26/GCTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/26/GCTF/" itemprop="url">GCTF解析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-26T14:02:11+08:00">
+                2018-05-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><h2 id="Hackme"><a href="#Hackme" class="headerlink" title="Hackme"></a>Hackme</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是一个ELF的逆向题，IDA打开，发现流程如下：输入字符串，然后经过一个函数的加密，利用这个函数返回出来的数值，对该数值以22取余数，得到索引，得到Hex数组里面的数据，然后经过第一个循环得到V16，再用V16和输入的字符串异或，然后把结果和Hex比较即可。
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/26/GCTF/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/Linux常见命令_6_shell基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/25/Linux常见命令_6_shell基础/" itemprop="url">Linux常见命令<6>shell</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-25T15:02:11+08:00">
+                2018-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="1-shell概述"><a href="#1-shell概述" class="headerlink" title="1 shell概述"></a>1 shell概述</h1><ul>
+<li>特点：<ul>
+<li>1：解释型编程语言</li>
+<li>2：可以直接调用系统命令
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/25/Linux常见命令_6_shell基础/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/动态规划_编辑距离/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/24/动态规划_编辑距离/" itemprop="url">动态规划--编辑距离问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T14:02:11+08:00">
+                2018-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="动态规划算法思想"><a href="#动态规划算法思想" class="headerlink" title="动态规划算法思想"></a>动态规划算法思想</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;问题的决策过程都是之前所有子问题的结合，也就是说每一步求解得问题都是后面阶段求解问题的子问题，每一步决策都将依赖于前面决策的结果。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/24/动态规划_编辑距离/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/22/XCTF嘉年华比赛试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/22/XCTF嘉年华比赛试题/" itemprop="url">XCTF嘉年华资格赛</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-22T00:02:11+08:00">
+                2018-05-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index">
+                    <span itemprop="name">CTF</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>花了两天时间好好把XCTF嘉年华的比赛试题之逆向题好好做了一下，结合前几天练习的Re题来看，windows里面涉及到的加密函数非常的多，外部有时候也会加入常见壳，但是在比赛中不常出现，基本语言为VC，但是里面会出现多种反调试，加密算法应用广泛。但是linux下面的题目很少出现反调试，和加密函数，也没有向windows一样多种逆向技术结合，相对比较容易，下面讲解一下XCTF嘉年华的比赛逆向题(可能也有杂项题)</strong><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/22/XCTF嘉年华比赛试题/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1771,7 +1759,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1817,7 +1805,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">97</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1828,7 +1816,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -1876,7 +1864,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

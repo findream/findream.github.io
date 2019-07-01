@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;1.这是《一篇文章带你….》系列的第三篇，也是自己的学习总结，很多不懂的地方找的论坛前辈的资料。代码都是自己手敲，边敲边注释，对一些细节做了微调。前两篇是一篇文章带你学会Armadillo脱壳和一篇文章带你理解PE三表  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一篇文章带你理解HOOK技术">
+<meta property="og:url" content="http://yoursite.com/2019/04/18/一篇文章带你理解HOOK技术/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;1.这是《一篇文章带你….》系列的第三篇，也是自己的学习总结，很多不懂的地方找的论坛前辈的资料。代码都是自己手敲，边敲边注释，对一些细节做了微调。前两篇是一篇文章带你学会Armadillo脱壳和一篇文章带你理解PE三表  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20190515/fUeMbC0WtqpB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190515/mzRhPtvTOhvn.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190515/RqnqFHLYoAdO.png?imageslim">
+<meta property="og:updated_time" content="2019-05-18T08:39:43.949Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一篇文章带你理解HOOK技术">
+<meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;1.这是《一篇文章带你….》系列的第三篇，也是自己的学习总结，很多不懂的地方找的论坛前辈的资料。代码都是自己手敲，边敲边注释，对一些细节做了微调。前两篇是一篇文章带你学会Armadillo脱壳和一篇文章带你理解PE三表  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta name="twitter:image" content="http://hacky.wang/blog/20190515/fUeMbC0WtqpB.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/18/一篇文章带你理解HOOK技术/"/>
+
+
+
+
+
+  <title>一篇文章带你理解HOOK技术 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/18/一篇文章带你理解HOOK技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一篇文章带你理解HOOK技术</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T15:02:11+08:00">
+                2019-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows安全/" itemprop="url" rel="index">
+                    <span itemprop="name">windows安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.这是《一篇文章带你….》系列的第三篇，也是自己的学习总结，很多不懂的地方找的论坛前辈的资料。代码都是自己手敲，边敲边注释，对一些细节做了微调。前两篇是<a href="https://bbs.pediy.com/thread-251148.htm" target="_blank" rel="external">一篇文章带你学会Armadillo脱壳</a>和<a href="https://bbs.pediy.com/thread-250924.htm" target="_blank" rel="external">一篇文章带你理解PE三表 </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.几个驱动相关的HOOK，从代码层面上讲理解的不是很深刻。但是手敲了一边除了一些驱动相关的知识，HOOK原理上应该有所领悟。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.还是一样，不提供源码下载，驱动相关的HOOK，前辈们都写有源码。不作伸手党。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.想来想去，这篇文章已经停滞1个多月了，今天草草结笔。关于HOOK检测部分估计需要鸽了。有空再学习吧。看雪第四版有源码。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.这篇文章是新瓶装旧酒，大佬别喷我。下一篇文章预计写注入，代码已经写完了，就剩下总结了，同样的还是新瓶装旧酒。旨在学习。下下一篇我也不知道写什么？加壳？花指令？？管他呢。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.唉，我什么时候才能成为像各位一样的大佬啊^_^</p>
+<h1 id="0x1-AddressHook"><a href="#0x1-AddressHook" class="headerlink" title="0x1 AddressHook"></a>0x1 AddressHook</h1><h2 id="0x1-1-IAT-HOOK"><a href="#0x1-1-IAT-HOOK" class="headerlink" title="0x1.1 IAT_HOOK"></a>0x1.1 IAT_HOOK</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IAT是程序中存储导入函数地址的数据结构，如果HOOK了导入函数地址。就可以在函数调用的时候，将函数流程HOOK到我们指定的流程。但是我个人觉得这种方式最好要结合DLL注入的方式，如果单纯的使用HOOK，那么就需要将需要执行的操作的shellcode写入目标进程，如果操作复杂，可能需要的shellcode量特别大，<strong>所以我们需要借助DLL注入</strong>，这样就将我们需要执行的代码写入进程内部，在HOOK的Detour函数只需要实现LoadLibrary的操作。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IATHOOK的基本原理就是通过修改程序IAT数据结构，将原始调用API函数地址Target函数地址修改为Detour函数地址。所以IAT_HOOK需要实现以下几个步骤:</p>
+<ul>
+<li>构造Detour函数</li>
+<li>获取Target函数地址</li>
+<li>通过PE获取Target函数所在的IAT的地址</li>
+<li>保存原始的IAT地址和IAT地址所存储的内容</li>
+<li>修改IAT地址中的数据</li>
+<li>如果需要调用原来API函数，可以直接使用保存的API地址，可以就保证了HOOK的有效性</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先需要构造Detour函数，为了堆栈平衡和一些其他原因，最好Detour函数的函数原型和Target函数原型保持一致。<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">typedef int(<span class="type">WINAPI</span> *<span class="type">PFN_MessageBoxA</span>)(<span class="type">HWND</span> hWnd, <span class="type">LPCTSTR</span> lpText, <span class="type">LPCTSTR</span> lpCaption, <span class="type">UINT</span> uType);</div><div class="line"><span class="title">int</span> <span class="type">WINAPI</span> <span class="type">My_MessageBoxA</span>(</div><div class="line">	<span class="type">HWND</span> hWnd,</div><div class="line">	<span class="type">LPCTSTR</span> lpText,</div><div class="line">	<span class="type">LPCTSTR</span> lpCaption,</div><div class="line">	<span class="type">UINT</span> uType</div><div class="line">)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个函数的内容可以任意设置，主要执行两个方面的操作，<strong>一是执行我们想进行的操作，二是控制Target函数的返回值。</strong>为了简单期间，设置MessageBox作为HOOK，标志，MessageBox函数地址可以使用保存的API函数<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">bReturn = OldMessageBox(<span class="literal">NULL</span>, <span class="string">"You Are Hooked"</span>, <span class="string">"Warning"</span>, MB_OK);</div><div class="line"><span class="comment">//2.你可以控制API函数的返回值</span></div><div class="line"><span class="built_in">BOOL</span> bReturn = <span class="literal">FALSE</span>;</div><div class="line"><span class="keyword">return</span> bReturn;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二歩是获取Target函数地址，这一步的目的是为了遍历IAT的时候比较IAT中所存储的Target函数地址。以便找到存放目标函数的IAT地址。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">||<span class="meta">#<span class="meta-keyword">ifdef</span> _WIN64</span></div><div class="line">	ULONG_PTR TargetFunAddr = (ULONG_PTR)GetProcAddress(hModule, szFuncName);</div><div class="line">	PULONG_PTR lpAddr = <span class="literal">NULL</span>;</div><div class="line">	SIZE_T size = <span class="keyword">sizeof</span>(PULONG_PTR);</div><div class="line">||<span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line">	ULONG32  TargetFunAddr = (ULONG32)GetProcAddress(hModule, szFuncName);</div><div class="line">	PULONG32 lpAddr = <span class="literal">NULL</span>;</div><div class="line">	SIZE_T size = <span class="keyword">sizeof</span>(PULONG32);</div><div class="line">||<span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"><span class="comment">//MARKDOWN原因，不能以#开头，所以加个||符号，实际代码不存在||符号</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三步是获取Target函数的IAT地址，首先需要获取导入表的RVA，这里可以使用函数<code>ImageDirectoryEntryToData</code>获取<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">PIMAGE_IMPORT_DESCRIPTOR pImportDescriptor = (<span class="name">PIMAGE_IMPORT_DESCRIPTOR</span>)	ImageDirectoryEntryToData(<span class="name">hModToHook</span>,</div><div class="line">		TRUE,</div><div class="line">		IMAGE_DIRECTORY_ENTRY_IMPORT,</div><div class="line">		<span class="symbol">&amp;ulSize</span>)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE装载器已经将PE文件载入内存，可以使用IAT获取函数地址，所以通过FirstThunk指向的IAT遍历Target函数。需要判断DLLNAME是否是Target函数所在的模块，也就是说需要确定IID,<strong>毕竟一个IID对应一个DLL</strong><br><figure class="highlight rust"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> (pImportDescriptor-&gt;FirstThunk)</div><div class="line">&#123;</div><div class="line">	<span class="comment">//存放DllName</span></div><div class="line">	szModName = (<span class="built_in">char</span>*)((PBYTE)hModToHook + pImportDescriptor-&gt;Name);</div><div class="line">	printf(<span class="string">"[*]Cur Module Name:%s\n"</span>, szModName);</div><div class="line">	<span class="comment">//比较DLLName与目标DLL是否相同  使用stricmp函数是不区分大小写的</span></div><div class="line">	<span class="keyword">if</span> (stricmp(szModName, szModuleName) != <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		pImportDescriptor++;</div><div class="line">		<span class="keyword">continue</span>;</div><div class="line">	&#125;</div><div class="line">	...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First指向的是一个IAT结构，存储的API函数地址。所以可以利用PIMAGE_THUNK_DATA(IAT)遍历Target函数。<strong>如果找到了最好保存修改的IAT地址和数据</strong>。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">PIMAGE_THUNK_DATA pThunkData = (PIMAGE_THUNK_DATA)((BYTE*)hModToHook + pImportDescriptor-&gt;FirstThunk);</div><div class="line"><span class="keyword">while</span> (pThunkData-&gt;u1.Function)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> ((*lpAddr) == TargetFunAddr)</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//保存数据，修改为Detour函数地址</span></div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">//最好保存一下</span></div><div class="line"><span class="keyword">if</span> (pThunkPointer != <span class="keyword">NULL</span>)   <span class="comment">//保存修改内存的地址</span></div><div class="line">&#123;</div><div class="line">	*pThunkPointer = lpAddr;</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (pOriginalFuncAddr != <span class="keyword">NULL</span>)   <span class="comment">//保存修改内存的数据，也就是Target函数的地址</span></div><div class="line">&#123;</div><div class="line">	*pOriginalFuncAddr = *lpAddr;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>这里我实现了X64和X86的兼容，但是在实现X86的时候，出现了内存访问异常在VirtuallProtest处，但是在debug模式下程序没奔溃，需要那位大佬可以解答一下</strong></p>
+<h2 id="0x1-2-EAT-HOOK"><a href="#0x1-2-EAT-HOOK" class="headerlink" title="0x1.2 EAT_HOOK"></a>0x1.2 EAT_HOOK</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用EAT_HOOK需要注意一下两点：第一：EAT存储的是函数地址的偏移，<strong>所以在HOOK EAT的时候需要加上基地址</strong>，在写入EAT的时候，Detour地址需要减去BaseAddress。第二，EAT不对隐式链接起作用，<strong>只对显示链接起作用</strong>，也就是说对于那种<strong>GetProcAddress的那种调用</strong>起作用。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAT_HOOK的原理和IAT_HOOK类似，都是通过修改函数地址数据从而HOOK。EAT_HOOK，也需要进行以下步骤：</p>
+<ul>
+<li>1.获取Target函数在HookModule上的RVA</li>
+<li>2.获取导出函数数组首地址</li>
+<li>3.遍历查找Target函数RVA</li>
+<li>4.切记在修改函数地址之前，需要保存EAT地址和原函数地址、</li>
+<li>5.将Detour函数地址写入EAT</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先是获取Target函数RVA，因为EAT存的是函数的RVA，所以，我们需要获取Target函数RVA<br><figure class="highlight protobuf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//1.获取Target函数在HookModule上的RVA</span></div><div class="line">ULONG_PTR TargetFunAddr = NULL;</div><div class="line">TargetFunAddr = (ULONG_PTR)GetProcAddress(hModToHook, szFuncName);	</div><div class="line">ULONG_PTR TargetFunRVA = NULL;</div><div class="line">TargetFunRVA = (ULONG_PTR)(TargetFunAddr - (ULONG_PTR)hModToHook);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二歩是获取导出函数数组首地址，在EAT-&gt;AddressOfFunctions可以获取导出函数地址数组AddressOfFunctions的首地址<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">PIMAGE_EXPORT_DIRECTORY pExportDir = NULL<span class="comment">;</span></div><div class="line">pExportDir = (<span class="name">PIMAGE_EXPORT_DIRECTORY</span>)ImageDirectoryEntryToData(<span class="name">hModToHook</span>,//BaseAddress</div><div class="line">		TRUE,</div><div class="line">		IMAGE_DIRECTORY_ENTRY_EXPORT,   //Type</div><div class="line">		<span class="symbol">&amp;ulSize</span>)<span class="comment">;                       //接收数据的大小</span></div><div class="line">ULONG* FuncAddr = NULL<span class="comment">;</span></div><div class="line">FuncAddr = (<span class="name">ULONG*</span>)((<span class="name">BYTE*</span>)hModToHook + pExportDir-&gt;AddressOfFunctions)<span class="comment">;  //导出函数数组首地址</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三步是在EAT在寻找Target函数的RVA<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (FuncAddr[i] == TargetFunRVA)</div><div class="line">&#123;</div><div class="line">	<span class="comment">//修改内存保护属性</span></div><div class="line">	DWORD OldProtect = <span class="literal">NULL</span>;</div><div class="line">	<span class="keyword">if</span> (VirtualProtect(&amp;FuncAddr[i], <span class="keyword">sizeof</span>(ULONG*), PAGE_EXECUTE_READWRITE, &amp;OldProtect))</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//修改保存数据</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第四步是保存EAT地址和Target函数RVA<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">*pAddrPointer = (PULONG_PTR)&amp;FuncAddr<span class="string">[i]</span>;</div><div class="line">*pOriginalFuncAddr = FuncAddr<span class="string">[i]</span>;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>EAT保存的是Target函数的RVA</strong>，这一定要记住。所以在写入Detour函数的时候，是需要减去BaseAddress的。<br><figure class="highlight protobuf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//5.将Detour函数地址写入EAT</span></div><div class="line"><span class="comment">//因为EAT里面保存的是函数地址RVA值，所以在写入Detour函数地址需要减去BaseAddress</span></div><div class="line">FuncAddr[i] = (ULONG)((ULONG_PTR)DetourFunc-(ULONG_PTR)hModToHook);</div></pre></td></tr></table></figure></p>
+<h2 id="0x1-3-VirtualFunctionHook"><a href="#0x1-3-VirtualFunctionHook" class="headerlink" title="0x1.3 VirtualFunctionHook"></a>0x1.3 VirtualFunctionHook</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++虚函数存在的意义是为了方便使用多态性。在实现虚函数Hook的时候需要注意如下问题：1.在构建DetourFun函数的时候，一定要构造DetourClass，因为在调用虚函数的时候使用了Thiscall的函数调用约定，如果直接调用detourfun函数应该使用的标准调用约定，两者不统一，会出错。2.当使用Trampolinefun回调的时候，需要重新实例化一个TrampolineClass。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一步：仍然是构造DetourClass类和TrampolineClass类<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//因为使用了This的调用方法，所以在Hook的时候同时需要创建DetourClass类，保证函数约定是一致的</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DetourClass</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">DetourFun</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>;</div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TrampolineClass</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">TrampolineFun</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span></div><div class="line"><span class="function">	</span>&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"TrampolineFun"</span>);</div><div class="line">		<span class="keyword">return</span> a + b;</div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"><span class="comment">//此处构造DetourFun</span></div><div class="line"><span class="keyword">int</span> DetourClass::DetourFun(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</div><div class="line">&#123;</div><div class="line">	<span class="comment">//此处执行自定义操作</span></div><div class="line">	MessageBox(<span class="literal">NULL</span>, <span class="string">"Hooked"</span>, <span class="string">"warning"</span>, MB_OK);</div><div class="line">	<span class="comment">//调用TrampolineFun，首先需要将TrampolineClass实例化</span></div><div class="line">	TrampolineClass *pTrampoline = <span class="keyword">new</span> TrampolineClass;</div><div class="line">	<span class="keyword">int</span> iRet = pTrampoline-&gt;TrampolineFun(a, b);</div><div class="line">	<span class="keyword">delete</span> pTrampoline;</div><div class="line">	<span class="keyword">return</span> iRet+<span class="number">10</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二歩：将Target函数地址保存在TableTrampoline虚表中，方便回调。这时候需要获取两个值，第一个TableTrampoline虚表，第二个TargetFun地址。由于TableTrampoline虚函数表在类的起始位置。所以类的地址就是虚函数表的地址，第二，TargetFun函数地址位于虚函数中，存储在类似于数组的结构，可以用其索引指向获取虚函数地址<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//获取虚表地址vfTableToHook</span></div><div class="line"><span class="keyword">base</span> <span class="keyword">base</span>;</div><div class="line">printf(<span class="string">"[*]pBase=0x%x\n"</span>, &amp;<span class="keyword">base</span>);</div><div class="line">ULONG_PTR *vfTableToHook = (ULONG_PTR*)*(ULONG_PTR*)&amp;<span class="keyword">base</span>;</div><div class="line"><span class="comment">//获取Trampoline虚表地址，用于回调</span></div><div class="line">ULONG_PTR *vfTableTrampoline = (ULONG_PTR*)*(ULONG_PTR*)&amp;Trampoline;</div><div class="line"><span class="comment">//第一次修改，用于保存原始的Target函数地址</span></div><div class="line"><span class="comment">//修改内存保护属性</span></div><div class="line">VirtualProtect(vfTableTrampoline, <span class="keyword">sizeof</span>(ULONG_PTR), PAGE_EXECUTE_READWRITE, &amp;dwOldProtect);</div><div class="line">vfTableTrampoline[<span class="number">0</span>] = (ULONG_PTR)GetClassVirtualFnAddress(&amp;<span class="keyword">base</span>, <span class="number">0</span>);</div><div class="line">printf(<span class="string">"[*]vfTableTrampoline=0x%x\n"</span>, vfTableTrampoline[<span class="number">0</span>]);</div><div class="line">VirtualProtect(vfTableTrampoline, <span class="keyword">sizeof</span>(ULONG_PTR), dwOldProtect, &amp;dwOldProtect);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三步，将Detour函数地址写入到TargetClass的原始虚表TableToHook中<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//第二次修改，为了HookTarget函数，修改原始虚表</span></div><div class="line">VirtualProtect(vfTableToHook, sizeof(ULONG_PTR), PAGE_EXECUTE_READWRITE, &amp;dwOldProtect);</div><div class="line">vfTableToHook[<span class="number">0</span>] = (ULONG_PTR)GetClassVirtualFnAddress(&amp;Detour, <span class="number">0</span>);</div><div class="line">printf(<span class="string">"[*]vfTableTrampoline=0x%x<span class="subst">\n</span>"</span>, vfTableToHook[<span class="number">0</span>]);</div><div class="line">VirtualProtect(vfTableToHook, sizeof(ULONG_PTR), dwOldProtect, &amp;dwOldProtect);</div></pre></td></tr></table></figure></p>
+<h1 id="0x2-InlineHook"><a href="#0x2-InlineHook" class="headerlink" title="0x2 InlineHook"></a>0x2 InlineHook</h1><h2 id="0x2-1-InlineHook-A"><a href="#0x2-1-InlineHook-A" class="headerlink" title="0x2.1 InlineHook(A)"></a>0x2.1 InlineHook(A)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这一类InlineHook是一类较为特殊的InlineHook，他修改的不是开始的多个字节，而是修改Target函数中call指令的地址。比如说VirtualAlloc函数中调用了VirtualAllocEx函数，这次inlineHook其实就是修改了VirtualAllocEx的地址(调用处的地址)，这样做的好处是可以避免被一些Hook检测工具检测。但是这样的缺点是兼容性不是很好，因为一些API的函数可能会因为系统的改变而改变。<br><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">do</span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> (pTargetFun[<span class="number">0</span>] == <span class="number">0xE8</span>)</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//获取VirtualAllocEx地址</span></div><div class="line">		addrTemp = (<span class="keyword">ULONG</span>)pTargetFun + <span class="number">5</span> + *(<span class="keyword">LONG</span>*)(pTargetFun + <span class="number">1</span>);</div><div class="line">		<span class="comment">//比较是否相同</span></div><div class="line">		<span class="keyword">if</span> (addrTemp == addrTargetFun)</div><div class="line">		&#123;</div><div class="line">			bResult = <span class="keyword">TRUE</span>;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	i++;</div><div class="line">	pTargetFun++;</div><div class="line">&#125; <span class="keyword">while</span> (i &lt; <span class="number">0x30</span>);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果比较无误后修改DetourFun<br><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//保存修改的地址</span></div><div class="line">g_PointerToRawData = (<span class="keyword">ULONG</span>)(pTargetFun + <span class="number">1</span>);</div><div class="line"><span class="comment">//保存修改的内容</span></div><div class="line">g_RawOffset = *(<span class="keyword">ULONG</span>*)(pTargetFun + <span class="number">1</span>);</div><div class="line"><span class="comment">//保存Detour函数到Target函数的偏移量</span></div><div class="line">addrTemp= (<span class="keyword">LONG</span>)DetourVirtualAllocEx - (<span class="keyword">LONG</span>)pTargetFun - <span class="number">5</span></div><div class="line"><span class="comment">//修改</span></div><div class="line">bResult = WriteProcessMemory(GetCurrentProcess(), pTargetFun + <span class="number">1</span>, &amp;addrTemp, sizeof(<span class="keyword">LONG</span>), <span class="keyword">NULL</span>);</div></pre></td></tr></table></figure></p>
+<h2 id="0x2-2-InlineHook-B"><a href="#0x2-2-InlineHook-B" class="headerlink" title="0x2.2 InlineHook(B)"></a>0x2.2 InlineHook(B)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这种InlineHook修改的是Target函数前5个字节，这种做的好处是能够多版本进行HOOK，因为如果是采用上一种InlineHook，可能内部调用流程随着版本不同而不同，所以不容易Hook。而这种就没有这种缺点。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用InlineHook，需要了解到三种函数：</p>
+<ul>
+<li>Target函数：目标函数，我们选定的HOOK的函数</li>
+<li>Detour函数：我们构造的函数，用于搭载HOOK完Target函数后，我们制定的操作</li>
+<li>TrampolineFun函数：负责回调Target函数，在回调的时候，需要注意的时候重新执行HOOK修改的三条指令，并绕过HOOK的地方</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InlineHook主要的步骤就是修改Target函数的前五个字节。大概有以下几个步骤：</p>
+<ul>
+<li>Step1：构造Detour函数</li>
+<li>Step2：构造TrampolineFun函数</li>
+<li>Step3：获取TrampolineFun和HookPoint的地址。</li>
+<li>Step4：填充需要修改的指令</li>
+<li>Step5：使用ReadProcessMemory保存原指令</li>
+<li>Step5：使用WriteProcessMemory修改Target函数指令</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;虽然步骤看着简单，但是里面坑还是很多的。首先是构造构造Detour函数，<strong>这里需要注意的是Detour函数声明需要和Target函数保持一致，否则函数返回会异常</strong>,而且还要在DetourFun中还要调用TrampolineFun。</p>
+<figure class="highlight hsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//第一步设置Detour函数</span></div><div class="line"><span class="comment">//Detour函数的函数声明需要和Target函数保持一致，否则函数返回会异常</span></div><div class="line"><span class="keyword">int</span> WINAPI My_MessageBoxA(<span class="keyword">HWND</span> <span class="keyword">hWnd</span>, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)</div><div class="line">&#123;</div><div class="line">	<span class="comment">//修改操作</span></div><div class="line">	<span class="keyword">int</span> iResult = <span class="number">0</span><span class="comment">;</span></div><div class="line">	lpText = <span class="string">"Hooked"</span><span class="comment">;</span></div><div class="line">	iResult = OriginalMessageBox(<span class="keyword">hWnd</span>, lpText, lpCaption, uType)<span class="comment">;</span></div><div class="line">	<span class="comment">//修改返回值</span></div><div class="line">	iResult = <span class="number">0</span><span class="comment">;</span></div><div class="line">	<span class="keyword">return</span> iResult<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二歩是构造TrampolineFun函数，Trampoline函数是用于在Detour回调Target函数，在使用Trampoline首先执行Target被修改的三条指令，为了避免调用Target函数堆栈异常。然后使用jmp的方式跳转到Target函数中第四条指令，绕过被修改的指令，<strong>这是为了实现永久化</strong><br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//77D5050B &gt;  8BFF                   <span class="keyword">mov</span> <span class="built_in">edi</span>,<span class="built_in">edi</span></div><div class="line">//77D5050D    <span class="number">55</span>                     <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">//77D5050E    8BEC                   <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">/////////////</div><div class="line">__declspec( naked )</div><div class="line"><span class="keyword">int</span> WINAPI OriginalMessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)</div><div class="line">&#123;</div><div class="line">	_asm</div><div class="line">	&#123;</div><div class="line">		//再次执行之前被修改的三条指令，避免堆栈异常</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">edi</span>,<span class="built_in">edi</span></div><div class="line">		<span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">		<span class="keyword">jmp</span> MsgBoxHookData.JmpBackAddr  //跳转到Hook之后的地方，跳过自己安装的HOOK,实现持续化</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在正式HOOK开始，还需要填充一些关键的参数，为此，我们构造一个结构体。以便管理参数。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">HOOK_DATA</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">	<span class="keyword">char</span> szApiName[<span class="number">128</span>];   <span class="comment">//TargetFun</span></div><div class="line">	<span class="keyword">char</span> szModuleName[<span class="number">64</span>]; <span class="comment">//TargetModule</span></div><div class="line">	<span class="keyword">int</span> HookCodelen;       <span class="comment">//HOOK长度</span></div><div class="line">	BYTE oleEntry[<span class="number">16</span>];     <span class="comment">//保存HOOK原始指令</span></div><div class="line">	BYTE newEntry[<span class="number">16</span>];     <span class="comment">//保存HOOK新指令</span></div><div class="line">	ULONG_PTR HookPoint;   <span class="comment">//被HOOK的地址</span></div><div class="line">	ULONG_PTR JmpBackAddr; <span class="comment">//回跳的地址，可以多次使用</span></div><div class="line">	ULONG_PTR pfnTrampolineFun;    <span class="comment">//跳转到原函数执行的函数</span></div><div class="line">	ULONG_PTR pfnDetourFun;   <span class="comment">//Detour函数</span></div><div class="line">&#125;HOOK_DATA,*PHOOK_DATA;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第三步是获取HookPoint和pfnTrampolineFun的地址，<strong>这一步的目的我也不是很清楚，但是我删除这两个指令，程序也是正常的。</strong>,接着设置回调点，这是为了在TrampolineFun中，设置跳转。<strong>回调点为了被修改指令之后</strong><br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//如果是跳转指令，获取跳转指令跟随的地址</span></div><div class="line"><span class="comment">//如果不是跳转指令，直接返回参数</span></div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span><span class="function"><span class="title">pfnTrampolineFun</span> = SkipJmpAddress(pHookData-&gt;</span>pfnTrampolineFun);</div><div class="line"><span class="comment">//HOOK点，是mov指令</span></div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span>H<span class="function"><span class="title">ookPoint</span> = SkipJmpAddress(pHookData-&gt;</span>HookPoint);</div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span>J<span class="function"><span class="title">mpBackAddr</span> = pHookData-&gt;</span>H<span class="function"><span class="title">ookPoint</span> + pHookData-&gt;</span>HookCodelen;</div><div class="line">ULONG_PTR SkipJmpAddress(ULONG_PTR uAddress)</div><div class="line">&#123;</div><div class="line">	·······</div><div class="line">	<span class="keyword">if</span> (pFn[<span class="number">0</span>] == <span class="number">0</span>xE9)</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//目标地址-当前地址-5 = 偏移量</span></div><div class="line">		<span class="comment">//(ULONG_PTR)pFn为当前地址</span></div><div class="line">		<span class="comment">//*(ULONG_PTR*)(pFn + 1)为偏移量</span></div><div class="line">		TrueAddress = (ULONG_PTR)pFn + *(ULONG_PTR*)(pFn + <span class="number">1</span>) + <span class="number">5</span>;</div><div class="line">		return TrueAddress;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第四步是填充我们修改的指令<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//填充需要修改的内容</span></div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span>newEntry[<span class="number">0</span>] = <span class="number">0</span>xE9;    <span class="comment">//jmp</span></div><div class="line">*(ULONG*)(<span class="function"><span class="title">pHookData</span>-&gt;</span><span class="function"><span class="title">newEntry</span> + 1) = (ULONG)pHookData-&gt;</span><span class="function"><span class="title">pfnDetourFun</span> - (ULONG)pHookData-&gt;</span>HookPoint - <span class="number">5</span>;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第五步：使用ReadProcessMemory保存原指令以便恢复HOOK<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//保存原始数据到pHookData-&gt;oldEntry</span></div><div class="line"><span class="keyword">if</span> (!ReadProcessMemory(hProcess, (LPCVOID)pHookData-&gt;HookPoint, pHookData-&gt;oleEntry, pHookData-&gt;HookCodelen, &amp;dwBtyeReturned))</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"[*]ReadProcessMemory:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第六步：使用WriteProcessMemory修改前三条指令<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!WriteProcessMemory(hProcess, (LPVOID)pHookData-&gt;HookPoint, pHookData-&gt;newEntry, pHookData-&gt;HookCodelen, &amp;dwBtyeReturned))</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"[*]WriteProcessMemory:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>题外话：</strong>例程中给的是当前进程HOOK，如果是需要跨进程的话，需要将InlineHook包装成dll，然后使用注入技术注入到目标进程，才能实现HOOK。</p>
+<h2 id="0x2-3-InlineHook-C"><a href="#0x2-3-InlineHook-C" class="headerlink" title="0x2.3 InlineHook(C)"></a>0x2.3 InlineHook(C)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在InlineHook(B)中，我们使用jmp指令跳转到Detour函数，这部分我们使用mov-jmp和push-ret，以及HotPatch的方法跳转到DetourFun。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先将跳转分为两种，第一种是一次性跳转，例如jmp，push-retn.mov-jmp等，第二种是HotPatch这种长短跳。对于第一种跳转比较简单，根据Hook的指令不同，可以选择长度为5.6.7不同的Hook指令。象jmp指令对应的是修改5个字节，而push-ret修改6个字节，mov-jmp修改的是七个字节。具体填充到HookPoint的数据如下：<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//jmp （5个字节）</span></div><div class="line">M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span>newEntry[<span class="number">0</span>] = <span class="string">'\xE9'</span>;</div><div class="line">*(ULONG_PTR*)(M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span><span class="function"><span class="title">newEntry</span> + 1) = (ULONG_PTR)MsgBoxHookData-&gt;</span><span class="function"><span class="title">pfnDetourFun</span> - (ULONG_PTR)MsgBoxHookData-&gt;</span>HookPoint - <span class="number">5</span>;</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//push-retn  (6个字节)</span></div><div class="line"><span class="function"><span class="title">memcpy</span>(MsgBoxHookData-&gt;</span>newEntry, <span class="string">"\x68\x44\x33\x22\x11\xC3"</span>,<span class="number">5</span>);</div><div class="line">*(LONG_PTR*)(M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span><span class="function"><span class="title">newEntry</span> + 1) = (ULONG)MsgBoxHookData-&gt;</span>pfnDetourFun;</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//mov-jmp (7个字节)</span></div><div class="line"><span class="function"><span class="title">memcpy</span>(MsgBoxHookData-&gt;</span>newEntry, <span class="string">"\xB8\x44\x33\x22\x11\xFF\xE0 "</span>, <span class="number">7</span>);</div><div class="line">*(LONG_PTR*)(M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span><span class="function"><span class="title">newEntry</span> + 1) = (ULONG)MsgBoxHookData-&gt;</span>pfnDetourFun;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种跳转是长短跳，也就是HotPatch的方法，由于标准函数调用存在两种形式，分别是不存在SEH，和存在SEH的。对于第二种12个字节指令，我们推荐使用Hotpatch的方法，原理如下：因为在API上面存在nop或者int3，这些指令通常是微软用于实现HotPatch的。可以使用长短跳结合的方式占用上方的nop实现Hook，步骤是这样的：1.使用短跳到HookPoint上面5个字节HotPatchCode处， 2.然后使用长跳到DetourFun。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//<span class="number">1</span>.不存在SEH</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">edi</span>,<span class="built_in">edi</span></div><div class="line">		<span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span>（<span class="number">5</span>个字节）</div><div class="line">//<span class="number">2</span>.存在SEH</div><div class="line">		<span class="keyword">push</span> <span class="number">10</span></div><div class="line">		<span class="keyword">push</span> xxxx</div><div class="line">		<span class="keyword">call</span> xxx（<span class="number">2</span>+<span class="number">5</span>+<span class="number">5</span>）</div></pre></td></tr></table></figure></p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//77D507E5   &gt;-/E9 66086B88      jmp InlineHo.00401050</span></div><div class="line"><span class="comment">//77D507EA &gt; $^\EB F9            jmp short USER32.77D507E5</span></div><div class="line"><span class="comment">//</span></div><div class="line">M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span>newEntry[<span class="number">0</span>] = <span class="number">0</span>xEB; <span class="comment">//Jmp -5</span></div><div class="line">M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span>newEntry[<span class="number">1</span>] = <span class="number">0</span>xF9;</div><div class="line">M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span>HotPatchCode[<span class="number">0</span>] = <span class="number">0</span>xE9; <span class="comment">//Jmp</span></div><div class="line">*(ULONG*)(M<span class="function"><span class="title">sgBoxHookData</span>-&gt;</span>H<span class="function"><span class="title">otPatchCode</span> + 1) = (ULONG)MsgBoxHookData-&gt;</span><span class="function"><span class="title">pfnDetourFun</span> - ((ULONG)MsgBoxHookData-&gt;</span>HookPoint - <span class="number">5</span>) - <span class="number">5</span>;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InlineHook(C)属于InlineHook(B)的进阶版。所以基本步骤也是相同的。</p>
+<ul>
+<li>Step1：构造Detour函数和TrampolineFun</li>
+<li>Step2：获取Detour和HookPoint的地址。</li>
+<li>Step3：修改TrampolineFun处初始化的原指令</li>
+<li>Step4：填充需要修改的指令</li>
+<li>Step5：使用ReadProcessMemory保存原指令</li>
+<li>Step5：使用WriteProcessMemory修改Target函数指令</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构造Detour函数和构造TrampolineFun函数，以及填充修改的指令和之前是一致的，第三步是保存原始数据，这样做是为了以后能够将头几条指令填充TrampolineFun<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Step3 保存原始数据</span></div><div class="line"><span class="comment">//jmp mov-jmp，push-ret三种方法和HotPatch大有不同，分开讨论</span></div><div class="line">SIZE_T lpNumberOfBytesRead = <span class="number">0</span>;</div><div class="line"><span class="keyword">if</span> (!ReadProcessMemory(GetCurrentProcess(), (LPCVOID)MsgBoxHookData-&gt;HookPoint, MsgBoxHookData-&gt;oldEntry, <span class="number">8</span>, &amp;lpNumberOfBytesRead))</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"[*]ReadProcessMemory:%d"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第四步填充TrampolineFun函数<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (MsgBoxHookData-&gt;HookCodeLen != <span class="number">2</span>)</div><div class="line">&#123;</div><div class="line">	SIZE_T lpNumberOfBytesWrite = <span class="number">0</span>;</div><div class="line">	<span class="keyword">if</span> (!WriteProcessMemory(GetCurrentProcess(), (LPVOID)MsgBoxHookData-&gt;pfnTrampolineFun, MsgBoxHookData-&gt;oldEntry, MsgBoxHookData-&gt;HookCodeLen, &amp;lpNumberOfBytesWrite))</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">"[*]WriteProcessMemory:%d"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第五步是向向HookPoint写入跳转数据，对于一次性跳转和之前是一致的，不再说明，重点是HotPatch。根据原理，在HookPaint处写入<code>\xE8\xF9</code>是跳转到EIP-5处也就是HotPatch处。可以在HookPoint前5个指令写入Hotpatch用于跳转到Detourfun，<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//一次性跳转</span></div><div class="line">pAddrToWrite = (PBYTE)MsgBoxHookData-&gt;HookPoint;</div><div class="line"><span class="keyword">if</span> (!WriteProcessMemory(GetCurrentProcess(), pAddrToWrite, MsgBoxHookData-&gt;newEntry, MsgBoxHookData-&gt;HookCodeLen, &amp;lpNumberOfBytesWrite))</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"[*]WriteProcessMemory:%d"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//[重点]HotPatch</span></div><div class="line"><span class="keyword">if</span> (MsgBoxHookData-&gt;HookCodeLen == <span class="number">2</span>)   <span class="comment">//[重点]HotPatch</span></div><div class="line">&#123;</div><div class="line">	pAddrToWrite = (PBYTE)MsgBoxHookData-&gt;HookPoint - <span class="number">5</span>;</div><div class="line">	<span class="keyword">if</span> (!WriteProcessMemory(GetCurrentProcess(), pAddrToWrite, MsgBoxHookData-&gt;HotPatchCode, <span class="number">5</span>, &amp;lpNumberOfBytesWrite))</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">"[*]WriteProcessMemory:%d"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//达到需要写入的地址</span></div><div class="line">	pAddrToWrite += <span class="number">5</span>;</div><div class="line">	<span class="keyword">if</span> (!WriteProcessMemory(GetCurrentProcess(), pAddrToWrite, MsgBoxHookData-&gt;newEntry, MsgBoxHookData-&gt;HookCodeLen, &amp;lpNumberOfBytesWrite))</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">"[*]WriteProcessMemory:%d"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="0x2-4-InlineHook-D-x64"><a href="#0x2-4-InlineHook-D-x64" class="headerlink" title="0x2.4 InlineHook(D)(x64)"></a>0x2.4 InlineHook(D)(x64)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这一节主要讲x64下面的HOOK技术，和之前的x86下HOOK一样，都需要经历一下步骤：这一部分主要讲一下在X64位下面HOOK需要注意的地方。</p>
+<ul>
+<li>Step1：构造Detour函数</li>
+<li>Step2：获取Detour和HookPoint的地址。</li>
+<li>Step3：修改TrampolineFun处初始化的原指令</li>
+<li>Step4：填充需要修改的指令</li>
+<li>Step5：使用ReadProcessMemory保存原指令</li>
+<li>Step5：使用WriteProcessMemory修改Target函数指令</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一点，就是在X86下可以直接写入一段shellcode到TrampolineFun。但是在x64下不能内联汇编了，所以申请一块内存用做TrampolineFun的shellcode。然后使用才能填充Trampoline。<strong>但是教主给的例程使用第二段代码做重定位，不知道作用是什么，但是使用这段代码在WIN10下HOOK MessageBoxA是不正确的，可能是填充Trampoline出现了意外。或者在填写跳转地址的时候少了一个字节，跳到了在正常的代码上面的一个int 3处，导致异常。</strong><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">MsgBoxHookData.pfnTrampolineFun = (ULONG_PTR)VirtualAlloc(NULL, <span class="number">128</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</div><div class="line"><span class="comment">//...</span></div><div class="line">PBYTE pFun = (PBYTE)pHookData-&gt;pfnTrampolineFun;</div><div class="line">memcpy(pFun, (PVOID)(pHookData-&gt;HookPoint), <span class="number">14</span>);</div><div class="line">pFun += <span class="number">14</span>;</div><div class="line">pFun[<span class="number">0</span>] =<span class="number">0xFF</span>;</div><div class="line">pFun[<span class="number">1</span>] = <span class="number">0x25</span>;</div><div class="line">*(ULONG_PTR*)(pFun + <span class="number">6</span>) = pHookData-&gt;JmpBackAddr;</div></pre></td></tr></table></figure></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">//</span>由于第三行指令中有重定位数据，所以这里需要修复一下</div><div class="line"><span class="regexp">//</span>更好的办法是使用反汇编引擎来判断是否有重定位数据</div><div class="line"><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span></div><div class="line"><span class="regexp">//</span>                   不懂                            <span class="regexp">//</span></div><div class="line"><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span></div><div class="line">ULONG DataOffset = <span class="number">0</span>;</div><div class="line">ULONG_PTR pData = (ULONG_PTR)pHookData-&gt;HookPoint + <span class="number">7</span> + <span class="number">7</span> + *(ULONG*)(pHookData-&gt;HookPoint + <span class="number">10</span>);</div><div class="line">printf(<span class="string">"pData = 0x%p\n"</span>, pData);</div><div class="line">DataOffset = (ULONG)(pData - ((ULONG_PTR)pFun + <span class="number">14</span>));</div><div class="line">*(ULONG*)(pFun + <span class="number">10</span>) = DataOffset;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二点，就是在X86下面，修改指令的长度最大是7个字节，在X64下变成了14个字节，而且地址长度变成了8个字节。并且使用的指令E9变成了FF25这种长跳转指令。<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//64位jmp</span></div><div class="line"><span class="function"><span class="title">memset</span>(pHookData-&gt;</span>newEntry, <span class="number">0</span>, <span class="number">14</span>);</div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span>newEntry[<span class="number">0</span>] = <span class="number">0</span>xFF;</div><div class="line"><span class="function"><span class="title">pHookData</span>-&gt;</span>newEntry[<span class="number">1</span>] = <span class="number">0</span>x25;</div><div class="line"><span class="comment">//2-5是全0</span></div><div class="line">*(ULONG_PTR*)(<span class="function"><span class="title">pHookData</span>-&gt;</span><span class="function"><span class="title">newEntry</span> + 6) = (ULONG_PTR)pHookData-&gt;</span>pfnDetourFun;</div></pre></td></tr></table></figure></p>
+<h1 id="0x3-VEH-HOOK"><a href="#0x3-VEH-HOOK" class="headerlink" title="0x3 VEH_HOOK"></a>0x3 VEH_HOOK</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VEH技术的主要原理是利用异常处理改变程序指令流程。通过主动抛出异常，使程序触发异常，控制权交给异常处理例程的这一系列操作来实现HOOK。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里简单提一下VEH，向量异常处理，基于VEH链表而不是栈，这样的话其作用范围是进程全局，而不是线程。且优先级也高于SEH，这也是VEH_HOOK的优势所在。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VEH_HOOK通过异常机制实现HOOK，必不可少需要构造异常处理函数，同时也需要人为的构造异常，同时为了实现永久化机制，保证执行原操作需要实现TrampolineFun函数。所以总结VEH_HOOK步骤如下：</p>
+<ul>
+<li>1.构造TrampolineFun</li>
+<li>2.构造异常处理函数，即Detour函数</li>
+<li>3.人为构造异常。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 构造TrampolineFun的目的1是为了执行原有流程，2是实现永久化。因为64位不支持内联汇编，所以需要开辟空间来存放shellcode。复制前四个指令，实现堆栈平衡，然后为了永久化，特定将跳转点定在函数开头后四个字节处。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">pFun = (PBYTE)VirtualAlloc(NULL, <span class="number">128</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</div><div class="line">uResult = (ULONG_PTR)pFun;</div><div class="line">if (NULL == pFun)</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"VirtualAlloc%d<span class="subst">\n</span>"</span>, GetLastError());</div><div class="line">	return NULL;</div><div class="line">&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">memset(pFun, <span class="number">0</span>, <span class="number">128</span>);</div><div class="line">memcpy(pFun, g_AddressOfMsgBox, <span class="number">4</span>);   <span class="comment">//复制MsgBox前四个字节</span></div><div class="line">pFun += <span class="number">4</span>;</div><div class="line">pFun[<span class="number">0</span>] = <span class="number">0xFF</span>;</div><div class="line">pFun[<span class="number">1</span>] = <span class="number">0x25</span>;</div><div class="line">*(ULONG_PTR*)(pFun + <span class="number">6</span>) = (ULONG_PTR)g_AddressOfMsgBox + <span class="number">4</span>;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构造异常处理函数，这个函数就是Detour函数，同时也是我们异常处理的函数，所以他的参数是一个_EXCEPTION_POINTERS结构。根据看雪加密解密所介绍，他是一个陷进帧，用来存放EXCEPTION_RECORD和 CONTEXT_RECORD。EXCEPTION_RECORD保存发生异常的基本信息，<strong>如异常类型，发生异常的地址</strong>。而二是CONTEXT_RECORD用于保存上下文。<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">LONG WINAPI VectoredHandler1(struct _EXCEPTION_POINTERS *ExceptionInfo)</div><div class="line">&#123;</div><div class="line">		<span class="comment">//初始化异常信息</span></div><div class="line">	<span class="function"><span class="title">pExceptionRecord</span> = ExceptionInfo-&gt;</span>ExceptionRecord;</div><div class="line">	<span class="function"><span class="title">pContextRecord</span> = ExceptionInfo-&gt;</span>ContextRecord;</div><div class="line">	<span class="comment">//如果异常发生在Msgbox，且异常原因是断点异常。</span></div><div class="line">	<span class="function"><span class="title">if</span> (pExceptionRecord-&gt;</span>ExceptionAddress == g_AddressOfMsgBox</div><div class="line">		&amp;&amp; <span class="function"><span class="title">pExceptionRecord</span>-&gt;</span>ExceptionCode == EXCEPTION_BREAKPOINT)</div><div class="line">	&#123;</div><div class="line">	<span class="comment">//此处执行你想要的操作。</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为X64是采用了类似于FastCall的调用约定，所以压栈顺序为RCX,RDX,R8,R9。同时也是从右到左的传参方式。所以，修改RDX就可以修改MsgBox的第二个参数。<strong>同时，别忘记修改Eip到TrampolineFun</strong>。对于x86平台下的，只需要修改栈顶第二个参数就可以了。<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">|<span class="type">|#ifdef</span> _WIN64</div><div class="line">		pContextRecord-&gt;Rdx = (ULONG_PTR)szText;</div><div class="line">		pContextRecord-&gt;Rip = g_OriginalMessageBoxA;</div><div class="line">|<span class="type">|#else</span></div><div class="line">		/*</div><div class="line">		<span class="number">0012</span>FF70   <span class="number">0040105</span>A   /CALL 到 MessageBoxA 来自 VEHHook<span class="number">.00401054</span></div><div class="line">		<span class="number">0012</span>FF74   <span class="number">00000000</span>   |<span class="type">hOwner</span> = NULL</div><div class="line">		<span class="number">0012</span>FF78   <span class="number">00407030</span>   |<span class="type">Text</span> = <span class="string">"VEH Hook"</span></div><div class="line">		<span class="number">0012</span>FF7C   <span class="number">0040703</span>C   |<span class="type">Title</span> = <span class="string">"Test"</span></div><div class="line">		<span class="number">0012</span>FF80   <span class="number">00000000</span>   \Style = MB_OK|<span class="type">MB_APPLMODAL</span></div><div class="line">		<span class="number">0012</span>FF84   <span class="number">00401225</span>   返回到 VEHHook.&lt;ModuleEntryPoint&gt;+<span class="number">0</span>B4 来自 VEHHook<span class="number">.00401000</span></div><div class="line">		*/</div><div class="line">		ULONG_PTR* uEsp = (ULONG_PTR*)pContextRecord-&gt;Esp;   //截断栈</div><div class="line">		uEsp[<span class="number">2</span>] = (ULONG_PTR)szText;</div><div class="line">		pContextRecord-&gt;Eip = (ULONG_PTR)g_OriginalMessageBoxA; //跳过函数开头</div><div class="line">|<span class="type">|#endif</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设置异常，这里选择的是简单的断点异常。直接将Target原始代码修改一个字节为0xCC即可！<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">g_OldCode[<span class="number">0</span>] = *pTarget;</div><div class="line"><span class="keyword">if</span> (!VirtualProtect(pTarget, <span class="keyword">sizeof</span>(BYTE), PAGE_EXECUTE_READWRITE, &amp;dwOldProtect))</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"VirtualProtect:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> FALSE;</div><div class="line">&#125;</div><div class="line"><span class="comment">//修改CC</span></div><div class="line">pTarget[<span class="number">0</span>] = <span class="number">0xCC</span>;</div><div class="line"><span class="keyword">if</span> (!VirtualProtect(pTarget, <span class="keyword">sizeof</span>(BYTE), dwOldProtect, &amp;dwOldProtect))</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"VirtualProtect:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> FALSE;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="0x4-SSDT-HOOK"><a href="#0x4-SSDT-HOOK" class="headerlink" title="0x4 SSDT_HOOK"></a>0x4 SSDT_HOOK</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSDT中文全称为<strong>系统服务描述符表</strong>，其作用是作为R3和R0层的通道，将用户态API函数和内核函数联系起来。用简单的API函数举例子，我们调用了CreateFile,其会调用ZwCreateFile,然后调用NtCreateFile，经过参数和模式的检查，然后调用系统服务分发函数KiSystemService进入内核。在R0中通过传入的系统服务号(函数索引)得到系统服务的地址，然后调用该系统服务即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所以，根据上述，我们可以知道SSDT其实是一个存储系统服务的数组。SSDT_HOOK其实就是在内核层的AddressHook。只不过他修改是系统服务描述符表数据。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为SSDT的索引号和系统服务内核地址是一一对应的，所以不需要向普通的AddressHook一一对比函数地址。所以让我们来屡一下执行SSDT的操作。我们有目的向原因开始。如果我们需要执行SSDT_HOOK的话，首先需要修改为与SSDT中的系统服务地址，但又由于系统服务地址是和服务索引是保持对应关系的，所以我们还需要获取索引号。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上面的分析，我们知道首先需要获取服务索引号。但是服务索引号和函数地址对应的，<strong>在X86系统中，相对于导出函数偏移量1的地址往后读四个字节就是SSDT服务索引号。但是对于X64位的系统，却是函数地址偏移为4的地址读取四个字节。</strong>所以需要得到服务索引号，就需要得到导出函数地址。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们现在总结一下得到服务索引的步骤：</p>
+<ul>
+<li>Step1：将Ntdll.dll载入内存</li>
+<li>Step2：获取导出函数地址</li>
+<li>Step3：计算函数索引</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSDT适用于R0内，在内核层映射文件到内存和在应用层是一致的。只是使用的函数不一样,首先使用<code>InitializeObjectAttributes</code>初始化文件对象，然后使用<code>ZwOpenFile</code>获得映射文件句柄,接着使用<code>ZwCreateSection</code>创建创建一个节对象。最后使用<code>ZwMapViewOfSection</code>,这些都是固定的模板，代码如下。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">//初始化文件对象</div><div class="line">InitializeObjectAttributes(&amp;objectAttributes,</div><div class="line">	&amp;ustrDllFileName,</div><div class="line">	OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, </div><div class="line">	NULL, NULL);</div><div class="line">//获得映射文件句柄</div><div class="line"><span class="built_in">status</span> = ZwOpenFile(&amp;hFile,</div><div class="line">	GENERIC_READ,</div><div class="line">	&amp;objectAttributes, </div><div class="line">	&amp;iosb, </div><div class="line">	FILE_SHARE_READ,</div><div class="line">	FILE_SYNCHRONOUS_IO_NONALERT);</div><div class="line"><span class="keyword">if</span> (!NT_SUCCESS(<span class="built_in">status</span>))</div><div class="line">&#123;</div><div class="line">	//DbgPrint宏定义</div><div class="line">	KdPrint((<span class="string">"ZwOpenFile Error! [error code: 0x%X]"</span>, <span class="built_in">status</span>));</div><div class="line">	<span class="keyword">return</span> <span class="built_in">status</span>;</div><div class="line">&#125;</div><div class="line">//创建一个节对象</div><div class="line"><span class="built_in">status</span> = ZwCreateSection(&amp;hSection, SECTION_MAP_READ | SECTION_MAP_WRITE, NULL, <span class="number">0</span>, PAGE_READWRITE, <span class="number">0x100000</span>, hFile);</div><div class="line"><span class="keyword">if</span> (!NT_SUCCESS(<span class="built_in">status</span>))</div><div class="line">&#123;</div><div class="line">	//DbgPrint宏定义</div><div class="line">	ZwClose(hFile);</div><div class="line">	KdPrint((<span class="string">"ZwCreateSection Error! [error code: 0x%X]"</span>, <span class="built_in">status</span>));</div><div class="line">	<span class="keyword">return</span> <span class="built_in">status</span>;</div><div class="line">&#125;</div><div class="line">//将文件映射到内存</div><div class="line"><span class="built_in">status</span> = ZwMapViewOfSection(hSection, GetCurrentProcess(), &amp;pBaseAddress, <span class="number">0</span>, <span class="number">1024</span>,<span class="number">0</span>, &amp;viewSize,ViewShare, MEM_TOP_DOWN, PAGE_READWRITE);</div><div class="line"><span class="keyword">if</span> (!NT_SUCCESS(<span class="built_in">status</span>))</div><div class="line">&#123;</div><div class="line">	//DbgPrint宏定义</div><div class="line">	ZwClose(hFile);</div><div class="line">	ZwClose(hSection);</div><div class="line">	KdPrint((<span class="string">"ZwMapViewOfSection Error! [error code: 0x%X]"</span>, <span class="built_in">status</span>));</div><div class="line">	<span class="keyword">return</span> <span class="built_in">status</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将Ntdll映射到内存中，然后就想普通的获取导出函数地址的方式获取对应的函数地址，然后根据公式获取服务索引。<br><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ULONG</span> GetIndexFromExportTable(PVOID pBaseAddress, PCHAR pszFunctionName)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">ULONG</span> ulFunctionIndex = <span class="number">0</span>;</div><div class="line">	<span class="comment">// Dos Header</span></div><div class="line">	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pBaseAddress;</div><div class="line">	<span class="comment">// NT Header</span></div><div class="line">	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)((PUCHAR)pDosHeader + pDosHeader-&gt;e_lfanew);</div><div class="line">	<span class="comment">// Export Table</span></div><div class="line">	PIMAGE_EXPORT_DIRECTORY pExportTable = (PIMAGE_EXPORT_DIRECTORY)((PUCHAR)pDosHeader + pNtHeaders-&gt;OptionalHeader.DataDirectory[<span class="number">0</span>].VirtualAddress);</div><div class="line">	<span class="comment">// 有名称的导出函数个数</span></div><div class="line">	<span class="keyword">ULONG</span> ulNumberOfNames = pExportTable-&gt;NumberOfNames;</div><div class="line">	<span class="comment">// 导出函数名称地址表</span></div><div class="line">	PULONG lpNameArray = (PULONG)((PUCHAR)pDosHeader + pExportTable-&gt;AddressOfNames);</div><div class="line">	PCHAR lpName = <span class="keyword">NULL</span>;</div><div class="line">	<span class="comment">// 开始遍历导出表</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">ULONG</span> i = <span class="number">0</span>; i &lt; ulNumberOfNames; i++)</div><div class="line">	&#123;</div><div class="line">		lpName = (PCHAR)((PUCHAR)pDosHeader + lpNameArray[i]);</div><div class="line">		<span class="comment">// 判断是否查找的函数</span></div><div class="line">		<span class="keyword">if</span> (<span class="number">0</span> == _strnicmp(pszFunctionName, lpName, strlen(pszFunctionName)))</div><div class="line">		&#123;</div><div class="line">			<span class="comment">// 获取导出函数地址</span></div><div class="line">			USHORT uHint = *(USHORT *)((PUCHAR)pDosHeader + pExportTable-&gt;AddressOfNameOrdinals + <span class="number">2</span> * i);</div><div class="line">			<span class="keyword">ULONG</span> ulFuncAddr = *(PULONG)((PUCHAR)pDosHeader + pExportTable-&gt;AddressOfFunctions + <span class="number">4</span> * uHint);</div><div class="line">			PVOID lpFuncAddr = (PVOID)((PUCHAR)pDosHeader + ulFuncAddr);</div><div class="line">			<span class="comment">// 获取 SSDT 函数 Index</span></div><div class="line">|<span class="comment">#ifdef _WIN64</span></div><div class="line">			ulFunctionIndex = *(<span class="keyword">ULONG</span> *)((PUCHAR)lpFuncAddr + <span class="number">4</span>);</div><div class="line">|<span class="comment">#else</span></div><div class="line">			ulFunctionIndex = *(<span class="keyword">ULONG</span> *)((PUCHAR)lpFuncAddr + <span class="number">1</span>);</div><div class="line">|<span class="comment">#endif</span></div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ulFunctionIndex;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为SSDT在x86系统上是由Ntoskrnl.exe导出，导出符号为KeServiceDesriptorTable，我们很容易获取SSDT的地址。只需要获取KeServiceDesriptorTable即可！也就是使用以下语句，同时给出_SERVICE_DESCIPTOR_TABLE结构，可以看到结构体第一个成员是SSDT基址，所以可以使用<code>(PVOID)KeServiceDescriptorTable.ServiceTableBase[ulSSDTFunctionIndex];</code>获取函数基地址。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">extern</span> SSDTEntry __declspec(dllimport) KeServiceDescriptorTable;</div><div class="line"><span class="comment">//_SERVICE_DESCIPTOR_TABLE结构</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SERVICE_DESCIPTOR_TABLE</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">	PULONG ServiceTableBase;		  <span class="comment">// SSDT基址</span></div><div class="line">	PULONG ServiceCounterTableBase;   <span class="comment">// SSDT中服务被调用次数计数器</span></div><div class="line">	ULONG NumberOfService;            <span class="comment">// SSDT服务个数</span></div><div class="line">	PUCHAR ParamTableBase;		      <span class="comment">// 系统服务参数表基址</span></div><div class="line">&#125;SSDTEntry, *PSSDTEntry;</div><div class="line"><span class="comment">//获取服务地址</span></div><div class="line">pFunctionAddress = (PVOID)KeServiceDescriptorTable.ServiceTableBase[ulSSDTFunctionIndex];</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们已经找到了目标函数在SSDT的地址，最后，我们只需要在该地址处填写我们构造的函数地址即可！！但是这块内存是有保护属性的，所以我们需要使用MDL方式绕过写保护属性。<br><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 使用 MDL 方式修改 SSDT</span></div><div class="line">pMdl = MmCreateMdl(<span class="keyword">NULL</span>, &amp;KeServiceDescriptorTable.ServiceTableBase[ulSSDTFunctionIndex], sizeof(<span class="keyword">ULONG</span>));</div><div class="line"><span class="keyword">if</span> (<span class="keyword">NULL</span> == pMdl)</div><div class="line">&#123;</div><div class="line">	DbgPrint(<span class="string">"MmCreateMdl Error!\n"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div><div class="line">MmBuildMdlForNonPagedPool(pMdl);</div><div class="line">pNewAddress = MmMapLockedPages(pMdl, KernelMode);</div><div class="line"><span class="keyword">if</span> (<span class="keyword">NULL</span> == pNewAddress)</div><div class="line">&#123;</div><div class="line">	IoFreeMdl(pMdl);</div><div class="line">	DbgPrint(<span class="string">"MmMapLockedPages Error!\n"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">// 写入新函数地址</span></div><div class="line">ulNewFuncAddr = (<span class="keyword">ULONG</span>)New_ZwQueryDirectoryFile;</div><div class="line">RtlCopyMemory(pNewAddress, &amp;ulNewFuncAddr, sizeof(<span class="keyword">ULONG</span>));</div><div class="line"><span class="comment">// 释放</span></div><div class="line">MmUnmapLockedPages(pNewAddress, pMdl);</div><div class="line">IoFreeMdl(pMdl);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同样的，卸载HOOK，只需要将之前的修改恢复就可以了<br><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">BOOLEAN</span> SSDTUnhook()</div><div class="line">&#123;</div><div class="line">	UNICODE_STRING ustrDllFileName;</div><div class="line">	<span class="keyword">ULONG</span> ulSSDTFunctionIndex = <span class="number">0</span>;</div><div class="line">	PVOID pSSDTFunctionAddress = <span class="keyword">NULL</span>;</div><div class="line">	PMDL pMdl = <span class="keyword">NULL</span>;</div><div class="line">	PVOID pNewAddress = <span class="keyword">NULL</span>;</div><div class="line">	<span class="keyword">ULONG</span> ulOldFuncAddr = <span class="number">0</span>;</div><div class="line">	RtlInitUnicodeString(&amp;ustrDllFileName, L<span class="string">"\\??\\C:\\Windows\\System32\\ntdll.dll"</span>);</div><div class="line">	<span class="comment">// 从 ntdll.dll 中获取 SSDT 函数索引号</span></div><div class="line">	ulSSDTFunctionIndex = GetSSDTFunctionIndex(ustrDllFileName, <span class="string">"ZwQueryDirectoryFile"</span>);</div><div class="line">	<span class="comment">// 使用 MDL 方式修改 SSDT</span></div><div class="line">	pMdl = MmCreateMdl(<span class="keyword">NULL</span>, &amp;KeServiceDescriptorTable.ServiceTableBase[ulSSDTFunctionIndex], sizeof(<span class="keyword">ULONG</span>));</div><div class="line">	<span class="keyword">if</span> (<span class="keyword">NULL</span> == pMdl)</div><div class="line">	&#123;</div><div class="line">		DbgPrint(<span class="string">"MmCreateMdl Error!\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	MmBuildMdlForNonPagedPool(pMdl);</div><div class="line">	pNewAddress = MmMapLockedPages(pMdl, KernelMode);</div><div class="line">	<span class="keyword">if</span> (<span class="keyword">NULL</span> == pNewAddress)</div><div class="line">	&#123;</div><div class="line">		IoFreeMdl(pMdl);</div><div class="line">		DbgPrint(<span class="string">"MmMapLockedPages Error!\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 写入原函数地址</span></div><div class="line">	ulOldFuncAddr = (<span class="keyword">ULONG</span>)g_pOldSSDTFunctionAddress;</div><div class="line">	RtlCopyMemory(pNewAddress, &amp;ulOldFuncAddr, sizeof(<span class="keyword">ULONG</span>));</div><div class="line">	<span class="comment">// 释放</span></div><div class="line">	MmUnmapLockedPages(pNewAddress, pMdl);</div><div class="line">	IoFreeMdl(pMdl);</div><div class="line">	<span class="keyword">return</span> <span class="keyword">TRUE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="0x5-IRP-Hook"><a href="#0x5-IRP-Hook" class="headerlink" title="0x5 IRP_Hook"></a>0x5 IRP_Hook</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IRP全称是IO请求包，发送到设备驱动程序的大多数请求都打包在IRP中。操作系统组件或驱动程序通过调用IoCallDriver将IRP发送给驱动程序。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大概的执行流程是这样的：IO管理器创建一个IRP来代表一个IO操作，并且将该IRP传递给正确的驱动程序，当此IO操作完成时再处理该请求包。相对的，驱动程序(上层的虚拟设备驱动或者底层的真实设备驱动)接收一个IRP，执行该IRP指定的操作，然后将IRP传回给IO管理器，告诉它，该操作已经完成，或者应该传给另一个驱动以进行进一步处理。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IO管理器可以使用一下三个函数创建IRP。<strong>但此时，IRP堆栈还没有被初始化，难以进行拦截。</strong>然后使用你可以调用IoGetNextIrpStackLocation函数获得该IRP第一个堆栈单元的指针。然后初始化这个堆栈单元。当初始化完成之后，就可以调用IoCallDriver函数把IRP发送到设备驱动程序了。<strong>这就可以在中途进行拦截啦。</strong></p>
+<ul>
+<li><code>IoBuildAsynchronousFsdRequest 创建异步IRP</code></li>
+<li><code>IoBuildSynchronousFsdRequest 创建同步IRP</code></li>
+<li><code>IoBuildDeviceIoControlRequest 创建一个同步IRP_MJ_DEVICE_CONTROL或IRP_MJ_INTERNAL_DEVICE_CONTROL请求。</code></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上述流程，执行IrpHook可以在三个地址进行，第一：在Irp初始化之后，第二：在发往派遣例程过程中，第三，直接修改需要拦截驱动对象派遣例程函数表。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过查看 IofCallDriver函数发现，在函数开头存在一个jmp指令。<code>ff2500c85480</code>其中ff25是jmp的机器码，后面的机器码是跳转的绝对地址。可以使用InlineHook直接修改跳转地址即可<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">void HookpIofCallDriver()</div><div class="line">&#123;</div><div class="line">	KIRQL oldIrql<span class="comment">;</span></div><div class="line">	ULONG addr = (ULONG)IofCallDriver<span class="comment">;</span></div><div class="line">	//保存原始的IofCallDriver函数地址</div><div class="line">	__asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, addr</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">esi</span>, [<span class="built_in">eax</span> + <span class="number">2</span>]</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, [<span class="built_in">esi</span>]</div><div class="line">		<span class="keyword">mov</span> old_piofcalldriver, <span class="built_in">eax</span></div><div class="line">	&#125;</div><div class="line">	//引发硬件优先IRQL</div><div class="line">	oldIrql = KeRaiseIrqlToDpcLevel()<span class="comment">;</span></div><div class="line">	__asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="built_in">cr0</span></div><div class="line">		<span class="keyword">mov</span> oData, <span class="built_in">eax</span></div><div class="line">		<span class="keyword">and</span> <span class="built_in">eax</span>, <span class="number">0xffffffff</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">cr0</span>, <span class="built_in">eax</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, addr<span class="comment">; IofCallDriver</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">esi</span>, [<span class="built_in">eax</span> + <span class="number">2</span>]</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span>[<span class="built_in">esi</span>], offset NewpIofCallDriver<span class="comment">; 写入新的数据</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">eax</span>, oData<span class="comment">;恢复cr0的数据</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">cr0</span>, <span class="built_in">eax</span></div><div class="line">	&#125;</div><div class="line">	KeLowerIrql(oldIrql)<span class="comment">;</span></div><div class="line">	return<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>本文作者：<ul>
+<li><a href="https://www.cnblogs.com/LittleHann/p/3450436.html" target="_blank" rel="external">https://www.cnblogs.com/LittleHann/p/3450436.html</a></li>
+<li><a href="https://bbs.pediy.com/thread-60022.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-60022.htm</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="0x6-Object-Hook"><a href="#0x6-Object-Hook" class="headerlink" title="0x6 Object Hook"></a>0x6 Object Hook</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先讲解一个重要的结构体<code>_OBJECT_HEADER</code>,使用WINDBG用<code>dt _OBJECT_HEADER</code>命令即可显示如下：<br>    <img src="http://hacky.wang/blog/20190515/fUeMbC0WtqpB.png?imageslim" alt="mark">  </p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">typedef <span class="class"><span class="keyword">struct</span> <span class="title">_OBJECT_HEADER</span> &#123; </span></div><div class="line">  LONG PointerCount; </div><div class="line">  <span class="class"><span class="keyword">union</span> &#123; </span></div><div class="line">    LONG HandleCount; </div><div class="line">    PSINGLE_LIST_ENTRY SEntry; </div><div class="line">  &#125;; </div><div class="line">  POBJECT_TYPE Type; <span class="regexp">//</span>这个很重要HOOK就靠它，对象类型结构也是一个对象，TYPE它是系统第一个创建出来的对象类型 </div><div class="line">  UCHAR NameInfoOffset; <span class="regexp">//</span>OBJECT_HEADER_NAME_INFO 偏移</div><div class="line">  UCHAR HandleInfoOffset; <span class="regexp">//</span>OBJECT_HEADER_HANDLE_INFO 偏移</div><div class="line">  UCHAR QuotaInfoOffset; </div><div class="line">  UCHAR Flags; </div><div class="line">  <span class="class"><span class="keyword">union</span> </span></div><div class="line">  &#123; </div><div class="line">    POBJECT_CREATE_INFORMATION ObjectCreateInfo; </div><div class="line">    PVOID QuotaBlockCharged; </div><div class="line">  &#125;;</div><div class="line">  PSECURITY_DESCRIPTOR SecurityDescriptor; </div><div class="line">  QUAD Body;<span class="regexp">//</span>对象本身 </div><div class="line">&#125; OBJECT_HEADER, *POBJECT_HEADER;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着，我们来看一下OBJECT_TYPE，同样的使用windbg<code>dt _OBJECT_TYPE</code>即可查看<br>     <img src="http://hacky.wang/blog/20190515/mzRhPtvTOhvn.png?imageslim" alt="mark"><br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//对象类型结构</div><div class="line">typedef struct _OBJECT_TYPE &#123; </div><div class="line">  <span class="type">ERESOURCE</span> <span class="type">Mutex</span>; </div><div class="line">  <span class="type">LIST_ENTRY</span> <span class="type">TypeList</span>; //队列</div><div class="line">  <span class="type">UNICODE_STRING</span> <span class="type">Name</span>; </div><div class="line">  <span class="type">PVOID</span> <span class="type">DefaultObject</span>; </div><div class="line">  <span class="type">ULONG</span> <span class="type">Index</span>; </div><div class="line">  <span class="type">ULONG</span> <span class="type">TotalNumberOfObjects</span>; </div><div class="line">  <span class="type">ULONG</span> <span class="type">TotalNumberOfHandles</span>; </div><div class="line">  <span class="type">ULONG</span> <span class="type">HighWaterNumberOfObjects</span>; </div><div class="line">  <span class="type">ULONG</span> <span class="type">HighWaterNumberOfHandles</span>; </div><div class="line">  <span class="type">OBJECT_TYPE_INITIALIZER</span> <span class="type">TypeInfo</span>; //这个很重要，下面讲这个结构</div><div class="line">||#ifdef <span class="type">POOL_TAGGING</span> </div><div class="line">  <span class="type">ULONG</span> <span class="type">Key</span>; </div><div class="line">||#endif </div><div class="line">&#125; <span class="type">OBJECT_TYPE</span>, *<span class="type">POBJECT_TYPE</span>;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于对象类型结构，主要的层次结构像一个树形或者说目录形。其主要的对象类型比如<em>IoFileObjectType，</em>PsProcessType，*PsThreadType。都是存在于ObjectTypes\Device。所以，只要生成对象就会创建指定的对象类型结构。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后讲解一下关于最后一个结构体<code>OBJECT_TYPE_INITIALIZER</code>,使用<code>dt _OBJECT_TYPE_INITIALIZER</code>就可以查看<code>_OBJECT_TYPE_INITIALIZER</code>的数据。在这个结构体中，最后8个函数指针是关乎HOOK的，这些函数能够决定对象的操作，比如说打开，创建，删除等。<br>    <img src="http://hacky.wang/blog/20190515/RqnqFHLYoAdO.png?imageslim" alt="mark"></p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">typedef struct _OBJECT_TYPE_INITIALIZER &#123;</div><div class="line">  <span class="type">USHORT</span> <span class="type">Length</span>;</div><div class="line">  <span class="type">BOOLEAN</span> <span class="type">UseDefaultObject</span>;</div><div class="line">  <span class="type">BOOLEAN</span> <span class="type">CaseInsensitive</span>;</div><div class="line">  <span class="type">ULONG</span> <span class="type">InvalidAttributes</span>;</div><div class="line">  <span class="type">GENERIC_MAPPING</span> <span class="type">GenericMapping</span>;</div><div class="line">  <span class="type">ULONG</span> <span class="type">ValidAccessMask</span>;</div><div class="line">  <span class="type">BOOLEAN</span> <span class="type">SecurityRequired</span>;</div><div class="line">  <span class="type">BOOLEAN</span> <span class="type">MaintainHandleCount</span>;</div><div class="line">  <span class="type">BOOLEAN</span> <span class="type">MaintainTypeList</span>;</div><div class="line">  <span class="type">POOL_TYPE</span> <span class="type">PoolType</span>;</div><div class="line">  <span class="type">ULONG</span> <span class="type">DefaultPagedPoolCharge</span>;</div><div class="line">  <span class="type">ULONG</span> <span class="type">DefaultNonPagedPoolCharge</span>;</div><div class="line">  <span class="type">PVOID</span> <span class="type">DumpProcedure</span>;</div><div class="line">  <span class="type">PVOID</span> <span class="type">OpenProcedure</span>;        //这几个函数指针就是我们最需要的</div><div class="line">  <span class="type">PVOID</span> <span class="type">CloseProcedure</span>;       //这些函数都是决定你的对象的的一些</div><div class="line">  <span class="type">PVOID</span> <span class="type">DeleteProcedure</span>;      //操作或者叫方法，比如打开 创建 删除</div><div class="line">  <span class="type">PVOID</span> <span class="type">ParseProcedure</span>;       //不同的对象类型(<span class="type">OBJECT_TYPE</span>)操作也不同</div><div class="line">  <span class="type">PVOID</span> <span class="type">SecurityProcedure</span>;    </div><div class="line">  <span class="type">PVOID</span> <span class="type">QueryNameProcedure</span>;   </div><div class="line">  <span class="type">PVOID</span> <span class="type">OkayToCloseProcedure</span>;</div><div class="line">&#125; <span class="type">OBJECT_TYPE_INITIALIZER</span>, *<span class="type">POBJECT_TYPE_INITIALIZER</span>；</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当你调用NtCreateFile-&gt;IoCreateFile-&gt;ObOpenObjectByName-&gt;ObpLookupObjectName-&gt;IopParseFile-&gt;IopParseDevice<br>IopParseFile最终也会调用IopParseDevice<br>ObjectHook其实就是比如你要HOOK 创建打开就是OBJECT_TYPE_INITIALIZER-&gt;ParseProcedure，所以ObjectHook的关键就是Hook  OBJECT_TYPE_INITIALIZER最后几个关键的函数。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实现代码如下<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">NTSTATUS Hook()</div><div class="line">&#123;</div><div class="line">	NTSTATUS  Status;</div><div class="line">	<span class="keyword">HANDLE</span> hFile;</div><div class="line">	UNICODE_STRING Name;</div><div class="line">	OBJECT_ATTRIBUTES Attr;</div><div class="line">	IO_STATUS_BLOCK ioStaBlock;</div><div class="line">	PVOID pObject = <span class="built_in">NULL</span>;</div><div class="line">	RtlInitUnicodeString(&amp;Name, L<span class="string">"\\Device\\HarddiskVolume1\\1.txt"</span>);</div><div class="line">	InitializeObjectAttributes(&amp;Attr,</div><div class="line">		&amp;Name, </div><div class="line">		OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, </div><div class="line">		<span class="number">0</span>, <span class="built_in">NULL</span>);</div><div class="line">	Status = ZwOpenFile(&amp;hFile,</div><div class="line">		GENERIC_ALL,</div><div class="line">		&amp;Attr,</div><div class="line">		&amp;ioStaBlock, </div><div class="line">		<span class="number">0</span>, FILE_NON_DIRECTORY_FILE);</div><div class="line">	<span class="keyword">if</span> (!NT_SUCCESS(Status))</div><div class="line">	&#123;</div><div class="line">		KdPrint((<span class="string">"File is Null\n"</span>));</div><div class="line">		<span class="keyword">return</span> Status;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//获取访问对象的句柄</span></div><div class="line">	Status = ObReferenceObjectByHandle(hFile, GENERIC_ALL, <span class="built_in">NULL</span>, KernelMode, &amp;pObject, <span class="built_in">NULL</span>);</div><div class="line">	<span class="keyword">if</span> (!NT_SUCCESS(Status))</div><div class="line">	&#123;</div><div class="line">		KdPrint((<span class="string">"Object is Null\n"</span>));</div><div class="line">		<span class="keyword">return</span> Status;</div><div class="line">	&#125;</div><div class="line">	KdPrint((<span class="string">"pobject is %08X\n"</span>, pObject));</div><div class="line">	addrs = OBJECT_TO_OBJECT_HEADER(pObject);<span class="comment">//获取对象头</span></div><div class="line">	<span class="comment">//POBJECT_TYPE</span></div><div class="line">	pType = addrs-&gt;<span class="keyword">Type</span>;<span class="comment">//获取对象类型结构 object-10h</span></div><div class="line">	KdPrint((<span class="string">"pType is %08X\n"</span>, pType));</div><div class="line">	<span class="comment">//保存原始地址</span></div><div class="line">	<span class="comment">//POBJECT_TYPE-&gt;OBJECT_TYPE_INITIALIZER.ParseProcedure</span></div><div class="line">	OldParseProcedure = pType-&gt;TypeInfo.ParseProcedure;<span class="comment">//获取服务函数原始地址OBJECT_TYPE+9C位置为打开</span></div><div class="line">	KdPrint((<span class="string">"OldParseProcedure addrs is %08X\n"</span>, OldParseProcedure));</div><div class="line">	KdPrint((<span class="string">"addrs is %08X\n"</span>, addrs));</div><div class="line">	<span class="comment">//MDL去掉内存保护</span></div><div class="line">	__asm</div><div class="line">	&#123;</div><div class="line">		cli;</div><div class="line">		mov eax, cr0;</div><div class="line">		<span class="literal">and</span> eax, <span class="literal">not</span> <span class="number">10000</span>h;</div><div class="line">		mov cr0, eax;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//hook</span></div><div class="line">	pType-&gt;TypeInfo.ParseProcedure = NewParseProcedure;</div><div class="line">	__asm</div><div class="line">	&#123;</div><div class="line">		mov eax, cr0;</div><div class="line">		<span class="literal">or</span> eax, <span class="number">10000</span>h;</div><div class="line">		mov cr0, eax;</div><div class="line">		sti;</div><div class="line">	&#125;</div><div class="line">	Status = ZwClose(hFile);</div><div class="line">	<span class="keyword">return</span> Status;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>本文作者：<ul>
+<li><a href="https://blog.csdn.net/whatday/article/details/13626947" target="_blank" rel="external">https://blog.csdn.net/whatday/article/details/13626947</a></li>
+<li><a href="http://www.blogfshare.com/object-hook.html" target="_blank" rel="external">http://www.blogfshare.com/object-hook.html</a></li>
+<li><a href="https://www.write-bug.com/article/2136.html" target="_blank" rel="external">https://www.write-bug.com/article/2136.html</a></li>
+<li><a href="https://bbs.pediy.com/thread-203767.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-203767.htm</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="0x7-sysenterHook"><a href="#0x7-sysenterHook" class="headerlink" title="0x7 sysenterHook"></a>0x7 sysenterHook</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sysenter是由目态进入管态的CPU支持的快速系统调用的一条指令。在此之前，系统的切换是使用<code>int 0x2E</code>系统中断实现的。但是这样做的弊端是操作是非原子的，因为要进行大量的栈切换，需要多次访问内存。所以在后来使用了新的切换指令—<code>sysenter/sysexit</code>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为sysenter的原子性，这决定了管态和目态的无论是堆栈还是指令上的切换都是可以通过一条指令来实现，当然，同时，CPU也为其配备了相对应的寄存器。分别是<code>SYSENTER_CS_MSR:0x174</code>,<code>SYSENTER_ESP_MSR:0x175</code>,<code>SYSENTER_EIP_MSR:0x176</code>。并且我们可以通过rdmsr和wrmsr进行读写这三个寄存器。由于CS和EIP可以决定程序的流程，所以我们如何修改了SYSENTER_CS_MSR和SYSENTER_EIP_MSR的数据，将流程劫持到我们想要的路径，这样就实现了一次Hook。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hook流程大概是这样的<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">_asm</div><div class="line">&#123;</div><div class="line">	<span class="comment">//读取IA32_SYSENTER_EIP</span></div><div class="line">	<span class="keyword">mov</span> ecx, 0x176</div><div class="line">	rdmsr</div><div class="line">	<span class="comment">//保存原始数据</span></div><div class="line">	<span class="comment">//作用无非有二，第一为了回调该函数，第二为了卸载Hook的时候方便恢复。</span></div><div class="line">	<span class="keyword">mov</span> d_origKiFastCallEntry eax</div><div class="line">	<span class="comment">//Hook</span></div><div class="line">	<span class="keyword">mov</span> eax,MyKiFastCallEntry</div><div class="line">	wrmsr</div><div class="line">&#125;</div><div class="line"><span class="comment">//摘录自：https://bbs.pediy.com/thread-60247.htm</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是上面的方法直接修改寄存器数据，这样容易被Hook检测工具检测，一般检测工具对于常见sysenterHook检测基于寄存器的值是否超过本模块范围，对于InlineHook一般检测函数起始数据是否是0xE9，然后检测后面的地址是否超过当前模块范围。如果我们使用FF25这类的转移指令，这样是不容易被察觉的。起始接下来的方法并不是严格意义上的sysenterHook,更像是属于InlineHook。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">OID HookSysenter()</div><div class="line">&#123;</div><div class="line">	UCHAR  cHookCode[<span class="number">8</span>] = &#123; <span class="number">0x57</span>,          <span class="comment">//push edi       第一跳,从KiFastCall跳到MyKiFastCallEntry.并绕过rootkit检测工具检测</span></div><div class="line">						    <span class="number">0xBF</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,  <span class="comment">//mov  edi,0000  0000需要被填充</span></div><div class="line">							<span class="number">0xFF</span>,<span class="number">0xE7</span> &#125;;   <span class="comment">//jmp  edi</span></div><div class="line">	UCHAR  JmpCode[] = &#123;<span class="number">0xE9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>&#125;;       <span class="comment">//jmp 0000 第三跳,从KiFastCall函数头代码跳转到原来KiFastCall+N</span></div><div class="line">	int    nCopyLen = <span class="number">0</span>;</div><div class="line">	int    nPos = <span class="number">0</span>;</div><div class="line">	<span class="comment">//得到KiFastCallEntry地址</span></div><div class="line">	<span class="comment">//但是也存在使用rdmsr读取的IP并不是KiFastCallEntry地址</span></div><div class="line">	ULONG uSysenter=NULL;</div><div class="line">	__asm &#123;</div><div class="line">		mov ecx, <span class="number">0x176</span></div><div class="line">		rdmsr</div><div class="line">		mov uSysenter, eax  </div><div class="line">	&#125;</div><div class="line">	DbgPrint(<span class="string">"sysenter:0x%08X"</span>, uSysenter);</div><div class="line">	<span class="comment">//我们要改写的函数头至少需要8字节 这里计算实际需要COPY的代码长度 因为我们不能把一条完整的指令打断</span></div><div class="line">	nPos = uSysenter;</div><div class="line">	while (nCopyLen &lt; <span class="number">8</span>) &#123;</div><div class="line">		nCopyLen += GetOpCodeSize((PVOID)nPos);  </div><div class="line">		nPos = uSysenter + nCopyLen;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//保存原是的前八个字节代码</span></div><div class="line">	ULONG uOrigSysenterHead[<span class="number">8</span>];</div><div class="line">	DbgPrint(<span class="string">"copy code lenght:%d"</span>, nCopyLen);</div><div class="line">	PVOID pMovedSysenterCode = ExAllocatePool(NonPagedPool, <span class="number">20</span>);</div><div class="line">	memcpy(uOrigSysenterHead, (PVOID)uSysenter, <span class="number">8</span>);</div><div class="line">	<span class="comment">//计算跳转地址</span></div><div class="line">	*((ULONG*)(JmpCode + <span class="number">1</span>)) = (uSysenter + nCopyLen) - ((ULONG)pMovedSysenterCode + nCopyLen) - <span class="number">5</span>;</div><div class="line">	<span class="comment">//保存函数其实不妨原始数据</span></div><div class="line">	memcpy(pMovedSysenterCode, (PVOID)uSysenter, nCopyLen); </div><div class="line">	<span class="comment">//把跳转代码COPY上去</span></div><div class="line">	memcpy((PVOID)(pMovedSysenterCode + nCopyLen), JmpCode, <span class="number">5</span>); </div><div class="line">	<span class="comment">//HOOK地址，其实填充的是第二条语句的地址，其实就是InlineHook(A)</span></div><div class="line">	*((ULONG*)(cHookCode + <span class="number">2</span>)) = (ULONG)MyKiFastCallEntry; </div><div class="line">	DbgPrint(<span class="string">"Saved sysenter code:0x%08X"</span>, pMovedSysenterCode);</div><div class="line">	DbgPrint(<span class="string">"MyKiFastCallEntry:0x%08X"</span>, MyKiFastCallEntry);</div><div class="line">	__asm &#123;</div><div class="line">		cli</div><div class="line">		mov  eax, cr0</div><div class="line">		and  eax, not <span class="number">10000</span>h</div><div class="line">		mov  cr0, eax</div><div class="line">	&#125;</div><div class="line">	memcpy((PVOID)uSysenter, cHookCode, <span class="number">8</span>);<span class="comment">//把改写原来函数头</span></div><div class="line">	__asm &#123;</div><div class="line">		mov  eax, cr0</div><div class="line">		or eax, <span class="number">10000</span>h</div><div class="line">		mov  cr0, eax</div><div class="line">		sti</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">//摘录自https://bbs.pediy.com/thread-42705.htm</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是，<strong>rdmsr对于的IP地址并不一定是KiFastCallEntry，按道理来说其地址应该是KiFastCallEntry，但是我的机器上显示的不是！看看哪位师傅可以给解释一下</strong><br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>: kd&gt; rdmsr <span class="number">176</span></div><div class="line">msr[<span class="number">176</span>] = <span class="number">00000000</span>`<span class="number">80542520</span></div><div class="line"><span class="number">0</span>: kd&gt; u <span class="number">80542520</span></div><div class="line">nt!KeReleaseInStackQueuedSpinLockFromDpcLevel+<span class="number">0xa78</span>:</div><div class="line"><span class="number">80542520</span> b923000000      mov     ecx,23h</div><div class="line"><span class="number">80542525</span> 6a30            <span class="built_in">push</span>    30h</div><div class="line"><span class="number">80542527</span> <span class="number">0fa1</span>            <span class="built_in">pop</span>     fs</div><div class="line"><span class="number">80542529</span> 8ed9            mov     ds,cx</div><div class="line">8054252b 8ec1            mov     es,cx</div><div class="line">8054252d 648b0d40000000  mov     ecx,dword ptr fs:[40h]</div><div class="line"><span class="number">80542534</span> <span class="number">8b6104</span>          mov     esp,dword ptr [ecx+<span class="number">4</span>]</div><div class="line"><span class="number">80542537</span> 6a23            <span class="built_in">push</span>    23h</div></pre></td></tr></table></figure></p>
+<ul>
+<li>本文作者<ul>
+<li><a href="https://bbs.pediy.com/thread-60247.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-60247.htm</a></li>
+<li><a href="https://bbs.pediy.com/thread-42705.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-42705.htm</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="0x8-相关事项"><a href="#0x8-相关事项" class="headerlink" title="0x8 相关事项"></a>0x8 相关事项</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这一部分主要讲一下Hook的注意事项和部分大厂关于Hook的面经。部分面经之前讲解了，在这里不做赘述。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先是二次HOOK，就是被别人HOOK了之后自己再次HOOK，这里可以提供4种方法，第一可以<strong>换个位置HOOK</strong>。<strong>第二就是替换原HOOK</strong>，也就是说将别人HOOK的指令修改为自己HOOK的指令。这样应该是比较有效的，但是需要注意的是修改指令数量一定要和对方的一致，或者修改之前将原来的HOOK还原，不然容易产生错误。<strong>第三，在Detour函数中HOOK</strong>，<strong>第四，在Target函数中的原来HOOK的地址后面HOOK</strong>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二是X64下HOOK应该注意什么？首先X64和X86本质区别就是地址总线上的差别，一个是2^64次，一次传输64位数据，一个是2^32次，一次传输32位数据。由此造成的差异就是内存地址大小问题，在32位机器上主要是4个字节，64位机器上就变成了8个字节。这样的话对于指针的使用就需要考虑到两个架构上的兼容性和差异性。例如在32下可以使用ULONG，但是在64位下使用ULONG_PTR。这样就可以有效避免由于编码问题产生的异常(或者统一使用ULONG_PTR)。第二就是PE格式上，由于x86和x64PE结构上存在微小差异，所以在进行AddressHook的时候需要注意。<strong>第三可能涉及到跳转的问题</strong>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于地址长度导致跳转指令长度变化。想mov-jmp就需要利用2+8+2的长度进行跳转，又像push-ret的方法，在32位系统下直接push就是32位数据，但是64位下只能push32位数据，这样的话，只能先push低位数据，然后修改高位数据，例如这样：<code>push 55667788h;mov [esp+4],11223344</code>。再如使用jmp[addr]方法。FF25类型jmp在X86平台下是一种绝对偏移的跳转，但是在x64下也是一种相对偏移的跳转。计算公式为当前EIP+0x6(指令长度)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;检测HOOK：</p>
+<ul>
+<li>1.HOOK修改的是内存中的数据，本地文件却没有修改。可以将本地文件加载到内存中，然后进行对比</li>
+<li>2.对内存模块进行CRC校验</li>
+<li>3.设置回调函数，检测某个IAT或者函数的前几个指令是否被修改</li>
+<li>4.对VirtualProtect函数和WriteProcess函数进行HOOK，检测修改内容的合法性</li>
+<li>5.利用PsSetCreateProcessNotifyRoutineEx注册回调函数，监控进程创建，对比特定的进程，如果创建，设置创建标志为假，创建失败</li>
+<li>6.利用PsSetCreateThreadNotifyRoutine注册回调函数，监控线程创建，通过进程路径.找到对应进程名.判断是否符合，如果是的话.找到回调函数地址( pWin32Address = <em>(UCHAR**)((UCHAR</em>)Thread + 0x410);)并改为C3</li>
+<li>7.利用PsSetLoadImageNotifyRoutine拦截模块，首先需要获取模块基地址(让其载入)，PE寻找基地址，解析到OEP，修改oep为ret即可</li>
+<li><a href="https://bbs.pediy.com/thread-224514.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-224514.htm</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/病毒分析技术_20_贪吃蛇”挖矿木马团伙/" rel="next" title="贪吃蛇挖矿木马团伙分析报告">
+                <i class="fa fa-chevron-left"></i> 贪吃蛇挖矿木马团伙分析报告
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/18/一篇文章带你理解PE三表/" rel="prev" title="一篇文章带你理解PE三表">
+                一篇文章带你理解PE三表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">109</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-前言"><span class="nav-number">1.</span> <span class="nav-text">0x0 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-AddressHook"><span class="nav-number">2.</span> <span class="nav-text">0x1 AddressHook</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-1-IAT-HOOK"><span class="nav-number">2.1.</span> <span class="nav-text">0x1.1 IAT_HOOK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-2-EAT-HOOK"><span class="nav-number">2.2.</span> <span class="nav-text">0x1.2 EAT_HOOK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-3-VirtualFunctionHook"><span class="nav-number">2.3.</span> <span class="nav-text">0x1.3 VirtualFunctionHook</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-InlineHook"><span class="nav-number">3.</span> <span class="nav-text">0x2 InlineHook</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-1-InlineHook-A"><span class="nav-number">3.1.</span> <span class="nav-text">0x2.1 InlineHook(A)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-2-InlineHook-B"><span class="nav-number">3.2.</span> <span class="nav-text">0x2.2 InlineHook(B)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-3-InlineHook-C"><span class="nav-number">3.3.</span> <span class="nav-text">0x2.3 InlineHook(C)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-4-InlineHook-D-x64"><span class="nav-number">3.4.</span> <span class="nav-text">0x2.4 InlineHook(D)(x64)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-VEH-HOOK"><span class="nav-number">4.</span> <span class="nav-text">0x3 VEH_HOOK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-SSDT-HOOK"><span class="nav-number">5.</span> <span class="nav-text">0x4 SSDT_HOOK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-IRP-Hook"><span class="nav-number">6.</span> <span class="nav-text">0x5 IRP_Hook</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x6-Object-Hook"><span class="nav-number">7.</span> <span class="nav-text">0x6 Object Hook</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x7-sysenterHook"><span class="nav-number">8.</span> <span class="nav-text">0x7 sysenterHook</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x8-相关事项"><span class="nav-number">9.</span> <span class="nav-text">0x8 相关事项</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

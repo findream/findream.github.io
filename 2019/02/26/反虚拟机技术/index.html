@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反虚拟机技术">
+<meta property="og:url" content="http://yoursite.com/2019/02/26/反虚拟机技术/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-02T11:36:32.970Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="反虚拟机技术">
+<meta name="twitter:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/26/反虚拟机技术/"/>
+
+
+
+
+
+  <title>反虚拟机技术 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/26/反虚拟机技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">反虚拟机技术</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-26T15:02:11+08:00">
+                2019-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/逆向工程/" itemprop="url" rel="index">
+                    <span itemprop="name">逆向工程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="VMware痕迹"><a href="#VMware痕迹" class="headerlink" title="VMware痕迹"></a>VMware痕迹</h2><ul>
+<li><p>1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">BOOL CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    string <span class="keyword">mac</span>;  </div><div class="line">    get_3part_mac(<span class="keyword">mac</span>);    <span class="comment">//res =ioctl(sock,SIOCGIFHWADDR,&amp;ifr)获取Mac地址</span></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">mac</span>==<span class="string">"00-05-69"</span> || <span class="keyword">mac</span>==<span class="string">"00-0c-29"</span> || <span class="keyword">mac</span>==<span class="string">"00-50-56"</span>||<span class="keyword">mac</span>==<span class="string">"00-03-ff"</span>||<span class="keyword">mac</span>=="08-00-27)  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> TRUE;  </div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">else</span>  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> FALSE;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>2.板序列号、主机型号、系统盘所在磁盘名称等其他硬件信息</p>
+</li>
+<li><p>3.根据当前进程信息，通过进程快照读取当前进程信息，查找是否存在虚拟机中特有的进程，如VMware中的<code>vmware.exe</code>和VirtualBox中的<code>VBoxService.exe</code>。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">BOOL </span>CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    DWORD ret = <span class="number">0</span><span class="comment">;  </span></div><div class="line">    PROCESSENTRY32 pe32<span class="comment">;  </span></div><div class="line">    pe32.dwSize = sizeof(pe32)<span class="comment">;   </span></div><div class="line">    HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, <span class="number">0</span>)<span class="comment">;   </span></div><div class="line">    if(hProcessSnap == INVALID_HANDLE_VALUE)   </div><div class="line">    &#123;   </div><div class="line">        return FALSE<span class="comment">;   </span></div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">BOOL </span><span class="keyword">bMore </span>= Process<span class="number">32F</span>irst(hProcessSnap, &amp;pe32)<span class="comment">;   </span></div><div class="line">    while(<span class="keyword">bMore) </span> </div><div class="line">    &#123; </div><div class="line">        if (!strcmp(pe32.szExeFile, <span class="string">"vmware.exe"</span>)<span class="title">||</span>!strcmp(pe32.szExeFile, <span class="string">"VBoxService.exe"</span>))  </div><div class="line">        &#123;  </div><div class="line">            return TRUE<span class="comment">;  </span></div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">bMore </span>= Process32Next(hProcessSnap, &amp;pe32)<span class="comment">;   </span></div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">CloseHandle(hProcessSnap); </span> </div><div class="line">    return FALSE<span class="comment">;  </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>4.根据特定的文件夹或文件信息,通过查找磁盘中是否存在特定的文件夹或文件，判断当前是否在虚拟机中。VMware虚拟机中通常会有路径C:\Program Files\VMware\VMware Tools\；VirtualBox虚拟机中通常会有路径C:\Program Files\Oracle\VirtualBox Guest Additions\。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">BOOL CheckVMware()  </div><div class="line">&#123; </div><div class="line">    if (!PathIsDirectory(<span class="string">"C:<span class="subst">\\</span>Program Files<span class="subst">\\</span>VMware<span class="subst">\\</span>VMware Tools<span class="subst">\\</span>"</span>)||!PathIsDirectory(<span class="string">"C:<span class="subst">\\</span>Program Files<span class="subst">\\</span>Oracle<span class="subst">\\</span>VirtualBox Guest Additions<span class="subst">\\</span>"</span>) )  </div><div class="line">    &#123;  </div><div class="line">        return <span class="literal">FALSE</span>;  </div><div class="line">    &#125;  </div><div class="line">    else  </div><div class="line">    &#123;  </div><div class="line">        return <span class="literal">TRUE</span>;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>5.根据特定注册表信息,通过读取主机具有虚拟机特性的注册表位置来判断是否处于虚拟机环境中。针对VMware可以判断注册表项HKEY_CLASSES_ROOT\Applications\VMwareHostOpen.exe；针对VirtualBox可以判断注册表项HKEY_LOCAL_MACHINE\SOFTWARE\Oracle\VirtualBox Guest Additions。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    HKEY hkey;  </div><div class="line">    <span class="keyword">if</span> (RegOpenKey(HKEY_CLASSES_ROOT, <span class="string">"\\Applications\\VMwareHostOpen.exe"</span>, &amp;hkey) == ERROR_SUCCESS)  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> <span class="literal">TRUE</span>;  </div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">else</span>  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> <span class="literal">FALSE</span>;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>6.根据特定服务名,通过获取主机当前具有VMware特性的服务信息，判断当前主机是否为虚拟机。在VMware中通常会存在VMware物理磁盘助手服务和VMware Tools服务等；在VirtualBox中通常会存在VirtualBox Guest Additions Service服务等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="function">BOOL <span class="title">CheckVMWare</span><span class="params">()</span>  </span></div><div class="line"><span class="function"></span>&#123;  </div><div class="line">    <span class="keyword">int</span> menu = <span class="number">0</span>;    </div><div class="line">    <span class="comment">//打开系统服务控制器    </span></div><div class="line">    SC_HANDLE SCMan = OpenSCManager(<span class="literal">NULL</span>, <span class="literal">NULL</span>, SC_MANAGER_ENUMERATE_SERVICE);   </div><div class="line">    <span class="keyword">if</span>(SCMan == <span class="literal">NULL</span>)    </div><div class="line">    &#123; </div><div class="line">        <span class="built_in">cout</span> &lt;&lt; GetLastError() &lt;&lt; <span class="built_in">endl</span>;  </div><div class="line">        <span class="built_in">printf</span>(<span class="string">"OpenSCManager Eorror/n"</span>);    </div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;    </div><div class="line">    &#125;    </div><div class="line">    <span class="comment">//保存系统服务的结构  </span></div><div class="line">    LPENUM_SERVICE_STATUSA service_status;     </div><div class="line">    DWORD cbBytesNeeded = <span class="literal">NULL</span>;     </div><div class="line">    DWORD ServicesReturned = <span class="literal">NULL</span>;    </div><div class="line">    DWORD ResumeHandle = <span class="literal">NULL</span>;    </div><div class="line">    service_status = (LPENUM_SERVICE_STATUSA)LocalAlloc(LPTR, <span class="number">1024</span> * <span class="number">64</span>);    </div><div class="line">    <span class="comment">//获取系统服务的简单信息    </span></div><div class="line">    <span class="keyword">bool</span> ESS = EnumServicesStatusA(SCMan, <span class="comment">//系统服务句柄    </span></div><div class="line">        SERVICE_WIN32, <span class="comment">//服务的类型    </span></div><div class="line">        SERVICE_STATE_ALL,  <span class="comment">//服务的状态    </span></div><div class="line">        (LPENUM_SERVICE_STATUSA)service_status,  <span class="comment">//输出参数，系统服务的结构    </span></div><div class="line">        <span class="number">1024</span> * <span class="number">64</span>,  <span class="comment">//结构的大小    </span></div><div class="line">        &amp;cbBytesNeeded, <span class="comment">//输出参数，接收返回所需的服务    </span></div><div class="line">        &amp;ServicesReturned, <span class="comment">//输出参数，接收返回服务的数量    </span></div><div class="line">        &amp;ResumeHandle); <span class="comment">//输入输出参数，第一次调用必须为0，返回为0代表成功    </span></div><div class="line">    <span class="keyword">if</span>(ESS == <span class="literal">NULL</span>)     </div><div class="line">    &#123;    </div><div class="line">        <span class="built_in">printf</span>(<span class="string">"EnumServicesStatus Eorror/n"</span>);    </div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;    </div><div class="line">    &#125;    </div><div class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ServicesReturned; i++)    </div><div class="line">    &#123;    </div><div class="line">        <span class="keyword">if</span> (<span class="built_in">strstr</span>(service_status[i].lpDisplayName, <span class="string">"VMware Tools"</span>)!=<span class="literal">NULL</span> || <span class="built_in">strstr</span>(service_status[i].lpDisplayName, <span class="string">"VMware 物理磁盘助手服务"</span>)!=<span class="literal">NULL</span>||<span class="built_in">strstr</span>(service_status[i].lpDisplayName, <span class="string">"Virtual Machine"</span>)!=<span class="literal">NULL</span>)  </div><div class="line">        &#123;  </div><div class="line">            <span class="keyword">return</span> TRUE;  </div><div class="line">        &#125;  </div><div class="line">    &#125;    </div><div class="line">    <span class="comment">//关闭服务管理器的句柄   </span></div><div class="line">    CloseServiceHandle(SCMan);   </div><div class="line">    <span class="keyword">return</span> FALSE;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="漏洞指令"><a href="#漏洞指令" class="headerlink" title="漏洞指令"></a>漏洞指令</h2><ul>
+<li><p>Red Pill<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Red Pill通过运行sidt指令获取IDTR寄存器的值。虚拟机监视器必须重新定位Guest系统的IDTR，来避免与Host系统的IDTR冲突。因为在虚拟机中运行sidt指令时，虚拟机监视器不会得到通知，所以会返回虚拟机的IDTR。Red Pill通过测试这种差异来探测Vmware的使用。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果检测到了sidt这个指令，说明很可能采用了反虚拟机技术</p>
+</li>
+<li><p>No Pill<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sgdt和sldt指令探测VMware的技术通常被称为No Pill</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">BOOL CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    ULONG xdt = <span class="number">0</span> <span class="comment">;  </span></div><div class="line">    ULONG InVM = <span class="number">0</span><span class="comment">;  </span></div><div class="line">    __asm  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">push</span> <span class="built_in">edx</span>  </div><div class="line">        <span class="keyword">sidt</span> [<span class="built_in">esp</span>-<span class="number">2</span>]  </div><div class="line">        <span class="keyword">pop</span> <span class="built_in">edx</span>  </div><div class="line">        <span class="keyword">nop</span>  </div><div class="line">        <span class="keyword">mov</span> xdt , <span class="built_in">edx</span>  </div><div class="line">    &#125;  </div><div class="line">    if (xdt &gt; <span class="number">0xd0000000</span>)  </div><div class="line">    &#123;  </div><div class="line">        InVM = <span class="number">1</span><span class="comment">; </span></div><div class="line">    &#125;  </div><div class="line">    else  </div><div class="line">    &#123;  </div><div class="line">        InVM = <span class="number">0</span><span class="comment">;  </span></div><div class="line">    &#125;  </div><div class="line">    __asm  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">push</span> <span class="built_in">edx</span>  </div><div class="line">        <span class="keyword">sgdt</span> [<span class="built_in">esp</span>-<span class="number">2</span>]  </div><div class="line">        <span class="keyword">pop</span> <span class="built_in">edx</span>  </div><div class="line">        <span class="keyword">nop</span>  </div><div class="line">        <span class="keyword">mov</span> xdt , <span class="built_in">edx</span>  </div><div class="line">    &#125;  </div><div class="line">    if (xdt &gt; <span class="number">0xd0000000</span>)  </div><div class="line">    &#123;  </div><div class="line">        InVM += <span class="number">1</span><span class="comment">;  </span></div><div class="line">    &#125;  </div><div class="line">    if (InVM == <span class="number">0</span>)  </div><div class="line">    &#123;  </div><div class="line">        return FALSE<span class="comment">;  </span></div><div class="line">    &#125;  </div><div class="line">    else  </div><div class="line">    &#123;  </div><div class="line">        return TRUE<span class="comment">;  </span></div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过禁用VMware加速可以防止No Pill技术的探测</p>
+<ul>
+<li><p>查询IO端口</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">BOOL CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    bool rc = true<span class="comment">;  </span></div><div class="line">    __try  </div><div class="line">    &#123;  </div><div class="line">        __asm  </div><div class="line">        &#123;  </div><div class="line">            <span class="keyword">push</span>   <span class="built_in">edx</span>  </div><div class="line">            <span class="keyword">push</span>   <span class="built_in">ecx</span>  </div><div class="line">            <span class="keyword">push</span>   <span class="built_in">ebx</span>    </div><div class="line">            <span class="keyword">mov</span>    <span class="built_in">eax</span>, <span class="string">'VMXh'</span>  //Magic数</div><div class="line">            <span class="keyword">mov</span>    <span class="built_in">ebx</span>, <span class="number">0</span>    </div><div class="line">            <span class="keyword">mov</span>    <span class="built_in">ecx</span>, <span class="number">10</span>   </div><div class="line">            <span class="keyword">mov</span>    <span class="built_in">edx</span>, <span class="string">'VX'</span>    //指定端口<span class="number">0x5668</span></div><div class="line">            <span class="keyword">in</span>     <span class="built_in">eax</span>, <span class="built_in">dx</span>      //返回值放入<span class="built_in">ebx</span></div><div class="line">            <span class="keyword">cmp</span>    <span class="built_in">ebx</span>, <span class="string">'VMXh'</span>   //返回值与Magic比较，为<span class="number">1</span>则处于虚拟机中</div><div class="line">            <span class="keyword">setz</span>   [rc]   </div><div class="line">            <span class="keyword">pop</span>    <span class="built_in">ebx</span>  </div><div class="line">            <span class="keyword">pop</span>    <span class="built_in">ecx</span>  </div><div class="line">            <span class="keyword">pop</span>    <span class="built_in">edx</span>  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">    __except(EXCEPTION_EXECUTE_HANDLER)    </div><div class="line">    &#123;  </div><div class="line">        rc = false<span class="comment">;  </span></div><div class="line">    &#125;  </div><div class="line">    return rc<span class="comment">;  </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>总结：如下特权指令可以被用于反虚拟机，但是一般不使用：<code>sidt,sgdt,sldt,snsw,str,in,cpuid</code></p>
+<h2 id="防范"><a href="#防范" class="headerlink" title="防范"></a>防范</h2></li>
+<li>1.不安装vmware tools</li>
+<li>2.不使用vm加速</li>
+<li>3.分析时，检查特权指令，nop</li>
+<li>4.不建议修改vmx文件，这是不高效的。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/31/C++反汇编及逆向分析技术/" rel="next" title="C++反汇编及逆向分析技术">
+                <i class="fa fa-chevron-left"></i> C++反汇编及逆向分析技术
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/09/一篇短文带你了解蓝屏分析/" rel="prev" title="《windows PE》导入表">
+                《windows PE》导入表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">109</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#VMware痕迹"><span class="nav-number">1.</span> <span class="nav-text">VMware痕迹</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞指令"><span class="nav-number">2.</span> <span class="nav-text">漏洞指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#防范"><span class="nav-number">3.</span> <span class="nav-text">防范</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
