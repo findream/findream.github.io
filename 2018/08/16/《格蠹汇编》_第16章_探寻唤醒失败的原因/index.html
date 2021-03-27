@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;通过查看当前线程和Idle.">
+<meta name="description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="&lt;格蠹汇编&gt;_第16章_探寻唤醒失败的原因">
 <meta property="og:url" content="https://findream.github.io/2018/08/16/《格蠹汇编》_第16章_探寻唤醒失败的原因/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;通过查看当前线程和Idle.">
+<meta property="og:description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-24T02:31:39.216Z">
+<meta property="og:updated_time" content="2021-03-27T09:39:24.574Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="&lt;格蠹汇编&gt;_第16章_探寻唤醒失败的原因">
-<meta name="twitter:description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁  &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;通过查看当前线程和Idle.">
+<meta name="twitter:description" content="寻找突破口&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：  1.使用!pcr查看处理器控制区，了解CPU状态 2.使用!locks寻找可能存在的系统死锁">
 
 
 
@@ -386,7 +386,8 @@
         <h2 id="寻找突破口"><a href="#寻找突破口" class="headerlink" title="寻找突破口"></a>寻找突破口</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：</p>
 <ul>
 <li>1.使用<strong>!pcr</strong>查看处理器控制区，了解CPU状态</li>
-<li>2.使用<strong>!locks</strong>寻找可能存在的系统死锁</li>
+<li>2.使用<strong>!locks</strong>寻找可能存在的系统死锁<a id="more"></a>
+</li>
 </ul>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过查看当前线程和Idle.exe线程ID不同的处理器，但是该处理器处于用户态，<strong>而挂死一般是处于内核态</strong>，我们换个思路，利用<code>!locks</code>寻找存在的对象死锁。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在执行!locks命令发现线程87474da8线程拥有多个资源</p>

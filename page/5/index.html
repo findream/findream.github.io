@@ -294,6 +294,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/04/26/《Windows Internals》第三章_映像加载器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/26/《Windows Internals》第三章_映像加载器/" itemprop="url">《Windows Internals》第三章_映像加载器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T15:02:11+08:00">
+                2018-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="映像加载器"><a href="#映像加载器" class="headerlink" title="映像加载器"></a>映像加载器</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当系统中的进程被启动的时候，内核创建一个内核对象表示该进程，并执行各种和内核相关的初始化任务。绝大部分的初始化任务是在内核之外完成的，这些工作是由<strong>映像加载器</strong>完成的。映像加载器驻留在用户模式下的<strong>Ntdll.dll</strong>中，映像加载器完成以下的初始化工作：</p>
+<ul>
+<li>1.初始化其他用户模式，包括堆栈的初始化，TLS和FLS的初始化</li>
+<li>2.解析执行文件的IAT，DLL的导出表</li>
+<li>3.加载卸载DLL，维护模块数据库</li>
+<li>4.启用API集和API重定向
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/26/《Windows Internals》第三章_映像加载器/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/04/08/《Windows Internals》第三章_同步/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -313,7 +464,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/08/《Windows Internals》第三章_同步/" itemprop="url">第三章：系统机制-同步</a></h1>
+                <a class="post-title-link" href="/2018/04/08/《Windows Internals》第三章_同步/" itemprop="url">《Windows Internals》第三章_同步</a></h1>
         
 
         <div class="post-meta">
@@ -386,13 +537,14 @@
 
       
         
-          
-            <h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong> </p>
-<h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内核用来实现多处理器互斥的机制是自旋锁。自旋锁是一个与某个局部变量相关联的锁原语，在进入临界区之前，内核（处理器）会一直尝试获取相关联的自旋锁，直到成功为止。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁是通过硬件支持的test-and-set操作来实现的，也即：在一条原子指令内测试并获取锁，这样避免多线对锁的争夺。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每一个自旋锁都拥有一个IRQL，并且这个IRQL总是在DPC/Dispatch或者更高级别，因为这个原因，如果一个线程拥有自旋锁，则他永远不会被抢占。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何一个试图获取自旋锁的处理器本质上都是处于忙等状态。<strong>因为处理器在进入临界区之前会循环的去获取自旋锁</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用pause汇编指令，插入到忙等的循环中，这条指令告诉处理器他正在执行的部分是自旋锁的获取循环部分。  </p>
-<h2 id="排队的自旋锁"><a href="#排队的自旋锁" class="headerlink" title="排队的自旋锁"></a>排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当一个处理器想要获取被其他处理器持有的自旋锁的时候，他会把自己的标志符放在与该自旋锁关联的队列中，如果当前正持有自旋锁的处理器释放的，则其将自旋锁移交给队列的第一个处理器，如果处理器正在等待一个忙着的自旋锁，他会检查处于该处理器之前的处理器的标志，<strong>而不是检查自旋锁的标志</strong>。<strong>说是排队的自旋锁，还不如说是排队等待自旋锁的处理器</strong>。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;锁是留给内核使用的，所以，在设备驱动程序中获取这些排队的自旋锁是不被支持的。</p>
-<h2 id="栈内排队的自旋锁"><a href="#栈内排队的自旋锁" class="headerlink" title="栈内排队的自旋锁"></a>栈内排队的自旋锁</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;自旋锁句柄是一个数据结构。包含了<strong>锁的所有权</strong>（要求局部变量的原因所在）和处理器队列等状态信息，由此，<strong>句柄不应该是一个全局变量，往往是一个栈变量，以保证调用线程的局部性。</strong></p>
-
-          
+          <h1 id="3-3-同步"><a href="#3-3-同步" class="headerlink" title="3.3 同步"></a>3.3 同步</h1><h2 id="高IRQL的同步"><a href="#高IRQL的同步" class="headerlink" title="高IRQL的同步"></a>高IRQL的同步</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在内核执行的各个阶段，内核必须保证在临界区中同一时刻只有一个处理器在执行，内核必须保证所有线程按照互斥的方法访问这些数据（内核临界区）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于中断的发生，该中断的处理例程需要修改一个全局的数据结构，与此同时，内核恰好在更新该数据结构，违背了互斥的原则（同一时间只有一个处理器访问数据结构）。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;windows采用了一个比较复杂的方法：首先内核先将处理器的IRQL(中断请求级别)提高到能访问该数据结构的最高的级别，这样就屏蔽了在中断处理例程中使用该资源的中断。<strong>但是这种策略对于单处理器来说是可以的，但是不能阻止多处理器发生中断。</strong><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/08/《Windows Internals》第三章_同步/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -585,214 +737,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/04/05/一篇文章带你了解Dll注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/05/一篇文章带你了解Dll注入/" itemprop="url">一篇文章带你了解Dll注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-05T15:02:11+08:00">
-                2018-04-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是&lt;一篇文章带你…&gt;系列的第四篇，主要会阐明DLL注入的基本原理和几种主流方式，虽然这些方法已经有点滞后了。但是DLL注入的基本原理是不会改变的。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL注入的主要原理就是强制进程自己将需要注入的dll文件注入到自身进程空间内，最好配合Hook技术。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dll注入可以从三个方向入手：第一：在进程创建初期按照导入表加载dll的时候。第二：进程运行时期利用LoadLibrary函数加载，第三：利用某些系统机制：例如windows消息机制等。</p>
-<h1 id="进程创建后期"><a href="#进程创建后期" class="headerlink" title="进程创建后期"></a>进程创建后期</h1><h2 id="0x1-CreateRemoteThread"><a href="#0x1-CreateRemoteThread" class="headerlink" title="0x1 CreateRemoteThread"></a>0x1 CreateRemoteThread</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此方法是最常见的dll注入的方法，原理是由于CreateRemoteThread的函数原型和CreateThread是一致的。所以模仿CreateThread创建线程的方式实现注入。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于创建的是远程线程，是需要将注入的参数(也就是Dll文件的路径)写入目标进程空间。所以基本步骤如下：</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;打开目标进程句柄<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//打开目标进程</span></div><div class="line">hProc = OpenProcess(PROCESS_ALL_ACCESS,</div><div class="line">	FALSE,</div><div class="line">	dwTargetPid</div><div class="line">);</div><div class="line"><span class="keyword">if</span> (hProc == <span class="literal">NULL</span>)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"OpenProcess:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向目标进程中开辟空间并写入Dll文件路径<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//向目标进程中写入句柄</span></div><div class="line">LPTSTR psLibFileRemote = <span class="literal">NULL</span>;</div><div class="line">psLibFileRemote = (LPTSTR)VirtualAllocEx(hProc, </div><div class="line">	<span class="literal">NULL</span>, </div><div class="line">	lstrlen(DllPath) + <span class="number">1</span>, </div><div class="line">	MEM_COMMIT,</div><div class="line">	PAGE_READWRITE);</div><div class="line"><span class="keyword">if</span> (psLibFileRemote == <span class="literal">NULL</span>)</div><div class="line">&#123;</div><div class="line">	printf(<span class="string">"VirtualAllocEx:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">&#125;</div><div class="line"><span class="built_in">BOOL</span> bRet=WriteProcessMemory(hProc,</div><div class="line">	psLibFileRemote,</div><div class="line">	(LPCVOID)DllPath,</div><div class="line">	<span class="comment">//(void *)DllPath</span></div><div class="line">	lstrlen(DllPath) + <span class="number">1</span>,</div><div class="line">	<span class="literal">NULL</span>);</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;获取LoadLibrary的地址<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">PTHREAD_START_ROUTINE pfnStartAddr = (PTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandle(<span class="string">"Kernel32.dll"</span>),</div><div class="line">	<span class="string">"LoadLibraryA"</span>);</div><div class="line"><span class="keyword">if</span> (pfnStartAddr == <span class="literal">NULL</span>)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"GetProcAddress %d\n"</span>,GetLastError());</div><div class="line">	<span class="keyword">return</span> FALSE;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用CreateRemoteThread函数调用LoadLibrary加载dll<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//CreateThreadThread</div><div class="line">HANDLE hThread = CreateRemoteThread(hProc,</div><div class="line"><span class="built_in">	NULL,</span></div><div class="line"><span class="built_in">	0,</span></div><div class="line"><span class="built_in">	pfnStartAddr,</span></div><div class="line"><span class="built_in">	psLibFileRemote,</span></div><div class="line"><span class="built_in">	0,</span></div><div class="line">	NULL)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
-<h2 id="0x2-RtlCreateUserThread"><a href="#0x2-RtlCreateUserThread" class="headerlink" title="0x2 RtlCreateUserThread"></a>0x2 RtlCreateUserThread</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RtlCreateUserThread是CreateRemoteThread的底层实现，所以使用RtlCreateUserThread的原理是和使用CreateRemoteThread的原理是一样的。唯一的区别是使用CreateRemoteThread写入目标进程的是Dll的路径，而RtlCreateUserThread写入的是一段shellcode。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;和CreateRemoteThread一样都是需要获取目标进程句柄，获取LoadLibrary地址，dll路径。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着我们需要获取RtlCreateUserThread地址，RtlCreateUserThread函数原型如下：<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">typedef <span class="type">NTSTATUS</span>(__stdcall *<span class="type">PCreateThread</span>)(   </div><div class="line">	<span class="type">HANDLE</span> <span class="type">Process</span>,                                 //句柄</div><div class="line">	<span class="type">PSECURITY_DESCRIPTOR</span> <span class="type">ThreadSecurityDescriptor</span>,  //线程安全描述符              </div><div class="line">	<span class="type">BOOLEAN</span> <span class="type">CreateSuspended</span>,                      //创建挂起标志</div><div class="line">	<span class="type">ULONG</span> <span class="type">ZeroBits</span>,</div><div class="line">	<span class="type">SIZE_T</span> <span class="type">MaximumStackSize</span>,</div><div class="line">	<span class="type">SIZE_T</span> <span class="type">CommittedStackSize</span>,</div><div class="line">	<span class="type">PUSER_THREAD_START_ROUTINE</span> <span class="type">StartAddress</span>,      //远程线程函数</div><div class="line">	<span class="type">PVOID</span> <span class="type">Parameter</span> <span class="type">OPTIONAL</span>,                      //参数</div><div class="line">	<span class="type">PHANDLE</span> <span class="type">Thread</span> <span class="type">OPTIONAL</span>,</div><div class="line">	<span class="type">PCLIENT_ID</span> <span class="type">ClientId</span> <span class="type">OPTIONAL</span></div><div class="line">	);</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如何构造shellcode？<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">VOID ShellCodeFun(VOID)</div><div class="line">&#123;</div><div class="line">	_asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">call</span> L001</div><div class="line"><span class="symbol">L001:</span></div><div class="line">		<span class="keyword">pop</span> <span class="built_in">ebx</span></div><div class="line">		<span class="keyword">sub</span> <span class="built_in">ebx</span>,<span class="number">5</span>                                                //自定位</div><div class="line">		<span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span> : [<span class="built_in">ebx</span>]INJECT_DATA.lpParameter         //lpParameter</div><div class="line">		<span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span> : [<span class="built_in">ebx</span>]INJECT_DATA.lpThreadStartRoutine //ThreadProc</div><div class="line">		<span class="keyword">xor</span> <span class="built_in">ebx</span>,<span class="built_in">ebx</span></div><div class="line">		<span class="keyword">push</span> <span class="built_in">ebx</span></div><div class="line">		<span class="keyword">push</span> -<span class="number">2</span></div><div class="line">		<span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span> : [<span class="built_in">ebx</span>]INJECT_DATA.AddrOfZwTerminateThread //ZwTerminateThread</div><div class="line">		<span class="keyword">nop</span></div><div class="line">		<span class="keyword">nop</span></div><div class="line">		<span class="keyword">nop</span></div><div class="line">		<span class="keyword">nop</span></div><div class="line">		<span class="keyword">nop</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将shellcode写入进程内存中，然后调用RtlCreateUserThread执行shellcode。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//写入shellcode</span></div><div class="line">	<span class="keyword">int</span> bRet = WriteProcessMemory(hProcess, pMem, &amp;Data, <span class="keyword">sizeof</span>(INJECT_DATA), &amp;dwIoCnt);</div><div class="line">	<span class="keyword">if</span> (bRet == <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">" WriteProcessMemory:%d\n"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	status = RtlCreateUserThread(hProcess,    <span class="comment">//进程句柄</span></div><div class="line">		lpThreadAttributes,                   <span class="comment">//线程安全符</span></div><div class="line">		<span class="literal">TRUE</span>,                                 <span class="comment">//创建挂起标志</span></div><div class="line">		<span class="number">0</span>,                                    <span class="comment">//ZeroBit</span></div><div class="line">		dwStackSize,                          <span class="comment">//栈大小</span></div><div class="line">		<span class="number">0</span>,</div><div class="line">		(PUSER_THREAD_START_ROUTINE)pMem,    <span class="comment">//StartAddress，包含了shellcode和数据(StartAddress)</span></div><div class="line">		<span class="literal">NULL</span>,                                <span class="comment">//参数</span></div><div class="line">		&amp;hThread,                            <span class="comment">//远程线程句柄</span></div><div class="line">		&amp;Cid                                 <span class="comment">//ClientID</span></div><div class="line">	);</div></pre></td></tr></table></figure></p>
-<h2 id="0x3-APC注入"><a href="#0x3-APC注入" class="headerlink" title="0x3 APC注入"></a>0x3 APC注入</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APC中文名称为异步过程调用， APC是一个链状的数据结构，可以让一个线程在其本应该的执行步骤前执行其他代码，每个线程都维护这一个APC链。当线程从等待状态苏醒后，会自动检测自己得APC队列中是否存在APC过程。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所以只需要将目标进程的线程的APC队列里面添加APC过程，当然为了提高命中率可以向进程的所有线程中添加APC过程。然后促使线程从休眠中恢复就可以实现APC注入。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先依旧是将DLL文件路径写入进程。<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">lpData = VirtualAllocEx(hProcess, lpData, lstrlen(szDllFullPath) + <span class="number">1</span>, MEM_COMMIT, PAGE_READWRITE)<span class="comment">;</span></div><div class="line">if (lpData)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">bStatus </span>= WriteProcessMemory(hProcess, lpData, szDllFullPath, lstrlen(szDllFullPath) + <span class="number">1</span>, &amp;stSize)<span class="comment">;</span></div><div class="line">	if (FALSE == <span class="keyword">bStatus)</span></div><div class="line"><span class="keyword">	</span>&#123;</div><div class="line">		printf(<span class="string">"WriteProcessMemory:%d\n"</span>, GetLastError())<span class="comment">;</span></div><div class="line">		return NULL<span class="comment">;</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后使用QueueUserAPC将APC例程添加到APC队列中，QueueUserAPC三个参数分别是APC例程，线程句柄，例程参数。所以还需要获取线程句柄<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">dwRet=QueueUserAPC((PAPCFUNC)LoadLibraryA, hThread, (ULONG_PTR)lpData);</div><div class="line"><span class="keyword">if</span> (<span class="literal">NULL</span> == dwRet)			</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"QueueUserAPC:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当然，为了提高命中率，可以使用遍历所有线程，然后利用te32.th32OwnerProcessID是否等于目标进程PID的策略进行进程全局注入。<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (Thread32First(hThreadSnap, &amp;te32))</div><div class="line">&#123;</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">//线程所属的进程ID==目标进程ID</span></div><div class="line">		<span class="keyword">if</span> (te32.th32OwnerProcessID == dwPid)   </div><div class="line">		&#123;</div><div class="line">			<span class="comment">//获取当前线程句柄</span></div><div class="line">			<span class="keyword">HANDLE</span> hThread = OpenThread(THREAD_ALL_ACCESS,<span class="literal">FALSE</span>,te32.th32ThreadID);</div><div class="line">			DWORD dwRet = <span class="built_in">NULL</span>;			</div><div class="line">			<span class="comment">//插入APC队列</span></div><div class="line">			dwRet=QueueUserAPC((PAPCFUNC)LoadLibraryA, hThread, (ULONG_PTR)lpData);</div><div class="line">			<span class="keyword">if</span> (<span class="built_in">NULL</span> == dwRet)</div><div class="line">			&#123;</div><div class="line">				printf(<span class="string">"QueueUserAPC:%d\n"</span>, GetLastError());</div><div class="line">				<span class="keyword">return</span> <span class="built_in">NULL</span>;</div><div class="line">			&#125;</div><div class="line">			CloseHandle(hThread);</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">while</span> (Thread32Next(hThreadSnap, &amp;te32));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="0x4-代码注入"><a href="#0x4-代码注入" class="headerlink" title="0x4 代码注入"></a>0x4 代码注入</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用傀儡进程：以挂起方式创建进程，然后向其中写入shellcode，利用shellcode执行LoadLibrary</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先以挂起方式创建进程，CreateProcess的第6个参数可以设定进程创建的方式<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="string">bRetProcess</span> <span class="string">=</span> <span class="string">CreateProcess("D:\\HostProc.exe",</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="string">CREATE_SUSPENDED,</span>       <span class="string">//挂起创建进程</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="literal">NULL</span><span class="string">,</span></div><div class="line">	<span class="string">&amp;Startup,</span></div><div class="line">	<span class="string">&amp;pi);</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后需要保存进程的上下文信息，主要是EIP的值。以便于Load完成后返回。<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//获取CONTEXT</span></div><div class="line">ctx.ContextFlags = CONTEXT_CONTROL;</div><div class="line">GetThreadContext(pi.hThread, <span class="meta">&amp;ctx);</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着需要构建我们替换执行的代码。这段代码的目的是Load我们的恶意的dll文件，所以至少需要做两个方面的准备，第一：需要知道LoadLibrary的地址。第二需要知道Dll的路径。为了让程序更好的运行还需要保存现场。最后利用ret方式返回。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">unsigned char sc[] = &#123;</div><div class="line">		<span class="comment">//push ret</span></div><div class="line">		<span class="number">0x68</span>,retChar[<span class="number">0</span>],retChar[<span class="number">1</span>],retChar[<span class="number">2</span>],retChar[<span class="number">3</span>],</div><div class="line">		<span class="comment">//push flags</span></div><div class="line">		<span class="number">0x9C</span>,</div><div class="line">		<span class="comment">//pushad</span></div><div class="line">		<span class="number">0x60</span>,</div><div class="line">		<span class="comment">//push DllPath</span></div><div class="line">		<span class="number">0x68</span>, strChar[<span class="number">0</span>], strChar[<span class="number">1</span>],strChar[<span class="number">2</span>],strChar[<span class="number">3</span>],</div><div class="line">		<span class="comment">//mov eax,AddressOfLoadLibrary</span></div><div class="line">		<span class="number">0xB8</span>, apiChar[<span class="number">0</span>],apiChar[<span class="number">1</span>],apiChar[<span class="number">2</span>],apiChar[<span class="number">3</span>],</div><div class="line">		<span class="comment">//call eax</span></div><div class="line">		<span class="number">0xFF</span>,<span class="number">0xD0</span>,</div><div class="line">		<span class="comment">//popad</span></div><div class="line">		<span class="number">0x61</span>,</div><div class="line">		<span class="comment">//popfd</span></div><div class="line">		<span class="number">0x9D</span>,</div><div class="line">		<span class="comment">//ret</span></div><div class="line">		<span class="number">0xC3</span> &#125;;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构造完这些之后将shellcode写入，由于内存本身就有执行属性，所以不需要修改内存属性。<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">bRet=WriteProcessMemory(pi.hProcess,</span></div><div class="line"><span class="keyword">	</span>Remote_ShellCodePtr,</div><div class="line">	<span class="keyword">ShellCode,</span></div><div class="line"><span class="keyword">	</span><span class="keyword">ShellCodeLength,</span></div><div class="line"><span class="keyword">	</span>NULL</div><div class="line">	)<span class="comment">;</span></div><div class="line">if (FALSE == <span class="keyword">bRet)</span></div><div class="line"><span class="keyword">&#123;</span></div><div class="line"><span class="keyword">	</span>printf(<span class="string">"WriteProcessMemory:%d\n"</span>, GetLastError())<span class="comment">;</span></div><div class="line">	return FALSE<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后利用SetThreadContext将我们的EIP设置为shellcode起始地址。并调用ResumeThread重启线程<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ctx.<span class="keyword">Eip </span>=(DWORD) Remote_ShellCodePtr<span class="comment">;</span></div><div class="line">ctx.ContextFlags = CONTEXT_CONTROL<span class="comment">;</span></div><div class="line">SetThreadContext(pi.hThread, &amp;ctx)<span class="comment">;</span></div><div class="line">ResumeThread(pi.hThread)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为了提高命中率可以向目标进程的所有线程进行注入.利用<code>CreateToolhelp32Snapshot</code>等三个函数遍历线程。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (Thread32First(hThreadSnap, &amp;te32))</div><div class="line">&#123;</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (te32.th32OwnerProcessID == ProcessId)</div><div class="line">		&#123;</div><div class="line">			bStatus = TRUE;</div><div class="line">			dwTidList[Index] = te32.th32ThreadID;</div><div class="line">			//	<span class="keyword">printf</span>(<span class="string">"%d:%d:%d\n"</span>, Index, dwTidList[Index], te32.th32ThreadID);</div><div class="line">			Index++;</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">while</span> (Thread32Next(hThreadSnap, &amp;te32));</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="0x5-反射式DLL注入"><a href="#0x5-反射式DLL注入" class="headerlink" title="0x5 反射式DLL注入"></a>0x5 反射式DLL注入</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;反射式dll注入不需要dll文件落地，减少被查杀的风险。首先将需要注入的dll写入进程内存，然后为该dll添加一个导出函数，利用这个导出函数让其自动的装载dll。注射器是将DLL文件写入目标进程内存。反射装载器实现的就是模拟dll装载器装载dll文件的操作。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先说一下注射器，注射器的目的是将Dll文件写入到目标进程空间，然后获取里面导出函数ReflectiveLoader。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先需要打开目标进程句柄<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//打开目标进程句柄</span></div><div class="line"><span class="keyword">HANDLE</span> hProcess = <span class="built_in">NULL</span>;</div><div class="line">DWORD dwProcessId = <span class="number">0</span>;</div><div class="line">dwProcessId = GetProcessIdByName(ProcessNmae);</div><div class="line">hProcess = OpenProcess(PROCESS_CREATE_THREAD |   <span class="comment">//创建线程所必需的</span></div><div class="line">	PROCESS_QUERY_INFORMATION |                <span class="comment">//检索有关进程的某些信息</span></div><div class="line">	PROCESS_VM_OPERATION |                     <span class="comment">//需要对进程的地址空间执行操作</span></div><div class="line">	PROCESS_VM_WRITE |                         <span class="comment">//需要对进程的地址空间执行写操作</span></div><div class="line">	PROCESS_VM_READ,                          <span class="comment">//需要对进程的地址空间执行读操作</span></div><div class="line">	<span class="literal">FALSE</span>,</div><div class="line">	dwProcessId);</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向目标进程写入DLL数据<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//为需要注入的DLL在目标进程中分配空间</span></div><div class="line">LPVOID lpRemoteLibraryBuffer = <span class="literal">NULL</span>;</div><div class="line">lpRemoteLibraryBuffer=VirtualAllocEx(hProcess, <span class="literal">NULL</span>, dwLength, MEM_COMMIT, PAGE_EXECUTE_READ);</div><div class="line"><span class="keyword">if</span> (!lpRemoteLibraryBuffer)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"VirtualAllocEx:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">//将DLL写入目标内存</span></div><div class="line"><span class="keyword">if</span> (!WriteProcessMemory(hProcess, lpRemoteLibraryBuffer, lpBuffer, dwLength, <span class="literal">NULL</span>))</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"WriteProcessMemory:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用导出表获取导出函数地址ReflectiveLoader。<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> (iCounter--)</div><div class="line">&#123;</div><div class="line">	char* cpExportFunctionName = (char*)(uiBaseAddress + RvaToOffset(DEREF_32(uiNameArray), uiBaseAddress));</div><div class="line">	<span class="regexp">//为了找到载入DLL中的导出函数ReflectiveLoader地址</span></div><div class="line"><span class="regexp">	if (strstr(cpExportFunctionName, "ReflectiveLoader") != NULL)</span></div><div class="line"><span class="regexp">	&#123;</span></div><div class="line"><span class="regexp">		//</span>获取目标函数数组的地址</div><div class="line">		uiAddressArray = uiBaseAddress + RvaToOffset<span class="function"><span class="params">(((PIMAGE_EXPORT_DIRECTORY)uiExportF0A)-&gt;AddressOfFunctions, uiBaseAddress)</span>;</span></div><div class="line"><span class="function">		//获取导出函数<span class="title">ReflectiveLoader</span>的地址，计算公式<span class="title">FunAddress</span>=<span class="title">uiAddressArrary</span>+<span class="title">Orginal</span>*<span class="title">sizeof</span><span class="params">(dword)</span></span></div><div class="line"><span class="function">		<span class="title">uiAddressArray</span> += <span class="params">(DEREF_16(uiNameOrdinals) * sizeof(DWORD))</span>;</span></div><div class="line"><span class="function">		//返回<span class="title">offset</span></span></div><div class="line"><span class="function">		<span class="title">return</span> <span class="title">RvaToOffset</span><span class="params">(DEREF_32(uiAddressArray), uiBaseAddress)</span>;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	//下一个函数名称数组</span></div><div class="line"><span class="function">	<span class="title">uiNameArray</span> += <span class="title">sizeof</span><span class="params">(DWORD)</span>;</span></div><div class="line"><span class="function">	//下一个函数索引数组</span></div><div class="line"><span class="function">	<span class="title">uiNameOrdinals</span> += <span class="title">sizeof</span><span class="params">(DWORD)</span>;</span></div><div class="line"><span class="function">&#125;</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后利用CreateRemoteThread跨线程调用ReflectiveLoader。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//使用CreateRemoteThread调用lpReflectiveLoader加载DLL</span></div><div class="line">DWORD dwThreadId = <span class="number">0</span>;</div><div class="line">HANDLE hThread = CreateRemoteThread(hProcess, NULL, <span class="number">1024</span>*<span class="number">1024</span>, lpReflectiveLoader, lpParameter, (DWORD)NULL, &amp;dwThreadId);</div><div class="line">printf(<span class="string">"CreateRemoteThread:%d<span class="subst">\n</span>"</span>, GetLastError());</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是ReflectiveLoader的编程，ReflectiveLoader其实就是一个dll加载器。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先需要知道当前dll的基地址，而ReflectiveLoader肯定位于这个DLL中所以在此函数地址出逐次递减，然后判断是否存在MZ标志，MZ的地址就是DLL的基地址<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">uiLibraryAddress = caller();</div><div class="line">ULONG_PTR uiHeaderValue = NULL;</div><div class="line"><span class="keyword">while</span> (TRUE)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> <span class="function"><span class="params">(((PIMAGE_DOS_HEADER)uiLibraryAddress)-&gt;e_magic == IMAGE_DOS_SIGNATURE)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		//<span class="title">NtHeaders</span>的偏移</span></div><div class="line"><span class="function">		<span class="title">uiHeaderValue</span> = <span class="params">((PIMAGE_DOS_HEADER)uiLibraryAddress)</span>-&gt;</span>e_lfanew;</div><div class="line">		<span class="keyword">if</span> (uiHeaderValue &gt;= sizeof(IMAGE_DOS_HEADER) &amp;&amp; uiHeaderValue &lt; <span class="number">1024</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="regexp">//NtHeaders</span></div><div class="line"><span class="regexp">			uiHeaderValue += uiLibraryAddress;</span></div><div class="line"><span class="regexp">			//</span></div><div class="line">			<span class="keyword">if</span> <span class="function"><span class="params">(((PIMAGE_NT_HEADERS)uiHeaderValue)-&gt;Signature == IMAGE_NT_SIGNATURE)</span></span></div><div class="line"><span class="function">			&#123;</span></div><div class="line"><span class="function">				<span class="title">break</span>;</span></div><div class="line"><span class="function">			&#125;</span></div><div class="line"><span class="function">		&#125;</span></div><div class="line"><span class="function">	&#125;</span></div><div class="line"><span class="function">	<span class="title">uiLibraryAddress</span>--;</span></div><div class="line"><span class="function">&#125;</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着获取注射器所需要的API函数LoadLibrary，GetProcess，VirtualAlloc的地址。<br><figure class="highlight moonscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div></pre></td><td class="code"><pre><div class="line">//读取LDR的链表地址</div><div class="line"><span class="function"><span class="title">uiBaseAddress</span> = <span class="params">(ULONG_PTR)((_PPEB)uiBaseAddress)</span>-&gt;</span>pLdr;</div><div class="line">USHORT usCounter = <span class="number">0</span>;</div><div class="line">ULONG_PTR uiValueC = <span class="number">0</span>;</div><div class="line">//读取InMemoryOrderModuleList的入口地址</div><div class="line">ULONG_PTR uiValueA = <span class="function"><span class="params">(LONG_PTR)((PPEB_LDR_DATA)uiBaseAddress)</span>-&gt;</span>InMemoryOrderModuleList.Flink;</div><div class="line"><span class="keyword">while</span> (uiValueA)</div><div class="line">&#123;</div><div class="line">	//DllName</div><div class="line"><span class="function">	<span class="title">uiValueB</span> = <span class="params">(ULONG_PTR)((PLDR_DATA_TABLE_ENTRY)uiValueA)</span>-&gt;</span>BaseDllName.pBuffer;</div><div class="line">	//DllName.Length</div><div class="line"><span class="function">	<span class="title">usCounter</span> = <span class="params">(USHORT)((PLDR_DATA_TABLE_ENTRY)uiValueA)</span>-&gt;</span>BaseDllName.Length;</div><div class="line">	//存储的Dll Module的HASH</div><div class="line">	uiValueC = <span class="number">0</span>;</div><div class="line">	//计算模块名的HASH值</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		uiValueC = ror((DWORD)uiValueC);</div><div class="line">		<span class="keyword">if</span> (*((BYTE*)uiValueB) &gt;= <span class="string">'a'</span>)</div><div class="line">			uiValueC += *((BYTE *)uiValueB) - <span class="number">0x20</span>;</div><div class="line">		<span class="keyword">else</span></div><div class="line">			uiValueC += *((BYTE *)uiValueB);</div><div class="line">		uiValueB++;</div><div class="line">	&#125; <span class="keyword">while</span> (<span class="comment">--usCounter);</span></div><div class="line">	<span class="keyword">if</span> ((DWORD)uiValueC == KERNEL32DLL_HASH)</div><div class="line">	&#123;</div><div class="line">		//获取导出表</div><div class="line">		//<span class="number">1.</span>获取基地址(DOS头)</div><div class="line"><span class="function">		<span class="title">uiBaseAddress</span> = <span class="params">(ULONG_PTR)((PLDR_DATA_TABLE_ENTRY)uiValueA)</span>-&gt;</span>DllBase;</div><div class="line">		//<span class="number">2.</span>获取Nt头</div><div class="line">		uiExportDir = uiBaseAddress + (<span class="function"><span class="params">(PIMAGE_DOS_HEADER)</span>uiBaseAddress)-&gt;</span>e_lfanew;</div><div class="line">		//<span class="number">3.</span>获取导出表数据目录</div><div class="line"><span class="function">		<span class="title">uiNameArray</span> = <span class="params">(ULONG_PTR)</span>&amp;(<span class="params">(PIMAGE_NT_HEADERS)</span><span class="title">uiExportDir</span>)-&gt;</span>OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];</div><div class="line">		//<span class="number">4.</span>获取导出表的地址</div><div class="line">		uiExportDir = uiBaseAddress + (<span class="function"><span class="params">(PIMAGE_DATA_DIRECTORY)</span>uiNameArray)-&gt;</span>VirtualAddress;</div><div class="line">		//<span class="number">5.</span>获取函数名称数组</div><div class="line">		uiNameArray = uiBaseAddress + (<span class="function"><span class="params">(PIMAGE_EXPORT_DIRECTORY)</span>uiExportDir)-&gt;</span>AddressOfNames;</div><div class="line">		//<span class="number">6.</span>获取导出表的索引数组</div><div class="line">		uiNameOrdinals = uiBaseAddress + (<span class="function"><span class="params">(PIMAGE_EXPORT_DIRECTORY)</span>uiExportDir)-&gt;</span>AddressOfNameOrdinals;</div><div class="line">		usCounter = <span class="number">3</span>;</div><div class="line">		<span class="keyword">while</span> (usCounter &gt; <span class="number">0</span>)</div><div class="line">		&#123;</div><div class="line">			dwHashValue = hash((char*)(uiBaseAddress + DEREF_32(uiNameArray)));</div><div class="line">			//比较是否是LoadLibrary，GetProcAddress，VirtualAlloc的HASH</div><div class="line">			<span class="keyword">if</span> (dwHashValue == LOADLIBRARYA_HASH || dwHashValue == GETPROCADDRESS_HASH || dwHashValue == VIRTUALALLOC_HASH)</div><div class="line">			&#123;</div><div class="line">				//获取指定函数的地址</div><div class="line">				uiAddressArray = uiBaseAddress + (<span class="function"><span class="params">(PIMAGE_EXPORT_DIRECTORY)</span>uiExportDir)-&gt;</span>AddressOfFunctions;</div><div class="line">				uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(DWORD));</div><div class="line">				//存储函数的VA</div><div class="line">				//存储LoadLibrary的绝对地址</div><div class="line">				<span class="keyword">if</span> (dwHashValue == LOADLIBRARYA_HASH)</div><div class="line">					pLoadLibraryA = (LOADLIBRARYA)(uiBaseAddress + DEREF_32(uiAddressArray));</div><div class="line">				//存储GetProcAddress的绝对地址</div><div class="line">				<span class="keyword">else</span> <span class="keyword">if</span> (dwHashValue == GETPROCADDRESS_HASH)</div><div class="line">					pGetProcAddress = (GETPROCADDRESS)(uiBaseAddress + DEREF_32(uiAddressArray));</div><div class="line">				//存储VirtualAlloc的绝对地址</div><div class="line">				<span class="keyword">else</span> <span class="keyword">if</span> (dwHashValue == VIRTUALALLOC_HASH)</div><div class="line">					pVirtualAlloc = (VIRTUALALLOC)(uiBaseAddress + DEREF_32(uiAddressArray));</div><div class="line">				usCounter<span class="comment">--;</span></div><div class="line">			&#125;</div><div class="line">			uiNameArray += sizeof(DWORD);</div><div class="line">			uiNameOrdinals += sizeof(DWORD);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span> ((DWORD)uiValueC == NTDLLDLL_HASH)</div><div class="line">	&#123;</div><div class="line">		//获取Ntdll的基地址</div><div class="line"><span class="function">		<span class="title">uiBaseAddress</span> = <span class="params">(ULONG_PTR)((PLDR_DATA_TABLE_ENTRY)uiValueA)</span>-&gt;</span>DllBase;</div><div class="line">		//获取NtHeader</div><div class="line"><span class="function">		<span class="title">uiExportDir</span> = <span class="params">(uiBaseAddress+((PIMAGE_DOS_HEADER)uiBaseAddress)-&gt;e_lfanew)</span>;</span></div><div class="line"><span class="function">		//获取数据目录导出表</span></div><div class="line"><span class="function">		<span class="title">uiNameArray</span> = <span class="params">(ULONG_PTR)</span>&amp;(<span class="params">(PIMAGE_NT_HEADERS)</span><span class="title">uiExportDir</span>)-&gt;</span>OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];</div><div class="line">		//获取导出表的VA</div><div class="line"><span class="function">		<span class="title">uiExportDir</span> = <span class="params">(uiBaseAddress + ((PIMAGE_DATA_DIRECTORY)uiNameArray)-&gt;VirtualAddress)</span>;</span></div><div class="line"><span class="function">		//获取导出表函数名称数组</span></div><div class="line"><span class="function">		<span class="title">uiNameArray</span> = <span class="params">(uiBaseAddress + ((PIMAGE_EXPORT_DIRECTORY)uiExportDir)-&gt;AddressOfNames)</span>;</span></div><div class="line"><span class="function">		//获取导出表函数索引数组</span></div><div class="line"><span class="function">		<span class="title">uiNameOrdinals</span> = <span class="params">(uiBaseAddress + ((PIMAGE_EXPORT_DIRECTORY)uiExportDir)-&gt;AddressOfNameOrdinals)</span>;</span></div><div class="line"><span class="function">		<span class="title">usCounter</span> = 1;</span></div><div class="line"><span class="function">		<span class="title">while</span> <span class="params">(usCounter &gt; <span class="number">0</span>)</span></span></div><div class="line"><span class="function">		&#123;</span></div><div class="line"><span class="function">			//利用导出函数名称计算<span class="title">HASH</span></span></div><div class="line"><span class="function">			//<span class="title">DEREF_32</span>函数是为了将32位<span class="title">DWORD</span>转化为字符串</span></div><div class="line"><span class="function">			<span class="title">dwHashValue</span> = <span class="title">hash</span>(<span class="params">(char*)(uiBaseAddress + DEREF_32(uiNameArray))</span>);</span></div><div class="line"><span class="function">			//比较是否是<span class="title">ntflushinstructioncache</span>函数<span class="title">HASH</span></span></div><div class="line"><span class="function">			<span class="title">if</span> <span class="params">(dwHashValue == NTFLUSHINSTRUCTIONCACHE_HASH)</span></span></div><div class="line"><span class="function">			&#123;</span></div><div class="line"><span class="function">				//获取函数地址数组</span></div><div class="line"><span class="function">				<span class="title">uiAddressArray</span> =<span class="title">uiBaseAddress</span> + (<span class="params">(PIMAGE_EXPORT_DIRECTORY)</span><span class="title">uiExportDir</span>)-&gt;</span>AddressOfFunctions;</div><div class="line">				//根据索引找到其在函数地址数组中的地址</div><div class="line">				uiAddressArray +=  ((DEREF_16(uiNameOrdinals) * sizeof(DWORD)));</div><div class="line">				//存储pNtFlushInstructionCache函数的地址</div><div class="line">				<span class="keyword">if</span> (dwHashValue == NTFLUSHINSTRUCTIONCACHE_HASH)</div><div class="line">				&#123;</div><div class="line">					//RVA+BaseAddress=VA</div><div class="line">					pNtFlushInstructionCache = (NTFLUSHINSTRUCTIONCACHE)(uiBaseAddress + DEREF_32(uiAddressArray));</div><div class="line">				&#125;</div><div class="line">				usCounter<span class="comment">--;</span></div><div class="line">			&#125;</div><div class="line">			//下一个函数名称数组</div><div class="line">			uiNameArray += sizeof(DWORD);</div><div class="line">			uiNameOrdinals += sizeof(DWORD);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	//已经找到四个函数地址VA结束第二歩</div><div class="line">	<span class="keyword">if</span> (pLoadLibraryA &amp;&amp; pGetProcAddress &amp;&amp; pVirtualAlloc &amp;&amp; pNtFlushInstructionCache)</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	uiValueA = DEREF(uiValueA);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有了前面这几个API函数做支撑，可以将DLL文件载入到内存,这个是模拟装载器的载入，并不是单纯的读取。<br><figure class="highlight moonscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">//NT头</div><div class="line">uiHeaderValue = uiLibraryAddress + (<span class="function"><span class="params">(PIMAGE_DOS_HEADER)</span>uiLibraryAddress)-&gt;</span>e_lfanew;</div><div class="line">//开辟内存空间</div><div class="line">//因为是自己构架的Loader，所以没有加载kernel32.dll需要自行获取函数的地址，然后调用</div><div class="line">uiBaseAddress = (ULONG_PTR)pVirtualAlloc(NULL, </div><div class="line">(<span class="function"><span class="params">(PIMAGE_NT_HEADERS)</span>uiHeaderValue)-&gt;</span>OptionalHeader.SizeOfImage, </div><div class="line">	MEM_RESERVE | MEM_COMMIT,</div><div class="line">	PAGE_EXECUTE_READWRITE);</div><div class="line">//文件头大小</div><div class="line"><span class="function"><span class="title">uiValueA</span> = (<span class="params">(PIMAGE_NT_HEADERS)</span><span class="title">uiHeaderValue</span>)-&gt;</span>OptionalHeader.SizeOfHeaders;</div><div class="line">//原地址地址</div><div class="line">uiValueB = uiLibraryAddress;</div><div class="line">//目的地址</div><div class="line">uiValueC = uiBaseAddress;</div><div class="line"><span class="keyword">while</span> (uiValueA<span class="comment">--)</span></div><div class="line">	*(BYTE*)uiValueC++ = *(BYTE*)uiValueB;</div><div class="line">//复制节区</div><div class="line">ULONG_PTR uiValueD=NULL;</div><div class="line"><span class="function"><span class="title">uiValueA</span> = <span class="params">(ULONG_PTR)</span>&amp;(<span class="params">(PIMAGE_NT_HEADERS)</span><span class="title">uiHeaderValue</span>)-&gt;</span>OptionalHeader + (<span class="function"><span class="params">(PIMAGE_NT_HEADERS)</span>uiHeaderValue)-&gt;</span>FileHeader.SizeOfOptionalHeader;</div><div class="line">//获取节区数目</div><div class="line">ULONG_PTR uiValueE = <span class="function">(<span class="params">(PIMAGE_NT_HEADERS)</span>uiHeaderValue)-&gt;</span>FileHeader.NumberOfSections;</div><div class="line"><span class="keyword">while</span> (uiValueE<span class="comment">--)</span></div><div class="line">&#123;</div><div class="line">	//获取节区VA</div><div class="line"><span class="function">	<span class="title">uiValueB</span> = <span class="params">(uiBaseAddress + ((PIMAGE_SECTION_HEADER)uiValueA)-&gt;VirtualAddress)</span>;</span></div><div class="line"><span class="function">	//获取磁盘中节区的<span class="title">VA</span></span></div><div class="line"><span class="function">	<span class="title">uiValueC</span> = <span class="title">uiLibraryAddress</span> + (<span class="params">(PIMAGE_SECTION_HEADER)</span><span class="title">uiValueA</span>)-&gt;</span>PointerToRawData;</div><div class="line">	//获取磁盘中节区大小，不需要填充</div><div class="line"><span class="function">	<span class="title">uiValueD</span> = (<span class="params">(PIMAGE_SECTION_HEADER)</span><span class="title">uiValueA</span>)-&gt;</span>SizeOfRawData;</div><div class="line">	//复制</div><div class="line">	<span class="keyword">while</span> (uiValueD<span class="comment">--)</span></div><div class="line">		*(BYTE*)uiValueC++ = *(BYTE*)uiValueC++;</div><div class="line">	//下一个节区</div><div class="line">	uiValueA += sizeof(IMAGE_SECTION_HEADER);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后就是修正IAT和重定位表。修正OEP。和加壳很像！<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">//6.修正重定位表</span></div><div class="line"><span class="regexp">//</span>计算重定位信息公式：VA-ImageBase+BaseAddress</div><div class="line"><span class="regexp">//计算BaseAddress-ImageBase</span></div><div class="line"><span class="regexp">uiLibraryAddress = uiBaseAddress - ((PIMAGE_NT_HEADERS)uiHeaderValue)-&gt;OptionalHeader.ImageBase;</span></div><div class="line"><span class="regexp">//</span>获取重定位数据目录</div><div class="line"><span class="function"><span class="title">uiValueB</span> = <span class="params">(ULONG_PTR)</span>&amp;<span class="params">((PIMAGE_NT_HEADERS)uiHeaderValue)</span>-&gt;</span>OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];</div><div class="line"><span class="keyword">if</span> <span class="function"><span class="params">(((PIMAGE_DATA_DIRECTORY)uiValueB)-&gt;Size)</span>   //确定重定位表是否存在值</span></div><div class="line"><span class="function">&#123;</span></div><div class="line"><span class="function">	//获取重定位表<span class="title">VA</span></span></div><div class="line"><span class="function">	<span class="title">uiValueC</span> = <span class="params">(uiBaseAddress + ((PIMAGE_DATA_DIRECTORY)uiValueB)-&gt;VirtualAddress)</span>;</span></div><div class="line"><span class="function">	<span class="title">while</span> <span class="params">(((PIMAGE_BASE_RELOCATION)uiValueC)-&gt;SizeOfBlock)</span></span></div><div class="line"><span class="function">	&#123;</span></div><div class="line"><span class="function">		//获取重定位块的<span class="title">RVA</span></span></div><div class="line"><span class="function">		<span class="title">uiValueA</span> = <span class="params">(uiBaseAddress + ((PIMAGE_BASE_RELOCATION)uiValueC)-&gt;VirtualAddress)</span>;</span></div><div class="line"><span class="function">		//获取重定位块的个数</span></div><div class="line"><span class="function">		<span class="title">uiValueB</span> = <span class="params">(((PIMAGE_BASE_RELOCATION)uiValueC)-&gt;SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION))</span> / <span class="title">sizeof</span><span class="params">(IMAGE_RELOC)</span>;</span></div><div class="line"><span class="function">		<span class="title">uiValueD</span> = <span class="title">uiValueC</span> + <span class="title">sizeof</span><span class="params">(IMAGE_BASE_RELOCATION)</span>;</span></div><div class="line"><span class="function">		<span class="title">while</span> <span class="params">(uiValueB--)</span></span></div><div class="line"><span class="function">		&#123;</span></div><div class="line"><span class="function">			<span class="title">if</span> <span class="params">(((PIMAGE_RELOC)uiValueD)-&gt;type == IMAGE_REL_BASED_DIR64)</span></span></div><div class="line"><span class="function">				*<span class="params">(ULONG_PTR *)(uiValueA + ((PIMAGE_RELOC)uiValueD)-&gt;offset)</span> += <span class="title">uiLibraryAddress</span>;</span></div><div class="line"><span class="function">			<span class="title">else</span> <span class="title">if</span> <span class="params">(((PIMAGE_RELOC)uiValueD)-&gt;type == IMAGE_REL_BASED_HIGHLOW)</span></span></div><div class="line"><span class="function">				*<span class="params">(DWORD *)(uiValueA + ((PIMAGE_RELOC)uiValueD)-&gt;offset)</span> += <span class="params">(DWORD)</span><span class="title">uiLibraryAddress</span>;</span></div><div class="line"><span class="function">			<span class="title">else</span> <span class="title">if</span> <span class="params">(((PIMAGE_RELOC)uiValueD)-&gt;type == IMAGE_REL_BASED_HIGH)</span></span></div><div class="line"><span class="function">				*<span class="params">(WORD *)(uiValueA + ((PIMAGE_RELOC)uiValueD)-&gt;offset)</span> += <span class="title">HIWORD</span><span class="params">(uiLibraryAddress)</span>;</span></div><div class="line"><span class="function">			<span class="title">else</span> <span class="title">if</span> <span class="params">(((PIMAGE_RELOC)uiValueD)-&gt;type == IMAGE_REL_BASED_LOW)</span></span></div><div class="line"><span class="function">				*<span class="params">(WORD *)(uiValueA + ((PIMAGE_RELOC)uiValueD)-&gt;offset)</span> += <span class="title">LOWORD</span><span class="params">(uiLibraryAddress)</span>;</span></div><div class="line"><span class="function">			//获取下一个重定位</span></div><div class="line"><span class="function">			<span class="title">uiValueD</span> += <span class="title">sizeof</span><span class="params">(IMAGE_RELOC)</span>;</span></div><div class="line"><span class="function">		&#125;</span></div><div class="line"><span class="function">		<span class="title">uiValueC</span> = <span class="title">uiValueC</span> + <span class="params">((PIMAGE_BASE_RELOCATION)uiValueC)</span>-&gt;</span>SizeOfBlock;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="regexp">//7.调用DLL的OEP</span></div><div class="line"><span class="regexp">//</span>获取DLL的OEP</div><div class="line"><span class="function"><span class="title">uiValueA</span> = <span class="params">(uiBaseAddress + ((PIMAGE_NT_HEADERS)uiHeaderValue)-&gt;OptionalHeader.AddressOfEntryPoint)</span>;</span></div><div class="line"><span class="function">//刷新指令集</span></div><div class="line"><span class="function"><span class="title">pNtFlushInstructionCache</span><span class="params">((HANDLE)-<span class="number">1</span>, NULL, <span class="number">0</span>)</span>;</span></div><div class="line"><span class="function">//调用<span class="title">DLL</span>入口点</span></div><div class="line"><span class="function"><span class="params">((DLLMAIN)uiValueA)((HINSTANCE)uiBaseAddress, DLL_PROCESS_ATTACH, NULL)</span>;</span></div><div class="line"><span class="function"><span class="title">return</span> <span class="title">uiValueA</span>;</span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下</p>
-<ul>
-<li>注射器的实现<ul>
-<li>1.将待注入DLL读入自身内存(利用解密磁盘上加密的文件、网络传输等方式避免文件落地)</li>
-<li>2.利用VirtualAlloc和WriteProcessMemory在目标进程中写入待注入的DLL文件</li>
-<li>3.利用CreateRemoteThread等函数启动位于目标进程中的ReflectiveLoader</li>
-</ul>
-</li>
-<li>ReflectiveLoader的实现，ReflectiveLoader要完成的任务是对自身的装载<ul>
-<li>1.定位DLL文件在内存中的基址，便于后期载入内存</li>
-<li>2.获取所需的系统API</li>
-<li>3.分配一片用来装载DLL的空间<strong>以内存方式写入，而非文件方式</strong></li>
-<li>4.复制PE文件头和各个节</li>
-<li>5.处理DLL的引入表,修复重定位表</li>
-<li>6.调用DLL入口点</li>
-</ul>
-</li>
-</ul>
-<h1 id="系统机制"><a href="#系统机制" class="headerlink" title="系统机制"></a>系统机制</h1><h2 id="0x6-输入法注入"><a href="#0x6-输入法注入" class="headerlink" title="0x6 输入法注入"></a>0x6 输入法注入</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;切换输入法时候，<strong>输入法管理器imm32.dll就会加载IME模块，</strong>这样就形成了输入法注入的充要条件。而由于这个Ime文件本质上只是个存放在C:\WINDOWS\system32目录下的特殊的DLL文件，因此我们可以利用这个特性，在Ime文件中使用LoadLibrary()函数待注入的DLL文件。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先就是编写ime文件，至少需要两个导出函数<code>BOOL  ImeClass_Register(HINSTANCE hinstDLL)</code>，<code>BOOL WINAPI ImeInquire(LPIMEINFO lpIMEInfo, LPTSTR lpszUIClass, LPCTSTR lpszOption)</code>这两个是必须要实现的。剩下的导出函数可以选择不去实现。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着编写注射器。利用ImmInstallIME安装ime文件，当输入法切换的时候就可以注入dll了。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">InstallIME</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="comment">//获取当前默认的输入法</span></div><div class="line">	SystemParametersInfo(SPI_GETDEFAULTINPUTLANG,</div><div class="line">		<span class="number">0</span>,</div><div class="line">		&amp;m_retV,</div><div class="line">		<span class="number">0</span>);</div><div class="line">	<span class="comment">//安装输入法</span></div><div class="line">	m_hImeFile32 = ImmInstallIME(<span class="string">"HookIme.ime"</span>,</div><div class="line">		<span class="string">"我的输入法"</span>);</div><div class="line">	<span class="comment">//是否安装成功</span></div><div class="line">	<span class="keyword">if</span> (ImmIsIME(m_hImeFile32))</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//设置默认输入法</span></div><div class="line">		SystemParametersInfo(SPI_SETDEFAULTINPUTLANG,</div><div class="line">			<span class="number">0</span>,</div><div class="line">			&amp;m_hImeFile32,</div><div class="line">			SPIF_SENDWININICHANGE);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="0x7-SetWindowsHookEx"><a href="#0x7-SetWindowsHookEx" class="headerlink" title="0x7 SetWindowsHookEx"></a>0x7 SetWindowsHookEx</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的理解是：windows维护着消息队列，应用程序会从队列中取出消息，不同的消息有着不同的编号，我们根据编号<code>idHook</code>，设置不同钩子。如何设置钩子？可以利用SetWindowsHookEx这个API函数,函数原型如下：第一个参数是消息编号，第二个参数为Hook函数<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function">HHOOK <span class="title">SetWindowsHookExA</span><span class="params">(</span></span></div><div class="line"><span class="function"><span class="params">  <span class="keyword">int</span>       idHook,</span></span></div><div class="line"><span class="function"><span class="params">  HOOKPROC  lpfn,</span></span></div><div class="line"><span class="function"><span class="params">  HINSTANCE hmod,</span></span></div><div class="line"><span class="function"><span class="params">  DWORD     dwThreadId)</span></span>;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体操作如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">extern</span> <span class="string">"C"</span> _declspec(dllexport) <span class="function"><span class="keyword">void</span> <span class="title">HookStart</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line"><span class="comment">//	HHOOK hHook = NULL;</span></div><div class="line">	g_hHook=SetWindowsHookEx(WH_KEYBOARD, HookProc, </div><div class="line">		GetModuleHandle(<span class="string">"E://Viusal Studio//kanxue//注入技术//SetWindowsHookEx//Inject_dll//Debug//Inject_dll.dll"</span>), <span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == g_hHook)</div><div class="line">	&#123;</div><div class="line">		MessageBox(<span class="literal">NULL</span>, <span class="string">"安装钩子失败"</span>, <span class="string">"提示"</span>, MB_OKCANCEL);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h1 id="其他方法："><a href="#其他方法：" class="headerlink" title="其他方法："></a>其他方法：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL劫持法(输入表DLL替换法)，原理是利用搜索DLL路径存在先后顺序(exe程序目录&gt;系统目录&gt;当前目录&gt;Path),当较高层存在一个同名的DLL文件的时候，就会直接加载较高层的DLL文件。常常用于病毒的白加黑。需要注意的是黑DLL路径优先级一定要高于原来的dll文件，第二，一定要具有源dll文件所有的导出函数。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;毕竟新创建的进程在加载User32.dll时，都会自动调用LoadLibrary去加载注册表中某个表项键值里写入的Dll路径</p>
-<ul>
-<li><code>x64下:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows</code></li>
-<li><code>x86下：HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\Windows</code></li>
-</ul>
-<h1 id="应用级防护"><a href="#应用级防护" class="headerlink" title="应用级防护"></a>应用级防护</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>在创建远程线程创建初期</strong>在DllMain中防御远程线程，此时尚未调用LoadLibrary。可以对线程的合法性判断<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>LoadLibrary之前</strong>首先可以挂钩LoadLibrary函数，然后检查dll路径合法性<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>LoadLibrary之后</strong>枚举可疑内存和模块</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/03/31/《Windows Internals》第三章_系统机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -812,7 +756,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/31/《Windows Internals》第三章_系统机制/" itemprop="url">第三章：系统机制-陷阱分发</a></h1>
+                <a class="post-title-link" href="/2018/03/31/《Windows Internals》第三章_系统机制/" itemprop="url">《Windows Internals》第三章_陷阱分发</a></h1>
         
 
         <div class="post-meta">

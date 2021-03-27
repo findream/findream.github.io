@@ -294,6 +294,152 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/" itemprop="url"><格蠹汇编>_第14章_是谁动了我的句柄</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T17:02:11+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/16/《格蠹汇编》_第16章_探寻唤醒失败的原因/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -386,21 +532,17 @@
 
       
         
-          
-            <h2 id="寻找突破口"><a href="#寻找突破口" class="headerlink" title="寻找突破口"></a>寻找突破口</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：</p>
+          <h2 id="寻找突破口"><a href="#寻找突破口" class="headerlink" title="寻找突破口"></a>寻找突破口</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于唤醒失败一般存在于内核态，可有两个突破口：</p>
 <ul>
 <li>1.使用<strong>!pcr</strong>查看处理器控制区，了解CPU状态</li>
-<li>2.使用<strong>!locks</strong>寻找可能存在的系统死锁</li>
-</ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过查看当前线程和Idle.exe线程ID不同的处理器，但是该处理器处于用户态，<strong>而挂死一般是处于内核态</strong>，我们换个思路，利用<code>!locks</code>寻找存在的对象死锁。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在执行!locks命令发现线程87474da8线程拥有多个资源</p>
-<h2 id="关键线程"><a href="#关键线程" class="headerlink" title="关键线程"></a>关键线程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看线程信息，切换线程，然后查看栈回溯，发现用于睡眠的函数<code>NtSetSystemPowerState</code>和用于通知设备驱动的程序</p>
-<h2 id="了解驱动"><a href="#了解驱动" class="headerlink" title="了解驱动"></a>了解驱动</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>!drvobj</code>查看驱动的相关信息。然后利用<code>dt _DRIVER_OBJECT XXXXXXX</code>来获取_DRIVER_OBJECT结构的信息。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为了了解设备接入方式可以使用<code>!drvstack</code>来描述设备栈的设备对象的地址，驱动名称等信息。</p>
-<h2 id="解析参数"><a href="#解析参数" class="headerlink" title="解析参数"></a>解析参数</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在之前栈回溯中可以发现多个驱动函数被反复调用，但是我们没有驱动的符号信息，只能利用已知函数去推测未知函数的功能</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用已经公开的函数，PoCallDriver来判断，我们知道该函数第一个参数是设备对象，第二个参数是IRP IO请求包（需要调用的驱动程序）利用<code>!devobj</code>查看第一个参数，利用<code>!IRP</code>查看IRP。</p>
-
-          
+<li>2.使用<strong>!locks</strong>寻找可能存在的系统死锁
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/08/16/《格蠹汇编》_第16章_探寻唤醒失败的原因/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1586,156 +1728,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/07/25/windbg学习笔记_5_内核调试基本命令/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/07/22/windbg学习笔记_4_/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/22/windbg学习笔记_4_/" itemprop="url">windbg学习笔记 (4)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-22T14:02:11+08:00">
-                2018-07-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows-内核/" itemprop="url" rel="index">
-                    <span itemprop="name">windows 内核</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="第一部分-调试目标程序的函数"><a href="#第一部分-调试目标程序的函数" class="headerlink" title="第一部分 调试目标程序的函数"></a>第一部分 调试目标程序的函数</h1><h2 id="call命令的原理"><a href="#call命令的原理" class="headerlink" title=".call命令的原理"></a>.call命令的原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们使用.call调试被调试程序的函数。利用.call元命令可以不需要使函数运行到函数调用处，而是类似于进行一次虚拟调用。具体原理如下：</p>
-<ul>
-<li>windbg在栈上创建一小段代码，这段代码用于被调用函数的父函数，函数返回到这段代码，然后中断。</li>
-<li>在栈上创建一个新的关于被调用函数的栈帧，用于模拟被调用函数</li>
-<li>修改寄存器，使程序指向模拟被调用的函数的起始地址，保证恢复程序运行就能执行这个函数
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/07/22/windbg学习笔记_4_/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
