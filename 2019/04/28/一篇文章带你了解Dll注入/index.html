@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是&amp;lt;一篇文章带你…&amp;gt;系列的第四篇，主要会阐明DLL注入的基本原理和几种主流方式，虽然这些方法已经有点滞后了。但是DLL注入的基本原理是不会改变的。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;DLL注入的主要原">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-03-27T09:42:57.517Z">
+<meta property="og:updated_time" content="2021-03-27T09:45:22.106Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一篇文章带你了解Dll注入">
 <meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是&amp;lt;一篇文章带你…&amp;gt;系列的第四篇，主要会阐明DLL注入的基本原理和几种主流方式，虽然这些方法已经有点滞后了。但是DLL注入的基本原理是不会改变的。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;DLL注入的主要原">
@@ -385,7 +385,7 @@
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是&lt;一篇文章带你…&gt;系列的第四篇，主要会阐明DLL注入的基本原理和几种主流方式，虽然这些方法已经有点滞后了。但是DLL注入的基本原理是不会改变的。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL注入的主要原理就是强制进程自己将需要注入的dll文件注入到自身进程空间内，最好配合Hook技术。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dll注入可以从三个方向入手：第一：在进程创建初期按照导入表加载dll的时候。第二：进程运行时期利用LoadLibrary函数加载，第三：利用某些系统机制：例如windows消息机制等。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dll注入可以从三个方向入手：第一：在进程创建初期按照导入表加载dll的时候。第二：进程运行时期利用LoadLibrary函数加载，第三：利用某些系统机制：例如windows消息机制等。<br><a id="more"></a></p>
 <h1 id="进程创建后期"><a href="#进程创建后期" class="headerlink" title="进程创建后期"></a>进程创建后期</h1><h2 id="0x1-CreateRemoteThread"><a href="#0x1-CreateRemoteThread" class="headerlink" title="0x1 CreateRemoteThread"></a>0x1 CreateRemoteThread</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此方法是最常见的dll注入的方法，原理是由于CreateRemoteThread的函数原型和CreateThread是一致的。所以模仿CreateThread创建线程的方式实现注入。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于创建的是远程线程，是需要将注入的参数(也就是Dll文件的路径)写入目标进程空间。所以基本步骤如下：</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;打开目标进程句柄<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//打开目标进程</span></div><div class="line">hProc = OpenProcess(PROCESS_ALL_ACCESS,</div><div class="line">	FALSE,</div><div class="line">	dwTargetPid</div><div class="line">);</div><div class="line"><span class="keyword">if</span> (hProc == <span class="literal">NULL</span>)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"OpenProcess:%d\n"</span>, GetLastError());</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
