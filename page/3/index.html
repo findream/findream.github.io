@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/27/二进制分析工具angr使用笔记/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -313,7 +313,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/08/27/二进制分析工具angr使用笔记/" itemprop="url">angr使用笔记</a></h1>
+                <a class="post-title-link" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/" itemprop="url"><格蠹汇编>_第14章_是谁动了我的句柄</a></h1>
         
 
         <div class="post-meta">
@@ -325,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-27T14:02:11+08:00">
-                2018-08-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T17:02:11+08:00">
+                2018-08-16
               </time>
             
 
@@ -348,8 +348,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/逆向工程/" itemprop="url" rel="index">
-                    <span itemprop="name">逆向工程</span>
+                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
+                    <span itemprop="name"><格蠹汇编></span>
                   </a>
                 </span>
 
@@ -386,10 +386,10 @@
 
       
         
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一般来说，二进制文件有两种分析方法：静态分析、动态分析。<br>
+          <h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/08/27/二进制分析工具angr使用笔记/#more" rel="contents">
+            <a class="btn" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -547,152 +547,6 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用已经公开的函数，PoCallDriver来判断，我们知道该函数第一个参数是设备对象，第二个参数是IRP IO请求包（需要调用的驱动程序）利用<code>!devobj</code>查看第一个参数，利用<code>!IRP</code>查看IRP。</p>
 
           
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/" itemprop="url"><格蠹汇编>_第14章_是谁动了我的句柄</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T17:02:11+08:00">
-                2018-08-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
-                    <span itemprop="name"><格蠹汇编></span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="回到异常现场"><a href="#回到异常现场" class="headerlink" title="回到异常现场"></a>回到异常现场</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拿到一个dump文件，使用k命令进行栈回溯的时候，可能无法正常显示函数名，产生这样的问题的原因是dump文件显示的上下文信息是写入转储文件时的上下文，我们首先<strong>需要想办法切换到发生异常的时候的上下文。</strong><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/08/16/《格蠹汇编》_第14章_是谁动了我的句柄/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -1764,6 +1618,156 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/07/22/windbg学习笔记_4_/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/22/windbg学习笔记_4_/" itemprop="url">windbg学习笔记 (4)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-22T14:02:11+08:00">
+                2018-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows 内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="第一部分-调试目标程序的函数"><a href="#第一部分-调试目标程序的函数" class="headerlink" title="第一部分 调试目标程序的函数"></a>第一部分 调试目标程序的函数</h1><h2 id="call命令的原理"><a href="#call命令的原理" class="headerlink" title=".call命令的原理"></a>.call命令的原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们使用.call调试被调试程序的函数。利用.call元命令可以不需要使函数运行到函数调用处，而是类似于进行一次虚拟调用。具体原理如下：</p>
+<ul>
+<li>windbg在栈上创建一小段代码，这段代码用于被调用函数的父函数，函数返回到这段代码，然后中断。</li>
+<li>在栈上创建一个新的关于被调用函数的栈帧，用于模拟被调用函数</li>
+<li>修改寄存器，使程序指向模拟被调用的函数的起始地址，保证恢复程序运行就能执行这个函数
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/22/windbg学习笔记_4_/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1814,7 +1818,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-count">48</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1825,7 +1829,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
