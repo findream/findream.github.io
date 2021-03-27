@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;没事看看linux~~~~学习学习。然后的重点是linux的调试，文件结构，机制。慢慢积累。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下样本分析小结">
+<meta property="og:url" content="https://findream.github.io/2019/07/16/病毒分析技术_23_linux样本分析小结/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;没事看看linux~~~~学习学习。然后的重点是linux的调试，文件结构，机制。慢慢积累。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/o1DgFc6rditl.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/Bt4NDhq93ku6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/2MUax55n5ru1.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/zIVjoDueJAaG.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/WpN4C7LeO5sw.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/8YM0N6zo0hIc.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/Dj0WdtinjDov.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/i6ncImgAwuX4.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/bf1NORLX0Gp7.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/W7r4q8pyeWc9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190716/m824ROntpI43.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190730/Htvj0Tz6eeEq.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/5vWDf3v5hNGY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/tDrqKTIME3HW.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/J6Lcf3SGNSy5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/uIAlcuOQaFkG.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/2Jc0TRerRd88.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/F6u3KMwvmIBW.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190731/zi4cqYmXmSU1.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/oNFlrOtQ65sf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/7T7zBw2TeNRE.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/t4rurkHK3GWx.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/nH4os1PIxYfB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/Ltbw8n1fvJbV.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/uHb5rCJz80gp.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/JsE44xv3gso5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/y1fM53Wha8kq.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/KCAe3s3Qi7VA.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190812/NGtoHiqfvIxY.png?imageslim">
+<meta property="og:updated_time" content="2019-08-14T12:03:27.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下样本分析小结">
+<meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;没事看看linux~~~~学习学习。然后的重点是linux的调试，文件结构，机制。慢慢积累。">
+<meta name="twitter:image" content="http://hacky.wang/blog/20190716/o1DgFc6rditl.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2019/07/16/病毒分析技术_23_linux样本分析小结/"/>
+
+
+
+
+
+  <title>linux下样本分析小结 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/07/16/病毒分析技术_23_linux样本分析小结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux下样本分析小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-16T15:02:11+08:00">
+                2019-07-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/病毒分析/" itemprop="url" rel="index">
+                    <span itemprop="name">病毒分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没事看看linux~~~~学习学习。然后的重点是linux的调试，文件结构，机制。慢慢积累。<br><a id="more"></a></p>
+<h1 id="0x1-Perl脚本样本"><a href="#0x1-Perl脚本样本" class="headerlink" title="0x1 Perl脚本样本"></a>0x1 Perl脚本样本</h1><h2 id="0x1-1-Perl调试"><a href="#0x1-1-Perl调试" class="headerlink" title="0x1.1 Perl调试"></a>0x1.1 Perl调试</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perl是一个解释性语言，此处的调试器为自带的Perl调试器。具体调试指令如下：</p>
+<ul>
+<li>启动调试器-d：<code>perl -d Test.pl</code><br>  <img src="http://hacky.wang/blog/20190716/o1DgFc6rditl.png?imageslim" alt="mark"></li>
+<li>插入断点 b：<code>b 行号/函数名 条件</code></li>
+<li>查看断点 L：</li>
+<li>删除断点 B：<code>B 行号</code></li>
+<li>添加监视 w: <code>w $变量名</code></li>
+<li>查看监视 p：<code>p $变量名</code></li>
+<li>删除监视 W：<code>W $变量名</code></li>
+<li>步入操作 s</li>
+<li>步过操作 n</li>
+<li>执行到返回 r</li>
+<li>退出调试 q</li>
+<li>参考自：<a href="https://www.cnblogs.com/royenhome/archive/2010/09/09/1822239.html" target="_blank" rel="external">https://www.cnblogs.com/royenhome/archive/2010/09/09/1822239.html</a></li>
+</ul>
+<h2 id="0x1-2-实例分析"><a href="#0x1-2-实例分析" class="headerlink" title="0x1.2 实例分析"></a>0x1.2 实例分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;得到样本是一个perl语言编写的脚本，没有加混淆，可读性比较好。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先判断文件/tmp/.Abe0ffdecac1a561be917bfded951a7a是否存在，以及当前进程正在运行<br>    <img src="http://hacky.wang/blog/20190716/Bt4NDhq93ku6.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着创建一个新进程，然后清空三个标准标志符，将之前创建的进程PID写入/tmp/.Abe0ffdecac1a561be917bfded951a7a<br>    <img src="http://hacky.wang/blog/20190716/2MUax55n5ru1.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190716/zIVjoDueJAaG.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;检测配置文件/usr/share/hplip/data/images/24x24/.rc是否存在。如果存在，解析文件中的休眠时间和Hash数据。读取数据暂存到$line变量中，然后利用sqlit函数进行以’,’符号为界限，进行字符串分割，得到onfigHash和DEFAULT_SLEEP_TIME<br>    <img src="http://hacky.wang/blog/20190716/WpN4C7LeO5sw.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将收集到的信息，经过加密，形成要发送给C2的数据串，根据返回的结果，解密得到向对应的命令。一共分为四种<code>needregr</code>|<code>newtask</code>|<code>notasks</code>|<code>newreconfig</code>。然后返回到MAIN<br>    <img src="http://hacky.wang/blog/20190716/8YM0N6zo0hIc.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据返回的结果，有m/needregr/ig命令，主要收集用户数据Post给C2，然后升级配置文件<br>    <img src="http://hacky.wang/blog/20190716/Dj0WdtinjDov.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;命令m/newtask/ig是主要是任务命令，主要的操作有Command Execution，Download Execute，Download Execute W Params，Uninstall，killcycle，Update Me<br>    <img src="http://hacky.wang/blog/20190716/i6ncImgAwuX4.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m/notasks/ig参数是休眠参数。<br>    <img src="http://hacky.wang/blog/20190716/bf1NORLX0Gp7.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参数m/newreconfig/ig为重置命令参数<br>    <img src="http://hacky.wang/blog/20190716/W7r4q8pyeWc9.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190716/m824ROntpI43.png?imageslim" alt="mark"></p>
+<ul>
+<li>IoC：808128d5fb6db3df1a842faeccd9226c</li>
+<li>参考自：<a href="https://mp.weixin.qq.com/s/4t_6vZ4lpEKgViScQJpqDw" target="_blank" rel="external">https://mp.weixin.qq.com/s/4t_6vZ4lpEKgViScQJpqDw</a></li>
+</ul>
+<h1 id="0x2-CoinMiner-linux"><a href="#0x2-CoinMiner-linux" class="headerlink" title="0x2 CoinMiner_linux"></a>0x2 CoinMiner_linux</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;linux_c写的，直接拖到IDA中，发现首先检查<code>w.3ei.xyz</code>,<code>w.21-3n.xyz</code>,<code>http://w.21-2n.com</code>三个域名是否可用。<br>    <img src="http://hacky.wang/blog/20190730/Htvj0Tz6eeEq.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后检查<code>/etc/zigw</code>,<code>/tmp/zigw</code>,<code>etc/zjgw</code>是否存在，如果存在关闭进程，删除文件<br>    <img src="http://hacky.wang/blog/20190731/5vWDf3v5hNGY.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下载migrations，并设置777权限，降低可执行文件执行难度。检查进程列表是否存在其他挖矿进程，然后执行migrations<br>    <img src="http://hacky.wang/blog/20190731/tDrqKTIME3HW.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190731/J6Lcf3SGNSy5.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;检查crontab.sh是否存在<br>    <img src="http://hacky.wang/blog/20190731/uIAlcuOQaFkG.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kill syslog进程，xig进程，systemctI<br>    <img src="http://hacky.wang/blog/20190731/2Jc0TRerRd88.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改host文件，以便访问挖矿网站<br>    <img src="http://hacky.wang/blog/20190731/F6u3KMwvmIBW.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;清空log，命令历史，mail，避免留下痕迹<br><img src="http://hacky.wang/blog/20190731/zi4cqYmXmSU1.png?imageslim" alt="mark"></p>
+<ul>
+<li>0e77987c190b005191d51474e87748ca72cf18ae359fccaab3d6891f541e37ad</li>
+</ul>
+<h1 id="0x3-WordPress爆破"><a href="#0x3-WordPress爆破" class="headerlink" title="0x3 WordPress爆破"></a>0x3 WordPress爆破</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据微步在线情报社区有一篇帖子：35000个WordPress站被攻陷（<a href="https://x.threatbook.cn/nodev4/vb4/article?threatInfoID=1774" target="_blank" rel="external">https://x.threatbook.cn/nodev4/vb4/article?threatInfoID=1774</a>）。通过对C2的溯源，关联到一个elf样本（<a href="https://s.threatbook.cn/report/file/0f4755f65c495d3711bf22271f85f1ee86da8b7a487e770f769af56e189be48c/?sign=history&amp;env=centos_7_x64" target="_blank" rel="external">https://s.threatbook.cn/report/file/0f4755f65c495d3711bf22271f85f1ee86da8b7a487e770f769af56e189be48c/?sign=history&amp;env=centos_7_x64</a>）</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过readelf查看样本信息，发现是一个go语言写的elf样本。使用GolangHelper获取信息。<br>    <img src="http://hacky.wang/blog/20190812/oNFlrOtQ65sf.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先样本通过cat获取了系统的版本和CPU信息<br>    <img src="http://hacky.wang/blog/20190812/7T7zBw2TeNRE.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190812/t4rurkHK3GWx.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190812/nH4os1PIxYfB.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可能存在一个释放过程？？？？<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可能还存在一个创建进程的过程？？</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后判断程序是否正在运行<br>    <img src="http://hacky.wang/blog/20190812/Ltbw8n1fvJbV.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将获取到的系统版本和CPU信息发送给C2<br>    <img src="http://hacky.wang/blog/20190812/uHb5rCJz80gp.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;判断是否需要升级<br>    <img src="http://hacky.wang/blog/20190812/JsE44xv3gso5.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;初始化攻击模块，利用弱口令进行爆破攻击：设计的软件主要有brut，phpmyadmin，wordpress,WHM,Magento,Joomla,Drupal,Cpanel,Bitrix,Opencart<br>    <img src="http://hacky.wang/blog/20190812/y1fM53Wha8kq.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后开始执行爆破攻击<br>    <img src="http://hacky.wang/blog/20190812/KCAe3s3Qi7VA.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190812/NGtoHiqfvIxY.png?imageslim" alt="mark"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/01/病毒分析技术_22_样本分析之Powershell/" rel="next" title="样本分析之Powershell">
+                <i class="fa fa-chevron-left"></i> 样本分析之Powershell
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/18/病毒分析技术_24_Hwp样本分析总结/" rel="prev" title="Hwp_文本类型样本分析总结">
+                Hwp_文本类型样本分析总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-前言"><span class="nav-number">1.</span> <span class="nav-text">0x0 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Perl脚本样本"><span class="nav-number">2.</span> <span class="nav-text">0x1 Perl脚本样本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-1-Perl调试"><span class="nav-number">2.1.</span> <span class="nav-text">0x1.1 Perl调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-2-实例分析"><span class="nav-number">2.2.</span> <span class="nav-text">0x1.2 实例分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-CoinMiner-linux"><span class="nav-number">3.</span> <span class="nav-text">0x2 CoinMiner_linux</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-WordPress爆破"><span class="nav-number">4.</span> <span class="nav-text">0x3 WordPress爆破</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

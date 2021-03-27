@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="第一部分 预备知识四类地址 虚拟地址（VA） 相对虚拟内存地址（RVA） 文件偏移地址（FOA） 特殊地址">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《windows PE》PE文件头">
+<meta property="og:url" content="https://findream.github.io/2018/05/07/《windows PE》PE文件头/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="第一部分 预备知识四类地址 虚拟地址（VA） 相对虚拟内存地址（RVA） 文件偏移地址（FOA） 特殊地址">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://findream.github.io/home/findream/桌面/QQ截图20180507125335.png">
+<meta property="og:image" content="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-09-51%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-33-18%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png">
+<meta property="og:updated_time" content="2018-05-07T07:46:14.566Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《windows PE》PE文件头">
+<meta name="twitter:description" content="第一部分 预备知识四类地址 虚拟地址（VA） 相对虚拟内存地址（RVA） 文件偏移地址（FOA） 特殊地址">
+<meta name="twitter:image" content="https://findream.github.io/home/findream/桌面/QQ截图20180507125335.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/05/07/《windows PE》PE文件头/"/>
+
+
+
+
+
+  <title>《windows PE》PE文件头 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/05/07/《windows PE》PE文件头/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《windows PE》PE文件头</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-07T14:02:11+08:00">
+                2018-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第一部分-预备知识"><a href="#第一部分-预备知识" class="headerlink" title="第一部分 预备知识"></a>第一部分 预备知识</h1><h2 id="四类地址"><a href="#四类地址" class="headerlink" title="四类地址"></a>四类地址</h2><ul>
+<li>虚拟地址（VA）</li>
+<li>相对虚拟内存地址（RVA）</li>
+<li>文件偏移地址（FOA）</li>
+<li>特殊地址<a id="more"></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;虚拟地址：PE文件被加载到内存，PE对应的进程拥有了4GB的空间，这个空间存在的地址就是虚拟地址。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;相对虚拟地址：相对与基地址的偏移量，RVA的存在是由于dll（模块）的基地址的不同而产生的。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件偏移地址：文件中某个位置距离文件头的偏移量。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;特殊位置，不细考究。</li>
+</ul>
+<h2 id="数据目录"><a href="#数据目录" class="headerlink" title="数据目录"></a>数据目录</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据目录记录的是整个PE结构中存在的数据类型。</p>
+<h2 id="节"><a href="#节" class="headerlink" title="节"></a>节</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;节就是存放不同的类型的数据，不同的节区有不同的访问权限。</p>
+<h2 id="对齐"><a href="#对齐" class="headerlink" title="对齐"></a>对齐</h2><ul>
+<li>内存对齐</li>
+<li>文件对齐</li>
+<li>资源数据对齐<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内存对齐：windows中，内存属性的基本单位是页，在32位系统是4KB(1000h)，在64位系统中是8kb。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件对齐：为了提高磁盘利用率，把一个物理扇区作为一个对齐粒度的大小，也就是12字节（200H）,这是每个数据段都是200H的整数倍的原因。<br><img src="/home/findream/桌面/QQ截图20180507125335.png" alt=""> </li>
+</ul>
+<h1 id="第二部分-32位windows系统的PE结构"><a href="#第二部分-32位windows系统的PE结构" class="headerlink" title="第二部分 32位windows系统的PE结构"></a>第二部分 32位windows系统的PE结构</h1><h2 id="定位标准的PE头"><a href="#定位标准的PE头" class="headerlink" title="定位标准的PE头"></a>定位标准的PE头</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于DOS stub是一个不确定的长度，所以导致DOS头也是一个不确定的长度，这时候，<strong>我们采用e_lfanew字段来定位后续的PE结构位置。该字段是一个偏移量。</strong>PE头的定位遵循一下公式：PE_Start=DOS_MZ+IMAGE_HANDER.e_lfanew.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PE文件结构:<br><img src="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-09-51%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png" alt=""> </p>
+<h1 id="第三部分-PE文件头部解析"><a href="#第三部分-PE文件头部解析" class="headerlink" title="第三部分 PE文件头部解析"></a>第三部分 PE文件头部解析</h1><h2 id="DOS-MZ头"><a href="#DOS-MZ头" class="headerlink" title="DOS MZ头"></a>DOS MZ头</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MZ头下有两个需要知道的成员。一个是<strong>e_magic</strong> ,一个是<strong>e_lfanew</strong></p>
+<h2 id="PE头标志-Signature"><a href="#PE头标志-Signature" class="headerlink" title="PE头标志 Signature"></a>PE头标志 Signature</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature标志位于DOS_STUB之后，该标志位于e_lfanew所指向的位置。内容固定，对应的ASCII是”PE\0\0”。<br><img src="http://oxnvtxe03.bkt.clouddn.com/2018-05-07%2013-33-18%20%E5%88%9B%E5%BB%BA%E7%9A%84%E6%88%AA%E5%9B%BE.png" alt=""> </p>
+<h2 id="标准PE头-IMAGE-FILE-HEADER"><a href="#标准PE头-IMAGE-FILE-HEADER" class="headerlink" title="标准PE头 IMAGE_FILE_HEADER"></a>标准PE头 IMAGE_FILE_HEADER</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位置：在PE文件头标志的后面，位于e_lfanew+4的位置。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大小：占据了20个字节。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作用：他记录了PE文件的全局属性（运行的平台，PE文件的类型，文件中存在的节区总数）<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是FILE_HEADER的成员信息：<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_FILE_HEADER</span> </span></div><div class="line"><span class="class"></span>&#123;  </div><div class="line">        WORD    Machine;     <span class="comment">//运行平台</span></div><div class="line">        WORD    NumberOfSections;     <span class="comment">//节区数量</span></div><div class="line">        DWORD   TimeDateStamp;        <span class="comment">//创建时间</span></div><div class="line">        DWORD   PointerToSymbolTable;    <span class="comment">//指向符号表</span></div><div class="line">        DWORD   NumberOfSymbols;     <span class="comment">//符号表符号数</span></div><div class="line">        WORD    SizeOfOptionalHeader;    <span class="comment">//拓展头长度</span></div><div class="line">        WORD    Characteristics;        <span class="comment">//文件属性</span></div><div class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>Machime:该文件的运行平台，是x86、x64还是I64等等，可以是下面值里的某一个。</li>
+<li>TimeDateStamp：PE文件的创建时间，一般有连接器填写</li>
+<li>NumberOfSections：该PE文件中有多少个节，也就是节表中的项数</li>
+<li>SizeOfOptionalHeader：紧随其后的可选头的大小。</li>
+</ul>
+<h2 id="拓展PE头IMAGE-OPTIONAL-HEADER32"><a href="#拓展PE头IMAGE-OPTIONAL-HEADER32" class="headerlink" title="拓展PE头IMAGE_OPTIONAL_HEADER32"></a>拓展PE头IMAGE_OPTIONAL_HEADER32</h2><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_OPTIONAL_HEADER</span> </span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">        <span class="comment">// Standard fields.        </span></div><div class="line">        WORD    Magic;              <span class="comment">// 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）   </span></div><div class="line">        BYTE    MajorLinkerVersion;     <span class="comment">// 链接程序的主版本号   </span></div><div class="line">        BYTE    MinorLinkerVersion;     <span class="comment">// 链接程序的次版本号   </span></div><div class="line">        DWORD   SizeOfCode;         <span class="comment">// 所有含代码的节的总大小   </span></div><div class="line">        DWORD   SizeOfInitializedData;          <span class="comment">// 所有含已初始化数据的节的总大小   </span></div><div class="line">        DWORD   SizeOfUninitializedData;        <span class="comment">// 所有含未初始化数据的节的大小   </span></div><div class="line">        DWORD   AddressOfEntryPoint;        <span class="comment">// 程序执行入口RVA   </span></div><div class="line">        DWORD   BaseOfCode;         <span class="comment">// 代码的区块的起始RVA   </span></div><div class="line">        DWORD   BaseOfData;         <span class="comment">// 数据的区块的起始RVA   </span></div><div class="line">        <span class="comment">// NT additional fields.    以下是属于NT结构增加的领域。   </span></div><div class="line">        DWORD   ImageBase;          <span class="comment">// 程序的首选装载地址   </span></div><div class="line">        DWORD   SectionAlignment;       <span class="comment">// 内存中的区块的对齐大小   </span></div><div class="line">        DWORD   FileAlignment;          <span class="comment">// 文件中的区块的对齐大小   </span></div><div class="line">        WORD    MajorOperatingSystemVersion;    <span class="comment">// 要求操作系统最低版本号的主版本号   </span></div><div class="line">        WORD    MinorOperatingSystemVersion;    <span class="comment">// 要求操作系统最低版本号的副版本号   </span></div><div class="line">        WORD    MajorImageVersion;      <span class="comment">// 可运行于操作系统的主版本号   </span></div><div class="line">        WORD    MinorImageVersion;      <span class="comment">// 可运行于操作系统的次版本号   </span></div><div class="line">        WORD    MajorSubsystemVersion;      <span class="comment">// 要求最低子系统版本的主版本号   </span></div><div class="line">        WORD    MinorSubsystemVersion;      <span class="comment">// 要求最低子系统版本的次版本号   </span></div><div class="line">        DWORD   Win32VersionValue;      <span class="comment">// 莫须有字段，不被病毒利用的话一般为0   </span></div><div class="line">        DWORD   SizeOfImage;            <span class="comment">// 映像装入内存后的总尺寸   </span></div><div class="line">        DWORD   SizeOfHeaders;          <span class="comment">// 所有头+ 区块表的尺寸大小   </span></div><div class="line">        DWORD   CheckSum;           <span class="comment">// 映像的校检和   </span></div><div class="line">        WORD    Subsystem;          <span class="comment">// 可执行文件期望的子系统   </span></div><div class="line">        WORD    DllCharacteristics;     <span class="comment">// DllMain()函数何时被调用，默认为0   </span></div><div class="line">        DWORD   SizeOfStackReserve;     <span class="comment">// 初始化时的栈大小   </span></div><div class="line">        DWORD   SizeOfStackCommit;      <span class="comment">// 初始化时实际提交的栈大小   </span></div><div class="line">        DWORD   SizeOfHeapReserve;      <span class="comment">// 初始化时保留的堆大小   </span></div><div class="line">        DWORD   SizeOfHeapCommit;       <span class="comment">// 初始化时实际提交的堆大小   </span></div><div class="line">        DWORD   LoaderFlags;            <span class="comment">// 与调试有关，默认为0    </span></div><div class="line">        DWORD   NumberOfRvaAndSizes;        <span class="comment">// 下边数据目录的项数，这个字段自Windows NT 发布以来 一直是16   </span></div><div class="line">        IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];   <span class="comment">// 数据目录表   </span></div><div class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;需要我们熟悉的是以下几个成员。</p>
+<ul>
+<li>AddressOfEntryPoint;        // 程序执行入口RVA</li>
+<li>BaseOfCode;         // 代码的区块的起始RVA </li>
+<li>DWORD   ImageBase;          // 程序的首选装载地址</li>
+<li>SectionAlignment;       // 内存中的区块的对齐大小</li>
+<li>FileAlignment;          // 文件中的区块的对齐大小</li>
+<li>SizeOfImage;            // 映像装入内存后的总尺寸</li>
+<li>DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];   // 数据目录表</li>
+</ul>
+<h2 id="IMAGE-NT-HEADERS"><a href="#IMAGE-NT-HEADERS" class="headerlink" title="IMAGE_NT_HEADERS"></a>IMAGE_NT_HEADERS</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;包括三个部分组成：PE头标志，IMAGE_FILE_HEADER,IMAGE_OPTIOANAL_HEADER.</p>
+<h2 id="数据目录项-IMAGE-DATA-DIRECTORY"><a href="#数据目录项-IMAGE-DATA-DIRECTORY" class="headerlink" title="数据目录项 IMAGE_DATA_DIRECTORY"></a>数据目录项 IMAGE_DATA_DIRECTORY</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NT3.1开始，数据目录一共有16种，使用IMAGE_DATA_DIRECTORY来定义每种数据。<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_DATA_DIRECTORY &#123;</div><div class="line">        <span class="type">DWORD</span>　<span class="type">VirtualAddress</span>; //相对虚拟地址  </div><div class="line">        <span class="type">DWORD</span>　<span class="type">Size</span>;　　　　　 //大小  </div><div class="line">&#125; <span class="type">IMAGE_DATA_DIRECTORY</span>, *<span class="type">PIMAGE_DATA_DIRECTORY</span>;</div></pre></td></tr></table></figure></p>
+<p>##节表项IMAGE_SECTION_HEADER<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_SECTION_HEADER </div><div class="line">&#123;</div><div class="line">  	<span class="keyword">BYTE </span> Name[IMAGE_SIZEOF_SHORT_NAME]<span class="comment">;//节区名称</span></div><div class="line">  	union &#123;</div><div class="line">    		DWORD PhysicalAddress<span class="comment">;</span></div><div class="line">    		DWORD VirtualSize<span class="comment">;    //节区大小</span></div><div class="line">  	&#125; Misc<span class="comment">;</span></div><div class="line">  	DWORD VirtualAddress<span class="comment">;       //节区的RVA</span></div><div class="line">  	DWORD SizeOfRawData<span class="comment">;      //在文件中对齐的尺寸</span></div><div class="line">  	DWORD PointerToRawData<span class="comment">;   //在文件中的偏移</span></div><div class="line">  	DWORD PointerToRelocations<span class="comment">;    //指向重定位表的指针</span></div><div class="line"> 	DWORD PointerToLinenumbers<span class="comment">;</span></div><div class="line">  	WORD  NumberOfRelocations<span class="comment">;     //重定位表的数目</span></div><div class="line">  	WORD  NumberOfLinenumbers<span class="comment">;</span></div><div class="line">  	DWORD Characteristics<span class="comment">;       //节区表的属性</span></div><div class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<h1 id="第三部分-详细解析PE文件头字段"><a href="#第三部分-详细解析PE文件头字段" class="headerlink" title="第三部分 详细解析PE文件头字段"></a>第三部分 详细解析PE文件头字段</h1><h2 id="IMAGE-FILE-HEADER字段"><a href="#IMAGE-FILE-HEADER字段" class="headerlink" title="IMAGE_FILE_HEADER字段"></a>IMAGE_FILE_HEADER字段</h2><ul>
+<li>Machine:<ul>
+<li>位置：+0004H,</li>
+<li>大小：单字</li>
+<li>作用：查看文件可以在那种机器上运行。</li>
+</ul>
+</li>
+<li>NumberOfSection：<ul>
+<li>位置：+0006h</li>
+<li>大小：单字</li>
+<li>作用：文件中存在的节区的数目，数值不能小于1，但是节区数可以为0.</li>
+</ul>
+</li>
+<li>TimeDateStamp <ul>
+<li>位置：+0008h</li>
+<li>大小：双字</li>
+<li>作用：编译时间，压缩时被修改。</li>
+</ul>
+</li>
+<li>SizeofOptionalHeader<ul>
+<li>位置：+0014h</li>
+<li>大小：单字</li>
+<li>作用：指向的是OptionalHeader的大小。默认是00e0H，在64位是00f0H</li>
+</ul>
+</li>
+<li>Character<ul>
+<li>位置：+0016h</li>
+<li>大小：单字</li>
+<li>作用：标志这PE文件的类型，如果这个值是010fh的话，表示这是一个EXE文件，如果值是210eh，表示这个值是DLL文件。</li>
+</ul>
+</li>
+</ul>
+<h2 id="IMAGE-OPTIONAL-HEADER字段"><a href="#IMAGE-OPTIONAL-HEADER字段" class="headerlink" title="IMAGE_OPTIONAL_HEADER字段"></a>IMAGE_OPTIONAL_HEADER字段</h2><ul>
+<li>Magic：表示该文件的类型：如果是010Bh，表示文件是32位，如果是0107H，表示文件是ROM，如果是020BH，表示文件是64位PE</li>
+<li>AddressOfEntryPoint ：表示启动代码距离PE加载后的初始位置的偏移量，如果病毒需要在程序中启动恶意代码，则需要修改这一成员的数值。但是对于DLL文件，这一成员你的数值为0，因为不存在入口点。</li>
+<li>BaseOfCode：代码段的起始RVA，但是不一定是程序的入口点。</li>
+<li>ImageBase：PE文件的加载基地址。exe文件通常是00400000.</li>
+<li>SizeOfImade：表示内存中整个PE文件的映射尺寸。</li>
+<li>DllCharacteristics：DLL文件属性，但是不单纯是针对DLL文件，对于所有PE文件同样有效。</li>
+<li>DataDirectory：目录数据，表示不同的节区的基本属性（RVA和size）。</li>
+</ul>
+<h2 id="IMAGE-SECTION-HEADER"><a href="#IMAGE-SECTION-HEADER" class="headerlink" title="IMAGE_SECTION_HEADER"></a>IMAGE_SECTION_HEADER</h2><ul>
+<li>Name[IMAGE_SIZEOF_SHORT_NAME]： 八个字节的节去名称。</li>
+<li>VirtualAddress：节区的RVA</li>
+<li>SizeOfRAWDATA：节区对齐后的尺寸</li>
+<li>PointOfRAWDATA：节区数据在文件中的偏移量。</li>
+<li>PointerToRelocations：重定位表的指针</li>
+<li>NumberOfRelocations：重定位表的数目</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/26/《Windows Internals》第三章_映像加载器/" rel="next" title="第三章：系统机制-映像加载器">
+                <i class="fa fa-chevron-left"></i> 第三章：系统机制-映像加载器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/09/《windows PE》导入表/" rel="prev" title="《windows PE》导入表">
+                《windows PE》导入表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分-预备知识"><span class="nav-number">1.</span> <span class="nav-text">第一部分 预备知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#四类地址"><span class="nav-number">1.1.</span> <span class="nav-text">四类地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据目录"><span class="nav-number">1.2.</span> <span class="nav-text">数据目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#节"><span class="nav-number">1.3.</span> <span class="nav-text">节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对齐"><span class="nav-number">1.4.</span> <span class="nav-text">对齐</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分-32位windows系统的PE结构"><span class="nav-number">2.</span> <span class="nav-text">第二部分 32位windows系统的PE结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定位标准的PE头"><span class="nav-number">2.1.</span> <span class="nav-text">定位标准的PE头</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-PE文件头部解析"><span class="nav-number">3.</span> <span class="nav-text">第三部分 PE文件头部解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DOS-MZ头"><span class="nav-number">3.1.</span> <span class="nav-text">DOS MZ头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE头标志-Signature"><span class="nav-number">3.2.</span> <span class="nav-text">PE头标志 Signature</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准PE头-IMAGE-FILE-HEADER"><span class="nav-number">3.3.</span> <span class="nav-text">标准PE头 IMAGE_FILE_HEADER</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拓展PE头IMAGE-OPTIONAL-HEADER32"><span class="nav-number">3.4.</span> <span class="nav-text">拓展PE头IMAGE_OPTIONAL_HEADER32</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMAGE-NT-HEADERS"><span class="nav-number">3.5.</span> <span class="nav-text">IMAGE_NT_HEADERS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据目录项-IMAGE-DATA-DIRECTORY"><span class="nav-number">3.6.</span> <span class="nav-text">数据目录项 IMAGE_DATA_DIRECTORY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三部分-详细解析PE文件头字段"><span class="nav-number">4.</span> <span class="nav-text">第三部分 详细解析PE文件头字段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IMAGE-FILE-HEADER字段"><span class="nav-number">4.1.</span> <span class="nav-text">IMAGE_FILE_HEADER字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMAGE-OPTIONAL-HEADER字段"><span class="nav-number">4.2.</span> <span class="nav-text">IMAGE_OPTIONAL_HEADER字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMAGE-SECTION-HEADER"><span class="nav-number">4.3.</span> <span class="nav-text">IMAGE_SECTION_HEADER</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

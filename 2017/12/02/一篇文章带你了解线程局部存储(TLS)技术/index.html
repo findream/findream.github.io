@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于反调试技术。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一篇文章带你了解线程局部存储(TLS)技术">
+<meta property="og:url" content="https://findream.github.io/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于反调试技术。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/FSwCzEu.png">
+<meta property="og:image" content="https://i.imgur.com/6VonLyw.png">
+<meta property="og:image" content="https://i.imgur.com/7bDTcmj.png">
+<meta property="og:updated_time" content="2021-03-27T06:32:17.059Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一篇文章带你了解线程局部存储(TLS)技术">
+<meta name="twitter:description" content="线程局部存储技术：&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于反调试技术。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的">
+<meta name="twitter:image" content="https://i.imgur.com/FSwCzEu.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/"/>
+
+
+
+
+
+  <title>一篇文章带你了解线程局部存储(TLS)技术 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一篇文章带你了解线程局部存储(TLS)技术</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-02T13:45:11+08:00">
+                2017-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="线程局部存储技术："><a href="#线程局部存储技术：" class="headerlink" title="线程局部存储技术："></a>线程局部存储技术：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于<font color="#DC143C">反调试技术</font>。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的</strong></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="两个前提知识："><a href="#两个前提知识：" class="headerlink" title="两个前提知识："></a>两个前提知识：</h1><h2 id="线程环境块（TEB）："><a href="#线程环境块（TEB）：" class="headerlink" title="线程环境块（TEB）："></a>线程环境块（TEB）：</h2><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEB指的是线程环境块，该结构体里面包含一个线程的基本信息，进程的每一个线程都对应的一个这样的TEB数据结构。</strong></p>
+<h3 id="TEB的数据结构："><a href="#TEB的数据结构：" class="headerlink" title="TEB的数据结构："></a>TEB的数据结构：</h3><figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line">typedef struct _TEB</div><div class="line">&#123;</div><div class="line">    NT_TIB Tib;                             <span class="comment">/* 00h */</span></div><div class="line">    PVOID EnvironmentPointer;               <span class="comment">/* 1Ch */</span></div><div class="line">    CLIENT_ID Cid;                          <span class="comment">/* 20h */</span></div><div class="line">    PVOID ActiveRpcHandle;                  <span class="comment">/* 28h */</span></div><div class="line">    PVOID ThreadLocalStoragePointer;        <span class="comment">/* 2Ch */</span></div><div class="line">    struct _PEB *ProcessEnvironmentBlock;   <span class="comment">/* 30h */</span></div><div class="line">    <span class="keyword">ULONG</span> LastErrorValue;                   <span class="comment">/* 34h */</span></div><div class="line">    <span class="keyword">ULONG</span> CountOfOwnedCriticalSections;     <span class="comment">/* 38h */</span></div><div class="line">    PVOID CsrClientThread;                  <span class="comment">/* 3Ch */</span></div><div class="line">    struct _W32THREAD* Win32ThreadInfo;     <span class="comment">/* 40h */</span></div><div class="line">    <span class="keyword">ULONG</span> User32Reserved[<span class="number">0x1A</span>];             <span class="comment">/* 44h */</span></div><div class="line">    <span class="keyword">ULONG</span> UserReserved[<span class="number">5</span>];                  <span class="comment">/* ACh */</span></div><div class="line">    PVOID WOW32Reserved;                    <span class="comment">/* C0h */</span></div><div class="line">    LCID CurrentLocale;                     <span class="comment">/* C4h */</span></div><div class="line">    <span class="keyword">ULONG</span> FpSoftwareStatusRegister;         <span class="comment">/* C8h */</span></div><div class="line">    PVOID SystemReserved1[<span class="number">0x36</span>];            <span class="comment">/* CCh */</span></div><div class="line">    <span class="keyword">LONG</span> ExceptionCode;                     <span class="comment">/* 1A4h */</span></div><div class="line">    struct _ACTIVATION_CONTEXT_STACK *ActivationContextStackPointer; <span class="comment">/* 1A8h */</span></div><div class="line">    <span class="keyword">UCHAR</span> SpareBytes1[<span class="number">0x28</span>];                <span class="comment">/* 1ACh */</span></div><div class="line">    GDI_TEB_BATCH GdiTebBatch;              <span class="comment">/* 1D4h */</span></div><div class="line">    CLIENT_ID RealClientId;                 <span class="comment">/* 6B4h */</span></div><div class="line">    PVOID GdiCachedProcessHandle;           <span class="comment">/* 6BCh */</span></div><div class="line">    <span class="keyword">ULONG</span> GdiClientPID;                     <span class="comment">/* 6C0h */</span></div><div class="line">    <span class="keyword">ULONG</span> GdiClientTID;                     <span class="comment">/* 6C4h */</span></div><div class="line">    PVOID GdiThreadLocalInfo;               <span class="comment">/* 6C8h */</span></div><div class="line">    <span class="keyword">ULONG</span> Win32ClientInfo[<span class="number">62</span>];              <span class="comment">/* 6CCh */</span></div><div class="line">    PVOID glDispatchTable[<span class="number">0xE9</span>];            <span class="comment">/* 7C4h */</span></div><div class="line">    <span class="keyword">ULONG</span> glReserved1[<span class="number">0x1D</span>];                <span class="comment">/* B68h */</span></div><div class="line">    PVOID glReserved2;                      <span class="comment">/* BDCh */</span></div><div class="line">    PVOID glSectionInfo;                    <span class="comment">/* BE0h */</span></div><div class="line">    PVOID glSection;                        <span class="comment">/* BE4h */</span></div><div class="line">    PVOID glTable;                          <span class="comment">/* BE8h */</span></div><div class="line">    PVOID glCurrentRC;                      <span class="comment">/* BECh */</span></div><div class="line">    PVOID glContext;                        <span class="comment">/* BF0h */</span></div><div class="line">    NTSTATUS LastStatusValue;               <span class="comment">/* BF4h */</span></div><div class="line">    UNICODE_STRING StaticUnicodeString;     <span class="comment">/* BF8h */</span></div><div class="line">    WCHAR StaticUnicodeBuffer[<span class="number">0x105</span>];       <span class="comment">/* C00h */</span></div><div class="line">    PVOID DeallocationStack;                <span class="comment">/* E0Ch */</span></div><div class="line">    PVOID TlsSlots[<span class="number">0x40</span>];                   <span class="comment">/* E10h */</span></div><div class="line">    LIST_ENTRY TlsLinks;                    <span class="comment">/* F10h */</span></div><div class="line">    PVOID Vdm;                              <span class="comment">/* F18h */</span></div><div class="line">    PVOID ReservedForNtRpc;                 <span class="comment">/* F1Ch */</span></div><div class="line">    PVOID DbgSsReserved[<span class="number">0x2</span>];               <span class="comment">/* F20h */</span></div><div class="line">    <span class="keyword">ULONG</span> HardErrorDisabled;                <span class="comment">/* F28h */</span></div><div class="line">    PVOID Instrumentation[<span class="number">14</span>];              <span class="comment">/* F2Ch */</span></div><div class="line">    PVOID SubProcessTag;                    <span class="comment">/* F64h */</span></div><div class="line">    PVOID EtwTraceData;                     <span class="comment">/* F68h */</span></div><div class="line">    PVOID WinSockData;                      <span class="comment">/* F6Ch */</span></div><div class="line">    <span class="keyword">ULONG</span> GdiBatchCount;                    <span class="comment">/* F70h */</span></div><div class="line">    <span class="keyword">BOOLEAN</span> InDbgPrint;                     <span class="comment">/* F74h */</span></div><div class="line">    <span class="keyword">BOOLEAN</span> FreeStackOnTermination;         <span class="comment">/* F75h */</span></div><div class="line">    <span class="keyword">BOOLEAN</span> HasFiberData;                   <span class="comment">/* F76h */</span></div><div class="line">    <span class="keyword">UCHAR</span> IdealProcessor;                   <span class="comment">/* F77h */</span></div><div class="line">    <span class="keyword">ULONG</span> GuaranteedStackBytes;             <span class="comment">/* F78h */</span></div><div class="line">    PVOID ReservedForPerf;                  <span class="comment">/* F7Ch */</span></div><div class="line">    PVOID ReservedForOle;                   <span class="comment">/* F80h */</span></div><div class="line">    <span class="keyword">ULONG</span> WaitingOnLoaderLock;              <span class="comment">/* F84h */</span></div><div class="line">    <span class="keyword">ULONG</span> SparePointer1;                    <span class="comment">/* F88h */</span></div><div class="line">    <span class="keyword">ULONG</span> SoftPatchPtr1;                    <span class="comment">/* F8Ch */</span></div><div class="line">    <span class="keyword">ULONG</span> SoftPatchPtr2;                    <span class="comment">/* F90h */</span></div><div class="line">    PVOID *TlsExpansionSlots;               <span class="comment">/* F94h */</span></div><div class="line">    <span class="keyword">ULONG</span> ImpersionationLocale;             <span class="comment">/* F98h */</span></div><div class="line">    <span class="keyword">ULONG</span> IsImpersonating;                  <span class="comment">/* F9Ch */</span></div><div class="line">    PVOID NlsCache;                         <span class="comment">/* FA0h */</span></div><div class="line">    PVOID pShimData;                        <span class="comment">/* FA4h */</span></div><div class="line">    <span class="keyword">ULONG</span> HeapVirualAffinity;               <span class="comment">/* FA8h */</span></div><div class="line">    PVOID CurrentTransactionHandle;         <span class="comment">/* FACh */</span></div><div class="line">    PTEB_ACTIVE_FRAME ActiveFrame;          <span class="comment">/* FB0h */</span></div><div class="line">    PVOID FlsData;                          <span class="comment">/* FB4h */</span></div><div class="line">    <span class="keyword">UCHAR</span> SafeThunkCall;                    <span class="comment">/* FB8h */</span></div><div class="line">    <span class="keyword">UCHAR</span> BooleanSpare[<span class="number">3</span>];                  <span class="comment">/* FB9h */</span></div><div class="line">&#125; TEB, *PTEB;</div></pre></td></tr></table></figure>
+<h3 id="TEB的重要成员："><a href="#TEB的重要成员：" class="headerlink" title="TEB的重要成员："></a>TEB的重要成员：</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NT_TIB Tib;                             <span class="comment">/* 00h */</span></div><div class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">PEB</span> *<span class="title">ProcessEnvironmentBlock</span>;</span>   <span class="comment">/* 30h */</span></div></pre></td></tr></table></figure>
+<ul>
+<li>ProcessEnvirnmentBlock是一个指向PEB的指针。</li>
+<li><p>TEB的第一个成员是_NT_Tib（线程信息块）的结构体。</p>
+<ul>
+<li><p>TIB的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">typedef struct _KPCR_TIB </div><div class="line">&#123;  </div><div class="line">	PVOID  ExceptionList;   //重点              </div><div class="line">	PVOID  StackBase;                 </div><div class="line">	PVOID  StackLimit;                 </div><div class="line">	PVOID  SubSystemTib;              </div><div class="line">	_ANONYMOUS_UNION union </div><div class="line">	&#123;  </div><div class="line">   		PVOID  FiberData;             </div><div class="line">   		DWORD  Version;            </div><div class="line">	&#125;DUMMYUNIONNAME;  </div><div class="line">	PVOID  ArbitraryUserPointer;       </div><div class="line">	struct _NT_TIB *Self;  //重点             </div><div class="line">&#125; KPCR_TIB, *PKPCR_TIB;</div></pre></td></tr></table></figure>
+</li>
+<li><p>ExceptionList用于指向EXCEPTION_REGISTRATION_RECORD结构体链表（指向SEH）</p>
+</li>
+<li>self成员是TIB的自用指针，指向TIB的第一个成员，也是TEB的第一个成员。</li>
+</ul>
+</li>
+<li><h3 id="TEB的访问方法："><a href="#TEB的访问方法：" class="headerlink" title="TEB的访问方法："></a>TEB的访问方法：</h3></li>
+<li>FS:[0X00]=SEH的起始地址</li>
+<li>FS:[0x18]=TEB的起始地址</li>
+<li>FS:[0x30]=PEB的起始地址</li>
+</ul>
+<h2 id="进程环境块（PEB）："><a href="#进程环境块（PEB）：" class="headerlink" title="进程环境块（PEB）："></a>进程环境块（PEB）：</h2><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PEB（Process Environment Block，进程环境块）存放进程信息，每个进程都有自己的PEB信息。位于用户地址空间。在Win 2000下，进程环境块的地址对于每个进程来说是固定的，在0x7FFDF000处，这是用户地址空间，所以程序能够直接访问。准确的PEB地址应从系统 的EPROCESS结构的0x1b0偏移处获得，但由于EPROCESS在系统地址空间，访问这个结构需要有ring0的权限。还可以通过TEB结构的偏 移0x30处获得PEB的位置，FS段寄存器指向当前的TEB结构.</strong></p>
+<h3 id="PEB的信息如下："><a href="#PEB的信息如下：" class="headerlink" title="PEB的信息如下："></a>PEB的信息如下：</h3><figure class="highlight plain"><figcaption><span>_PEB结构：</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">typedef struct _PEB </div><div class="line">&#123; </div><div class="line"> 	UCHAR InheritedAddressSpace;   /*000*/</div><div class="line">	UCHAR ReadImageFileExecOptions;/*001*/ </div><div class="line">	UCHAR BeingDebugged;           /*002*/ //程序是否处于调试状态</div><div class="line">	UCHAR SpareBool;               /*003*/ // Allocation size</div><div class="line"> 	HANDLE Mutant;                 /*004*/</div><div class="line">	HINSTANCE ImageBaseAddress;    /*008*/ //进程映像基地址 </div><div class="line"> 	VOID *DllList;                 /*00C*/ //加载的其他模块信息</div><div class="line"> 	PPROCESS_PARAMETERS *ProcessParameters;  /*010*/</div><div class="line"> 	ULONG SubSystemData;           /*014*/</div><div class="line">	HANDLE DefaultHeap;            /*018*/ </div><div class="line">	KSPIN_LOCK FastPebLock;        /*01C*/ </div><div class="line"> 	ULONG FastPebLockRoutine;      /*020*/</div><div class="line">	ULONG FastPebUnlockRoutine;    /*024*/ </div><div class="line"> 	ULONG EnvironmentUpdateCount;  /*028*/</div><div class="line"> 	ULONG KernelCallbackTable;     /*02C*/</div><div class="line"> 	LARGE_INTEGER SystemReserved;  /*030*/</div><div class="line">	ULONG FreeList;                /*038*/ </div><div class="line"> 	ULONG TlsExpansionCounter;     /*03C*/  //TSL索引计数</div><div class="line">	ULONG TlsBitmap;               /*040*/  //TSL位图指针</div><div class="line">	LARGE_INTEGER TlsBitmapBits;   /*044*/  //TSL进程标志位</div><div class="line">	ULONG ReadOnlySharedMemoryBase;/*04C*/ </div><div class="line">	ULONG ReadOnlySharedMemoryHeap;/*050*/ </div><div class="line"> 	ULONG ReadOnlyStaticServerData;/*054*/</div><div class="line">	ULONG AnsiCodePageData;        /*058*/ </div><div class="line">	ULONG OemCodePageData;         /*05C*/ </div><div class="line">	ULONG UnicodeCaseTableData;    /*060*/ </div><div class="line">	ULONG NumberOfProcessors;      /*064*/ </div><div class="line">	LARGE_INTEGER NtGlobalFlag;    /*068*/ // Address of a local copy</div><div class="line">	LARGE_INTEGER CriticalSectionTimeout;/*070*/ </div><div class="line"> 	ULONG HeapSegmentReserve;      /*078*/</div><div class="line"> 	ULONG HeapSegmentCommit;       /*07C*/</div><div class="line"> 	ULONG HeapDeCommitTotalFreeThreshold;/*080*/</div><div class="line">	ULONG HeapDeCommitFreeBlockThreshold;/*084*/ </div><div class="line">	ULONG NumberOfHeaps;           /*088*/ </div><div class="line"> 	ULONG MaximumNumberOfHeaps;    /*08C*/</div><div class="line"> 	ULONG ProcessHeaps;            /*090*/</div><div class="line">	ULONG GdiSharedHandleTable;    /*094*/ </div><div class="line">	ULONG ProcessStarterHelper;    /*098*/ </div><div class="line">	ULONG GdiDCAttributeList;      /*09C*/ </div><div class="line">	KSPIN_LOCK LoaderLock;         /*0A0*/ </div><div class="line">	ULONG OSMajorVersion;          /*0A4*/ </div><div class="line"> 	ULONG OSMinorVersion;          /*0A8*/</div><div class="line">	USHORT OSBuildNumber;          /*0AC*/ </div><div class="line">	USHORT OSCSDVersion;           /*0AE*/ </div><div class="line"> 	ULONG OSPlatformId;            /*0B0*/</div><div class="line">	ULONG ImageSubsystem;          /*0B4*/ </div><div class="line"> 	ULONG ImageSubsystemMajorVersion;/*0B8*/</div><div class="line"> 	ULONG ImageSubsystemMinorVersion;/*0BC*/</div><div class="line">	ULONG ImageProcessAffinityMask;/*0C0*/ </div><div class="line">	ULONG GdiHandleBuffer[0x22];   /*0C4*/ </div><div class="line"> 	ULONG PostProcessInitRoutine;  /*14C*/</div><div class="line"> 	ULONG TlsExpansionBitmap;      /*150*/</div><div class="line">	UCHAR TlsExpansionBitmapBits[0x80];/*154*/ </div><div class="line"> 	ULONG SessionId;               /*1D4*/</div><div class="line">&#125;PEB, *PPEB;</div></pre></td></tr></table></figure>
+<h3 id="PEB的重要成员："><a href="#PEB的重要成员：" class="headerlink" title="PEB的重要成员："></a>PEB的重要成员：</h3><ul>
+<li>1.PEB.BeingDebugged    //程序是否处于调试状态</li>
+<li>2.ImageBaseAddress     //表示进程的基地址</li>
+<li>3.PEB.Ldr              //指向PEB_LDR_DATA的指针，该结构体可以获取模块（dll）加载的基地址</li>
+<li>4.PEB.ProcessHeap&amp;&amp;PEB.NtGlobalFlag  //用于<font color="#DC143C">反调试</font><h3 id="PEB的访问方法："><a href="#PEB的访问方法：" class="headerlink" title="PEB的访问方法："></a>PEB的访问方法：</h3></li>
+<li>FS:[0X30]=PEB</li>
+<li>先获得TEB的地址，在偏移0x30得到PEB</li>
+</ul>
+<hr>
+<h1 id="TLS技术"><a href="#TLS技术" class="headerlink" title="TLS技术"></a>TLS技术</h1><h2 id="动态TLS技术"><a href="#动态TLS技术" class="headerlink" title="动态TLS技术"></a>动态TLS技术</h2><p>四个API函数：<br>  TLsAlloc     //获取索引<br>  TlsGetValue  //获取索引值<br>  TlsSetVaule  //设置索引值<br>  TisFree      //释放索引 </p>
+<h2 id="静态TLS技术"><a href="#静态TLS技术" class="headerlink" title="静态TLS技术"></a>静态TLS技术</h2><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预先将变量定义在PE文件内部，一般实验.tls节即可。通过查看TLS节区，而已看到程序是否使用TLS反调试技术</strong><br>    <img src="https://i.imgur.com/FSwCzEu.png" alt=""></p>
+<h2 id="TSL回调函数—-反调试技术的基石"><a href="#TSL回调函数—-反调试技术的基石" class="headerlink" title="TSL回调函数—-反调试技术的基石"></a>TSL回调函数—-反调试技术的基石</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>TSL函数是指，每当创建或者终止进程的线程的时候，就会自动调用的函数，一共调用2次。有意思的是，进程创建主线程的时候也会自动的调用TSL回调函数，并且调用函数优先执行于EP代码（应该是主线程调用后，但是线程函数的尚未执行之前）。<font color="#DC143C">一点扩展利用TLS回调函数在调试器加载前执行Anti-Debug函数保护软件不被恶意修改，关键部分依旧是具体实现反调试部分的代码编写。比如传统的检测断点，检测进程，检测调试器等等。反调试技术就是利用这一特征。</font></strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果使用单纯的调试器（VS），就容易被TSL回调函数检测到，由于od的工具自动免疫了TSL的反调试机制，所以只会出现正常的状态（假的）。<br>     <img src="https://i.imgur.com/6VonLyw.png" alt=""><br>     <img src="https://i.imgur.com/7bDTcmj.png" alt=""></p>
+<ul>
+<li>解决反调试的方法：<ul>
+<li>1）OD插件</li>
+<li>2）PE或者IDA查找TSL的回调函数的入口地址和大小，然后转换成文件偏移，最后用工具00填充掉就行。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/24/一篇文章带你了解SEH技术/" rel="prev" title="一篇文章带你了解SEH技术">
+                一篇文章带你了解SEH技术 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程局部存储技术："><span class="nav-number">1.</span> <span class="nav-text">线程局部存储技术：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#"><span class="nav-number">1.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#两个前提知识："><span class="nav-number">2.</span> <span class="nav-text">两个前提知识：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程环境块（TEB）："><span class="nav-number">2.1.</span> <span class="nav-text">线程环境块（TEB）：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TEB的数据结构："><span class="nav-number">2.1.1.</span> <span class="nav-text">TEB的数据结构：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TEB的重要成员："><span class="nav-number">2.1.2.</span> <span class="nav-text">TEB的重要成员：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TEB的访问方法："><span class="nav-number">2.1.3.</span> <span class="nav-text">TEB的访问方法：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程环境块（PEB）："><span class="nav-number">2.2.</span> <span class="nav-text">进程环境块（PEB）：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PEB的信息如下："><span class="nav-number">2.2.1.</span> <span class="nav-text">PEB的信息如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PEB的重要成员："><span class="nav-number">2.2.2.</span> <span class="nav-text">PEB的重要成员：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PEB的访问方法："><span class="nav-number">2.2.3.</span> <span class="nav-text">PEB的访问方法：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TLS技术"><span class="nav-number">3.</span> <span class="nav-text">TLS技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#动态TLS技术"><span class="nav-number">3.1.</span> <span class="nav-text">动态TLS技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态TLS技术"><span class="nav-number">3.2.</span> <span class="nav-text">静态TLS技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TSL回调函数—-反调试技术的基石"><span class="nav-number">3.3.</span> <span class="nav-text">TSL回调函数—-反调试技术的基石</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

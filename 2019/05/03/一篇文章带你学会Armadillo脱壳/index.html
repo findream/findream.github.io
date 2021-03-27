@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在跟进一个APT组织的一次攻击，其中有一个样本使用了Arm加壳，所以花了差不多10多天的时间看看这方面的东西。并总结一下。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一篇文章带你学会Armadillo脱壳">
+<meta property="og:url" content="https://findream.github.io/2019/05/03/一篇文章带你学会Armadillo脱壳/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在跟进一个APT组织的一次攻击，其中有一个样本使用了Arm加壳，所以花了差不多10多天的时间看看这方面的东西。并总结一下。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/05/02/5ccaefb30fa36.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/04/26/5cc3183998afa.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc930d294e58.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc93414c84c5.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/01/5cc9396eea356.png">
+<meta property="og:updated_time" content="2019-07-01T07:41:01.181Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一篇文章带你学会Armadillo脱壳">
+<meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在跟进一个APT组织的一次攻击，其中有一个样本使用了Arm加壳，所以花了差不多10多天的时间看看这方面的东西。并总结一下。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/02/5ccaefb30fa36.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2019/05/03/一篇文章带你学会Armadillo脱壳/"/>
+
+
+
+
+
+  <title>一篇文章带你学会Armadillo脱壳 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/05/03/一篇文章带你学会Armadillo脱壳/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一篇文章带你学会Armadillo脱壳</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-03T15:02:11+08:00">
+                2019-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows安全/" itemprop="url" rel="index">
+                    <span itemprop="name">windows安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近在跟进一个APT组织的一次攻击，其中有一个样本使用了Arm加壳，所以花了差不多10多天的时间看看这方面的东西。并总结一下。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这篇文章主要参考了FLY和刹那恍惚两位大佬的文章。和录制的视频。以及jcyhlh大侠在2008年写下的总结帖。那时候我估计还在玩泥巴呢。这是我写这篇文章的主要参考来源。前人栽树后人乘凉。此外还看了<strong>看雪的知识库</strong>。基本看了3.x和4.x所有师傅的文章。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这篇文章的架构，文章架构主要参照了网上下载的视频教程的架构。并对此作出小小修改和注释以及归纳总结。更加方便我等小白学习成长。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于文章主要脱去的是3.x和4.x的Arm，可能有一些<strong>伪大佬</strong>又要说都发了几百遍了还在发。这篇文章适合我等小白，所以伪大佬勿扰。真大佬可以daidaiwo。<strong>对此我的处理意见是，把其直接挂在文章起始部分</strong>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，加油吧，小伙伴们。<br><a id="more"></a></p>
+<h2 id="0x1-Armadillo"><a href="#0x1-Armadillo" class="headerlink" title="0x1 Armadillo"></a>0x1 Armadillo</h2><h3 id="0x1-1-保护机制"><a href="#0x1-1-保护机制" class="headerlink" title="0x1.1 保护机制"></a>0x1.1 保护机制</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Armadillo，中文名穿山甲，本意为犰狳，就是下面那个有点可爱的家伙。<br>    <img src="https://i.loli.net/2019/05/02/5ccaefb30fa36.jpg" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Armadillo主要采用了Debug-Blocker，CopyMem-II， Enable Import Table Elimination，Enable Nanomites Processing，Enable Memory-Patching Protections保护手段。同时也有单双进程之分，造成了保护手段的多样性。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug-Blocker，称为阻止调试器，所谓反调试，基本只要开插件都可以过，所以这也是为什么大家脱穿山甲的时候打开IsProcessDebug去反调试选项和忽略异常的原因。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CopyMem-II：双进程保护，最常使用的是<code>bp OpenMutexA</code>,然后转到401000 patch代码。另外一种是修改相反跳转的方法。(脚本方法就是不说了)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable Import Table Elimination：IAT保护，修改Magic_Jmp。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable Nanomites Processing就是CC保护，也是Armadillo最强大的保护机制。原理就是就是将程序中的部分代码改写为int3或者向其中插入int3代码。</p>
+<h3 id="0x1-2-前期侦壳"><a href="#0x1-2-前期侦壳" class="headerlink" title="0x1.2 前期侦壳"></a>0x1.2 前期侦壳</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;知己知彼百战不殆，在脱壳最重要的就是侦壳。这里需要使用到的工具主要有：PEID(不推荐)，exepeinfo，ArmaFP，任务管理器。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其中，exepeinfo是用于查壳的，任务管理器是用于判断是单进程还是双进程，如果是双进程就需要双转单。ArmaFP是用于判断其保护模式，是标准模式，还是全保护模式(专业模式)。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;不过关于壳的版本，exepeinfo容易误报，所以可以使用这个方法：OD载入程序，下<code>HE OutputDebugStringA</code>断点。shift+F9中断后，看堆栈如果出现如下的，就是4.0以上的壳。这是由于Arm在4.0利用Od在调式保护格式串的消息时会奔溃而新增的反调试技术。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//<span class="number">4.01</span></div><div class="line"><span class="number">0012</span>EC7<span class="number">0</span>   <span class="number">021</span>B580F  /CALL 到 OutputDebugStringA 来自 <span class="number">021</span>B5809</div><div class="line"><span class="number">0012</span>EC74   <span class="number">0012</span>F5E8  \String = <span class="string">"%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"</span></div><div class="line">/<span class="number">3</span>.X</div><div class="line">//此时程序运行起来。</div></pre></td></tr></table></figure></p>
+<h2 id="0x2-Armadillo单进程脱壳"><a href="#0x2-Armadillo单进程脱壳" class="headerlink" title="0x2 Armadillo单进程脱壳"></a>0x2 Armadillo单进程脱壳</h2><h3 id="0x2-1-标准单进程Armadillo-3-78-4-xx-脱壳"><a href="#0x2-1-标准单进程Armadillo-3-78-4-xx-脱壳" class="headerlink" title="0x2.1 标准单进程Armadillo 3.78 - 4.xx 脱壳"></a>0x2.1 标准单进程Armadillo 3.78 - 4.xx 脱壳</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是最简单的加密方法，只需要修改Magic_Jmp就可以了，因为这个版本单进程防护只是加密了IAT，(1)只需要绕过加密，(2)并让其解压压缩区段即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;绕过IAT加密的方法就是修改Magic_Jmp,这是脱穿山甲壳必须使用的方法。步骤如下：</p>
+<ul>
+<li>step1：在<code>GetModuleHandle</code>下硬件断点，可以<code>HE GetModuleHandle</code>或者<code>HE GetModuleHandle+5</code>。</li>
+<li><p>Step2：然后Shift+F9,断下的时候，看堆栈窗口是否存在VirtualAlloc或者VirtualFree，只要出现这两个API函数，就表明快到了。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">000</span>C94C8  |<span class="number">00726</span>DF3  返回到 <span class="number">00726</span>DF3 来自 kernel32.GetModuleHandleA</div><div class="line"><span class="number">000</span>C94CC  |<span class="number">0073</span>BC1C  ASCII <span class="string">"kernel32.dll"</span></div><div class="line"><span class="number">000</span>C94D0  |<span class="number">0073</span>CEC4  ASCII <span class="string">"VirtualAlloc"</span></div><div class="line"><span class="number">000</span>C94D4  |<span class="number">0073</span>FA98</div><div class="line"><span class="number">000</span>C94D8  |<span class="number">77E22270</span>  ntdll.RtlLeaveCriticalSection</div></pre></td></tr></table></figure>
+</li>
+<li><p>Step3：继续Shift+F9，只要堆栈出现kernel32.dll，但是不包含任何其他函数名称，表示到达了返回的时机。此时<strong>执行到返回ctrl+F9</strong>。如何判断之前执行到返回的时机是否正确呢，就是看是否存在LoadLibrary这个API函数。此时就是正确的。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">000</span>C9228  /<span class="number">000</span>C94C8</div><div class="line"><span class="number">000</span>C922C  |<span class="number">00715</span>CE1  返回到 <span class="number">00715</span>CE1 来自 kernel32.GetModuleHandleA</div><div class="line"><span class="number">000</span>C9230  |<span class="number">000</span>C937C  ASCII <span class="string">"kernel32.dll"</span></div><div class="line"><span class="number">000</span>C9234  |<span class="number">000</span>CEAB4</div><div class="line"><span class="number">000</span>C9238  |<span class="number">3</span>CBC24B7</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">00715CE1    8B0D AC407400   <span class="keyword">mov</span>     <span class="built_in">ecx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [7440AC]</div><div class="line">00715CE7    89040E          <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esi</span>+<span class="built_in">ecx</span>], <span class="built_in">eax</span></div><div class="line">00715CEA    A1 AC407400     <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [7440AC]</div><div class="line">00715CEF    391C06          <span class="keyword">cmp</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esi</span>+<span class="built_in">eax</span>], <span class="built_in">ebx</span></div><div class="line">00715CF2    <span class="number">75</span> <span class="number">16</span>           <span class="keyword">jnz</span>     short 00715D0A</div><div class="line">00715CF4    8D85 B4FEFFFF   <span class="keyword">lea</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-14C]</div><div class="line">00715CFA    <span class="number">50</span>              <span class="keyword">push</span>    <span class="built_in">eax</span></div><div class="line">00715CFB    FF15 BC627300   <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [7362BC]               <span class="comment">; kernel32.LoadLibraryA</span></div><div class="line">00715D01    8B0D AC407400   <span class="keyword">mov</span>     <span class="built_in">ecx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [7440AC]</div><div class="line">00715D07    89040E          <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esi</span>+<span class="built_in">ecx</span>], <span class="built_in">eax</span></div></pre></td></tr></table></figure>
+<ul>
+<li>此时就可以修改LoadLibrary函数下面的那个条件跳转(00715D12)为jmp，跳转到00425E5C,然后撤销之前的修改。<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">00715CF4    8D85 B4FEFFFF   <span class="keyword">lea</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-14C]</div><div class="line">00715CFA    <span class="number">50</span>              <span class="keyword">push</span>    <span class="built_in">eax</span></div><div class="line">00715CFB    FF15 BC627300   <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [7362BC]               <span class="comment">; kernel32.LoadLibraryA</span></div><div class="line">00715D01    8B0D AC407400   <span class="keyword">mov</span>     <span class="built_in">ecx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [7440AC]</div><div class="line">00715D07    89040E          <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esi</span>+<span class="built_in">ecx</span>], <span class="built_in">eax</span></div><div class="line">00715D0A    A1 AC407400     <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [7440AC]</div><div class="line">00715D0F    391C06          <span class="keyword">cmp</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esi</span>+<span class="built_in">eax</span>], <span class="built_in">ebx</span></div><div class="line">00715D12  - 0F84 2F010090   <span class="keyword">je</span>      90715E47</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">00425E53</span>    <span class="number">395</span>F FC         cmp     dword ptr [edi<span class="number">-4</span>], ebx</div><div class="line"><span class="number">00425E56</span>  ^ <span class="number">0</span>F85 <span class="number">49</span>FEFFFF   jnz     <span class="number">00425</span>CA5</div><div class="line"><span class="number">00425E5</span>C    EB <span class="number">03</span>           jmp     short <span class="number">00425E61</span></div><div class="line"><span class="number">00425E5</span>E    D6              salc</div></pre></td></tr></table></figure>
+<ul>
+<li>Step4：因为外壳肯定需要将存储在某一区段的数据解压到text段，需要对该段进行访问，所以，在内存窗口的程序的text段下访问断点。然后shift+F9。中断在43468F,然后单步，在此代码段的最后一个<code>call ecx</code>处步入就是OEP。<br>  <img src="https://i.loli.net/2019/04/26/5cc3183998afa.png" alt=""><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">0043F68F    8B12            <span class="keyword">mov</span>     <span class="built_in">edx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>]</div><div class="line">0043F691    <span class="number">8955</span> DC         <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">24</span>], <span class="built_in">edx</span></div><div class="line">0043F694    <span class="number">834D</span> FC FF      <span class="keyword">or</span>      <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">4</span>], FFFFFFFF</div><div class="line">0043F698    EB <span class="number">11</span>           <span class="keyword">jmp</span>     short 0043F6AB</div><div class="line">0043F69A    6A <span class="number">01</span>           <span class="keyword">push</span>    <span class="number">1</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="number">0100739D</span>    6A <span class="number">70</span>           <span class="built_in">push</span>    <span class="number">70</span></div><div class="line"><span class="number">0100739F</span>    <span class="number">68</span> <span class="number">98180001</span>     <span class="built_in">push</span>    <span class="number">01001898</span></div><div class="line"><span class="number">010073A4</span>    E8 BF010000     call    <span class="number">01007568</span></div><div class="line"><span class="number">010073A9</span>    33DB            xor     ebx, ebx</div><div class="line"><span class="number">010073AB</span>    <span class="number">53</span>              <span class="built_in">push</span>    ebx</div><div class="line"><span class="number">010073AC</span>    8B3D CC100001   mov     edi, dword ptr [10010CC]         ; kernel32.GetModuleHandleA</div><div class="line"><span class="number">010073B2</span>    FFD7            call    edi</div><div class="line"><span class="number">010073B4</span>    <span class="number">66</span>:<span class="number">8138</span> 4D5A    cmp     word ptr [eax], 5A4D</div><div class="line"><span class="number">010073B9</span>    <span class="number">75</span> 1F           jnz     short <span class="number">010073DA</span></div><div class="line"><span class="number">010073BB</span>    <span class="number">8B48</span> 3C         mov     ecx, dword ptr [eax+3C]</div><div class="line"><span class="number">010073BE</span>    <span class="number">03C8</span>            add     ecx, eax</div><div class="line"><span class="number">010073C0</span>    <span class="number">8139</span> <span class="number">50450000</span>   cmp     dword ptr [ecx], <span class="number">4550</span></div><div class="line"><span class="number">010073C6</span>    <span class="number">75</span> <span class="number">12</span>           jnz     short <span class="number">010073DA</span></div><div class="line"><span class="number">010073C8</span>    <span class="number">0FB741</span> <span class="number">18</span>       movzx   eax, word ptr [ecx+<span class="number">18</span>]</div><div class="line"><span class="number">010073CC</span>    3D <span class="number">0B010000</span>     cmp     eax, 10B</div><div class="line"><span class="number">010073D1</span>    <span class="number">74</span> 1F           je      short <span class="number">010073F2</span></div><div class="line"><span class="number">010073D3</span>    3D <span class="number">0B020000</span>     cmp     eax, 20B</div><div class="line"><span class="number">010073D8</span>    <span class="number">74</span> <span class="number">05</span>           je      short <span class="number">010073DF</span></div><div class="line"><span class="number">010073DA</span>    895D E4         mov     dword ptr [ebp-1C], ebx</div><div class="line"><span class="number">010073DD</span>    EB <span class="number">27</span>           jmp     short <span class="number">01007406</span></div><div class="line"><span class="number">010073DF</span>    <span class="number">83B9</span> <span class="number">84000000</span> <span class="number">0</span>&gt;cmp     dword ptr [ecx+<span class="number">84</span>], <span class="number">0E</span></div></pre></td></tr></table></figure>
+<h3 id="0x2-2-单进程Armadillo-v4-x脱壳"><a href="#0x2-2-单进程Armadillo-v4-x脱壳" class="headerlink" title="0x2.2 单进程Armadillo v4.x脱壳"></a>0x2.2 单进程Armadillo v4.x脱壳</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先需要判断加壳版本是否是4.xxx。关于这点如何判断呢，主要下硬件断点 <code>HE OutputDebugStringA</code> 。在堆栈窗口出现%s%s%s%s的标志，说明这是4.X的壳。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">0012</span>EC7<span class="number">0</span>   <span class="number">021</span>C580F  /CALL 到 OutputDebugStringA 来自 <span class="number">021</span>C5809</div><div class="line"><span class="number">0012</span>EC74   <span class="number">0012</span>F5E8  \String = <span class="string">"%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于Armadillo v4.x单进程脱壳把握两点，<strong>第一，使用Magic_Jmp避过IAT加密保护，对GetCurrentThreadId下断点找到OEP</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于第一条，就是上面2.1讲的原则，下面解释第二条。首先对GetCurrentThreadId下断。<code>HE GetCurrentThreadId</code>。查看堆栈窗口，会出现如下结果.中间省略多个，查看关于GetCurrentThreadId都是来自其他模块的调用，但是最后一个是来自程序的调用。这就是程序返回的时机，所以，F8步过，根据之前说的规则，<strong>OEP在该程序段最后一个call ecx中。</strong><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">0236</span>FE50   <span class="number">7339352</span>D  /CALL 到 GetCurrentThreadId 来自 msvbvm60<span class="number">.73393527</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="number">0236</span>FE30   <span class="number">76</span>DE1434  /CALL 到 GetCurrentThreadId 来自 adsldpc<span class="number">.76</span>DE142E</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="number">0236</span>FE78   <span class="number">76</span>F31298  /CALL 到 GetCurrentThreadId 来自 wldap32<span class="number">.76</span>F31292</div><div class="line"><span class="comment">//....</span></div><div class="line"><span class="number">0012</span>F720   <span class="number">037560</span>EC  /CALL 到 GetCurrentThreadId 来自 <span class="number">037560E6</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">0376F70F    <span class="number">3350</span> <span class="number">40</span>         <span class="keyword">xor</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x40</span>]</div><div class="line">0376F712    <span class="number">3350</span> <span class="number">04</span>         <span class="keyword">xor</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x4</span>]</div><div class="line">0376F715    2BCA            <span class="keyword">sub</span> <span class="built_in">ecx</span>,<span class="built_in">edx</span></div><div class="line">0376F717    FFD1            <span class="keyword">call</span> <span class="built_in">ecx</span>                                 <span class="comment">; NOTEPAD_.004010CC</span></div><div class="line">0376F719    <span class="number">8945</span> E4         <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x1C</span>],<span class="built_in">eax</span></div><div class="line">0376F71C    8B45 E4         <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x1C</span>]</div><div class="line">0376F71F    8B4D F0         <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x10</span>]</div><div class="line">0376F722    <span class="number">64</span>:<span class="number">890D</span> <span class="number">0000000</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">0</span>],<span class="built_in">ecx</span></div><div class="line">0376F729    5F              <span class="keyword">pop</span> <span class="built_in">edi</span></div><div class="line">0376F72A    5E              <span class="keyword">pop</span> <span class="built_in">esi</span></div><div class="line">0376F72B    5B              <span class="keyword">pop</span> <span class="built_in">ebx</span></div><div class="line">0376F72C    C9              <span class="keyword">leave</span></div><div class="line">0376F72D    C3              <span class="keyword">retn</span></div></pre></td></tr></table></figure>
+<h3 id="2-3-加-PassWord单进程"><a href="#2-3-加-PassWord单进程" class="headerlink" title="2.3 加 PassWord单进程"></a>2.3 加 PassWord单进程</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是就比2.2多了一个密码验证，我们直接绕过密码验证就好。首先Shift+F9运行，通过查看导入表，在GetDlgItem处下断<code>bpx GetDlgItem</code>。然后在输入伪码按OK，程序中断在35359D0处.<strong>注意：先运行，在下断！在输入</strong><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="number">035349</span>D0    FF15 E8645403   call    dword ptr [<span class="number">35464E8</span>]              ; USER32.GetDlgItem</div><div class="line"><span class="number">035349</span>D6    <span class="number">50</span>              push    eax</div><div class="line"><span class="number">035349</span>D7    FF15 E0645403   call    dword ptr [<span class="number">35464E0</span>]              ; USER32.GetWindowTextA</div><div class="line"><span class="number">035349</span>DD    <span class="number">8</span>D85 <span class="number">00</span>FFFFFF   lea     eax, dword ptr [ebp<span class="number">-100</span>]</div><div class="line"><span class="number">035349E3</span>    <span class="number">50</span>              push    eax</div><div class="line"><span class="number">035349E4</span>    E8 <span class="number">35060100</span>     call    <span class="number">0354501</span>E                         ; jmp 到 msvcrt.strlen</div><div class="line"><span class="number">035349E9</span>    <span class="number">85</span>C0            test    eax, eax</div><div class="line"><span class="number">035349</span>EB    <span class="number">59</span>              pop     ecx</div><div class="line"><span class="number">035349</span>EC    <span class="number">74</span> <span class="number">1</span>A           je      short <span class="number">03534</span>A08</div><div class="line"><span class="number">035349</span>EE    <span class="number">8</span>B0D E01E5503   mov     ecx, dword ptr [<span class="number">3551</span>EE0]</div><div class="line"><span class="number">035349</span>F4    <span class="number">8</span>D85 <span class="number">00</span>FFFFFF   lea     eax, dword ptr [ebp<span class="number">-100</span>]</div><div class="line"><span class="number">035349</span>FA    <span class="number">50</span>              push    eax</div><div class="line"><span class="number">035349</span>FB    E8 <span class="number">7</span>D77FEFF     call    <span class="number">0351</span>C17D                         ; 比较原始密码</div><div class="line"><span class="number">03534</span>A00    <span class="number">84</span>C0            test    al, al</div><div class="line"><span class="number">03534</span>A02    <span class="number">74</span> <span class="number">04</span>           je      short <span class="number">03534</span>A08                   ; 不是原码，则跳转(不跳)</div><div class="line"><span class="number">03534</span>A04    <span class="number">6</span>A <span class="number">01</span>           push    <span class="number">1</span></div><div class="line"><span class="number">03534</span>A06    EB <span class="number">4</span>C           jmp     short <span class="number">03534</span>A54                   ; 回到正常流程</div><div class="line"><span class="number">03534</span>A08    <span class="number">33</span>F6            xor     esi, esi</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着修改魔法跳，可以使用<code>bp GetModueHandle</code>或者<code>HE GetModuleHandle</code>。这里发现了kernel32.dll就可以执行到返回查看了。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后就是找OEP，这里还是可以使用2.2中对GetProcessId下断。这里介绍个新方法。**可以在内存窗口.text段按F2下断点。因为壳执行完肯定会执行代码段的内容。也就是说代码段是由外壳到源程序的一扇门。所以在此处下断必然成立。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">004010</span>CC    <span class="number">55</span>               push    ebp</div><div class="line"><span class="number">004010</span>CD    <span class="number">8</span>BEC             mov     ebp, esp</div><div class="line"><span class="number">004010</span>CF    <span class="number">83</span>EC <span class="number">44</span>          sub     esp, <span class="number">44</span></div><div class="line"><span class="number">004010</span>D2    <span class="number">56</span>               push    esi</div><div class="line"><span class="number">004010</span>D3    FF15 E4634000    call    dword ptr [<span class="number">4063E4</span>]               ; kernel32.GetCommandLineA</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下，现在有两个方法可以找OEP。<strong>第一是对GetProcessId下断，第二个就是在.text下断。</strong></p>
+<h3 id="0x2-4-包含Code-Splicing和Import-Table-Elimination的修复"><a href="#0x2-4-包含Code-Splicing和Import-Table-Elimination的修复" class="headerlink" title="0x2.4 包含Code Splicing和Import Table Elimination的修复"></a>0x2.4 包含Code Splicing和Import Table Elimination的修复</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Armadillo使用Code Splicing和Import Table Elimination两项技术使得程序修复变得更加困难。幸好有大佬开发了ArmInline工具可以使得修复变得简单一些。注意：本节只将修复，不讲程序优化。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当我们寻找到OEP之后，就可以着手修复Code Splicing和Import Table Elimination了。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">0040C434    <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">0040C435    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">0040C437    6A FF           <span class="keyword">push</span> -<span class="number">0x1</span></div><div class="line">0040C439    <span class="number">68</span> <span class="number">28334100</span>     <span class="keyword">push</span> fraps<span class="meta">.00413328</span></div><div class="line">0040C43E    <span class="number">68</span> 30E94000     <span class="keyword">push</span> fraps<span class="meta">.0040E930</span></div><div class="line">0040C443    <span class="number">64</span>:A1 <span class="number">00000000</span>  <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">0</span>]</div><div class="line">0040C449    <span class="number">50</span>              <span class="keyword">push</span> <span class="built_in">eax</span></div><div class="line">0040C44A    <span class="number">64</span>:<span class="number">8925</span> <span class="number">0000000</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">0</span>],<span class="built_in">esp</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先祭上大杀器ArmInline，欲要善其事，必先利其器。需要我们填写的就是上述三个区域，不过我这个版本可以自动填写修复的数据，只需要知道我们需要修复的进程，如图，目标进程ID为FC4，选中后依次删除拼接代码和巡回IAT基址。<br>    <img src="https://i.loli.net/2019/05/01/5cc930d294e58.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后按照常规的方法dump和修复IAT就可以了。注意的是使用PELord一定要勾选<strong>从磁盘粘贴文件头(一般默认勾选上了)</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果你的ArmInline不能自己修复(反正牛逼的师傅都是自己修复的，我不牛逼所以都是软件自动修复的)，关于<strong>Code Splicing</strong>的修复可以这样，Alt+M到内存窗口，在fraps模块之后有一段内存没有被其他模块映射(不知道这样说对不对，反正对于Kernel32这样的dll来说肯定是对的。大家理解就好)。<strong>在最后一块内存处</strong>，就是拼接代码起点，这个值不是一个定值。(这个只是经验之谈，需要大佬解释一波的)<br>    <img src="https://i.loli.net/2019/05/01/5cc93414c84c5.png" alt=""></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着修正IAT乱序，首先随便找个函数调用，在信息窗口点<code>数据窗口跟随地址</code>，然后向上拖动窗口(你最好改成<strong>显示地址</strong>)。找到IAT起始地址，然后找到结束地址，两者相减。计算大小即可。关于填充地址。可以考虑在一块没有读写的空白区域就好。不过大佬给的建议是在程序加壳前原来IAT的相近地方。可以这样寻找。Alt+M到内存窗口，因为IAT早rdata区域，又因为IAT肯定保存了一些IID成员，其中有个Name成员，也就是DllName。我们通过全局搜索确定<br>    <img src="https://i.loli.net/2019/05/01/5cc9396eea356.png" alt=""></p>
+<h2 id="0x3-Armadillo双进程脱壳"><a href="#0x3-Armadillo双进程脱壳" class="headerlink" title="0x3 Armadillo双进程脱壳"></a>0x3 Armadillo双进程脱壳</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这一章节主要讲穿山甲的双进程保护手段。所以双进程保护，简单的来说就是创建两个进程，一个进程是另外一个进程的调试进程，又由于在R3下面一个进程只能被一个调试器附加。这样可以有效避免程序被调试。</p>
+<h3 id="0x3-1-标准保护"><a href="#0x3-1-标准保护" class="headerlink" title="0x3.1 标准保护"></a>0x3.1 标准保护</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来简单讲解一下关于双进程保护的原理，主要可以利用互斥体来判断进程列表是否存在相同的进程(即多开)。首先是利用CreateMutex创建一个互斥体。然后在利用OpenMutex打开那个互斥体，如果OpenMutex成功返回互斥体句柄，说明已经存在一个进程。如果不存在则在CreateProcess一个进程。而对于穿山甲壳双转单也是如此。<strong>如果提前创建了一个即将被打开的互斥体。那么程序就不会去创建新的进程。</strong>如下的脱壳方法就是基于这点考虑。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先对openMutex下断点(HE,bp皆可)。<code>HE openMutexA</code>,然后shift+F9。观察堆栈<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">0012</span>F798   <span class="number">00434</span>DB8  /CALL 到 OpenMutexA 来自 NOTEPAD_<span class="number">.00434</span>DB2</div><div class="line"><span class="number">0012</span>F79C   <span class="number">001</span>F0001  |Access = <span class="number">1</span>F0001</div><div class="line"><span class="number">0012</span>F7A0   <span class="number">00000000</span>  |Inheritable = <span class="literal">FALSE</span></div><div class="line"><span class="number">0012</span>F7A4   <span class="number">0012</span>FDD8  \MutexName = <span class="string">"8A4::DABDC997F2"</span>   ；这是是重点，标记了互斥体名称。记住堆栈地址<span class="number">0012</span>FDD8，以后要用</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着需要创建互斥体。转到401000处编写汇编代码，为什么需要401000，因为这是.text段，但是理论上在哪里修改都可以。然后将EIP修改到401000处，就可以在这里执行了，然后shitf+F9.<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">00401000 </span>   <span class="number">60</span>                  pushad                    ;保存所有寄存器</div><div class="line"><span class="symbol">00401001 </span>   <span class="number">9</span>C                  pushfd                    ;保存标志寄存器</div><div class="line"><span class="symbol">00401002 </span>   <span class="number">68</span> F8FB1200         push <span class="number">0012</span>FDD8             ;堆栈里看到的值MutexName</div><div class="line"><span class="symbol">00401007 </span>   <span class="number">33</span>C0                <span class="keyword">xor</span> eax,eax</div><div class="line"><span class="symbol">00401009 </span>   <span class="number">50</span>                  push eax                  ;参数<span class="number">2</span></div><div class="line"><span class="number">0040100</span>A    <span class="number">50</span>                  push eax                  ;参数<span class="number">1</span></div><div class="line"><span class="number">0040100</span>B    E8 B5A6A577         <span class="keyword">call</span> kernel32.CreateMutexA  ；创建互斥体</div><div class="line"><span class="symbol">00401010 </span>   <span class="number">9D</span>                  popfd</div><div class="line"><span class="symbol">00401011 </span>   <span class="number">61</span>                  popad                      ;恢复</div><div class="line"><span class="symbol">00401012 </span> - E9 <span class="number">7</span>A13A677         jmp kernel32.OpenMutexA    ;打开互斥体</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着就是处理加密IAT和跳转OEP,DUMP的问题了。最后到达OEP如下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">004010CC    <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">004010CD    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">004010CF    83EC <span class="number">44</span>         <span class="keyword">sub</span> <span class="built_in">esp</span>,<span class="number">0x44</span></div><div class="line">004010D2    <span class="number">56</span>              <span class="keyword">push</span> <span class="built_in">esi</span></div><div class="line">004010D3    FF15 E4634000   <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x4063E4</span>]             <span class="comment">; kernel32.GetCommandLineA</span></div><div class="line">004010D9    8BF0            <span class="keyword">mov</span> <span class="built_in">esi</span>,<span class="built_in">eax</span></div></pre></td></tr></table></figure>
+<h3 id="0x3-2-CopyMem-II"><a href="#0x3-2-CopyMem-II" class="headerlink" title="0x3.2 CopyMem-II"></a>0x3.2 CopyMem-II</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去除CopyMem-ll 保护通常有两个方法。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方法1：首先寻找OEP，然后对WaitForDebugEvent下断点<code>bp WaitForDebugEvent</code>,接着运行程序，看堆栈，当出现<code>pDebugEvent</code>字符的时候，选择在数据窗口跟随，然后对WriteProcessMemory下断<code>bp WriteProcessMemory</code>，中断后，在数据窗口发现OEP。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里重点讲一下第二个方法：  </p>
+<ul>
+<li><p>bp WaitForDebugEvent，shift+F9运行起来，删除断点，然后执行到程序领空,大概停在0060F8BA</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">0060F8BA   ?  <span class="number">15</span> E0406400   <span class="keyword">adc</span> <span class="built_in">eax</span>,&lt;&amp;KERNEL32.WaitForDebugEvent&gt;</div><div class="line">0060F8BF   .  85C0          <span class="keyword">test</span> <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line">0060F8C1   .  0F84 2B270000 <span class="keyword">je</span> MAGCT.00611FF2</div><div class="line">0060F8C7   .  8B85 FCFDFFFF <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x204</span>]</div><div class="line">0060F8CD   .  <span class="number">25</span> FF000000   <span class="keyword">and</span> <span class="built_in">eax</span>,<span class="number">0xFF</span></div><div class="line">0060F8D2   .  85C0          <span class="keyword">test</span> <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line">0060F8D4   .  <span class="number">74</span> <span class="number">13</span>         <span class="keyword">je</span> XMAGCT.0060F8E9</div><div class="line">0060F8D6   .  8B0D 44AF6400 <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x64AF44</span>]</div><div class="line">0060F8DC   .  <span class="number">8379</span> <span class="number">20</span> <span class="number">00</span>    <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ecx</span>+<span class="number">0x20</span>],<span class="number">0x0</span></div><div class="line">0060F8E0   .  <span class="number">74</span> <span class="number">07</span>         <span class="keyword">je</span> XMAGCT.0060F8E9</div><div class="line">0060F8E2   .  C685 FCFDFFFF&gt;<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x204</span>],<span class="number">0x0</span></div><div class="line">0060F8E9   &gt;  <span class="number">68</span> 38AE6400   <span class="keyword">push</span> MAGCT.0064AE38                      <span class="comment">; /pCriticalSection = MAGCT.0064AE38</span></div><div class="line">0060F8EE   .  FF15 A4416400 <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[&lt;&amp;KERNEL32.EnterCriti&gt;<span class="comment">; \EnterCriticalSection</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>然后Ctrl+F搜索命令：<code>or eax，0FFFFFFF8</code>,想上看有两个比较，一个是cmp dword ptr ss:[ebp-0xA34],另外一个是cmp ecx,dword ptr ds:[0x64AF48]，然后对第一个cmp下断点，F9运行。这一步你需要记住以下内容，等下patch的时候需要用到内容，第一:第一个cmp的地址<code>0060FE43</code>,第二：第一个cmp【】内的值<code>ebp-0xA34</code>,第三：第二个cmp【】的值：<code>0x64AF48</code>.<strong>除此以外，需要将次一个cmp栈里面的数据清0</strong></p>
+</li>
+</ul>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">0060FE43   &gt; \83BD CCF5FFFF <span class="number">00</span>     <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA34</span>],<span class="number">0x0</span>         <span class="comment">;  3</span></div><div class="line">0060FE4A   .  0F8C A8020000        <span class="keyword">jl</span> MAGCT.006100F8                        <span class="comment">;在目的地址006100F8下断点</span></div><div class="line">0060FE50   .  8B8D CCF5FFFF        <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA34</span>]</div><div class="line">0060FE56   .  3B0D 48AF6400        <span class="keyword">cmp</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x64AF48</span>]          <span class="comment">;  2</span></div><div class="line">0060FE5C   .  0F8D <span class="number">96020000</span>        <span class="keyword">jge</span> MAGCT.006100F8</div><div class="line">0060FE62   .  8B95 40F6FFFF        <span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x9C0</span>]</div><div class="line">0060FE68   .  81E2 FF000000        <span class="keyword">and</span> <span class="built_in">edx</span>,<span class="number">0xFF</span></div><div class="line">0060FE6E   .  85D2                 <span class="keyword">test</span> <span class="built_in">edx</span>,<span class="built_in">edx</span></div><div class="line">0060FE70   .  0F84 AD000000        <span class="keyword">je</span> MAGCT.0060FF23</div><div class="line">0060FE76   .  6A <span class="number">00</span>                <span class="keyword">push</span> <span class="number">0x0</span></div><div class="line">0060FE78   .  8BB5 CCF5FFFF        <span class="keyword">mov</span> <span class="built_in">esi</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA34</span>]</div><div class="line">0060FE7E   .  C1E6 <span class="number">04</span>              <span class="keyword">shl</span> <span class="built_in">esi</span>,<span class="number">0x4</span></div><div class="line">0060FE81   .  8B85 CCF5FFFF        <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA34</span>]</div><div class="line">0060FE87   .  <span class="number">25</span> <span class="number">07000080</span>          <span class="keyword">and</span> <span class="built_in">eax</span>,<span class="number">0x80000007</span></div><div class="line">0060FE8C   .  <span class="number">79</span> <span class="number">05</span>                <span class="keyword">jns</span> XMAGCT.0060FE93</div><div class="line">0060FE8E   .  <span class="number">48</span>                   <span class="keyword">dec</span> <span class="built_in">eax</span></div><div class="line">0060FE8F   .  83C8 F8              <span class="keyword">or</span> <span class="built_in">eax</span>,<span class="number">0xFFFFFFF8</span>                        <span class="comment">;  1</span></div><div class="line">0060FE92   .  <span class="number">40</span>                   <span class="keyword">inc</span> <span class="built_in">eax</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p>接下来patch数据，我们向下看，找到<code>add eax,0xff</code>语句，在这里就可以patch了</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//原始数据</div><div class="line">0060FF16      <span class="number">25</span> FF000000          <span class="keyword">and</span> <span class="built_in">eax</span>,<span class="number">0xFF</span>                             <span class="comment">;  patch</span></div><div class="line">0060FF1B      85C0                 <span class="keyword">test</span> <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line">0060FF1D      0F84 D5010000        <span class="keyword">je</span> MAGCT.006100F8</div><div class="line">0060FF23      <span class="number">837D</span> D8 <span class="number">00</span>           <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x28</span>],<span class="number">0x0</span></div><div class="line">0060FF27      <span class="number">75</span> <span class="number">27</span>                <span class="keyword">jnz</span> XMAGCT.0060FF50</div><div class="line">0060FF29      8B15 D0436400        <span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x6443D0</span>]</div><div class="line">//</div><div class="line">//patch模块</div><div class="line"><span class="keyword">inc</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>：[] //第一个<span class="keyword">CMP</span>内的值</div><div class="line"><span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[XXXX+<span class="number">4</span>],<span class="number">1</span>  //XXXX为第二个<span class="keyword">CMP</span>[]内的值</div><div class="line"><span class="keyword">jmp</span> XXXX  //第一个<span class="keyword">CMP</span>前的地址</div><div class="line">//</div><div class="line">//patch后的数据</div><div class="line">0060FF16      FF85 CCF5FFFF        <span class="keyword">inc</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA34</span>]             <span class="comment">;  patch</span></div><div class="line">0060FF1C      C705 4CAF6400 <span class="number">010000</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x64AF4C</span>],<span class="number">0x1</span></div><div class="line">0060FF26    ^ E9 18FFFFFF          <span class="keyword">jmp</span> MAGCT.0060FE43</div><div class="line">0060FF2B      <span class="number">90</span>                   <span class="keyword">nop</span></div><div class="line">0060FF2C      <span class="number">90</span>                   <span class="keyword">nop</span></div><div class="line">0060FF2D      <span class="number">90</span>                   <span class="keyword">nop</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>接着shift+F9,中断在006100F8处,就可以dump处子进程了</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">006100EE   &gt; \C785 D8F5FFFF <span class="number">020001</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA28</span>],<span class="number">0x10002</span>     <span class="comment">;  UNICODE "::=::\"</span></div><div class="line">006100F8   &gt;  E9 D4100000          <span class="keyword">jmp</span> MAGCT.006111D1</div><div class="line">006100FD   &gt;  8B0D B0436400        <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x6443B0</span>]</div><div class="line"><span class="number">00610103</span>   .  81F1 050000C0        <span class="keyword">xor</span> <span class="built_in">ecx</span>,<span class="number">0xC0000005</span></div><div class="line"><span class="number">00610109</span>   .  <span class="number">398D</span> D4F5FFFF        <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xA2C</span>],<span class="built_in">ecx</span></div><div class="line">0061010F   .  0F85 <span class="number">92040000</span>        <span class="keyword">jnz</span> MAGCT.006105A7</div><div class="line"><span class="number">00610115</span>   .  <span class="number">70</span> <span class="number">07</span>                <span class="keyword">jo</span> XMAGCT.0061011E</div><div class="line"><span class="number">00610117</span>   .  7C <span class="number">03</span>                <span class="keyword">jl</span> XMAGCT.0061011C</div><div class="line"><span class="number">00610119</span>   &gt;  EB <span class="number">05</span>                <span class="keyword">jmp</span> XMAGCT<span class="meta">.00610120</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是还原IAT </p>
+<ul>
+<li>首先对DebugActiveProcess下断点<code>BP DebugActiveProcess</code>这样是为了寻找子进程，在堆栈窗口发现子进程ID为D84(不定)。接着重新打开一个OD，附加子进程，然后F9+F12，中断在入口点<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">0012</span>BCBC   <span class="number">0060</span>F71A  /CALL 到 DebugActiveProcess 来自 MAGCT<span class="number">.0060</span>F714</div><div class="line"><span class="number">0012</span>BCC0   <span class="number">00000</span>DB4  \ProcessId = DB4</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">0061F743</span> &gt;/$- EB FE         jmp XMAGCT.&lt;ModuleEntryPoint&gt;</div><div class="line"><span class="number">0061F745</span>  |?  EC            <span class="keyword">in</span> al,dx</div><div class="line"><span class="number">0061F746</span>  |.  6A FF         <span class="built_in">push</span> -<span class="number">0x1</span></div><div class="line"><span class="number">0061F748</span>  |.  <span class="number">68</span> <span class="number">209B6400</span>   <span class="built_in">push</span> MAGCT.00649B20</div><div class="line"><span class="number">0061F74D</span>  |.  <span class="number">68</span> 80F46100   <span class="built_in">push</span> MAGCT.<span class="number">0061F480</span>                      ;  SE 处理程序安装</div><div class="line"><span class="number">0061F752</span>  |.  <span class="number">64</span>:A1 <span class="number">0000000</span>&gt;mov eax,dword ptr fs:[<span class="number">0</span>]</div><div class="line"><span class="number">0061F758</span>  |.  <span class="number">50</span>            <span class="built_in">push</span> eax</div></pre></td></tr></table></figure>
+<ul>
+<li><p>将死跳转字节<code>EB FE</code>正常指令字节<code>55 8B</code>,然后就可以执行我们上节讲的双变单了。在401000修改完双转单代码后，shift+F9跑起来，再次中断在OpenMutexA处。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">0061F743</span> &gt;    <span class="number">55</span>            <span class="built_in">push</span> ebp</div><div class="line"><span class="number">0061F744</span>      8BEC          mov ebp,esp</div><div class="line"><span class="number">0061F746</span>  |.  6A FF         <span class="built_in">push</span> -<span class="number">0x1</span></div><div class="line"><span class="number">0061F748</span>  |.  <span class="number">68</span> <span class="number">209B6400</span>   <span class="built_in">push</span> MAGCT.00649B20</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后对GetModuleHandle下硬件断点。<code>HE GetModuleHandle</code>,经过VirtualAlloc和VirtualFree到达,然后返回，修改Magic_JMp.<strong>在此之前关闭硬件断点</strong></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">001265</span>F4   <span class="number">00</span>F9ACC1  /CALL 到 GetModuleHandleA 来自 <span class="number">00</span>F9ACBB</div><div class="line"><span class="number">001265</span>F8   <span class="number">00126738</span>  \pModule = <span class="string">"kernel32.dll"</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>初次以外还有一个时间校验，对GetTickCount下断，执行到返回</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">00E89116    FF15 AC22E900   <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[E922AC] <span class="comment">; kernel32.GetTickCount</span></div><div class="line">00E8911C    2B85 8CC3FFFF   <span class="keyword">sub</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-3C74]</div><div class="line">00E89122    8B8D 90C3FFFF   <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-3C70]</div><div class="line">00E89128    6BC9 <span class="number">32</span>         <span class="keyword">imul</span> <span class="built_in">ecx</span>,<span class="built_in">ecx</span>,<span class="number">32</span></div><div class="line">00E8912B    81C1 D0070000   <span class="keyword">add</span> <span class="built_in">ecx</span>,7D0</div><div class="line">00E89131    3BC1            <span class="keyword">cmp</span> <span class="built_in">eax</span>,<span class="built_in">ecx</span></div><div class="line">00E89133    <span class="number">76</span> <span class="number">07</span>           <span class="keyword">jbe</span> short 00E8913C  //修改为：<span class="keyword">JMP</span> 00E8913C </div><div class="line">00E89135    C685 20C8FFFF <span class="number">0</span>&gt;<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-37E0],<span class="number">1</span></div><div class="line">00E8913C    83BD D0C6FFFF <span class="number">0</span>&gt;<span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">3930</span>],<span class="number">0</span></div><div class="line">00E89143    0F85 8A000000   <span class="keyword">jnz</span> 00E891D3</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后用ImportRCE修复即可！</p>
+</li>
+</ul>
+<h2 id="0x4-带KEY的Armadillo"><a href="#0x4-带KEY的Armadillo" class="headerlink" title="0x4 带KEY的Armadillo"></a>0x4 带KEY的Armadillo</h2><h3 id="0x4-1-单进程"><a href="#0x4-1-单进程" class="headerlink" title="0x4.1 单进程"></a>0x4.1 单进程</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;带KEY的Armadillo相当于给软件多了一层保护，我们此时还不能通过爆破的方式解决这个KEY，原因有2，第一，OD对于这类情况不提供修改的选项，第二，就算爆破成功了，后期软件中还存在暗桩。所以可以逆向算法的方式得到一组合适的KEY。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先shitf+F9运行起来，不要管出现的对话框，首先随便输入个Key，然后下<code>HE GetDlgItem</code>断点即可。取消断点，ALT+F9执行返回。大概停在此处。<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">021B44FC</span>    85C0            test eax,eax</div><div class="line"><span class="number">021B44FE</span>    <span class="number">74</span> <span class="number">33</span>           je X021B4533</div><div class="line"><span class="number">021B4500</span>    BB <span class="number">00010000</span>     mov ebx,<span class="number">0x100</span></div><div class="line"><span class="number">021B4505</span>    8D85 <span class="number">00FFFFFF</span>   lea eax,dword ptr ss:[ebp-<span class="number">0x100</span>]</div><div class="line"><span class="number">021B450B</span>    <span class="number">53</span>              <span class="built_in">push</span> ebx</div><div class="line"><span class="number">021B450C</span>    <span class="number">50</span>              <span class="built_in">push</span> eax</div><div class="line"><span class="number">021B450D</span>    <span class="number">57</span>              <span class="built_in">push</span> edi</div><div class="line"><span class="number">021B450E</span>    FF75 <span class="number">08</span>         <span class="built_in">push</span> dword ptr ss:[ebp+<span class="number">0x8</span>]</div><div class="line"><span class="number">021B4511</span>    FFD6            call esi</div><div class="line"><span class="number">021B4513</span>    8B3D E0641C02   mov edi,dword ptr ds:[<span class="number">0x21C64E0</span>]         ; USER32.GetWindowTextA</div><div class="line"><span class="number">021B4519</span>    <span class="number">50</span>              <span class="built_in">push</span> eax</div><div class="line"><span class="number">021B451A</span>    FFD7            call edi</div><div class="line"><span class="number">021B451C</span>    8D85 <span class="number">00FEFFFF</span>   lea eax,dword ptr ss:[ebp-<span class="number">0x200</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后向上找，找到这个函数开始地方，也就是上一个ret的下个指令.然后下硬件执行断点。然后重新载入，shitf+F9<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="number">021B4462</span>    <span class="number">40</span>              inc eax</div><div class="line"><span class="number">021B4463</span>    C3              retn</div><div class="line"><span class="number">021B4464</span>    <span class="number">55</span>              <span class="built_in">push</span> ebp</div><div class="line"><span class="number">021B4465</span>    8BEC            mov ebp,esp</div><div class="line"><span class="number">021B4467</span>    81EC <span class="number">00040000</span>   sub esp,<span class="number">0x400</span></div><div class="line"><span class="number">021B446D</span>    <span class="number">8B45</span> <span class="number">0C</span>         mov eax,dword ptr ss:[ebp+<span class="number">0xC</span>]</div><div class="line"><span class="number">021B4470</span>    <span class="number">53</span>              <span class="built_in">push</span> ebx</div><div class="line"><span class="number">021B4471</span>    <span class="number">56</span>              <span class="built_in">push</span> esi</div><div class="line"><span class="number">021B4472</span>    2D <span class="number">10010000</span>     sub eax,<span class="number">0x110</span></div><div class="line"><span class="number">021B4477</span>    <span class="number">57</span>              <span class="built_in">push</span> edi</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此时中断在之前下的执行断点处。单步走到021B4478处的第一个大跳转<code>je 021B45F2</code>右键跟随。<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">021B4464</span>    <span class="number">55</span>              <span class="built_in">push</span> ebp</div><div class="line"><span class="number">021B4465</span>    8BEC            mov ebp,esp</div><div class="line"><span class="number">021B4467</span>    81EC <span class="number">00040000</span>   sub esp,<span class="number">0x400</span></div><div class="line"><span class="number">021B446D</span>    <span class="number">8B45</span> <span class="number">0C</span>         mov eax,dword ptr ss:[ebp+<span class="number">0xC</span>]</div><div class="line"><span class="number">021B4470</span>    <span class="number">53</span>              <span class="built_in">push</span> ebx</div><div class="line"><span class="number">021B4471</span>    <span class="number">56</span>              <span class="built_in">push</span> esi</div><div class="line"><span class="number">021B4472</span>    2D <span class="number">10010000</span>     sub eax,<span class="number">0x110</span></div><div class="line"><span class="number">021B4477</span>    <span class="number">57</span>              <span class="built_in">push</span> edi</div><div class="line"><span class="number">021B4478</span>    <span class="number">0F84</span> <span class="number">74010000</span>   je <span class="number">021B45F2</span></div><div class="line"><span class="number">021B447E</span>    <span class="number">48</span>              dec eax</div><div class="line"><span class="number">021B447F</span>    <span class="number">74</span> <span class="number">07</span>           je X021B4488</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;跟随到021B45F2处，F2下断点，执行到此处，继续单步跟。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="number">021B45F2</span>    F645 <span class="number">17</span> <span class="number">80</span>      test byte ptr ss:[ebp+<span class="number">0x17</span>],<span class="number">0x80</span></div><div class="line"><span class="number">021B45F6</span>    8B7D <span class="number">08</span>         mov edi,dword ptr ss:[ebp+<span class="number">0x8</span>]</div><div class="line"><span class="number">021B45F9</span>    <span class="number">74</span> <span class="number">12</span>           je X021B460D</div><div class="line"><span class="number">021B45FB</span>    <span class="number">8065</span> <span class="number">17</span> 7F      <span class="keyword">and</span> byte ptr ss:[ebp+<span class="number">0x17</span>],<span class="number">0x7F</span></div><div class="line"><span class="number">021B45FF</span>    6A <span class="number">01</span>           <span class="built_in">push</span> <span class="number">0x1</span></div><div class="line"><span class="number">021B4601</span>    <span class="number">68</span> 5CC91C02     <span class="built_in">push</span> <span class="number">0x21CC95C</span></div><div class="line"><span class="number">021B4606</span>    <span class="number">57</span>              <span class="built_in">push</span> edi</div><div class="line"><span class="number">021B4607</span>    FF15 C0641C02   call dword ptr ds:[<span class="number">0x21C64C0</span>]        ; USER32.SetPropA</div><div class="line"><span class="number">021B460D</span>    <span class="number">8B35</span> E8641C02   mov esi,dword ptr ds:[<span class="number">0x21C64E8</span>]         ; USER32.GetDlgItem</div><div class="line"><span class="number">021B4613</span>    6A <span class="number">01</span>           <span class="built_in">push</span> <span class="number">0x1</span></div><div class="line"><span class="number">021B4615</span>    <span class="number">57</span>              <span class="built_in">push</span> edi</div><div class="line"><span class="number">021B4616</span>    FFD6            call esi</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一直到021B4689处<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">021B467D</span>   /<span class="number">0F84</span> B7000000   je <span class="number">021B473A</span></div><div class="line"><span class="number">021B4683</span>   |<span class="number">53</span>              <span class="built_in">push</span> ebx</div><div class="line"><span class="number">021B4684</span>   |B9 98FA1C02     mov ecx,<span class="number">0x21CFA98</span></div><div class="line"><span class="number">021B4689</span>   |E8 253CFEFF     call <span class="number">021982B3</span>                            ; 跟入</div><div class="line"><span class="number">021B468E</span>   |<span class="number">53</span>              <span class="built_in">push</span> ebx</div><div class="line"><span class="number">021B468F</span>   |B9 98FA1C02     mov ecx,<span class="number">0x21CFA98</span></div><div class="line"><span class="number">021B4694</span>   |<span class="number">8945</span> <span class="number">08</span>         mov dword ptr ss:[ebp+<span class="number">0x8</span>],eax</div><div class="line"><span class="number">021B4697</span>   |E8 353CFEFF     call <span class="number">021982D1</span></div><div class="line"><span class="number">021B469C</span>   |837D <span class="number">14</span> <span class="number">01</span>      cmp dword ptr ss:[ebp+<span class="number">0x14</span>],<span class="number">0x1</span></div><div class="line"><span class="number">021B46A0</span>   |<span class="number">75</span> <span class="number">27</span>           jnz X021B46C9</div><div class="line"><span class="number">021B46A2</span>   |<span class="number">8B45</span> <span class="number">08</span>         mov eax,dword ptr ss:[ebp+<span class="number">0x8</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在021982C2步入，执行到021A59FA处可以发现EAX就是硬件号<code>3C6663B2</code>。接着在一个可以执行的代码段打补丁<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="number">021982B3</span>    <span class="number">56</span>              <span class="built_in">push</span> esi</div><div class="line"><span class="number">021982B4</span>    8BF1            mov esi,ecx</div><div class="line"><span class="number">021982B6</span>    FF7424 <span class="number">08</span>       <span class="built_in">push</span> dword ptr ss:[esp+<span class="number">0x8</span>]</div><div class="line"><span class="number">021982BA</span>    8B8E 5C060000   mov ecx,dword ptr ds:[esi+<span class="number">0x65C</span>]</div><div class="line"><span class="number">021982C0</span>    6A <span class="number">00</span>           <span class="built_in">push</span> <span class="number">0x0</span></div><div class="line"><span class="number">021982C2</span>    E8 24D70000     call <span class="number">021A59EB</span>                    ;步入</div><div class="line"><span class="number">021982C7</span>    <span class="number">3386</span> 5C200000   xor eax,dword ptr ds:[esi+<span class="number">0x205C</span>]</div><div class="line"><span class="number">021982CD</span>    5E              <span class="built_in">pop</span> esi</div><div class="line">//</div><div class="line"><span class="number">021A59EB</span>    <span class="number">8B4424</span> <span class="number">04</span>       mov eax,dword ptr ss:[esp+<span class="number">0x4</span>]</div><div class="line"><span class="number">021A59EF</span>    C1E0 <span class="number">06</span>         shl eax,<span class="number">0x6</span></div><div class="line"><span class="number">021A59F2</span>    <span class="number">034424</span> <span class="number">08</span>       add eax,dword ptr ss:[esp+<span class="number">0x8</span>]</div><div class="line"><span class="number">021A59F6</span>    <span class="number">8B4481</span> <span class="number">18</span>       mov eax,dword ptr ds:[ecx+eax*<span class="number">4</span>+<span class="number">0x18</span>]</div><div class="line"><span class="number">021A59FA</span>    <span class="number">35</span> 8AC0E665     xor eax,<span class="number">0x65E6C08A</span></div><div class="line">//</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctrl+g，输入00401000然后输入如下内容<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">xor</span>     <span class="built_in">eax</span>, 65E6C08A  </div><div class="line"><span class="keyword">cmp</span>     <span class="built_in">eax</span>, 5980A338   <span class="comment">; 判断 EAX 是否是我的机器码( )</span></div><div class="line"><span class="keyword">jnz</span>     <span class="number">00401011</span>         <span class="comment">;不是则返回</span></div><div class="line"><span class="keyword">mov</span>     <span class="built_in">eax</span>, 5F48DD41    <span class="comment">;如果是,则修改为5F48DD41</span></div><div class="line"><span class="keyword">retn</span>    <span class="number">8</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;打好补丁后，在401000处F2下下断点，然后返回，剩下的使用上面讲的方法就可以脱去。</p>
+<h3 id="0x4-1-双进程"><a href="#0x4-1-双进程" class="headerlink" title="0x4.1 双进程"></a>0x4.1 双进程</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;得鸽一下。</p>
+<h2 id="0x5-DLL脱壳"><a href="#0x5-DLL脱壳" class="headerlink" title="0x5 DLL脱壳"></a>0x5 DLL脱壳</h2><h3 id="0x5-1-DLL脱壳"><a href="#0x5-1-DLL脱壳" class="headerlink" title="0x5.1 DLL脱壳"></a>0x5.1 DLL脱壳</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改Magic_Jmp绕过IAT加密。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">02995E53    395F FC         <span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">edi</span>-<span class="number">0x4</span>],<span class="built_in">ebx</span></div><div class="line">02995E56  ^ 0F85 49FEFFFF   <span class="keyword">jnz</span> 02995CA5</div><div class="line">02995E5C    EB <span class="number">03</span>           <span class="keyword">jmp</span> X02995E61</div><div class="line">02995E5E    D6              <span class="keyword">salc</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是和exe脱壳不一样的地方，处理重定位表。<strong>大佬这边的操作有点不明白，哪位师傅如果知道告知一下。</strong>首先对GetTickCount下硬件断点<code>HE GetTickCount</code>,然后shitf+f9，观察堆栈是这个结果的话，删除断点，并返回.程序停在029AC3C8处。<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">00129220 </span>  <span class="number">029</span>AC3C8  /<span class="keyword">CALL</span> 到 GetTickCount 来自 <span class="number">029</span>AC3C2</div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">029AC3C8    2B85 A4D4FFFF   <span class="keyword">sub</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2B5C</span>]</div><div class="line">029AC3CE    8B8D A8D4FFFF   <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2B58</span>]</div><div class="line">029AC3D4    6BC9 <span class="number">32</span>         <span class="keyword">imul</span> <span class="built_in">ecx</span>,<span class="built_in">ecx</span>,<span class="number">0x32</span></div><div class="line">029AC3D7    81C1 D0070000   <span class="keyword">add</span> <span class="built_in">ecx</span>,<span class="number">0x7D0</span></div><div class="line">029AC3DD    3BC1            <span class="keyword">cmp</span> <span class="built_in">eax</span>,<span class="built_in">ecx</span></div><div class="line">029AC3DF    <span class="number">76</span> <span class="number">07</span>           <span class="keyword">jbe</span> X029AC3E8</div><div class="line">029AC3E1    C685 34D9FFFF <span class="number">0</span>&gt;<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x26CC</span>],<span class="number">0x1</span></div><div class="line">029AC3E8    83BD E4D7FFFF <span class="number">0</span>&gt;<span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x281C</span>],<span class="number">0x0</span></div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后ctrl+s，搜索,之后在找到的地址下断运行。就会出现如下黄色字体，记住标记的重定位RVA=6000和size=3B0.并将029ACFB8处跳转改为<strong>绝对跳转</strong>。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">PUSH</span> <span class="built_in">EAX</span></div><div class="line"><span class="keyword">XCHG</span> <span class="built_in">CX</span>,<span class="built_in">CX</span></div><div class="line"><span class="keyword">POP</span> <span class="built_in">EAX</span></div><div class="line"><span class="keyword">STC</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">029ACF59    C705 E0C09B02 <span class="number">6</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29BC0E0</span>],<span class="number">0x29BCB60</span>   <span class="comment">; 重定位表RVA为6000</span></div><div class="line">029ACF63    A1 E49F9C02     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>]</div><div class="line">029ACF68    8B00            <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>]</div><div class="line">029ACF6A    <span class="number">8985</span> 3CD9FFFF   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x26C4</span>],<span class="built_in">eax</span></div><div class="line">029ACF70    A1 E49F9C02     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>]</div><div class="line">029ACF75    83C0 <span class="number">04</span>         <span class="keyword">add</span> <span class="built_in">eax</span>,<span class="number">0x4</span></div><div class="line">029ACF78    A3 E49F9C02     <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>],<span class="built_in">eax</span></div><div class="line">029ACF7D    A1 E49F9C02     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>]</div><div class="line">029ACF82    8B00            <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>]               <span class="comment">; 重定位表的大小为03B0</span></div><div class="line">029ACF84    <span class="number">8985</span> 78D9FFFF   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2688</span>],<span class="built_in">eax</span></div><div class="line">029ACF8A    A1 E49F9C02     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>]</div><div class="line">029ACF8F    83C0 <span class="number">04</span>         <span class="keyword">add</span> <span class="built_in">eax</span>,<span class="number">0x4</span></div><div class="line">029ACF92    A3 E49F9C02     <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C9FE4</span>],<span class="built_in">eax</span></div><div class="line">029ACF97    83BD 3CD9FFFF <span class="number">0</span>&gt;<span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x26C4</span>],<span class="number">0x0</span>        <span class="comment">; 重定位表为0？？</span></div><div class="line">029ACF9E    <span class="number">74</span> 6F           <span class="keyword">je</span> X029AD00F</div><div class="line">029ACFA0    83BD 78D9FFFF <span class="number">0</span>&gt;<span class="keyword">cmp</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2688</span>],<span class="number">0x0</span></div><div class="line">029ACFA7    <span class="number">74</span> <span class="number">66</span>           <span class="keyword">je</span> X029AD00F</div><div class="line">029ACFA9    8B85 FCD7FFFF   <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2804</span>]</div><div class="line">029ACFAF    8B8D 0CD8FFFF   <span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x27F4</span>]</div><div class="line">029ACFB5    3B48 <span class="number">34</span>         <span class="keyword">cmp</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x34</span>]</div><div class="line">029ACFB8    <span class="number">74</span> <span class="number">55</span>           <span class="keyword">je</span> X029AD00F                             <span class="comment">; 重定位处理，此处需要跳过</span></div><div class="line">029ACFBA    FFB5 78D9FFFF   <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2688</span>]</div><div class="line">029ACFC0    8B85 0CD8FFFF   <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x27F4</span>]</div><div class="line">029ACFC6    <span class="number">0385</span> 3CD9FFFF   <span class="keyword">add</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x26C4</span>]</div><div class="line">029ACFCC    <span class="number">50</span>              <span class="keyword">push</span> <span class="built_in">eax</span></div><div class="line">029ACFCD    8B85 FCD7FFFF   <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2804</span>]</div><div class="line">029ACFD3    FF70 <span class="number">34</span>         <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x34</span>]</div><div class="line">029ACFD6    FFB5 0CD8FFFF   <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x27F4</span>]</div><div class="line">029ACFDC    E8 3C150000     <span class="keyword">call</span> 029AE51D                            <span class="comment">; 处理重定位</span></div><div class="line">029ACFE1    83C4 <span class="number">10</span>         <span class="keyword">add</span> <span class="built_in">esp</span>,<span class="number">0x10</span></div><div class="line">029ACFE4    0FB6C0          <span class="keyword">movzx</span> <span class="built_in">eax</span>,<span class="built_in">al</span></div><div class="line">029ACFE7    85C0            <span class="keyword">test</span> <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line">029ACFE9    <span class="number">75</span> <span class="number">24</span>           <span class="keyword">jnz</span> X029AD00F</div><div class="line">029ACFEB    8B45 <span class="number">08</span>         <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0x8</span>]</div><div class="line">029ACFEE    8B00            <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>]</div><div class="line">029ACFF0    C700 <span class="number">07000000</span>   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="number">0x7</span></div><div class="line">029ACFF6    <span class="number">68</span> 50CB9B02     <span class="keyword">push</span> <span class="number">0x29BCB50</span>                           <span class="comment">; ASCII "Location CPG"</span></div><div class="line">029ACFFB    8B45 <span class="number">08</span>         <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0x8</span>]</div><div class="line">029ACFFE    FF70 <span class="number">04</span>         <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x4</span>]</div><div class="line">029AD001    E8 <span class="number">24800000</span>     <span class="keyword">call</span> 029B502A                            <span class="comment">; jmp 到 msvcrt.strcpy</span></div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此处提供另外一种方法，首先在内存窗口，在PE文件头下访问断点,然后shift+F9中断到029A9BC7,这里是DLL文件的文件头区域<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Memory map, 条目 <span class="number">35</span></div><div class="line"> 地址=<span class="number">00</span>A20000</div><div class="line"> 大小=<span class="number">00001000</span> (<span class="number">4096.</span>)</div><div class="line"> 属主=EdrLib   <span class="number">00</span>A20000 (自身)</div><div class="line"> 区段=</div><div class="line"> 包含=PE 文件头</div><div class="line"> 类型=Imag <span class="number">01001002</span></div><div class="line"> 访问=R</div><div class="line"> 初始访问=RWE</div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">029A9BC7    <span class="number">0348</span> 3C         <span class="keyword">add</span> <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x3C</span>]</div><div class="line">029A9BCA    <span class="number">898D</span> FCD7FFFF   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2804</span>],<span class="built_in">ecx</span>        <span class="comment">; EdrLib.00A200D8</span></div><div class="line">029A9BD0    A1 FC009C02     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="number">0x29C00FC</span>]</div><div class="line">029A9BD5    <span class="number">8985</span> B0AAFFFF   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0xFFFFAAB0</span>],<span class="built_in">eax</span></div><div class="line">029A9BDB    8B85 B0AAFFFF   <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0xFFFFAAB0</span>]</div><div class="line">029A9BE1    <span class="number">8985</span> 0CD8FFFF   <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x27F4</span>],<span class="built_in">eax</span></div><div class="line">029A9BE7    8B85 FCD7FFFF   <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x2804</span>]</div><div class="line">029A9BED    8B40 <span class="number">50</span>         <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>+<span class="number">0x50</span>]</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着ctrl+s搜索如下指令<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ecx</span>+C]</div><div class="line"><span class="keyword">add</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ecx</span>+<span class="number">8</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们先来跟一下。这里是为了获取pdata,reloc<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">029AFABD    3BCE            <span class="keyword">cmp</span> <span class="built_in">ecx</span>,<span class="built_in">esi</span>                              <span class="comment">; 和pdata比较</span></div><div class="line">029AFABF    <span class="number">73</span> <span class="number">11</span>           <span class="keyword">jnb</span> X029AFAD2</div><div class="line">029AFAC1    8B51 0C         <span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ecx</span>+<span class="number">0xC</span>]</div><div class="line">029AFAC4    <span class="number">0351</span> <span class="number">08</span>         <span class="keyword">add</span> <span class="built_in">edx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ecx</span>+<span class="number">0x8</span>]</div><div class="line">029AFAC7    3BD0            <span class="keyword">cmp</span> <span class="built_in">edx</span>,<span class="built_in">eax</span></div><div class="line">029AFAC9    <span class="number">76</span> <span class="number">02</span>           <span class="keyword">jbe</span> X029AFACD</div><div class="line">029AFACB    8BC2            <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">edx</span></div><div class="line">029AFACD    83C1 <span class="number">28</span>         <span class="keyword">add</span> <span class="built_in">ecx</span>,<span class="number">0x28</span>                             <span class="comment">; next dir</span></div><div class="line">029AFAD0  ^ EB EB           <span class="keyword">jmp</span> X029AFABD</div><div class="line">029AFAD2    5E              <span class="keyword">pop</span> <span class="built_in">esi</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此时，当我们遍历到了reloc的时候，也就是eac为reloc的时候，在信息窗口显示的数据就是reloc的RVA=6000。size=3B0<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ds:[<span class="number">00A20254</span>]=<span class="number">00006000</span>    edx=<span class="number">000058E0</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;绕过重定位表处理之后，直接在 EdrLib .text段上下F2断点，然后shitf+f9直达OEP，注意并不是在LoadDll.exe的text段，而是需要脱壳的DLL的text段下断点。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Memory map, 条目 <span class="number">36</span></div><div class="line"> 地址=<span class="number">00</span>A21000</div><div class="line"> 大小=<span class="number">00003000</span> (<span class="number">12288.</span>)</div><div class="line"> 属主=EdrLib   <span class="number">00</span>A20000</div><div class="line"> 区段=.text</div><div class="line"> 类型=Imag <span class="number">01001002</span></div><div class="line"> 访问=R</div><div class="line"> 初始访问=RWE</div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">00A211C9    <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">00A211CA    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">00A211CC    <span class="number">53</span>              <span class="keyword">push</span> <span class="built_in">ebx</span></div><div class="line">00A211CD    8B5D <span class="number">08</span>         <span class="keyword">mov</span> <span class="built_in">ebx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0x8</span>]</div><div class="line">00A211D0    <span class="number">56</span>              <span class="keyword">push</span> <span class="built_in">esi</span></div><div class="line">00A211D1    8B75 0C         <span class="keyword">mov</span> <span class="built_in">esi</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0xC</span>]</div><div class="line">00A211D4    <span class="number">57</span>              <span class="keyword">push</span> <span class="built_in">edi</span></div><div class="line">00A211D5    8B7D <span class="number">10</span>         <span class="keyword">mov</span> <span class="built_in">edi</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>+<span class="number">0x10</span>]</div><div class="line">00A211D8    85F6            <span class="keyword">test</span> <span class="built_in">esi</span>,<span class="built_in">esi</span></div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就可以dump程序了，在LordPE<strong>目录</strong>中修改重定位信息。因为没有处理重定位表，所以只需要修复DLL原来的重定位表的RVA和大小就行了。<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">RVA=<span class="number">6000</span></div><div class="line">SIZE=<span class="number">3B0</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为没有修改IAT表，所以IAT表的数据是正确的。所以直接Ctrl+M，选中.rdata处，双击，为了方便查看选择地址显示.可以判断起始地址为A24000，结束地址为A240C8,大小为C8<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="number">00</span>A24000  <span class="number">77</span>EF7F9D  GDI32.GetTextExtentPoint32W</div><div class="line"><span class="number">00</span>A24004  <span class="number">77</span>EF7EAC  GDI32.TextOutW</div><div class="line"><span class="number">00</span>A24008  <span class="number">77</span>EFBA3F  GDI32.TextOutA</div><div class="line"><span class="number">00</span>A2400C  <span class="number">77</span>F0C63D  GDI32.GetTextExtentPoint32A</div><div class="line"><span class="number">00</span>A24010  <span class="number">029970</span>A0</div><div class="line"><span class="number">00</span>A24014  <span class="number">7</span>C809A99  kernel32.lstrlenW</div><div class="line"><span class="number">00</span>A24018  <span class="number">7</span>C814B77  kernel32.FreeEnvironmentStringsW</div><div class="line"><span class="number">00</span>A2401C  <span class="number">7</span>C812FAD  kernel32.GetCommandLineA</div><div class="line"><span class="number">00</span>A24020  <span class="number">7</span>C81126A  kernel32.GetVersion</div><div class="line"><span class="number">00</span>A24024  <span class="number">7</span>C81CAFA  kernel32.ExitProcess</div><div class="line"><span class="number">00</span>A24028  <span class="number">7</span>C801E1A  kernel32.TerminateProcess</div><div class="line"><span class="number">00</span>A2402C  <span class="number">7</span>C80DE85  kernel32.GetCurrentProcess</div><div class="line"><span class="number">00</span>A24030  <span class="number">7</span>C8097B8  kernel32.GetCurrentThreadId</div><div class="line"><span class="number">00</span>A24034  <span class="number">7</span>C809C55  kernel32.TlsSetValue</div><div class="line"><span class="number">00</span>A24038  <span class="number">7</span>C812E2F  kernel32.TlsAlloc</div><div class="line"><span class="number">00</span>A2403C  <span class="number">7</span>C813767  kernel32.TlsFree</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下有有一个很秀的操作，将我们获得从A24000-A240C8的IAT数据，复制到新打开的notepad中的404000-4040C8处.这叫借鸡生蛋。然后在ImportRCE中IAT的RVA填写404000，大小填写C8就好了<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">00404020</span>  <span class="number">6</span>A <span class="number">12</span> <span class="number">81</span> <span class="number">7</span>C FA CA <span class="number">81</span> <span class="number">7</span>C <span class="number">1</span>A <span class="number">1</span>E <span class="number">80</span> <span class="number">7</span>C <span class="number">85</span> DE <span class="number">80</span> <span class="number">7</span>C  j亅亅€|呣€|</div><div class="line"><span class="number">00404030</span>  B8 <span class="number">97</span> <span class="number">80</span> <span class="number">7</span>C <span class="number">55</span> <span class="number">9</span>C <span class="number">80</span> <span class="number">7</span>C <span class="number">2</span>F <span class="number">2</span>E <span class="number">81</span> <span class="number">7</span>C <span class="number">67</span> <span class="number">37</span> <span class="number">81</span> <span class="number">7</span>C  笚€|U渶|/.亅g7亅</div><div class="line"><span class="number">00404040</span>  D0 <span class="number">97</span> <span class="number">80</span> <span class="number">7</span>C <span class="number">27</span> CD <span class="number">80</span> <span class="number">7</span>C C9 <span class="number">2</span>F <span class="number">81</span> <span class="number">7</span>C E1 <span class="number">0</span>E <span class="number">81</span> <span class="number">7</span>C  袟€|'蛝|?亅?亅</div><div class="line"><span class="number">00404050</span>  F2 <span class="number">1</span>E <span class="number">80</span> <span class="number">7</span>C <span class="number">5</span>A <span class="number">13</span> <span class="number">93</span> <span class="number">7</span>C <span class="number">5</span>F B5 <span class="number">80</span> <span class="number">7</span>C D7 D6 <span class="number">81</span> <span class="number">7</span>C  ?€|Z搢_祤|字亅</div><div class="line"><span class="number">00404060</span>  <span class="number">46</span> BE <span class="number">80</span> <span class="number">7</span>C <span class="number">64</span> A1 <span class="number">80</span> <span class="number">7</span>C <span class="number">7</span>B CC <span class="number">81</span> <span class="number">7</span>C <span class="number">98</span> <span class="number">2</span>F <span class="number">81</span> <span class="number">7</span>C  F線|d|&#123;虂|?亅</div><div class="line"><span class="number">00404070</span>  <span class="number">88</span> <span class="number">0</span>F <span class="number">81</span> <span class="number">7</span>C <span class="number">46</span> <span class="number">2</span>C <span class="number">81</span> <span class="number">7</span>C <span class="number">74</span> <span class="number">9</span>B <span class="number">80</span> <span class="number">7</span>C <span class="number">0</span>D FF <span class="number">92</span> <span class="number">7</span>C  ?亅F,亅t泙|.抾</div><div class="line"><span class="number">00404080</span>  <span class="number">17</span> <span class="number">0</span>E <span class="number">81</span> <span class="number">7</span>C <span class="number">81</span> <span class="number">9</span>F <span class="number">80</span> <span class="number">7</span>C <span class="number">00</span> <span class="number">10</span> <span class="number">92</span> <span class="number">7</span>C E0 <span class="number">10</span> <span class="number">92</span> <span class="number">7</span>C  亅仧€|.抾?抾</div><div class="line"><span class="number">00404090</span>  A4 <span class="number">00</span> <span class="number">93</span> <span class="number">7</span>C <span class="number">06</span> <span class="number">2</span>F <span class="number">81</span> <span class="number">7</span>C A5 <span class="number">99</span> <span class="number">80</span> <span class="number">7</span>C <span class="number">37</span> <span class="number">28</span> <span class="number">81</span> <span class="number">7</span>C  ?搢/亅€|<span class="number">7</span>(亅</div><div class="line"><span class="number">004040</span>A0  E1 <span class="number">9</span>A <span class="number">80</span> <span class="number">7</span>C <span class="number">80</span> <span class="number">9</span>B <span class="number">93</span> <span class="number">7</span>C <span class="number">30</span> AE <span class="number">80</span> <span class="number">7</span>C <span class="number">7</span>B <span class="number">1</span>D <span class="number">80</span> <span class="number">7</span>C  釟€|€洆|<span class="number">0</span>畝|&#123;€|</div><div class="line"><span class="number">004040</span>B0  <span class="number">88</span> <span class="number">9</span>C <span class="number">80</span> <span class="number">7</span>C <span class="number">00</span> <span class="number">8</span>E <span class="number">83</span> <span class="number">7</span>C <span class="number">38</span> CD <span class="number">80</span> <span class="number">7</span>C <span class="number">24</span> <span class="number">8</span>A <span class="number">83</span> <span class="number">7</span>C  垳€|.巸|<span class="number">8</span>蛝|$妰|</div><div class="line"><span class="number">004040</span>C0  <span class="number">20</span> A5 <span class="number">80</span> <span class="number">7</span>C A5 AB <span class="number">94</span> <span class="number">7</span>C <span class="number">3</span>B C6 <span class="number">7</span>D <span class="number">1</span>B FF <span class="number">15</span> CC <span class="number">63</span>   |カ攟;苶蘡</div><div class="line"><span class="number">004040</span>D0  <span class="number">40</span> <span class="number">00</span> <span class="number">83</span> F8 <span class="number">3</span>F <span class="number">0</span>F <span class="number">85</span> A2 <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> C7 <span class="number">45</span> FC FD FF  @.凐?參..荅</div><div class="line"><span class="number">004040E0</span>  FF FF E9 <span class="number">96</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">33</span> F6 A1 <span class="number">00</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span> <span class="number">56</span> <span class="number">50</span>  闁.<span class="number">.3</span>觥.P@.VP</div></pre></td></tr></table></figure></p>
+<h2 id="0x6-非常规方法应对"><a href="#0x6-非常规方法应对" class="headerlink" title="0x6 非常规方法应对"></a>0x6 非常规方法应对</h2><h3 id="0x6-1-应对IAT加密"><a href="#0x6-1-应对IAT加密" class="headerlink" title="0x6.1 应对IAT加密"></a>0x6.1 应对IAT加密</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这里使用了非常简单的Arm作为示范，只含有IAT加密，不涉及其他，第二常规方法下建议使用增强版OD。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通常规避IAT加密的方法就是Magic_Jmp,然后.text下断到OEP。这里前辈给出新方法。介绍一下。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先须要了解到Arm并不是对所有的API函数进行加密，前辈这里的思路是先直接到达OEP，在根据里面一直的函数地址寻找IAT地址，然后寻找出IAT中被加密的地方，下硬件断点。重新运行之后到达被修改的的地址，然后分析加密IAT的过程，使用jmp或者nop规避即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在.text下断，然后F9运行，程序到达OEP，只是IAT被加密了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">004010CC    55              push    ebp</div><div class="line">004010CD    8BEC            mov     ebp, esp</div><div class="line">004010CF    83EC 44         sub     esp, 44</div><div class="line">004010D2    56              push    esi</div><div class="line">004010D3    FF15 E4634000   call    dword ptr [4063E4]</div><div class="line">004010D9    8BF0            mov     esi, eax</div><div class="line">004010DB    8A00            mov     al, byte ptr [eax]</div><div class="line">004010DD    3C 22           cmp     al, 22</div><div class="line">004010DF    75 1B           jnz     short 004010FC</div><div class="line">004010E1    56              push    esi</div><div class="line">004010E2    FF15 F4644000   call    dword ptr [4064F4]               ; USER32.CharNextA</div><div class="line">004010E8    8BF0            mov     esi, eax</div><div class="line">004010EA    8A00            mov     al, byte ptr [eax]</div><div class="line">004010EC    84C0            test    al, al</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大家应该都知道IID中所有函数应该是连续的，但是这些是不连续的，应该是被加密的。但是也说过其只是对IAT部分函数地址(有歧义自行理解)进行加密。但是IAT的RVA应该是一致的。所以将IAT的起始RVA=62E4，结束RVA=6524,大小应该为240，oep为4010cc记录下来。<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">0040645</span>C  <span class="number">77D3</span>C972  USER32.SetDlgItemTextA</div><div class="line"><span class="symbol">00406460 </span> <span class="number">77D5</span>A5E5  USER32.TabbedTextOutA</div><div class="line"><span class="symbol">00406464 </span> <span class="number">021</span>AB517</div><div class="line"><span class="symbol">00406468 </span> <span class="number">77D29849</span>  USER32.EnableWindow</div><div class="line"><span class="number">0040646</span>C  <span class="number">021</span>AA871</div><div class="line"><span class="symbol">00406470 </span> <span class="number">77D3</span>C2E7  USER32.SendDlgItemMessageA</div><div class="line"><span class="symbol">00406474 </span> <span class="number">77D2</span>AF1B  USER32.GetDlgCtrlID</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们在0040645C处下硬件断点，然后重新载入，接着按shitf+9，即可到达0218CF28处<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">0218CF28</span>    <span class="number">8B85</span> 10D9FFFF   mov     eax, dword ptr [ebp-26F0]        ; PackEd.<span class="number">004062EC</span></div><div class="line"><span class="number">0218CF2E</span>    83C0 <span class="number">04</span>         add     eax, <span class="number">4</span></div><div class="line"><span class="number">0218CF31</span>    <span class="number">8985</span> 10D9FFFF   mov     dword ptr [ebp-26F0], eax</div><div class="line"><span class="number">0218CF37</span>  ^ E9 4DFCFFFF     jmp     <span class="number">0218CB89</span></div><div class="line"><span class="number">0218CF3C</span>    FF15 <span class="number">84721902</span>   call    dword ptr [<span class="number">2197284</span>]              ; kernel32.GetTickCount</div><div class="line"><span class="number">0218CF42</span>    <span class="number">2B85</span> A4D4FFFF   sub     eax, dword ptr [ebp-2B5C]</div><div class="line"><span class="number">0218CF48</span>    8B8D A8D4FFFF   mov     ecx, dword ptr [ebp-<span class="number">2B58</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着往下跟，在0218CD6B处发现比较一个，可以发现第一轮他是和RegCreateKeyA比较<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">0218</span>CD63    <span class="number">50</span>              push    eax</div><div class="line"><span class="number">0218</span>CD64    <span class="number">8</span>D85 <span class="number">68</span>C2FFFF   lea     eax, dword ptr [ebp<span class="number">-3</span>D98]</div><div class="line"><span class="number">0218</span>CD6A    <span class="number">50</span>              push    eax</div><div class="line"><span class="number">0218</span>CD6B    FF15 <span class="number">78731902</span>   call    dword ptr [<span class="number">2197378</span>]              ; msvcrt._stricmp</div><div class="line"><span class="number">0218</span>CD71    <span class="number">59</span>              pop     ecx</div><div class="line"><span class="number">0218</span>CD72    <span class="number">59</span>              pop     ecx</div><div class="line"><span class="number">0218</span>CD73    <span class="number">85</span>C0            test    eax, eax</div><div class="line"><span class="number">0218</span>CD75    <span class="number">75</span> <span class="number">11</span>           jnz     short <span class="number">0218</span>CD88</div></pre></td></tr></table></figure></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="number">001294</span>D4   <span class="number">0012</span>AE7C  |s1 = <span class="string">"RegOpenKeyA"</span></div><div class="line"><span class="number">001294</span>D8   <span class="number">0012</span>AD6C  \s2 = <span class="string">"RegCreateKeyA"</span></div><div class="line"><span class="number">001294</span>DC   <span class="number">021</span>A0F88</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过如下分析，我们可以知道0218CF1A处就是我们加密IAT的操作。同时也知道Arm只是针对部分IAT进行加密的。所以只需要修改之前在0218CD6B处的<code>jnz short 0218CD88</code>，或者位于0218CF18处的<code>jnb short 0218CF37</code>即可！<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">0218CF1A    8B85 10D9FFFF   <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-26F0]        <span class="comment">; eax为IAT地址</span></div><div class="line">0218CF20    8B8D 68CAFFFF   <span class="keyword">mov</span>     <span class="built_in">ecx</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">3598</span>]        <span class="comment">; ecx是加密的值</span></div><div class="line">0218CF26    <span class="number">8908</span>            <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="built_in">ecx</span>             <span class="comment">; 将值写入IAT中</span></div><div class="line">0218CF28    8B85 10D9FFFF   <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-26F0]        <span class="comment">; 定位IAT</span></div><div class="line">0218CF2E    83C0 <span class="number">04</span>         <span class="keyword">add</span>     <span class="built_in">eax</span>, <span class="number">4</span>                           <span class="comment">; 指向下一个地址</span></div><div class="line">0218CF31    <span class="number">8985</span> 10D9FFFF   <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-26F0], <span class="built_in">eax</span>        <span class="comment">; 写入</span></div><div class="line">0218CF37  ^ E9 4DFCFFFF     <span class="keyword">jmp</span>     0218CB89                         <span class="comment">; 便利下一个</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/一篇文章带你理解PE三表/" rel="next" title="一篇文章带你理解PE三表">
+                <i class="fa fa-chevron-left"></i> 一篇文章带你理解PE三表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/30/病毒分析技术_21_针对KingSqlZ组织一次攻击的分析报告/" rel="prev" title="针对KingSqlZ组织一次攻击的分析报告">
+                针对KingSqlZ组织一次攻击的分析报告 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x0-前言"><span class="nav-number">1.</span> <span class="nav-text">0x0 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-Armadillo"><span class="nav-number">2.</span> <span class="nav-text">0x1 Armadillo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-1-保护机制"><span class="nav-number">2.1.</span> <span class="nav-text">0x1.1 保护机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-2-前期侦壳"><span class="nav-number">2.2.</span> <span class="nav-text">0x1.2 前期侦壳</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-Armadillo单进程脱壳"><span class="nav-number">3.</span> <span class="nav-text">0x2 Armadillo单进程脱壳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-1-标准单进程Armadillo-3-78-4-xx-脱壳"><span class="nav-number">3.1.</span> <span class="nav-text">0x2.1 标准单进程Armadillo 3.78 - 4.xx 脱壳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-2-单进程Armadillo-v4-x脱壳"><span class="nav-number">3.2.</span> <span class="nav-text">0x2.2 单进程Armadillo v4.x脱壳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-加-PassWord单进程"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 加 PassWord单进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-4-包含Code-Splicing和Import-Table-Elimination的修复"><span class="nav-number">3.4.</span> <span class="nav-text">0x2.4 包含Code Splicing和Import Table Elimination的修复</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x3-Armadillo双进程脱壳"><span class="nav-number">4.</span> <span class="nav-text">0x3 Armadillo双进程脱壳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-1-标准保护"><span class="nav-number">4.1.</span> <span class="nav-text">0x3.1 标准保护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-2-CopyMem-II"><span class="nav-number">4.2.</span> <span class="nav-text">0x3.2 CopyMem-II</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x4-带KEY的Armadillo"><span class="nav-number">5.</span> <span class="nav-text">0x4 带KEY的Armadillo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x4-1-单进程"><span class="nav-number">5.1.</span> <span class="nav-text">0x4.1 单进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x4-1-双进程"><span class="nav-number">5.2.</span> <span class="nav-text">0x4.1 双进程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x5-DLL脱壳"><span class="nav-number">6.</span> <span class="nav-text">0x5 DLL脱壳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x5-1-DLL脱壳"><span class="nav-number">6.1.</span> <span class="nav-text">0x5.1 DLL脱壳</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x6-非常规方法应对"><span class="nav-number">7.</span> <span class="nav-text">0x6 非常规方法应对</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x6-1-应对IAT加密"><span class="nav-number">7.1.</span> <span class="nav-text">0x6.1 应对IAT加密</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

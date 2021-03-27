@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="小结&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;常见的花指令构造方法主要有：  0x1 垃圾指令：这些垃圾指令并不影响程序的执行结果和过程，对寄存器也没有影响，但是大量重复的辣鸡指令可以有效阻碍逆向过程 0x2 指令膨胀(等价替换)：通过使用多条指令替换一条执行，或者起到同样的效果的方法来阻碍逆向分析 0x3 绝对执行分支：反汇编器优">
+<meta property="og:type" content="article">
+<meta property="og:title" content="花指令原理小结">
+<meta property="og:url" content="https://findream.github.io/2019/08/14/花指令小结/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="小结&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;常见的花指令构造方法主要有：  0x1 垃圾指令：这些垃圾指令并不影响程序的执行结果和过程，对寄存器也没有影响，但是大量重复的辣鸡指令可以有效阻碍逆向过程 0x2 指令膨胀(等价替换)：通过使用多条指令替换一条执行，或者起到同样的效果的方法来阻碍逆向分析 0x3 绝对执行分支：反汇编器优">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-03-26T14:29:51.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="花指令原理小结">
+<meta name="twitter:description" content="小结&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;常见的花指令构造方法主要有：  0x1 垃圾指令：这些垃圾指令并不影响程序的执行结果和过程，对寄存器也没有影响，但是大量重复的辣鸡指令可以有效阻碍逆向过程 0x2 指令膨胀(等价替换)：通过使用多条指令替换一条执行，或者起到同样的效果的方法来阻碍逆向分析 0x3 绝对执行分支：反汇编器优">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2019/08/14/花指令小结/"/>
+
+
+
+
+
+  <title>花指令原理小结 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/08/14/花指令小结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">花指令原理小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-14T15:02:11+08:00">
+                2019-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;常见的花指令构造方法主要有：</p>
+<ul>
+<li>0x1 垃圾指令：这些垃圾指令并不影响程序的执行结果和过程，对寄存器也没有影响，但是大量重复的辣鸡指令可以有效阻碍逆向过程</li>
+<li>0x2 指令膨胀(等价替换)：通过使用多条指令替换一条执行，或者起到同样的效果的方法来阻碍逆向分析</li>
+<li>0x3 绝对执行分支：反汇编器优先反汇编错误分支，使用绝对执行分支插入花指令可以干扰反汇编器反汇编。</li>
+<li>0x4 打乱执行流：通过打乱执行流，再向中间插入辣鸡指令干扰分析<a id="more"></a>
+</li>
+</ul>
+<h2 id="绝对分支执行"><a href="#绝对分支执行" class="headerlink" title="绝对分支执行"></a>绝对分支执行</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所谓绝对分支执行：就是虽然是一条条件跳转，但是其结果是已知确定的。是一个必然发生或者必然不发生的事情。常见的构造方法就是JZ-JNZ<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">void Junk1()   </div><div class="line">&#123;</div><div class="line">	<span class="variable">_asm</span></div><div class="line">	&#123;</div><div class="line">		jz l1</div><div class="line">		jnz l1</div><div class="line">		<span class="variable">_EMIT</span> <span class="number">0</span>xE8<span class="comment">//这里就是花指令</span></div><div class="line">		<span class="variable">_EMIT</span> <span class="number">0</span>x14<span class="comment">//这里就是花指令</span></div><div class="line">		<span class="variable">_EMIT</span> <span class="number">0</span>x56<span class="comment">//这里就是花指令</span></div><div class="line">		<span class="variable">_EMIT</span> <span class="number">0</span>x40<span class="comment">//这里就是花指令</span></div><div class="line">		l2:</div><div class="line">		mov eax, <span class="number">0</span>x11111111</div><div class="line">	&#125;</div><div class="line">	MessageBox(NULL, <span class="string">"Junk1"</span>, <span class="string">"Test"</span>, MB_OK);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">void Junk4()</div><div class="line">&#123;</div><div class="line">	_asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">pushad</span></div><div class="line">		<span class="keyword">xor</span> <span class="built_in">eax</span>,<span class="number">1</span></div><div class="line">		<span class="keyword">cmp</span> <span class="built_in">eax</span>,<span class="number">1</span></div><div class="line">		<span class="keyword">jnz</span> L1</div><div class="line">		_EMIT <span class="number">0xE8</span></div><div class="line"><span class="symbol">	L1:</span> </div><div class="line">		<span class="keyword">call</span> Message</div><div class="line">		<span class="keyword">popad</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="打乱执行流"><a href="#打乱执行流" class="headerlink" title="打乱执行流"></a>打乱执行流</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;跳来跳去，你说晕不晕<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">void Junk2()</div><div class="line">&#123;</div><div class="line">	<span class="built_in">DWORD</span> pAdress<span class="comment">;</span></div><div class="line">	_asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">jmp</span> L1</div><div class="line"><span class="symbol">	L1:</span></div><div class="line">		<span class="keyword">pop</span> <span class="built_in">eax</span>  //保存这条指令地址到<span class="built_in">eax</span></div><div class="line">		<span class="keyword">call</span> Fun1 </div><div class="line">		_EMIT <span class="number">0xEA</span></div><div class="line">		<span class="keyword">jmp</span> L2</div><div class="line"><span class="symbol">	Fun1:</span></div><div class="line">		<span class="keyword">pop</span> <span class="built_in">ebx</span>   //<span class="built_in">ebx</span>保存的是_EMIT <span class="number">0xEA</span>的地址</div><div class="line">		<span class="keyword">inc</span> <span class="built_in">ebx</span>   //<span class="built_in">ebx</span>保存的是<span class="keyword">jmp</span> L2的地址</div><div class="line">		<span class="keyword">push</span> <span class="built_in">ebx</span>  //将<span class="keyword">jmp</span> L2 地址压栈</div><div class="line">		<span class="keyword">ret</span>       //跳转到<span class="keyword">jmp</span> L2</div><div class="line"><span class="symbol">	L2:</span></div><div class="line">		<span class="keyword">call</span> Fun2</div><div class="line">		_EMIT <span class="number">0xE8</span></div><div class="line"><span class="symbol">	Fun2:</span></div><div class="line">		<span class="keyword">pop</span> <span class="built_in">ebx</span>   //为了保持栈平衡</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">ebx</span>,offset Fun3</div><div class="line">		<span class="keyword">push</span> <span class="built_in">ebx</span></div><div class="line">		<span class="keyword">ret</span> //跳转到Fun3</div><div class="line"><span class="symbol">	Fun3:</span></div><div class="line">	&#125;</div><div class="line">	MessageBox(NULL, <span class="string">"Junk2"</span>, <span class="string">"Test"</span>, MB_OK)<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="进阶花指令"><a href="#进阶花指令" class="headerlink" title="进阶花指令"></a>进阶花指令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用条件跳转是很容易被分析察觉出来的。执行流的更改除了使用跳转以外还是可以使用调用函数的。由于函数调用比跳转来的复杂所以增加了反汇编器识别的难度。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目的，隐藏那些字符串。我们首先思考一件事：花指令是不被执行的，如何在函数调用后返回的时候准确的落到花指令的后面也就是程序执行的地方。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方案：结合Hook技术中跳转Detour的方法，代码执行处F-减去函数地址$-代码大小。<strong>其实跳跃的就是那些花指令的地方</strong>，但是这些地方不能直接计算。用函数调用处(也就是函数返回地址)作为参照。加上之间的距离就是代码执行处F。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">myjmp   proc</div><div class="line">    <span class="keyword">pop</span> <span class="built_in">eax</span></div><div class="line">    <span class="keyword">add</span> <span class="built_in">eax</span>,<span class="built_in">ecx</span></div><div class="line">    <span class="keyword">push</span>    <span class="built_in">eax</span></div><div class="line">    <span class="keyword">ret</span></div><div class="line">myjmp   endp</div><div class="line"><span class="symbol">start:</span></div><div class="line">        <span class="keyword">mov</span> <span class="built_in">ecx</span>,offset @F- $ -<span class="number">10</span></div><div class="line">        <span class="keyword">call</span>    myjmp</div><div class="line">        <span class="built_in">db</span>  <span class="string">'花指令乱码'</span></div><div class="line">    @F:<span class="comment">;.........正常指令继续</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;适配一下VS就是下面这样<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">void Junk6()</div><div class="line">&#123;</div><div class="line">	char* Str1<span class="comment">;</span></div><div class="line">	_asm</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">jmp</span> L1</div><div class="line">	myjmp :</div><div class="line">		<span class="keyword">pop</span> <span class="built_in">eax</span>    //保存这条指令地址到<span class="built_in">eax</span></div><div class="line">			       //栈顶保存的是返回地址</div><div class="line">		<span class="keyword">add</span> <span class="built_in">eax</span>, <span class="built_in">ecx</span></div><div class="line">		<span class="keyword">push</span>    <span class="built_in">eax</span></div><div class="line">		<span class="keyword">ret</span></div><div class="line"><span class="symbol">	L1:</span></div><div class="line">		//<span class="keyword">mov</span> <span class="built_in">ecx</span>, offset (F -$- <span class="number">20</span>)</div><div class="line">		//是为了算出F到EMIT的距离，但是不能直接算，只能间接算F-L距离，减去代码长度</div><div class="line">		//从而<span class="keyword">ret</span>到F</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">edx</span>,offset L1</div><div class="line">		<span class="keyword">mov</span> <span class="built_in">ecx</span>,offset F</div><div class="line">		<span class="keyword">sub</span> <span class="built_in">ecx</span>,<span class="built_in">edx</span></div><div class="line">		<span class="keyword">sub</span> <span class="built_in">ecx</span>,<span class="number">20</span>      </div><div class="line">		<span class="keyword">call</span>    myjmp</div><div class="line">		_EMIT <span class="number">0xE9</span></div><div class="line">	//正常执行的指令</div><div class="line"><span class="symbol">	F:</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span>], <span class="string">'h'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">1</span>], <span class="string">'e'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">2</span>], <span class="string">'l'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">3</span>], <span class="string">'l'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">4</span>], <span class="string">'o'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">5</span>], <span class="string">' '</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">6</span>], <span class="string">'w'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">7</span>], <span class="string">'o'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">8</span>], <span class="string">'r'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">9</span>], <span class="string">'l'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">10</span>], <span class="string">'d'</span></div><div class="line">		<span class="keyword">mov</span> <span class="built_in">byte</span> <span class="built_in">ptr</span>[<span class="built_in">ebx</span> + <span class="number">11</span>], <span class="string">'\0'</span></div><div class="line">		<span class="keyword">mov</span> Str1, <span class="built_in">ebx</span><span class="comment">;</span></div><div class="line">	&#125;</div><div class="line">	MessageBox(NULL, Str1, <span class="string">"OK"</span>, MB_OK)<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/18/病毒分析技术_24_Hwp样本分析总结/" rel="next" title="Hwp_文本类型样本分析总结">
+                <i class="fa fa-chevron-left"></i> Hwp_文本类型样本分析总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2099/12/31/博客总览/" rel="prev" title="博客总览">
+                博客总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">1.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绝对分支执行"><span class="nav-number">2.</span> <span class="nav-text">绝对分支执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打乱执行流"><span class="nav-number">3.</span> <span class="nav-text">打乱执行流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进阶花指令"><span class="nav-number">4.</span> <span class="nav-text">进阶花指令</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

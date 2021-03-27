@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;偶然在论坛上看到一篇关于CoinMiner介绍，文章从该病毒的流行趋势，入侵路径，关联分析等多个角度对病毒进行的分析，对样本的分析寥寥几句就概括完了。想到之前分析的多为勒索类病毒，对于挖矿类病毒研究较少。故斗胆尝试小小分析一次，如有不到之处望师傅们指教。 一：目录 1.目录 2.样本信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="病毒分析技术(17) ---CoinMiner挖矿病毒">
+<meta property="og:url" content="https://findream.github.io/2018/11/15/病毒分析技术_17_ CoinMiner挖矿病毒/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;偶然在论坛上看到一篇关于CoinMiner介绍，文章从该病毒的流行趋势，入侵路径，关联分析等多个角度对病毒进行的分析，对样本的分析寥寥几句就概括完了。想到之前分析的多为勒索类病毒，对于挖矿类病毒研究较少。故斗胆尝试小小分析一次，如有不到之处望师傅们指教。 一：目录 1.目录 2.样本信息">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/8mIM5jj.png">
+<meta property="og:image" content="https://i.imgur.com/PKjcZEZ.png">
+<meta property="og:image" content="https://i.imgur.com/SBgTHTI.png">
+<meta property="og:image" content="https://i.imgur.com/I0iMCaD.png">
+<meta property="og:image" content="https://i.imgur.com/ZwU4MNQ.png">
+<meta property="og:image" content="https://i.imgur.com/g9nRJCl.png">
+<meta property="og:image" content="https://i.imgur.com/rpnwyaN.png">
+<meta property="og:image" content="https://i.imgur.com/tyZob4d.png">
+<meta property="og:image" content="https://i.imgur.com/wOsQMDq.png">
+<meta property="og:image" content="https://i.imgur.com/amBeAUN.png">
+<meta property="og:image" content="https://i.imgur.com/alU1Uew.png">
+<meta property="og:image" content="https://i.imgur.com/oTnCKoj.png">
+<meta property="og:image" content="https://i.imgur.com/r7rS9HU.png">
+<meta property="og:image" content="https://i.imgur.com/0wumWNB.png">
+<meta property="og:image" content="https://i.imgur.com/T29WIq7.png">
+<meta property="og:image" content="https://i.imgur.com/otkfSVm.png">
+<meta property="og:image" content="https://i.imgur.com/JZc0eQc.png">
+<meta property="og:image" content="https://i.imgur.com/LGFvRuR.png">
+<meta property="og:image" content="https://i.imgur.com/dUNDo2k.png">
+<meta property="og:image" content="https://i.imgur.com/hj2CkBq.png">
+<meta property="og:image" content="https://i.imgur.com/jElhNmG.png">
+<meta property="og:image" content="https://i.imgur.com/0mTfea6.png">
+<meta property="og:image" content="https://i.imgur.com/Q2iq3sY.png">
+<meta property="og:image" content="https://i.imgur.com/DnkROSm.png">
+<meta property="og:image" content="https://i.imgur.com/YFFCeC9.png">
+<meta property="og:image" content="https://i.imgur.com/T3VFB0U.png">
+<meta property="og:image" content="https://i.imgur.com/NPaJQ0r.png">
+<meta property="og:image" content="https://i.imgur.com/NDLwOol.png">
+<meta property="og:image" content="https://i.imgur.com/tAbDHoC.png">
+<meta property="og:image" content="https://i.imgur.com/qwMBeVt.png">
+<meta property="og:updated_time" content="2018-11-16T04:52:39.570Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="病毒分析技术(17) ---CoinMiner挖矿病毒">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;偶然在论坛上看到一篇关于CoinMiner介绍，文章从该病毒的流行趋势，入侵路径，关联分析等多个角度对病毒进行的分析，对样本的分析寥寥几句就概括完了。想到之前分析的多为勒索类病毒，对于挖矿类病毒研究较少。故斗胆尝试小小分析一次，如有不到之处望师傅们指教。 一：目录 1.目录 2.样本信息">
+<meta name="twitter:image" content="https://i.imgur.com/8mIM5jj.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/11/15/病毒分析技术_17_ CoinMiner挖矿病毒/"/>
+
+
+
+
+
+  <title>病毒分析技术(17) ---CoinMiner挖矿病毒 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/11/15/病毒分析技术_17_ CoinMiner挖矿病毒/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(17) ---CoinMiner挖矿病毒</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-15T11:02:11+08:00">
+                2018-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;偶然在论坛上看到一篇关于CoinMiner介绍，文章从该病毒的流行趋势，入侵路径，关联分析等多个角度对病毒进行的分析，对样本的分析寥寥几句就概括完了。想到之前分析的多为勒索类病毒，对于挖矿类病毒研究较少。故斗胆尝试小小分析一次，如有不到之处望师傅们指教。</p>
+<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.溯源分析</li>
+</ul>
+<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1><ul>
+<li>1.样本名称：antspywares.exe</li>
+<li>2.样本md5：3846b42b7ac29f8f92f6222230207cb5</li>
+<li>3.是否加壳：无壳</li>
+<li>4.编译语言：Microsoft Visual C++ ver. ~6.0~7.10 - Linker 14 - Visual 2015 </li>
+<li>5.样本来源：<a href="http://93.174.93.149/" target="_blank" rel="external">http://93.174.93.149/</a></li>
+</ul>
+<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;样本在技术上有所创新，首先没有直接使用Kernel32下的API函数，而是利用Knowdlls注册表优先在家Ntdll，然后获取其中的Nt*函数。第二，使用了进程替换技术，利用svchost.exe这一宿主进程，去启动挖矿进程，这样有效避免的被查杀的风险。但是实际操作中没有有效控制CPU的占用率，导致了被害者很容易觉察到。<br>    <img src="https://i.imgur.com/8mIM5jj.png" alt=""></p>
+<h1 id="四：样本分析"><a href="#四：样本分析" class="headerlink" title="四：样本分析"></a>四：样本分析</h1><ul>
+<li><p>1.程序在执行了初始化操作后，创建了一个名为<code>4e064bee1f3860fd606a</code>的互斥体，这一步目的是保证程序在此主机上是唯一的。如果检测到已存在次互斥体，程序退出。<br>  <img src="https://i.imgur.com/PKjcZEZ.png" alt=""></p>
+</li>
+<li><p>2.通过异或运算，解密得到配置文件地址，通过访问配置文件，我们可以看到钱包地址，矿池等相关配置信息。<br>  <img src="https://i.imgur.com/SBgTHTI.png" alt=""><br>  <img src="https://i.imgur.com/I0iMCaD.png" alt=""><br>  <img src="https://i.imgur.com/ZwU4MNQ.png" alt=""></p>
+</li>
+<li><p>3.再次通过相同的异或运算得到钱包地址，矿池地址<code>pool.monero.hashvault.pro:3333</code><br>  <img src="https://i.imgur.com/g9nRJCl.png" alt=""><br>  <img src="https://i.imgur.com/rpnwyaN.png" alt=""><br>  <img src="https://i.imgur.com/tyZob4d.png" alt=""><br>  <img src="https://i.imgur.com/wOsQMDq.png" alt=""></p>
+</li>
+<li><p>4.对病毒文件进行Hash加密 </p>
+<ul>
+<li>初始化CSP</li>
+<li>创建空的Hash对象</li>
+<li>将文件读入内存</li>
+<li>将读入数据添加到指定Hash对象<br><img src="https://i.imgur.com/amBeAUN.png" alt=""><br><img src="https://i.imgur.com/alU1Uew.png" alt=""></li>
+</ul>
+</li>
+<li><p>5.根据之前获得的系统位数(32位or64位)分别利用注册表<code>KnownDlls32</code>或者<code>KnowDlls</code>注册表项加载ntdll.dll，然后通过GetProcAddress函数获取指定函数地址。这样一来可以直接用Nt*函数，不需要Kernel32分发，也增大了分析人员分析的难度。<br>  <img src="https://i.imgur.com/oTnCKoj.png" alt=""><br>  <img src="https://i.imgur.com/r7rS9HU.png" alt=""></p>
+</li>
+<li><p>6.通过注册表<code>\\SOFTWARE\\Microsoft\\Cryptography</code>获取主机GUID值，目的是唯一的标志主机，在理论上GUID是每台主机唯一拥有的。也就是说每台主机的GUID值是不一样的。<br>  <img src="https://i.imgur.com/0wumWNB.png" alt=""><br>  <img src="https://i.imgur.com/T29WIq7.png" alt=""><br>  <img src="https://i.imgur.com/otkfSVm.png" alt=""><br>  <img src="https://i.imgur.com/JZc0eQc.png" alt=""></p>
+</li>
+<li><p>7.创建病毒释放目录<br>  <img src="https://i.imgur.com/LGFvRuR.png" alt=""><br>  <img src="https://i.imgur.com/dUNDo2k.png" alt=""></p>
+</li>
+<li><p>8.从网络中读取配置信息，可以发现这里的数据和前面的new.txt是一致的<br>  <img src="https://i.imgur.com/hj2CkBq.png" alt=""><br>  <img src="https://i.imgur.com/jElhNmG.png" alt=""><br>  <img src="https://i.imgur.com/0mTfea6.png" alt=""></p>
+</li>
+<li><p>9.判断svchost和wuapp.exe是否存在，这两个文件是系统文件，svchost是服务宿主程序，wuapp用于windows的更新，检查这两个程序存在的目的是为了后期利用这两个程序创建挖矿进程。<br>  <img src="https://i.imgur.com/Q2iq3sY.png" alt=""></p>
+</li>
+<li><p>10.创建两个配置文件<br>  <img src="https://i.imgur.com/DnkROSm.png" alt=""></p>
+</li>
+<li><p>11.在启动目录下创建<code>HpuEtzbXyw.url</code>文件，用于自启动.<br>  <img src="https://i.imgur.com/YFFCeC9.png" alt=""></p>
+</li>
+<li><p>12.创建挖矿进程，这里使用了进程替换技术。首先将代码跨进程写入svchost.exe中，然后通过sysenter汇编关键字resume。<br>  <img src="https://i.imgur.com/T3VFB0U.png" alt=""><br>  <img src="https://i.imgur.com/NPaJQ0r.png" alt=""><br>  <img src="https://i.imgur.com/NDLwOol.png" alt=""><br>  <img src="https://i.imgur.com/tAbDHoC.png" alt=""></p>
+</li>
+</ul>
+<h1 id="五。溯源分析"><a href="#五。溯源分析" class="headerlink" title="五。溯源分析"></a>五。溯源分析</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据管家团队的分析显示8220团队使用多个C&amp;C服务器，这样可以有效的避免被检测到。一下是8220团队使用到的C&amp;C服务器<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">159<span class="selector-class">.65</span><span class="selector-class">.155</span><span class="selector-class">.17</span></div><div class="line">93<span class="selector-class">.174</span><span class="selector-class">.93</span><span class="selector-class">.149</span></div><div class="line">198<span class="selector-class">.50</span><span class="selector-class">.179</span><span class="selector-class">.109</span></div><div class="line">193<span class="selector-class">.169</span><span class="selector-class">.252</span><span class="selector-class">.253</span></div><div class="line">192<span class="selector-class">.99</span><span class="selector-class">.142</span><span class="selector-class">.235</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同时样本中使用到的矿池地址是<code>pool.monero.hashvault.pro:3333</code>发现和其他厂商团队所报告的不符，可能是团队修改了其中的矿池。<br>    <img src="https://i.imgur.com/qwMBeVt.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/08/病毒分析技术_16_NotPetya/" rel="next" title="病毒分析技术(16) ---NotPetya勒索病毒">
+                <i class="fa fa-chevron-left"></i> 病毒分析技术(16) ---NotPetya勒索病毒
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/13/病毒分析技术_19_Ghost后门程序分析/" rel="prev" title="病毒分析技术18) ---Ghost后门病毒">
+                病毒分析技术18) ---Ghost后门病毒 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一：目录"><span class="nav-number">2.</span> <span class="nav-text">一：目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二：样本信息"><span class="nav-number">3.</span> <span class="nav-text">二：样本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三：行为分析"><span class="nav-number">4.</span> <span class="nav-text">三：行为分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四：样本分析"><span class="nav-number">5.</span> <span class="nav-text">四：样本分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五。溯源分析"><span class="nav-number">6.</span> <span class="nav-text">五。溯源分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

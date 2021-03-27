@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="vertarget:用于显示被调试计算机的基本的信息。   dg：用于显示段选择子的信息   有dg的输出结果可以看到，cs段的范围是0x00000000-0xffffffff   !cpuinfo:显示CPU的信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windbg学习笔记(5) --内核调试常用命令">
+<meta property="og:url" content="https://findream.github.io/2018/07/25/windbg学习笔记_5_内核调试基本命令/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="vertarget:用于显示被调试计算机的基本的信息。   dg：用于显示段选择子的信息   有dg的输出结果可以看到，cs段的范围是0x00000000-0xffffffff   !cpuinfo:显示CPU的信息">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/xSqp2aV.png">
+<meta property="og:image" content="https://i.imgur.com/wMSKxGr.png">
+<meta property="og:image" content="https://i.imgur.com/NXzeSxq.png">
+<meta property="og:image" content="https://i.imgur.com/WGbBowU.png">
+<meta property="og:image" content="https://i.imgur.com/rdVhnBp.png">
+<meta property="og:image" content="https://i.imgur.com/6l8kCG9.png">
+<meta property="og:image" content="https://i.imgur.com/XaRrjdE.png">
+<meta property="og:image" content="https://i.imgur.com/SJ6s4yV.png">
+<meta property="og:image" content="https://i.imgur.com/2ow0TWu.png">
+<meta property="og:updated_time" content="2018-08-15T04:28:13.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="windbg学习笔记(5) --内核调试常用命令">
+<meta name="twitter:description" content="vertarget:用于显示被调试计算机的基本的信息。   dg：用于显示段选择子的信息   有dg的输出结果可以看到，cs段的范围是0x00000000-0xffffffff   !cpuinfo:显示CPU的信息">
+<meta name="twitter:image" content="https://i.imgur.com/xSqp2aV.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/07/25/windbg学习笔记_5_内核调试基本命令/"/>
+
+
+
+
+
+  <title>windbg学习笔记(5) --内核调试常用命令 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/07/25/windbg学习笔记_5_内核调试基本命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">windbg学习笔记(5) --内核调试常用命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-25T14:02:11+08:00">
+                2018-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-内核/" itemprop="url" rel="index">
+                    <span itemprop="name">windows 内核</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li><strong>vertarget</strong>:用于显示被调试计算机的基本的信息。<br>  <img src="https://i.imgur.com/xSqp2aV.png" alt=""></li>
+<li><strong>dg</strong>：用于显示段选择子的信息<br>  <img src="https://i.imgur.com/wMSKxGr.png" alt=""><ul>
+<li>有dg的输出结果可以看到，cs段的范围是0x00000000-0xffffffff</li>
+</ul>
+</li>
+<li><strong>!cpuinfo</strong>:显示CPU的信息<br>  <img src="https://i.imgur.com/NXzeSxq.png" alt=""><a id="more"></a></li>
+<li>!pcr:显示处理器控制域，也就是KPCR块结构，每一个KPCR结构对应一个KPCR结构。</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">kd&gt; !pcr</div><div class="line">KPCR <span class="keyword">for</span> Processor <span class="number">0</span> at ffdff000:</div><div class="line">    Major <span class="number">1</span> Minor <span class="number">1</span></div><div class="line">	NtTib<span class="selector-class">.ExceptionList</span>: <span class="number">8054</span>a4b0</div><div class="line">	    NtTib<span class="selector-class">.StackBase</span>: <span class="number">8054</span>acf0</div><div class="line">	   NtTib<span class="selector-class">.StackLimit</span>: <span class="number">80547</span>f00</div><div class="line">	 NtTib<span class="selector-class">.SubSystemTib</span>: <span class="number">00000000</span></div><div class="line">	      NtTib<span class="selector-class">.Version</span>: <span class="number">00000000</span></div><div class="line">	  NtTib<span class="selector-class">.UserPointer</span>: <span class="number">00000000</span></div><div class="line">	      NtTib<span class="selector-class">.SelfTib</span>: <span class="number">00000000</span></div><div class="line"></div><div class="line">	            SelfPcr: ffdff000   <span class="comment">//PCR地址</span></div><div class="line">	               Prcb: ffdff120</div><div class="line">	               Irql: <span class="number">00000000</span></div><div class="line">	                IRR: <span class="number">00000000</span></div><div class="line">	                IDR: ffffffff</div><div class="line">	      InterruptMode: <span class="number">00000000</span></div><div class="line">	                IDT: <span class="number">8003</span>f400    <span class="comment">//IDT</span></div><div class="line">	                GDT: <span class="number">8003</span>f000</div><div class="line">	                TSS: <span class="number">80042000</span>    <span class="comment">//TSS</span></div><div class="line"></div><div class="line">	      CurrentThread: <span class="number">80553740</span></div><div class="line">	         NextThread: <span class="number">00000000</span></div><div class="line">	         IdleThread: <span class="number">80553740</span></div><div class="line"></div><div class="line">	          DpcQueue:</div></pre></td></tr></table></figure>
+<ul>
+<li>输出结果包括：SEH链表，IDT 中断，TSS表。有了PCR地址，我们可以使用dt命令<code>dt _KPCR XXXXXXX</code>来查看KPCR结构，或者使用<code>?? @$pcr</code>来查看。<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">kd&gt; ?? @$pcr</div><div class="line">struct _KPCR * 0xffdff000</div><div class="line">   +0x000 NtTib            : _NT_TIB</div><div class="line">   +<span class="number">0x01c</span> <span class="string">SelfPcr          :</span> <span class="number">0xffdff000</span> _KPCR</div><div class="line">   +<span class="number">0x020</span> <span class="string">Prcb             :</span> <span class="number">0xffdff120</span> _KPRCB</div><div class="line">   +<span class="number">0x024</span> <span class="string">Irql             :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x028</span> <span class="string">IRR              :</span> <span class="number">0</span></div><div class="line">   +<span class="number">0x02c</span> <span class="string">IrrActive        :</span> <span class="number">0</span></div><div class="line">   +<span class="number">0x030</span> <span class="string">IDR              :</span> <span class="number">0xffffffff</span></div><div class="line">   +<span class="number">0x034</span> <span class="string">KdVersionBlock   :</span> <span class="number">0x80546ab8</span> </div><div class="line">   +<span class="number">0x038</span> <span class="string">IDT              :</span> <span class="number">0x8003f400</span> _KIDTENTRY</div><div class="line">   +<span class="number">0x03c</span> <span class="string">GDT              :</span> <span class="number">0x8003f000</span> _KGDTENTRY</div><div class="line">   +<span class="number">0x040</span> <span class="string">TSS              :</span> <span class="number">0x80042000</span> _KTSS</div><div class="line">   +<span class="number">0x044</span> <span class="string">MajorVersion     :</span> <span class="number">1</span></div><div class="line">   +<span class="number">0x046</span> <span class="string">MinorVersion     :</span> <span class="number">1</span></div><div class="line">   +<span class="number">0x048</span> <span class="string">SetMember        :</span> <span class="number">1</span></div><div class="line">   +<span class="number">0x04c</span> <span class="string">StallScaleFactor :</span> <span class="number">0xa98</span></div><div class="line">   +<span class="number">0x050</span> <span class="string">DebugActive      :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x051</span> <span class="string">Number           :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x052</span> <span class="string">Spare0           :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x053</span> <span class="string">SecondLevelCacheAssociativity :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x054</span> <span class="string">VdmAlert         :</span> <span class="number">0</span></div><div class="line">   +<span class="number">0x058</span> <span class="string">KernelReserved   :</span> [<span class="number">14</span>] <span class="number">0</span></div><div class="line">   +<span class="number">0x090</span> <span class="string">SecondLevelCacheSize :</span> <span class="number">0</span></div><div class="line">   +<span class="number">0x094</span> <span class="string">HalReserved      :</span> [<span class="number">16</span>] <span class="number">0</span></div><div class="line">   +<span class="number">0x0d4</span> <span class="string">InterruptMode    :</span> <span class="number">0</span></div><div class="line">   +<span class="number">0x0d8</span> <span class="string">Spare1           :</span> <span class="number">0</span> <span class="string">''</span></div><div class="line">   +<span class="number">0x0dc</span> <span class="string">KernelReserved2  :</span> [<span class="number">17</span>] <span class="number">0</span></div><div class="line">   +<span class="number">0x120</span> <span class="string">PrcbData         :</span> _KPRCB</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p><strong>!prcb：</strong>当前线程、Idle 线程等重要信息</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">kd&gt; !prcb</div><div class="line">PRCB <span class="keyword">for</span> Processor <span class="number">0</span> <span class="built_in">at</span> ffdff120:</div><div class="line">Threads--  Current <span class="number">80553740</span> Next <span class="number">00000000</span> Idle <span class="number">80553740</span></div><div class="line">Number <span class="number">0</span> SetMember <span class="number">00000001</span></div><div class="line">Interrupt Count -- <span class="number">00004be9</span>   //中断个数</div><div class="line">Times -- Dpc    <span class="number">00000019</span> Interrupt <span class="number">00000083</span> </div><div class="line">         Kernel <span class="number">000028b9</span> User      <span class="number">000000ab</span></div></pre></td></tr></table></figure>
+<ul>
+<li>KPCR和KPRCB:KPRCR在KPCR的后面，位于KPCR的第0x120偏移处。利用<code>?? @$PCR</code>得到KPCR的起始地址是0xffdff000，加上0x120号偏移，0xffdff120，就是上面得到的KPCB的起始地址。</li>
+</ul>
+</li>
+<li><p>!IDT:显示的是当前中断向量表的信息(不指定终端号，则显示全部的中断向量表)</p>
+</li>
+<li><p>!IDT -a：显示所有的中断向量表</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">kd&gt; <span class="title">!idt</span></div><div class="line"></div><div class="line">Dumping IDT:</div><div class="line"></div><div class="line"><span class="number">37</span>:	<span class="number">806</span>d<span class="number">2728</span> hal<span class="title">!PicSpuriousService37</span></div><div class="line"><span class="number">3</span>d:	<span class="number">806</span>d<span class="number">3</span>b<span class="number">70</span> hal<span class="title">!HalpApcInterrupt</span></div><div class="line"><span class="number">41</span>:	<span class="number">806</span>d<span class="number">39</span><span class="keyword">cc</span> hal<span class="title">!HalpDispatchInterrupt</span></div><div class="line"><span class="number">50</span>:	<span class="number">806</span>d<span class="number">2800</span> hal<span class="title">!HalpApicRebootService</span></div><div class="line"><span class="number">62</span>:	<span class="number">8</span>a<span class="number">297</span>cdc atapi<span class="title">!IdePortInterrupt</span> (KINTERRUPT <span class="number">8</span>a<span class="number">297</span>ca<span class="number">0</span>)</div><div class="line"><span class="number">63</span>:	<span class="number">89</span>dc<span class="number">7</span>dd<span class="number">4</span> USBPORT<span class="title">!USBPORT_InterruptService</span> (KINTERRUPT <span class="number">89</span>dc<span class="number">7</span>d<span class="number">98</span>)</div><div class="line"><span class="number">73</span>:	<span class="number">89</span>dfbb<span class="number">3</span><span class="keyword">c</span> SCSIPORT<span class="title">!ScsiPortInterrupt</span> (KINTERRUPT <span class="number">89</span>dfbb<span class="number">00</span>)</div><div class="line">	         USBPORT<span class="title">!USBPORT_InterruptService</span> (KINTERRUPT <span class="number">8</span>a<span class="number">2533</span>f<span class="number">0</span>)</div><div class="line"><span class="number">82</span>:	<span class="number">8</span>a<span class="number">2972</span>fc atapi<span class="title">!IdePortInterrupt</span> (KINTERRUPT <span class="number">8</span>a<span class="number">2972</span><span class="keyword">c</span><span class="number">0</span>)</div><div class="line"><span class="number">83</span>:	<span class="number">8</span>a<span class="number">24</span>a<span class="number">89</span><span class="keyword">c</span> *** ERROR: Symbol file could not be found.  Defaulted <span class="keyword">to</span> export symbols for vmci.sys - </div><div class="line">vmci<span class="title">!DllUnload</span>+<span class="number">0x7D6</span> (KINTERRUPT <span class="number">8</span>a<span class="number">24</span>a<span class="number">860</span>)</div><div class="line">	         portcls<span class="title">!CKsShellRequestor</span>::`scalar deleting destructor'+<span class="number">0x26</span> (KINTERRUPT <span class="number">89</span>a<span class="number">2</span>d<span class="number">470</span>)</div><div class="line"><span class="number">93</span>:	<span class="number">8</span>a<span class="number">1</span>a<span class="number">57e4</span> <span class="keyword">i8042</span>prt<span class="title">!I8042KeyboardInterruptService</span> (KINTERRUPT <span class="number">8</span>a<span class="number">1</span>a<span class="number">57</span>a<span class="number">8</span>)</div><div class="line">a<span class="number">3</span>:	<span class="number">8</span>a<span class="number">1</span>f<span class="number">7314</span> <span class="keyword">i8042</span>prt<span class="title">!I8042MouseInterruptService</span> (KINTERRUPT <span class="number">8</span>a<span class="number">1</span>f<span class="number">72</span>d<span class="number">8</span>)</div><div class="line">b<span class="number">1</span>:	<span class="number">8</span>a<span class="number">2</span>aa<span class="number">85</span><span class="keyword">c</span> ACPI<span class="title">!ACPIInterruptServiceRoutine</span> (KINTERRUPT <span class="number">8</span>a<span class="number">2</span>aa<span class="number">820</span>)</div><div class="line">b<span class="number">4</span>:	<span class="number">89e25</span>cd<span class="number">4</span> NDIS<span class="title">!ndisMIsr</span> (KINTERRUPT <span class="number">89e25</span><span class="keyword">c</span><span class="number">98</span>)</div><div class="line"><span class="keyword">c</span><span class="number">1</span>:	<span class="number">806</span>d<span class="number">2984</span> hal<span class="title">!HalpBroadcastCallService</span></div><div class="line">d<span class="number">1</span>:	<span class="number">806</span>d<span class="number">1</span>d<span class="number">34</span> hal<span class="title">!HalpClockInterrupt</span></div><div class="line">e<span class="number">1</span>:	<span class="number">806</span>d<span class="number">2</span>f<span class="number">0</span><span class="keyword">c</span> hal<span class="title">!HalpIpiHandler</span></div><div class="line">e<span class="number">3</span>:	<span class="number">806</span>d<span class="number">2</span><span class="keyword">c</span><span class="number">70</span> hal<span class="title">!HalpLocalApicErrorService</span></div><div class="line">fd:	<span class="number">806</span>d<span class="number">3464</span> hal<span class="title">!HalpProfileInterrupt</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>!irql:中断的时候，显示终端响应级别</p>
+</li>
+<li><p>!running(-it):显示正在运行的线程，如果是蓝屏文件可以确定是那个线程造成的蓝屏。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">kd&gt; !running -it</div><div class="line"></div><div class="line">System Processors 1 (affinity mask)</div><div class="line">  Idle Processors 1</div><div class="line">All processors idle.</div><div class="line"></div><div class="line">     Prcb      Current   Next    </div><div class="line">  0  ffdff120  80553740            <span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span></div><div class="line"></div><div class="line">ChildEBP RetAddr  </div><div class="line">8054abac 8054209d nt!RtlpBreakWithStatusInstruction</div><div class="line">8054abac baa0a162 nt!KeUpdateSystemTime+0x165</div><div class="line">8054ac50 80542af0 intelppm!AcpiC1Idle+0x12</div><div class="line">8054ac54 00000000 nt!KiIdleLoop+0x10</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>!gflag</strong>：用于查看，设置系统的全局标志。</p>
+</li>
+<li><p><strong>!process</strong>:显示进程信息。</p>
+<ul>
+<li>!process 0 0:显示当前进程的基本信息(第一个0表示的是当前进程列表，第二个0表示的是显示基本信息)<br><img src="https://i.imgur.com/WGbBowU.png" alt=""></li>
+<li>!process xxxxxxxx 0   xxxx可以是EPROCESS，也可以是进程ID，0表示显示基本信息(否则是完整信息)，<br><img src="https://i.imgur.com/rdVhnBp.png" alt=""><br><img src="https://i.imgur.com/6l8kCG9.png" alt=""></li>
+<li>!process 0 0 xxx.exe：按照映像名称查找指定的进程信息。<br><img src="https://i.imgur.com/XaRrjdE.png" alt=""></li>
+<li>!process -1 0:显示当前进程的基本信息<br><img src="https://i.imgur.com/SJ6s4yV.png" alt=""></li>
+<li>!process xxxxxxx 2:显示指定进程的基本信息，线程列表和每个线程的等待状态。<br><img src="https://i.imgur.com/2ow0TWu.png" alt=""></li>
+</ul>
+</li>
+<li><p><strong>.process：</strong>切换进程上下文,例如需要显示内存的内容，就需要切换到内存后，然后在显示内存。</p>
+<ul>
+<li><p>.prcess /p/r xxxxx</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">kd&gt; db <span class="number">1000000</span> L160    <span class="comment">//显示内存</span></div><div class="line"><span class="number">01000000</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000010</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000020</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000030</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000040</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000050</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000060</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000070</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000080</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">01000090</span>  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">010000</span>a0  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line"><span class="number">010000</span>b0  ?? ?? ?? ?? ?? ?? ?? ??-?? ?? ?? ?? ?? ?? ?? ??  ????????????????</div><div class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span> explorer.exe     <span class="comment">//寻找explorer.exe的EPROCESS</span></div><div class="line">PROCESS <span class="number">8</span>a1ba5a8  SessionId: <span class="number">0</span>  Cid: <span class="number">0538</span>    Peb: <span class="number">7</span>ffdd000  ParentCid: <span class="number">0524</span></div><div class="line">    DirBase: <span class="number">136001</span>c0  ObjectTable: e191d458  HandleCount: <span class="number">498.</span></div><div class="line">    Image: explorer.exe</div><div class="line"></div><div class="line">kd&gt; .process /r /p <span class="number">8</span>a1ba5a8     <span class="comment">//切换进程</span></div><div class="line">Implicit process is now <span class="number">8</span>a1ba5a8</div><div class="line">.cache forcedecodeuser done</div><div class="line">Loading User Symbols</div><div class="line">...................................................................................</div><div class="line">kd&gt; db <span class="number">1000000</span> L160          <span class="comment">//显示内存</span></div><div class="line"><span class="number">01000000</span>  <span class="number">4</span>d <span class="number">5</span>a <span class="number">90</span> <span class="number">00</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span><span class="number">-04</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> ff ff <span class="number">00</span> <span class="number">00</span>  MZ..............</div><div class="line"><span class="number">01000010</span>  b8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span><span class="number">-40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ........@.......</div><div class="line"><span class="number">01000020</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span><span class="number">-00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</div><div class="line"><span class="number">01000030</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span><span class="number">-00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> d8 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</div><div class="line"><span class="number">01000040</span>  <span class="number">0</span>e <span class="number">1</span>f ba <span class="number">0</span>e <span class="number">00</span> b4 <span class="number">09</span> cd<span class="number">-21</span> b8 <span class="number">01</span> <span class="number">4</span>c cd <span class="number">21</span> <span class="number">54</span> <span class="number">68</span>  ........!..L.!Th</div><div class="line"><span class="number">01000050</span>  <span class="number">69</span> <span class="number">73</span> <span class="number">20</span> <span class="number">70</span> <span class="number">72</span> <span class="number">6</span>f <span class="number">67</span> <span class="number">72</span><span class="number">-61</span> <span class="number">6</span>d <span class="number">20</span> <span class="number">63</span> <span class="number">61</span> <span class="number">6</span>e <span class="number">6</span>e <span class="number">6</span>f  is program canno</div><div class="line"><span class="number">01000060</span>  <span class="number">74</span> <span class="number">20</span> <span class="number">62</span> <span class="number">65</span> <span class="number">20</span> <span class="number">72</span> <span class="number">75</span> <span class="number">6e-20</span> <span class="number">69</span> <span class="number">6</span>e <span class="number">20</span> <span class="number">44</span> <span class="number">4</span>f <span class="number">53</span> <span class="number">20</span>  t be run <span class="keyword">in</span> DOS </div><div class="line"><span class="number">01000070</span>  <span class="number">6</span>d <span class="number">6</span>f <span class="number">64</span> <span class="number">65</span> <span class="number">2</span>e <span class="number">0</span>d <span class="number">0</span>d <span class="number">0</span>a<span class="number">-24</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  mode....$.......</div><div class="line"><span class="number">01000080</span>  <span class="number">97</span> a6 b0 <span class="number">91</span> d3 c7 de c2-d3 c7 de c2 d3 c7 de c2  ................</div><div class="line"><span class="number">01000090</span>  <span class="number">10</span> c8 d1 c2 d7 c7 de c2-d3 c7 df c2 <span class="number">48</span> c5 de c2  ............H...</div><div class="line"><span class="number">010000</span>a0  <span class="number">10</span> c8 <span class="number">83</span> c2 c8 c7 de c2<span class="number">-10</span> c8 <span class="number">80</span> c2 d2 c7 de c2  ................</div><div class="line"><span class="number">010000</span>b0  <span class="number">10</span> c8 be c2 fa c7 de c2<span class="number">-10</span> c8 <span class="number">81</span> c2 ce c7 de c2  ................</div><div class="line"><span class="number">010000</span>c0  <span class="number">10</span> c8 <span class="number">84</span> c2 d2 c7 de c2<span class="number">-52</span> <span class="number">69</span> <span class="number">63</span> <span class="number">68</span> d3 c7 de c2  ........Rich....</div><div class="line"><span class="number">010000</span>d0  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span><span class="number">-50</span> <span class="number">45</span> <span class="number">00</span> <span class="number">00</span> <span class="number">4</span>c <span class="number">01</span> <span class="number">04</span> <span class="number">00</span>  ........PE..L...</div></pre></td></tr></table></figure>
+<ul>
+<li>.process /i xxxxxxx:让操作系统实际切换进程上下文，在切换完成后，需要输入g命令，是的切换执行。<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">kd&gt; .process /i <span class="number">8a0f24b0</span></div><div class="line">You need to continue execution (press 'g' &lt;enter&gt;) for the context</div><div class="line">to be switched. When the debugger breaks in again, you will be in</div><div class="line">the new process context.</div><div class="line">kd&gt; g</div><div class="line">Break instruction exception - code <span class="number">80000003</span> (first chance)</div><div class="line">nt!RtlpBreakWithStatusInstruction:</div><div class="line"><span class="number">80528</span>bdc cc              int     <span class="number">3</span></div><div class="line">kd&gt; dd <span class="number">1000000</span> L600</div><div class="line"><span class="number">01000000</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000010</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000020</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000030</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000040</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000050</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000060</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000070</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000080</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">01000090</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line"><span class="number">010000a0</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></div><div class="line">``` </div><div class="line"></div><div class="line">   * !dml_proc:显示粗略的进程列表</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>kd&gt; !dml_proc<br>Address  PID  Image file name<br>8a32c830 4    System<br>8a154270 228  smss.exe<br>8a147da0 258  csrss.exe<br>8a1d2a80 270  winlogon.exe<br>8a11cda0 29c  services.exe<br>89f0c4e0 2a8  lsass.exe<br>8a1a4020 340  vmacthlp.exe<br>8a24cda0 34c  svchost.exe<br>8a24c500 394  svchost.exe<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="bullet">* </span>!thread tid:显示线程的信息（不加参数，或者指定为-1表示当前线程）</div></pre></td></tr></table></figure></p>
+<p>kd&gt; !thread<br>THREAD 8a32a3c8  Cid 0004.0038  Teb: 00000000 Win32Thread: 00000000 RUNNING on processor 0<br>Not impersonating<br>DeviceMap                 e1fe9718<br>Owning Process            8a0f24b0       Image:         abexcm2-voiees.exe<br>Wait Start TickCount      30346          Ticks: 0<br>Context Switch Count      6586<br>UserTime                  00:00:00.000<br>KernelTime                00:00:00.453<br>Start Address nt!ExpWorkerThread (0x80535b02)<br>Stack Init bad04000 Current bad03d1c Base bad04000 Limit bad01000 Call 0<br>Priority 12 BasePriority 12 PriorityDecrement 0 DecrementCount 0<br>ChildEBP RetAddr  Args to Child<br>bad03d20 80662097 00000007 8055c040 8055c0fc nt!RtlpBreakWithStatusInstruction (FPO: [1,0,0])<br>bad03d74 80535c02 00000000 00000000 8a32a3c8 nt!ExpDebuggerWorker+0x91 (FPO: [Non-Fpo])<br>bad03dac 805c7160 00000000 00000000 00000000 nt!ExpWorkerThread+0x100 (FPO: [Non-Fpo])<br>bad03ddc 80542dd2 80535b02 00000001 00000000 nt!PspSystemThreadStartup+0x34 (FPO: [Non-Fpo])<br>00000000 00000000 00000000 00000000 00000000 nt!KiThreadStartup+0x16<br>```</p>
+<ul>
+<li>-t:显示指定线程的信息<code>!thread -t TID</code><ul>
+<li>.thread (/p/r)tid:切换线程上下文</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/22/windbg学习笔记_4_/" rel="next" title="windbg学习笔记 (4)">
+                <i class="fa fa-chevron-left"></i> windbg学习笔记 (4)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/26/windbg学习笔记_6_/" rel="prev" title="windbg学习笔记(6) --内核调试常用命令(2)">
+                windbg学习笔记(6) --内核调试常用命令(2) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

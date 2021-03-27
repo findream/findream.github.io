@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;前言略过，日后补齐~~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hwp_文本类型样本分析总结">
+<meta property="og:url" content="https://findream.github.io/2019/07/18/病毒分析技术_24_Hwp样本分析总结/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;前言略过，日后补齐~~">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/okBpHamjzgpb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/aWbpjaIoJCpQ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/u8cyRDTbOXIF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/r6CVmJ9r8EeM.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/rb8qYFJhKM6A.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/33EnUteq3PJo.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190718/yErIDoMzlvPb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/iqNNqHnTetHF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/F4MP53jc7ED2.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/bXOVHqVen2rU.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/EnqUOs4Oyx6V.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/30bUhBJFW6m0.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/SsigMfqwe4xl.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190719/X461TzKL5W6B.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190719/bzGRV72GBxlu.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190719/1m5l7yv9f0ud.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190719/uHUIOrxvkrOP.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190719/HR93uvLUshMM.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/3V4g9sWCdyeR.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/S03tYkkyMl97.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/jOtP1n0hQRV6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/yBRMs9OiWz55.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/z6GMpcUWv4rT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/9SVICvzsq8Ut.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/LmmbJ6uB34dO.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/O8i4weQPuuCn.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/GT6MjLQK2VSb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/HFqLvWzVooUu.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190722/d31OWJJ0qB0W.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190723/F6RGpo5Xvx1u.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20190726/qRnqOF0CtsIl.png?imageslim">
+<meta property="og:updated_time" content="2019-07-29T06:21:29.489Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hwp_文本类型样本分析总结">
+<meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;前言略过，日后补齐~~">
+<meta name="twitter:image" content="http://hacky.wang/blog/20190718/okBpHamjzgpb.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2019/07/18/病毒分析技术_24_Hwp样本分析总结/"/>
+
+
+
+
+
+  <title>Hwp_文本类型样本分析总结 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/07/18/病毒分析技术_24_Hwp样本分析总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hwp_文本类型样本分析总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-18T15:02:11+08:00">
+                2019-07-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows安全/" itemprop="url" rel="index">
+                    <span itemprop="name">windows安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;前言略过，日后补齐~~<br><a id="more"></a></p>
+<h1 id="0x1-什么是HWP"><a href="#0x1-什么是HWP" class="headerlink" title="0x1 什么是HWP"></a>0x1 什么是HWP</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HWP全称是Hangul Word Processor，意为Hangul文字处理软件。主要为韩国国内提供服务。韩国国内市场占有率为75%以上。功能类似于国内的WPS或者微软的office组件。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考自：<a href="https://ti.360.net/blog/articles/analysis-of-group123-sample-with-hwp-exploitkit/" target="_blank" rel="external">https://ti.360.net/blog/articles/analysis-of-group123-sample-with-hwp-exploitkit/</a></p>
+<h1 id="0x2-Hwp样本概述与分析思路"><a href="#0x2-Hwp样本概述与分析思路" class="headerlink" title="0x2 Hwp样本概述与分析思路"></a>0x2 Hwp样本概述与分析思路</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hwp和office一样，有至少两种攻击手段。一种是类似于(就是)宏样本，与office不同的是，office使用的是vb的脚本语言，而Hwp使用的是称为PostScript的脚本语言。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PostScript（PS）是主要用于电子产业和桌面出版领域的一种页面描述语言和编程语言。PostScript是一种基于堆栈的解释语言（例如stack language），它类似于Forth语言但是使用从Lisp语言派生出的数据结构。这种语言的语法使用<strong>逆波兰表示法</strong>，这就意味着不需要括号进行分割，但是因为需要记住堆栈结构，<strong>所以需要进行训练才能阅读这种程序。</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种就是利用hwp本身的漏洞，使用包括但不限于溢出，类型混淆之类的漏洞，改变程序的执行流，进而实施攻击。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上述所说，针对Hwp样本分析思路就是：首先使用hwpscan查看一下hwp文件基本结构，重点是是否存在ps文件。这样就排除他不是宏样本。接着查看目录是否存在esp文件，如果有就有很大概率说明是利用了某个esp漏洞。排除上述两种之后，如果文档打开会奔溃，那么就可能存在其他漏洞。可以使用vt去搜索一下。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考自：<a href="https://zh.wikipedia.org/wiki/PostScript" title="PostScript描述" target="_blank" rel="external">https://zh.wikipedia.org/wiki/PostScript</a></p>
+<h1 id="0x3-宏类型样本"><a href="#0x3-宏类型样本" class="headerlink" title="0x3 宏类型样本"></a>0x3 宏类型样本</h1><ul>
+<li>IoC:106f24660aa878c6aaa5f30422d1916b</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先使用HwpScan2工具打开样本文件。HwpScan2工具下载地址为<a href="https://www.nurilab.net/hwpscan2" target="_blank" rel="external">https://www.nurilab.net/hwpscan2</a>，可以看到存在一个BinData节。<br>    <img src="http://hacky.wang/blog/20190718/okBpHamjzgpb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将其Decompress转储出来，可以看到，根据PostScript语句如下代码是将Y101数组与<code>ED60732AA6FE818830ADCAE0C84717EE</code>这个key进行异或。解密得到下一层的混淆代码。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">sub</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	/Y18 exch <span class="number">1</span> <span class="number">2</span> <span class="keyword">and</span> <span class="keyword">pop</span> def</div><div class="line">	Y101 dup Y18 </div><div class="line">	get &lt;ED60732AA6FE818830ADCAE0C84717EE&gt; </div><div class="line">	Y18 <span class="number">15</span> <span class="keyword">and</span> /Y104 <span class="number">8</span> def get <span class="keyword">xor</span> Y18 exch put</div><div class="line">&#125; <span class="keyword">for</span> Y101 cvx <span class="keyword">exec</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下图<br>    <img src="http://hacky.wang/blog/20190718/aWbpjaIoJCpQ.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190718/u8cyRDTbOXIF.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;得到新的加密ps代码。通读代码发现大致逻辑是将数组/Y77与Y17 Y99 16#24相加如下代码：<br>   <code>Y77 length Y17 Y99 16#24 add</code></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;此时有两个思路，第一个，按照逻辑利用源码进行解密。第二个对PostScript解析器进行调试。这里使用第二种。使用调试的方法由有两种方法，第一，利用OD直接打开gbb.exe(在Hwp安装路径之下)，在参数传入第一层解密好的文件。如下图1为此方法。<br>    <img src="http://hacky.wang/blog/20190718/r6CVmJ9r8EeM.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种方法是，利用进程镜像劫持，启动调试器，然后开始调试，这是调试漏洞的常见方法。<br>    <img src="http://hacky.wang/blog/20190718/rb8qYFJhKM6A.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;主要讲一下思路：通过观察，目标是解密Hex数据串。我们只需要知道解密的数据即可。首先对CreateFile下断，然后对ReadFile下断。查看Buffer。待读入Hex之后下内存断点(不知道硬件断点为何失败)。然后F9，慢慢跟待到对Hex解密即可。<br>    <img src="http://hacky.wang/blog/20190718/33EnUteq3PJo.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190718/yErIDoMzlvPb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下，组织利用Hwp文档进行恶意代码投递。使用到的样本(本样本)利用Hwp宏(没有漏洞)经过两次解密，得到一个具有联网功能的shellcode。然后通过访问<code>https://www.calderonflooring[.]com/wp-content/uploads/2018/webfont1.dat</code>和<code>https://www.calderonflooring[.]com/wp-content/uploads/2018/webfont2.dat</code>下载两个PE文件。</p>
+<h2 id="PE分析"><a href="#PE分析" class="headerlink" title="PE分析"></a>PE分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;webfont1.dat和webfont2.dat实质上是两个PE文件，且两者是同一份源代码，但是webfont1.dat是X86,webfont2.dat是X64的。<br>    <img src="http://hacky.wang/blog/20190723/iqNNqHnTetHF.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;主要通过构造Http请求，使用Post方式，请求<code>https://www.mantoolmfg.com/wp-content/plugins/simple-sitemap/about.php</code>,<code>https://justintimecorp.com/wp-content/plugins/wordpress-seo/left.php</code>,<code>https://psalmsfm.org/wp-content/plugins/donate-plus/pay.php</code>url。然后通过WinHttpReceiveResponse等API接收和校验响应报文。使用WinHttpReadData并读取响应的数据<br>     <img src="http://hacky.wang/blog/20190723/F4MP53jc7ED2.png?imageslim" alt="mark"><br>     <img src="http://hacky.wang/blog/20190723/bXOVHqVen2rU.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过读取响应实现远控目的。命令为0x38CE55u时，为获取计算机盘符并发送。为0x21279Eu时，为从云端读取数据，并写入本地。当命令为0x2AFCB2u操作读取机器信息，并发送。当 Commond &gt; 0x48D6FC时。执行cmd.exe.<br>当Commond == 4773628。执行进程映射。<br>    <img src="http://hacky.wang/blog/20190723/EnqUOs4Oyx6V.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190723/30bUhBJFW6m0.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190723/SsigMfqwe4xl.png?imageslim" alt="mark"></p>
+<ul>
+<li>URL<ul>
+<li><a href="https://www.mantoolmfg.com/wp-content/plugins/simple-sitemap/about.php" target="_blank" rel="external">https://www.mantoolmfg.com/wp-content/plugins/simple-sitemap/about.php</a></li>
+<li><a href="https://justintimecorp.com/wp-content/plugins/wordpress-seo/left.php" target="_blank" rel="external">https://justintimecorp.com/wp-content/plugins/wordpress-seo/left.php</a></li>
+<li><a href="https://psalmsfm.org/wp-content/plugins/donate-plus/pay.php" target="_blank" rel="external">https://psalmsfm.org/wp-content/plugins/donate-plus/pay.php</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="0x4-GhostScript沙箱绕过漏洞"><a href="#0x4-GhostScript沙箱绕过漏洞" class="headerlink" title="0x4 GhostScript沙箱绕过漏洞"></a>0x4 GhostScript沙箱绕过漏洞</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先使用HwpScan2提取样本文件，发现存在eps文件，EPS是Encapsulated Post Script的缩写，是一个专用的打印机描述语言，可以描述矢量信息和位图信息，支持跨平台。<br>    <img src="http://hacky.wang/blog/20190719/X461TzKL5W6B.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过查看BIN0006.eps，可以发现样本进行如下操作：首先获取了appdata的路径，然后字符串凭借形成%appdata%\Microsoft\Windows\Start Menu\Programs\StartUp\UpgradeVer45.bat。将<code>copy /b &quot;%appdata%\\*.oju01&quot; &quot;%appdata%\\WinUpdate148399843.pif&quot; &amp; &quot;%appdata%\\WinUpdate148399843.pif&quot; &amp; del /f &quot;%appdata%\\WinUpdate148399843.pif</code>写入UpgradeVer45.bat。<br>     <img src="http://hacky.wang/blog/20190719/bzGRV72GBxlu.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着创建\Dhh01.oju01和\Dhh02.oju01，将MZ标志写入\Dhh01.oju01，然后循环读取closefile的Hex串。写入\Dhh02.oju01.<br>    <img src="http://hacky.wang/blog/20190719/1m5l7yv9f0ud.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这条语句<code>copy /b &quot;%appdata%\*.oju01&quot; &quot;%appdata%\WinUpdate148399843.pif&quot; &amp; &quot;%appdata%\WinUpdate148399843.pif&quot; &amp; del /f &quot;%appdata%\WinUpdate148399843.pif&quot;</code>作用是将两个文件拼接在一起。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;漏洞分析：通过上述分析，我们知道脚本功能是释放三个文件到启动目录，但是GhostScript提供了一个名为“-dSAFER”的参数来将EPS脚本的解析过程放到安全沙箱中执行，以防止诸如任意文件写这类高危操作发生。但是Hancom Office自带的使用GhostScript源代码开发出来的程序并没有使用这个参数。也就是说，Hancom Office自带的解释器没有安全沙箱这样的高危操作缓解的措施。也就间接的造成了沙箱绕过漏洞。<br>    <img src="http://hacky.wang/blog/20190719/uHUIOrxvkrOP.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们重新理一下Hwp漏洞触发的流程，首先，当我们使用Hancom Office打开恶意文档，自带的解释器会对参数进行适当的处理，然后跳转到gswin32.exe调用gsdll32.dll文件对ps脚本进行解析。当我们使用带有-dSAFER参数的命令，执行<code>gbb.exe -dSAFER BIN0006.eps</code>的时候，由于验证不合理，造成了漏洞利用，但是我们使用同目录下gswin32.exe并且带上-dSAFER参数参数，可以发现没有创建文件。<br>    <img src="http://hacky.wang/blog/20190719/HR93uvLUshMM.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值得注意的是restore也会造成-dSAFER选项失效。使用<code>{null restore} stopped {pop}</code>即可绕过沙箱。原理如下：PostScript是一种“逆波兰式”（Reverse Polish Notation，也称为后缀表达式）的语言。简单来说就是操作数在前，操作符在后。PoC中这条语句是一条典型的PostScript异常处理语句，stopped操作符用于PostScript的异常处理，也就是说stopped执行前面{}中给出的过程，如果解释器在执行该过程期间出现错误，它将终止该过程并执行stopped操作符之后{}中的过程。null restore会引起类型检查错误（/typecheck error），同时restore的执行将LockSafetyParams设置为False，stopped捕获到异常，弹出栈顶元素null，GS继续运行，但此时LockSafetyParams的值还没恢复为True。</p>
+<ul>
+<li>参考自：<ul>
+<li><a href="https://ti.360.net/blog/articles/analysis-of-group123-sample-with-hwp-exploitkit/" target="_blank" rel="external">https://ti.360.net/blog/articles/analysis-of-group123-sample-with-hwp-exploitkit/</a></li>
+<li><a href="https://www.freebuf.com/column/182083.html" target="_blank" rel="external">https://www.freebuf.com/column/182083.html</a></li>
+</ul>
+</li>
+<li>IoC:3f92afe96b4cfd41f512166c691197b5</li>
+</ul>
+<h1 id="0x5-类型混淆"><a href="#0x5-类型混淆" class="headerlink" title="0x5 类型混淆"></a>0x5 类型混淆</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先利用HpwScan2查看文件结构，可以发现一共有7个Section流在BodyText中。在2-6号Section中发现大量的雪橇指令，预估存在堆喷射。并且在雪橇指令的终点处发现标志<code>wvrsu</code>。之后预估为shellcode<br>    <img src="http://hacky.wang/blog/20190722/3V4g9sWCdyeR.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后开启页堆<code>gflag.exe /I Hwp.exe +hpa</code>。并在程序Hwp.exe启动的时候通过映像劫持挂上windbg。跑起来后，中断在08f9028a出现访问异常，定位于 [edx+54h] 处。这是因为开启了页堆造成的。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">First chance exceptions are reported before any exception handling.</div><div class="line">This exception may be expected <span class="keyword">and</span> handled.</div><div class="line"><span class="attribute">eax</span>=c0000000 <span class="attribute">ebx</span>=123f8600 <span class="attribute">ecx</span>=0e0c0e0c <span class="attribute">edx</span>=00000000 <span class="attribute">esi</span>=0012ecc4 <span class="attribute">edi</span>=00000000</div><div class="line"><span class="attribute">eip</span>=08f9028a <span class="attribute">esp</span>=0012ec6c <span class="attribute">ebp</span>=122faf80 <span class="attribute">iopl</span>=0         nv up ei pl nz na pe nc</div><div class="line"><span class="attribute">cs</span>=001b  <span class="attribute">ss</span>=0023  <span class="attribute">ds</span>=0023  <span class="attribute">es</span>=0023  <span class="attribute">fs</span>=003b  <span class="attribute">gs</span>=0000             <span class="attribute">efl</span>=00010206</div><div class="line">*** ERROR: Symbol file could <span class="keyword">not</span> be found.  Defaulted <span class="keyword">to</span> <span class="builtin-name">export</span> symbols <span class="keyword">for</span> C:\Program Files\Hnc\Hwp80\HwpApp.dll - </div><div class="line">HwpApp+0x4028a:</div><div class="line">08f9028a 8b4254          mov     eax,dword ptr [edx+54h] ds:0023:<span class="attribute">00000054</span>=????????</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着查看反汇编代码,看到将[edx+54h]这个未初始化的值赋给eax，然后调用了eax。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; u</div><div class="line">HwpApp+<span class="number">0x4028a</span>:</div><div class="line">08f9028a 8b4254          <span class="keyword">mov</span>     <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">54h</span>]</div><div class="line">08f9028d 896c241c        <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">esp</span>+<span class="number">1Ch</span>],<span class="built_in">ebp</span></div><div class="line">08f90291 ffd0            <span class="keyword">call</span>    <span class="built_in">eax</span></div><div class="line">08f90293 8bd8            <span class="keyword">mov</span>     <span class="built_in">ebx</span>,<span class="built_in">eax</span></div><div class="line">08f90295 8d7c241c        <span class="keyword">lea</span>     <span class="built_in">edi</span>,[<span class="built_in">esp</span>+<span class="number">1Ch</span>]</div><div class="line">08f90299 e8d2faffff      <span class="keyword">call</span>    HwpApp+<span class="number">0x3fd70</span> (08f8fd70)</div><div class="line">08f9029e 85c0            <span class="keyword">test</span>    <span class="built_in">eax</span>,<span class="built_in">eax</span></div><div class="line">08f902a0 747f            <span class="keyword">je</span>      HwpApp+<span class="number">0x40321</span> (08f90321)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后关闭页堆，同时对发生崩溃的call eax下断。<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; ? <span class="number">08</span>f90291-hwpapp</div><div class="line"><span class="symbol">Evaluate</span> expression: <span class="number">262801</span> = <span class="number">00040291</span></div><div class="line">//</div><div class="line"><span class="number">0</span>:<span class="number">000</span>&gt; <span class="keyword">bp </span>hwpapp+<span class="number">40291</span></div><div class="line"><span class="keyword">Bp </span>expression <span class="string">'hwpapp+40291'</span> could not <span class="keyword">be </span>resolved, <span class="keyword">adding </span>deferred <span class="keyword">bp</span></div><div class="line"><span class="keyword">0:000&gt; </span><span class="keyword">bl</span></div><div class="line"><span class="keyword"> </span><span class="number">0</span> eu             <span class="number">0001</span> (<span class="number">0001</span>) (hwppp+<span class="number">40291</span>)</div><div class="line"> <span class="number">1</span> eu             <span class="number">0001</span> (<span class="number">0001</span>) (hwpapp+<span class="number">40291</span>)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;触发漏洞使得EIP转移到 call    eax {0e0c0e0c}，t跟入。发现是一些雪橇指令，雪橇指令(或者堆喷射原理)见：<a href="https://blog.csdn.net/magictong/article/details/7391397" target="_blank" rel="external">https://blog.csdn.net/magictong/article/details/7391397</a>。找到了这些雪橇指令就相当于定位到shellcode。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ModLoad: 08e20000 08e27000   C:\Program Files\Hnc\Hwp80\DocFiltersRes.KOR</div><div class="line">Breakpoint 1 hit</div><div class="line"><span class="attribute">eax</span>=0e0c0e0c <span class="attribute">ebx</span>=072d0000 <span class="attribute">ecx</span>=0e0c0e0c <span class="attribute">edx</span>=0e0c0e0c <span class="attribute">esi</span>=0012ecc4 <span class="attribute">edi</span>=00000000</div><div class="line"><span class="attribute">eip</span>=04e00291 <span class="attribute">esp</span>=0012ec6c <span class="attribute">ebp</span>=08f98090 <span class="attribute">iopl</span>=0         nv up ei pl nz na pe nc</div><div class="line"><span class="attribute">cs</span>=001b  <span class="attribute">ss</span>=0023  <span class="attribute">ds</span>=0023  <span class="attribute">es</span>=0023  <span class="attribute">fs</span>=003b  <span class="attribute">gs</span>=0000             <span class="attribute">efl</span>=00000206</div><div class="line">HwpApp+0x40291:</div><div class="line">04e00291 ffd0            call    eax &#123;0e0c0e0c&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据之前，通过HpwScan2分析得到shellcode的标志<code>wvrsu</code>，通过搜索内存区域<code>s -d 0x3 l?0x7fffffff 0x53525657</code>，得到如下含有<code>wvrsu</code>的堆区。结合雪橇指令滑入的地址eip=0e0c0e0c，定位到0x0ecbfc5b.<code>bp 0x0ecbfc5b</code><br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">0:000&gt; s -d 0x3 l?0x7fffffff 0x53525657</div><div class="line">073e82bb  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">073fc573  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0b68fc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0c89fc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0daafc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0ecbfc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0fecfc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">1123fc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">133afc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">145bfc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">157cfc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">169dfc5b  53525657 c9335155 0c0e0cba 028a420e  WVRSUQ3<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span>B<span class="built_in">..</span></div><div class="line">0:000&gt; r eip</div><div class="line"><span class="attribute">eip</span>=0e0c0e0c</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>bp 0x0ecbfc5b</code>，g到0x0ecbfc5b，可以看到shellcode首先通过cpuid指令，通过去ecx第31位的值是否等于1判断样本是否处于虚拟机中运行。<br>    <img src="http://hacky.wang/blog/20190722/S03tYkkyMl97.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/jOtP1n0hQRV6.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在跟0x0eccfca2，<code>r ecx = 0</code>将ecx置0。跟到0x0eccfd21处，发现jmp eax调用了LoadLibraryEx。<code>bp 0x0eccfd21</code>下断。shellcode总计调用了<code>LoadLibraryEx</code>,<code>GlobalAlloc</code>,<code>CreateFileW</code>,<code>GetFileSize</code>,<code>SetFilePointer</code>,<code>ReadFile</code>,<code>CreateProcessA</code>,<code>VirtualAllocEx</code>,<code>WriteProcessMemory</code>,<code>CreateRemoteThread</code>。可以明确知道shellcode使用WriteProcessMemory将第二段shellcode写入notepad中，然后执行新的shellcode。<br>    <img src="http://hacky.wang/blog/20190722/yBRMs9OiWz55.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/z6GMpcUWv4rT.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/9SVICvzsq8Ut.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/LmmbJ6uB34dO.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/O8i4weQPuuCn.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/GT6MjLQK2VSb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二层shellcode首先在%temp下释放了wsss.dll文件，然后调用了wsss.dll文件。<br>    <img src="http://hacky.wang/blog/20190722/HFqLvWzVooUu.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190722/d31OWJJ0qB0W.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20190723/F6RGpo5Xvx1u.png?imageslim" alt="mark"></p>
+<ul>
+<li>IoC:33874577bf54d3c209925c9def880eb9</li>
+</ul>
+<h1 id="0x6-缓冲区溢出"><a href="#0x6-缓冲区溢出" class="headerlink" title="0x6 缓冲区溢出"></a>0x6 缓冲区溢出</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第四种是缓冲区溢出漏洞，Hwp2.0 偏移 0x48E 的位置开始是字体结构,前两个字节是字体名称数量,每个字体名称长度为 0x28。在程序读取Hwp2.0的文档的时候，首先使用ConvertFilterFileToWorkFile将文档转化为Hwp3.0，然后调用Set20FontList 子函数处理字体结构。但是在进行复制字体名称的时候，需要将arySrc[0x28]的数据复制到aryDest[0x28]，但是本应在arySrc[0x28]中最后一个字符为’\0’，但是此处为3C。造成了缓冲区异常，从而触发内存访问异常。<br>    <img src="http://hacky.wang/blog/20190726/qRnqOF0CtsIl.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当触发异常1后，然后进入SEH处理流程，调用SEH Handler。然后通过pop-ret指令跳转到shellcode</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没有复现成功，参考自：<a href="https://wooyun.js.org/drops/APT%20洋葱狗行动(Operation%20OnionDog" target="_blank" rel="external">https://wooyun.js.org/drops/APT%20洋葱狗行动(Operation%20OnionDog)分析报告.html</a>分析报告.html)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/16/病毒分析技术_23_linux样本分析小结/" rel="next" title="linux下样本分析小结">
+                <i class="fa fa-chevron-left"></i> linux下样本分析小结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/14/花指令小结/" rel="prev" title="花指令原理小结">
+                花指令原理小结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-前言"><span class="nav-number">1.</span> <span class="nav-text">0x0 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-什么是HWP"><span class="nav-number">2.</span> <span class="nav-text">0x1 什么是HWP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Hwp样本概述与分析思路"><span class="nav-number">3.</span> <span class="nav-text">0x2 Hwp样本概述与分析思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-宏类型样本"><span class="nav-number">4.</span> <span class="nav-text">0x3 宏类型样本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PE分析"><span class="nav-number">4.1.</span> <span class="nav-text">PE分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-GhostScript沙箱绕过漏洞"><span class="nav-number">5.</span> <span class="nav-text">0x4 GhostScript沙箱绕过漏洞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-类型混淆"><span class="nav-number">6.</span> <span class="nav-text">0x5 类型混淆</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x6-缓冲区溢出"><span class="nav-number">7.</span> <span class="nav-text">0x6 缓冲区溢出</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

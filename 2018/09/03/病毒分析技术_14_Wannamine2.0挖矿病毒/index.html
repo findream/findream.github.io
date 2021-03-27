@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Wannamine2.0是wannamine家族的变种。该家族特征是使用NSA泄露的eternalblue漏洞利用工具包+扫描传播模块+挖矿木马，一切未打ms17-010漏洞补丁的机器都将是其目标，对于网络中存在ms17-010漏洞的机器而言，它是不可忽视的安全威胁。该挖矿木马为了躲避杀">
+<meta property="og:type" content="article">
+<meta property="og:title" content="病毒分析技术_14_Wannamine2.0挖矿病毒">
+<meta property="og:url" content="https://findream.github.io/2018/09/03/病毒分析技术_14_Wannamine2.0挖矿病毒/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Wannamine2.0是wannamine家族的变种。该家族特征是使用NSA泄露的eternalblue漏洞利用工具包+扫描传播模块+挖矿木马，一切未打ms17-010漏洞补丁的机器都将是其目标，对于网络中存在ms17-010漏洞的机器而言，它是不可忽视的安全威胁。该挖矿木马为了躲避杀">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/OwuUqlR.png">
+<meta property="og:image" content="https://i.imgur.com/eyG1k84.png">
+<meta property="og:image" content="https://i.imgur.com/6DvitaS.png">
+<meta property="og:image" content="https://i.imgur.com/OytxI5G.png">
+<meta property="og:image" content="https://i.imgur.com/g2cSqzU.png">
+<meta property="og:image" content="https://i.imgur.com/nOWPKlb.png">
+<meta property="og:image" content="https://i.imgur.com/JiFiICc.png">
+<meta property="og:image" content="https://i.imgur.com/gvYx8CL.png">
+<meta property="og:image" content="https://i.imgur.com/uxrebIc.png">
+<meta property="og:image" content="https://i.imgur.com/aEL6tTg.png">
+<meta property="og:image" content="https://i.imgur.com/BI0IXv5.png">
+<meta property="og:image" content="https://i.imgur.com/6NiGyPn.png">
+<meta property="og:image" content="https://i.imgur.com/wrwmt34.png">
+<meta property="og:image" content="https://i.imgur.com/xrvHhQh.png">
+<meta property="og:image" content="https://i.imgur.com/D0Sp9zF.png">
+<meta property="og:image" content="https://i.imgur.com/15VjaNJ.png">
+<meta property="og:image" content="https://i.imgur.com/IGNYQF3.png">
+<meta property="og:image" content="https://i.imgur.com/7a0LPlb.png">
+<meta property="og:image" content="https://i.imgur.com/iEnpfMI.png">
+<meta property="og:image" content="https://i.imgur.com/bbprcyn.png">
+<meta property="og:image" content="https://i.imgur.com/VuhjwqR.png">
+<meta property="og:image" content="https://i.imgur.com/gz4PMKs.png">
+<meta property="og:image" content="https://i.imgur.com/CgvqPUA.png">
+<meta property="og:image" content="https://i.imgur.com/rFRuOYt.png">
+<meta property="og:image" content="https://i.imgur.com/EPRFnse.png">
+<meta property="og:image" content="https://i.imgur.com/s965CXu.png">
+<meta property="og:image" content="https://i.imgur.com/e2PbBZS.png">
+<meta property="og:image" content="https://i.imgur.com/kMxBpG7.png">
+<meta property="og:image" content="https://i.imgur.com/oH62LYi.png">
+<meta property="og:image" content="https://i.imgur.com/TZNBSJp.png">
+<meta property="og:image" content="https://i.imgur.com/zAaDmZV.png">
+<meta property="og:image" content="https://i.imgur.com/0sOu2UG.png">
+<meta property="og:updated_time" content="2018-09-03T07:03:23.987Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="病毒分析技术_14_Wannamine2.0挖矿病毒">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Wannamine2.0是wannamine家族的变种。该家族特征是使用NSA泄露的eternalblue漏洞利用工具包+扫描传播模块+挖矿木马，一切未打ms17-010漏洞补丁的机器都将是其目标，对于网络中存在ms17-010漏洞的机器而言，它是不可忽视的安全威胁。该挖矿木马为了躲避杀">
+<meta name="twitter:image" content="https://i.imgur.com/OwuUqlR.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/09/03/病毒分析技术_14_Wannamine2.0挖矿病毒/"/>
+
+
+
+
+
+  <title>病毒分析技术_14_Wannamine2.0挖矿病毒 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/09/03/病毒分析技术_14_Wannamine2.0挖矿病毒/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">病毒分析技术_14_Wannamine2.0挖矿病毒</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-03T10:45:11+08:00">
+                2018-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wannamine2.0是wannamine家族的变种。该家族特征是使用NSA泄露的eternalblue漏洞利用工具包+扫描传播模块+挖矿木马，一切未打ms17-010漏洞补丁的机器都将是其目标，对于网络中存在ms17-010漏洞的机器而言，它是不可忽视的安全威胁。该挖矿木马为了躲避杀毒软件查杀，特地将主控程序加密并放到资源EnrollCertXaml.dll中。样本通过MS17-010（永恒之蓝）漏洞进行传播，其漏洞利用模块是使用的NSA工具包eternalblue和doublepuls，即2017年影子经纪人所公开的NSA工具包，定时和C&amp;C进行连接接受命令和更新模块，主要目的为挖掘门罗币。<br><a id="more"></a></p>
+<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.样本分析</li>
+<li>4.防御手段</li>
+</ul>
+<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1><ul>
+<li>1.样本名称：spoolsv.exe</li>
+<li>2.样本md5:97911A1DA380F874393CF15982C6B1B9</li>
+<li>3.是否加壳:无壳</li>
+<li>4.编译语言：Microsoft Visual C++ v14 - 2015 - x64 </li>
+<li>5.样本来源：客户受感染主机</li>
+</ul>
+<h1 id="三：样本分析"><a href="#三：样本分析" class="headerlink" title="三：样本分析"></a>三：样本分析</h1><h2 id="母体文件"><a href="#母体文件" class="headerlink" title="母体文件"></a>母体文件</h2><ul>
+<li><p>首先，获取系统信息和进程线程ID，进行运算，产生标志，这一点和WanaCry一致。<br>   <img src="https://i.imgur.com/OwuUqlR.png" alt=""></p>
+</li>
+<li><p>接着初始化网络。创建一个名为{F5175396-40C2-0218-278D6EE}的互斥体。<br>   <img src="https://i.imgur.com/eyG1k84.png" alt=""></p>
+</li>
+<li><p>然后，程序创建了五个线程，分别执行查找指定文件，链接445端口，进行局域网内传播，获取主机名和同一网段内的其他主机IP验证是否可以通过445端口链接，开辟存储TCP表，从task.attendecr.com:80/task处读取文件到内存，访问读取error.ttemdecr:8080/log,或者scan.attendecr.80/status内容。<br>  <img src="https://i.imgur.com/6DvitaS.png" alt=""><br>  <img src="https://i.imgur.com/OytxI5G.png" alt=""><br>  <img src="https://i.imgur.com/g2cSqzU.png" alt=""></p>
+</li>
+<li><p>Thread_1:</p>
+<ul>
+<li>连接字符串，c:\windows\System32\EnrollCertXaml.dll，判断c:\windows\System32\EnrollCertXaml.dll是否存在，如果存在，则读取入内存，<br>  <img src="https://i.imgur.com/nOWPKlb.png" alt=""><br>  <img src="https://i.imgur.com/JiFiICc.png" alt=""></li>
+<li>如果不存在，创建C:\Windows\SpeechsTracing\Crypt”目录，然后释放病毒文件到C:\Windows\SpeechsTracing\Misresoft<br>  <img src="https://i.imgur.com/gvYx8CL.png" alt=""></li>
+<li>删除源目录<br>  <img src="https://i.imgur.com/uxrebIc.png" alt=""></li>
+<li>拼接字符串，读取svchost的配置信息<br>  <img src="https://i.imgur.com/aEL6tTg.png" alt=""></li>
+<li>释放x86.dll和x64.dll文件到C:\Windows\SpeechsTracing\Microsoft\中<br>  <img src="https://i.imgur.com/BI0IXv5.png" alt=""><br>  <img src="https://i.imgur.com/6NiGyPn.png" alt=""></li>
+<li>根据上面的print函数(相当于赋值操作)，创建了两个进程，执行c:\windows\SpeechsTracing\Microsoft\svchost.exe操作，<br><img src="https://i.imgur.com/wrwmt34.png" alt=""><br><img src="https://i.imgur.com/xrvHhQh.png" alt=""></li>
+<li>读取并写入stage1.txt，判断攻击是否成功<br><img src="https://i.imgur.com/D0Sp9zF.png" alt=""></li>
+<li>然后，通过CreateProcessA函数启动spoolsv.exe安装后门程序，同时将这个行为特征记录在stage2.txt。<br><img src="https://i.imgur.com/15VjaNJ.png" alt=""></li>
+<li>调用CreateThread，创建一个线程。</li>
+</ul>
+</li>
+<li><p>Thread_2 </p>
+<ul>
+<li>遍历每个IP地址</li>
+<li>创建线程，每创建64个线程，暂停500ms</li>
+<li>连接445端口和63257端口，<br><img src="https://i.imgur.com/IGNYQF3.png" alt=""></li>
+<li>进入关键区，将可以被利用的地址保存，<br> <img src="https://i.imgur.com/7a0LPlb.png" alt=""></li>
+</ul>
+</li>
+<li><p>Thread_3</p>
+<ul>
+<li>获取用户名和主机名<br>  <img src="https://i.imgur.com/iEnpfMI.png" alt=""></li>
+<li>如果不是本地回环，则将ip地址传入sub_14000C110，目的是交给线程2<br>  <img src="https://i.imgur.com/bbprcyn.png" alt=""></li>
+</ul>
+</li>
+<li><p>Thread_4</p>
+<ul>
+<li>存放已经可以被利用的IP的Tcp表，<br><img src="https://i.imgur.com/VuhjwqR.png" alt=""></li>
+</ul>
+</li>
+<li><p>Thread_5</p>
+<ul>
+<li>从task.attendecr.com:80/tasks读取文件到内存<br><img src="https://i.imgur.com/gz4PMKs.png" alt=""></li>
+</ul>
+</li>
+<li><p>Thread_6</p>
+<ul>
+<li>从访问读取error.ttemdecr:8080/log,或者scan.attendecr.80/status处读取文件<br><img src="https://i.imgur.com/CgvqPUA.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="x86-dll-x64-dll"><a href="#x86-dll-x64-dll" class="headerlink" title="x86.dll(x64.dll)"></a>x86.dll(x64.dll)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x64.dll和x86.dll针对不同的架构，但是其功能是相同的。所以为了篇幅期间只分析x86.dll。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到x86.dll有三个导出函数，分别是DllRegisterServer，DllUnregisterServer，DllEntryPoint，从名字上来看这只是只是注册服务和删除服务的导出函数。<br>     <img src="https://i.imgur.com/rFRuOYt.png" alt=""></p>
+<ul>
+<li>创建了互斥体名为{B3DD837C-473B}的互斥体<br>  <img src="https://i.imgur.com/EPRFnse.png" alt=""><br>  <img src="https://i.imgur.com/s965CXu.png" alt=""></li>
+<li>初始化网络，创建了线程，主要用于释放病毒，这里释放的是关于上文所述的EnrollCertXaml.dll，然后解压<br>  <img src="https://i.imgur.com/e2PbBZS.png" alt=""><br>  <img src="https://i.imgur.com/kMxBpG7.png" alt=""></li>
+<li>将恶意代码数据写入SOFTWARE\Microsoft\Windows NT\CurrentVersion\Svchost中的netsvcs中，而svchost是用来加载成组服务的，netsvcs 是一组服务的集合，不是单个的服务，具体哪些服务在netsvcs里，由此我们可以知道，病毒写入此注册表的目的是为了启动服务。从而实现常驻。<br>   <img src="https://i.imgur.com/oH62LYi.png" alt=""></li>
+<li>以c:\windows\System32\svchost.exe -k netsvcs参数创建服务。<br>   <img src="https://i.imgur.com/TZNBSJp.png" alt=""></li>
+<li>设置服务的描述和文件信息，servicedll指向dll文件的路径。<br>   <img src="https://i.imgur.com/zAaDmZV.png" alt=""></li>
+</ul>
+<h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于样本不全，无法对病毒的关键逻辑进行分析。</p>
+<h1 id="四：防御手段"><a href="#四：防御手段" class="headerlink" title="四：防御手段"></a>四：防御手段</h1><h2 id="1-打ms17-010补丁"><a href="#1-打ms17-010补丁" class="headerlink" title="1.打ms17-010补丁"></a>1.打ms17-010补丁</h2><ul>
+<li>官方补丁【注：补丁如果打不上原因kennel是补丁依赖，即安装此次的补丁需要前一个补丁的支持。】：<a href="https://docs.microsoft.com/zh-cn/security-updates/Securitybulletins/2017/ms17-010" target="_blank" rel="external">https://docs.microsoft.com/zh-cn/security-updates/Securitybulletins/2017/ms17-010</a><br>  <img src="https://i.imgur.com/0sOu2UG.png" alt=""></li>
+</ul>
+<h2 id="2-封堵445端口"><a href="#2-封堵445端口" class="headerlink" title="2.封堵445端口"></a>2.封堵445端口</h2><ul>
+<li>防火墙禁用445端口</li>
+<li>组策略445端口</li>
+<li>禁用SMB服务</li>
+</ul>
+<h2 id="3-安装安全软件"><a href="#3-安装安全软件" class="headerlink" title="3.安装安全软件"></a>3.安装安全软件</h2><ul>
+<li>进过测试，国内大部分安全厂商具备查杀此类病毒的能力</li>
+<li>建议：查杀时，最后隔离网络，避免交叉感染</li>
+</ul>
+<h2 id="4-如何判定是否安装补丁"><a href="#4-如何判定是否安装补丁" class="headerlink" title="4.如何判定是否安装补丁"></a>4.如何判定是否安装补丁</h2><ul>
+<li>1）控制面板-程序和功能-卸载程序-补丁更新</li>
+<li>2）cmd命令行-输入systeminfo</li>
+<li>3）win+R 输入regedit，依次展开，查看注册表项：<br>HKEY_LOCAL_MACHINE\SOFTWARE\MICROSOFT\WINDOWS NT\Currentversion\hotfix</li>
+</ul>
+<h2 id="5-安全意识"><a href="#5-安全意识" class="headerlink" title="5.安全意识"></a>5.安全意识</h2><ul>
+<li>不下载、不运行未知来源的软件，不点开不明链接，要有网络安全防范意识。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/28/《格蠹汇编》_第25章_如何调试窗口大总管/" rel="next" title="<格蠹汇编>_第25章_如何调试窗口大总管">
+                <i class="fa fa-chevron-left"></i> <格蠹汇编>_第25章_如何调试窗口大总管
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/04/《格蠹汇编》_第29章_在调试器中细品CPU/" rel="prev" title="<格蠹汇编>_第29章_在调试中细品CPU">
+                <格蠹汇编>_第29章_在调试中细品CPU <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一：目录"><span class="nav-number">2.</span> <span class="nav-text">一：目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二：样本信息"><span class="nav-number">3.</span> <span class="nav-text">二：样本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三：样本分析"><span class="nav-number">4.</span> <span class="nav-text">三：样本分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#母体文件"><span class="nav-number">4.1.</span> <span class="nav-text">母体文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#x86-dll-x64-dll"><span class="nav-number">4.2.</span> <span class="nav-text">x86.dll(x64.dll)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#备注"><span class="nav-number">4.3.</span> <span class="nav-text">备注</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四：防御手段"><span class="nav-number">5.</span> <span class="nav-text">四：防御手段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-打ms17-010补丁"><span class="nav-number">5.1.</span> <span class="nav-text">1.打ms17-010补丁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-封堵445端口"><span class="nav-number">5.2.</span> <span class="nav-text">2.封堵445端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-安装安全软件"><span class="nav-number">5.3.</span> <span class="nav-text">3.安装安全软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-如何判定是否安装补丁"><span class="nav-number">5.4.</span> <span class="nav-text">4.如何判定是否安装补丁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-安全意识"><span class="nav-number">5.5.</span> <span class="nav-text">5.安全意识</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

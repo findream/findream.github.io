@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言WannaCry（又叫Wanna Decryptor），一种“蠕虫式”的勒索病毒软件，大小3.3MB，由不法分子利用NSA（National Security Agency，美国国家安全局）泄露的危险漏洞“EternalBlue”（永恒之蓝）进行网络端口扫描攻击，目标机器被成功攻陷后会从攻击机下载WannaCry木马进行感染，并作为攻击机再次扫描互联网和局域网其他机器，行成蠕虫感染大范围超快速">
+<meta property="og:type" content="article">
+<meta property="og:title" content="病毒分析技术(13) ---WannaCry勒索病毒">
+<meta property="og:url" content="https://findream.github.io/2018/08/08/病毒分析技术_13_WannaCry勒索病毒/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="前言WannaCry（又叫Wanna Decryptor），一种“蠕虫式”的勒索病毒软件，大小3.3MB，由不法分子利用NSA（National Security Agency，美国国家安全局）泄露的危险漏洞“EternalBlue”（永恒之蓝）进行网络端口扫描攻击，目标机器被成功攻陷后会从攻击机下载WannaCry木马进行感染，并作为攻击机再次扫描互联网和局域网其他机器，行成蠕虫感染大范围超快速">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/ihlHjdg.png">
+<meta property="og:image" content="https://i.imgur.com/9WNrm07.png">
+<meta property="og:image" content="https://i.imgur.com/OSEQxtI.png">
+<meta property="og:image" content="https://i.imgur.com/yT3OXia.png">
+<meta property="og:image" content="https://i.imgur.com/OhMKRbL.png">
+<meta property="og:image" content="https://i.imgur.com/ZNEG7ra.png">
+<meta property="og:image" content="https://i.imgur.com/wRDjskM.png">
+<meta property="og:image" content="https://i.imgur.com/A5ckrCA.png">
+<meta property="og:image" content="https://i.imgur.com/MOAPBHP.png">
+<meta property="og:image" content="https://i.imgur.com/xDCj0dH.png">
+<meta property="og:image" content="https://i.imgur.com/XPIIWdH.png">
+<meta property="og:image" content="https://i.imgur.com/rausHoV.png">
+<meta property="og:image" content="https://i.imgur.com/eM0oF1w.png">
+<meta property="og:image" content="https://i.imgur.com/iOZEWLE.png">
+<meta property="og:image" content="https://i.imgur.com/086BNBX.png">
+<meta property="og:image" content="https://i.imgur.com/5fPDl0R.png">
+<meta property="og:image" content="https://i.imgur.com/Dbfq4bp.png">
+<meta property="og:image" content="https://i.imgur.com/HHsw5RT.png">
+<meta property="og:image" content="https://i.imgur.com/oaTvtlm.png">
+<meta property="og:image" content="https://i.imgur.com/6yfShNM.png">
+<meta property="og:image" content="https://i.imgur.com/Y0v5Sdp.png">
+<meta property="og:image" content="https://i.imgur.com/ED9WgYG.png">
+<meta property="og:image" content="https://i.imgur.com/6wZg2Dq.png">
+<meta property="og:image" content="https://i.imgur.com/y7GJqeM.png">
+<meta property="og:image" content="https://i.imgur.com/huKN6AC.png">
+<meta property="og:image" content="https://i.imgur.com/jeQnfs9.png">
+<meta property="og:image" content="https://i.imgur.com/5T6jYmG.png">
+<meta property="og:image" content="https://i.imgur.com/tFFcTFy.png">
+<meta property="og:image" content="https://i.imgur.com/ATfi4CV.png">
+<meta property="og:image" content="https://i.imgur.com/0NTGzJZ.png">
+<meta property="og:image" content="https://i.imgur.com/xqmbmqR.png">
+<meta property="og:image" content="https://i.imgur.com/Smdcdnw.png">
+<meta property="og:image" content="https://i.imgur.com/xsMCwKw.png">
+<meta property="og:image" content="https://i.imgur.com/FH6D8oF.png">
+<meta property="og:image" content="https://i.imgur.com/BDg2U5w.png">
+<meta property="og:image" content="https://i.imgur.com/nfSfgbS.png">
+<meta property="og:image" content="https://i.imgur.com/0wbU6WA.png">
+<meta property="og:image" content="https://i.imgur.com/NWwLr2S.png">
+<meta property="og:image" content="https://i.imgur.com/YApIj5M.png">
+<meta property="og:image" content="https://i.imgur.com/IfFk9tY.png">
+<meta property="og:image" content="https://i.imgur.com/sHGxfLI.png">
+<meta property="og:image" content="https://i.imgur.com/aHItbjJ.png">
+<meta property="og:image" content="https://i.imgur.com/4vYex6i.png">
+<meta property="og:image" content="https://i.imgur.com/gz4KlfB.png">
+<meta property="og:image" content="https://i.imgur.com/poTRQfK.png">
+<meta property="og:image" content="https://i.imgur.com/w22oLdH.png">
+<meta property="og:image" content="https://i.imgur.com/KA1qL5j.png">
+<meta property="og:image" content="https://i.imgur.com/YucWftJ.png">
+<meta property="og:image" content="https://i.imgur.com/TAWEX8o.png">
+<meta property="og:image" content="https://i.imgur.com/6k4GGxZ.png">
+<meta property="og:image" content="https://i.imgur.com/Mre0ikL.png">
+<meta property="og:image" content="https://i.imgur.com/ngaH87H.png">
+<meta property="og:image" content="https://i.imgur.com/64ffOIG.png">
+<meta property="og:image" content="https://i.imgur.com/Mzq5N6L.png">
+<meta property="og:image" content="https://i.imgur.com/42GGqoB.png">
+<meta property="og:image" content="https://i.imgur.com/s2JHN2O.png">
+<meta property="og:image" content="https://i.imgur.com/jrVuHzX.png">
+<meta property="og:image" content="https://i.imgur.com/PMJVIE3.png">
+<meta property="og:updated_time" content="2018-09-01T06:58:52.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="病毒分析技术(13) ---WannaCry勒索病毒">
+<meta name="twitter:description" content="前言WannaCry（又叫Wanna Decryptor），一种“蠕虫式”的勒索病毒软件，大小3.3MB，由不法分子利用NSA（National Security Agency，美国国家安全局）泄露的危险漏洞“EternalBlue”（永恒之蓝）进行网络端口扫描攻击，目标机器被成功攻陷后会从攻击机下载WannaCry木马进行感染，并作为攻击机再次扫描互联网和局域网其他机器，行成蠕虫感染大范围超快速">
+<meta name="twitter:image" content="https://i.imgur.com/ihlHjdg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/08/08/病毒分析技术_13_WannaCry勒索病毒/"/>
+
+
+
+
+
+  <title>病毒分析技术(13) ---WannaCry勒索病毒 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/08/病毒分析技术_13_WannaCry勒索病毒/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">病毒分析技术(13) ---WannaCry勒索病毒</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-08T11:02:11+08:00">
+                2018-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>WannaCry（又叫Wanna Decryptor），一种“蠕虫式”的勒索病毒软件，大小3.3MB，由不法分子利用NSA（National Security Agency，美国国家安全局）泄露的危险漏洞<strong>“EternalBlue”（永恒之蓝）</strong>进行网络端口扫描攻击，目标机器被成功攻陷后会从攻击机下载WannaCry木马进行感染，并作为攻击机再次扫描互联网和局域网其他机器，行成蠕虫感染大范围超快速扩散。木马母体为mssecsvc.exe，运行后会扫描随机ip的互联网机器，尝试感染，也会扫描局域网相同网段的机器进行感染传播，此外会释放敲诈者程序tasksche.exe，对磁盘文件进行加密勒索。木马加密使用AES加密文件，并使用非对称加密算法RSA 2048加密随机密钥，每个文件使用一个随机密钥，理论上不可逆向破解。<br><a id="more"></a></p>
+<h1 id="一：目录"><a href="#一：目录" class="headerlink" title="一：目录"></a>一：目录</h1><ul>
+<li>1.目录</li>
+<li>2.样本信息</li>
+<li>3.行为分析</li>
+<li>4.样本分析</li>
+<li>5.技术总结</li>
+</ul>
+<h1 id="二：样本信息"><a href="#二：样本信息" class="headerlink" title="二：样本信息"></a>二：样本信息</h1><ul>
+<li>1.样本名称：mssecsvc.exe</li>
+<li>2.样本md5：db349b97c37d22f5ea1d1841e3c89eb4</li>
+<li>3.是否加壳：无壳</li>
+<li>4.编译语言：vc++</li>
+<li>5.样本来源：来自于网络收集</li>
+</ul>
+<h1 id="三：行为分析"><a href="#三：行为分析" class="headerlink" title="三：行为分析"></a>三：行为分析</h1><ul>
+<li>行为分析：<br>  <img src="https://i.imgur.com/ihlHjdg.png" alt=""><h1 id="四-样本分析"><a href="#四-样本分析" class="headerlink" title="四 样本分析"></a>四 样本分析</h1><h2 id="mssecsvc-exe-母本文件"><a href="#mssecsvc-exe-母本文件" class="headerlink" title="mssecsvc.exe(母本文件)"></a>mssecsvc.exe(母本文件)</h2></li>
+<li>存在一个switch，如果联网访问该网址<code>http://www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com</code>，恶意代码不会执行<br>  <img src="https://i.imgur.com/9WNrm07.png" alt=""></li>
+<li><p>根据启动参数判断，是否第一次感染，如果第一次感染，创建服务，然后释放恶意代码到C://windows/tasksche.exe,并以/i参数执行恶意程序tasksche.exe。<br>  <img src="https://i.imgur.com/OSEQxtI.png" alt=""><br>  <img src="https://i.imgur.com/yT3OXia.png" alt=""></p>
+</li>
+<li><p>如果不是第一次被感染，则使得服务的ServiceMain函数连接到服务控制管理器上，成为服务控制调度程序线程。<br>  <img src="https://i.imgur.com/OhMKRbL.png" alt=""></p>
+</li>
+<li>ServiceMian函数作用：利用MS17_010漏洞漏，先读取自身的存在的payload的利用代码，根据系统不同需要读入两套不同的payload。<br>  <img src="https://i.imgur.com/ZNEG7ra.png" alt=""><br>  <img src="https://i.imgur.com/wRDjskM.png" alt=""><br>  <img src="https://i.imgur.com/A5ckrCA.png" alt=""></li>
+<li>利用多线程，分别对内网和外网扫描。对于公网，病毒首先产生随机IP，然后连接到445端口，进行传播。<br>  <img src="https://i.imgur.com/MOAPBHP.png" alt=""><br>  <img src="https://i.imgur.com/xDCj0dH.png" alt=""></li>
+<li>对于内网，选取同一网段的所有IP，然后利用445端口，进行传播。<br>  <img src="https://i.imgur.com/XPIIWdH.png" alt=""><br>  <img src="https://i.imgur.com/rausHoV.png" alt=""></li>
+</ul>
+<h2 id="tasksche-exe-释放模块"><a href="#tasksche-exe-释放模块" class="headerlink" title="tasksche.exe(释放模块)"></a>tasksche.exe(释放模块)</h2><ul>
+<li>判断传入参数是否是/i。<br>  <img src="https://i.imgur.com/eM0oF1w.png" alt=""></li>
+<li>向c://intel//xxxxx//中释放同一个恶意文件，实现多备份。<br>  <img src="https://i.imgur.com/iOZEWLE.png" alt=""></li>
+<li>利用cmd.exe /c以不显示的方式执行tasksche.exe。之后创建服务。并启动服务<br>  <img src="https://i.imgur.com/086BNBX.png" alt=""><br>  <img src="https://i.imgur.com/5fPDl0R.png" alt=""><br>  <img src="https://i.imgur.com/Dbfq4bp.png" alt=""></li>
+<li>创建互斥体，然后创建tasksche.exe创建服务。<br>  <img src="https://i.imgur.com/HHsw5RT.png" alt=""></li>
+<li>创建注册表，然后利用WNcry@2ol7参数，释放多个文件。<ul>
+<li>taskse.exe：<code>将权限提升至SeTcbPrivilege权限</code><br><img src="https://i.imgur.com/oaTvtlm.png" alt=""><br><img src="https://i.imgur.com/6yfShNM.png" alt=""></li>
+<li>taskd.exe：<code>删除.WnCy文件</code><br><img src="https://i.imgur.com/Y0v5Sdp.png" alt=""><br><img src="https://i.imgur.com/ED9WgYG.png" alt=""></li>
+<li>b.wnry:<code>图片bmp</code><br><img src="https://i.imgur.com/6wZg2Dq.png" alt=""></li>
+<li>c.wncy: <code>洋葱浏览器地址和洋葱路由信息，黑客团伙利用比特币转账，减少被抓获的风险</code><br><img src="https://i.imgur.com/y7GJqeM.png" alt=""></li>
+<li>r.wncy:<code>问答信息</code><br><img src="https://i.imgur.com/huKN6AC.png" alt=""></li>
+<li>s.wncy:<code>洋葱路由器安装包和数据.rar</code><br><img src="https://i.imgur.com/jeQnfs9.png" alt=""></li>
+<li>t.wncy：<code>后期恶意dll的加密版本</code></li>
+<li>u.wncy:<code>文件感染后的提示界面</code><br><img src="https://i.imgur.com/5T6jYmG.png" alt=""></li>
+</ul>
+</li>
+<li>向c.wncy中写入比特币钱包地址，利用暗网进行交易<br>   <img src="https://i.imgur.com/tFFcTFy.png" alt=""></li>
+<li>调用attrib.exe +h来设置文件隐藏属性<br>  <img src="https://i.imgur.com/ATfi4CV.png" alt=""></li>
+<li>调用icacls.exe来设置所有用户具有完全控制权限<br>  <img src="https://i.imgur.com/0NTGzJZ.png" alt=""></li>
+<li>读取t.wncy文件到内存，解密出其中的一部分信息，寻找文件头，然后复制节区信息，形成完整的PE文件。<br>  <img src="https://i.imgur.com/xqmbmqR.png" alt=""><br>  <img src="https://i.imgur.com/Smdcdnw.png" alt=""><br>  <img src="https://i.imgur.com/xsMCwKw.png" alt=""><br>  <img src="https://i.imgur.com/FH6D8oF.png" alt=""></li>
+<li>创建刚刚复制到内存中的dll文件的导入函数。然后调用导入函数。操作在内存中进行，文件不落地，有效规避了杀毒软件的查杀。<br>  <img src="https://i.imgur.com/BDg2U5w.png" alt=""><br>  <img src="https://i.imgur.com/nfSfgbS.png" alt=""></li>
+</ul>
+<h2 id="Inject-dll-感染模块"><a href="#Inject-dll-感染模块" class="headerlink" title="Inject.dll(感染模块)"></a>Inject.dll(感染模块)</h2><ul>
+<li>此部分由tasksche.exe由t.wncy进过解密拷贝到内存，分析的时候把内存数据dump到内存，操作如下：首先定位到内存空间，od显示的内存段是整个DLL驻留的地方，不需要考虑其大小。将所有的hex选中后，然后右键<code>复制到二进制</code>，粘贴就可以了。</li>
+<li>感染模块首先初始化一些操作，例如创建互斥体，获取函数地址，初始化加密模块。<br>  <img src="https://i.imgur.com/0wbU6WA.png" alt=""></li>
+<li>然后创建5个线程：<ul>
+<li>第一个线程：写入文件数据。<br><img src="https://i.imgur.com/NWwLr2S.png" alt=""></li>
+<li>第二个线程：读取解密文件数据<br><img src="https://i.imgur.com/YApIj5M.png" alt=""></li>
+<li>第三个线程：遍历和加密文件<br><img src="https://i.imgur.com/IfFk9tY.png" alt=""></li>
+<li>第四个进程：间隔特定时间创建taskdl.exe进程，然后终止。<br><img src="https://i.imgur.com/sHGxfLI.png" alt=""></li>
+<li>第五个线程：写入自启动项run，实现自启动。<br><img src="https://i.imgur.com/aHItbjJ.png" alt=""></li>
+</ul>
+</li>
+<li>复制解密程序，提取洋葱浏览器<br>  <img src="https://i.imgur.com/4vYex6i.png" alt=""></li>
+<li>利用kill命令杀死指定进程，防止加密的时候文件占用<br>  <img src="https://i.imgur.com/gz4KlfB.png" alt=""><br>  <img src="https://i.imgur.com/poTRQfK.png" alt=""></li>
+<li>只加密本地硬盘的文件。<br>  <img src="https://i.imgur.com/w22oLdH.png" alt=""><br>  <img src="https://i.imgur.com/KA1qL5j.png" alt=""></li>
+<li><p>排除以下文件路径和释放出来的文档说明<br>  <img src="https://i.imgur.com/YucWftJ.png" alt=""><br>  <img src="https://i.imgur.com/TAWEX8o.png" alt=""><br>  <img src="https://i.imgur.com/6k4GGxZ.png" alt=""></p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="string">\ProgramData</span></div><div class="line"><span class="string">\Intel</span></div><div class="line"><span class="string">\WINDOWS</span></div><div class="line"><span class="string">\Program</span> Files</div><div class="line"><span class="string">\Program</span> Files (x86)</div><div class="line"><span class="string">\AppData\Local\Temp</span></div><div class="line"><span class="string">\Local</span> Settings<span class="string">\Temp</span></div><div class="line">@WanaDecryptor@.bmp</div><div class="line">@WanaDecryptor@.exe.lnk</div><div class="line">@Please_Read_Me@.txt</div></pre></td></tr></table></figure>
+</li>
+<li><p>移动三个说明文件。<br>  <img src="https://i.imgur.com/Mre0ikL.png" alt=""></p>
+</li>
+<li>重新创建文件，用来加密原始文件，加密完毕后将原始文件删除。<br>  <img src="https://i.imgur.com/ngaH87H.png" alt=""><br>  <img src="https://i.imgur.com/64ffOIG.png" alt=""><br>  <img src="https://i.imgur.com/Mzq5N6L.png" alt=""></li>
+</ul>
+<h1 id="五-技术总结"><a href="#五-技术总结" class="headerlink" title="五 技术总结"></a>五 技术总结</h1><h2 id="1-如何转储shellcode"><a href="#1-如何转储shellcode" class="headerlink" title="1 如何转储shellcode"></a>1 如何转储shellcode</h2><ul>
+<li>OD,和其他dump软件可能没有对该段具有读写权限，导致dump失败</li>
+<li>首先定位到内存空间，od显示的内存段是整个DLL驻留的地方，不需要考虑其大小。</li>
+<li>将所有的hex选中。</li>
+<li>然后右键<code>复制二进制</code>，粘贴就可以了。</li>
+</ul>
+<h2 id="2-传播技术"><a href="#2-传播技术" class="headerlink" title="2 传播技术"></a>2 传播技术</h2><ul>
+<li>微软关于MS17-010的介绍：<a href="https://docs.microsoft.com/zh-cn/security-updates/Securitybulletins/2017/ms17-010" target="_blank" rel="external">https://docs.microsoft.com/zh-cn/security-updates/Securitybulletins/2017/ms17-010</a></li>
+<li>github上，病毒使用的利用恶意代码：<a href="https://github.com/rapid7/metasploit-framework" target="_blank" rel="external">https://github.com/rapid7/metasploit-framework</a></li>
+</ul>
+<h2 id="3-加密流程"><a href="#3-加密流程" class="headerlink" title="3 加密流程"></a>3 加密流程</h2><ul>
+<li>最开始，只是分析出来了函数是一个加密函数，并没有分析出加密流程，通过查看各个厂商的安全分析报告，将加密流程补上。<br>  <img src="https://i.imgur.com/42GGqoB.png" alt=""></li>
+<li>首先利用CryptGenRandom产生AES随机秘钥。<strong>因为AES加密是对称的，也就是说如果知道了加密秘钥的话，很容易得到原始数据，通常会利用RSA对AES秘钥进行加密。</strong><br>  <img src="https://i.imgur.com/s2JHN2O.png" alt=""></li>
+<li><p>接着，在将进过RSA加密的秘钥写入文件中，利用AES对源文件进行加密，<br>  <img src="https://i.imgur.com/jrVuHzX.png" alt=""><br>  <img src="https://i.imgur.com/PMJVIE3.png" alt=""> </p>
+</li>
+<li><p>密码学参考自：</p>
+<ul>
+<li>AES加密算法:<a href="https://blog.csdn.net/qq_28205153/article/details/55798628" target="_blank" rel="external">https://blog.csdn.net/qq_28205153/article/details/55798628</a></li>
+<li>RSA加密算法：<a href="https://www.cnblogs.com/gwind/p/8013116.html" target="_blank" rel="external">https://www.cnblogs.com/gwind/p/8013116.html</a></li>
+</ul>
+</li>
+<li><p>分析报告参考自：</p>
+<ul>
+<li>看雪：<a href="https://bbs.pediy.com/thread-228381.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-228381.htm</a></li>
+<li>腾讯电脑管家(安全客)：<a href="http://www.freebuf.com/articles/system/134578.html" target="_blank" rel="external">http://www.freebuf.com/articles/system/134578.html</a></li>
+<li>火绒安全：<a href="https://bbs.pediy.com/thread-217662.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-217662.htm</a></li>
+<li>腾讯电脑管家：<a href="https://slab.qq.com/news/tech/1575.html#_Toc482982597" target="_blank" rel="external">https://slab.qq.com/news/tech/1575.html#_Toc482982597</a></li>
+<li>360安全：<a href="https://www.anquanke.com/post/id/86092" target="_blank" rel="external">https://www.anquanke.com/post/id/86092</a></li>
+</ul>
+</li>
+<li><p>所用到的数据：<a href="https://pan.baidu.com/s/1DwCH42dJbIBLR3WGwXS7nA" target="_blank" rel="external">https://pan.baidu.com/s/1DwCH42dJbIBLR3WGwXS7nA</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/31/病毒分析技术_12_GandCrab勒索病毒/" rel="next" title="病毒分析技术(12) ---GandCrab勒索病毒">
+                <i class="fa fa-chevron-left"></i> 病毒分析技术(12) ---GandCrab勒索病毒
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/12/《格蠹汇编》_第9章_经典阅读器的经典死锁/" rel="prev" title="<格蠹汇编>_第9章_经典阅读器的经典死锁">
+                <格蠹汇编>_第9章_经典阅读器的经典死锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一：目录"><span class="nav-number">2.</span> <span class="nav-text">一：目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二：样本信息"><span class="nav-number">3.</span> <span class="nav-text">二：样本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三：行为分析"><span class="nav-number">4.</span> <span class="nav-text">三：行为分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-样本分析"><span class="nav-number">5.</span> <span class="nav-text">四 样本分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mssecsvc-exe-母本文件"><span class="nav-number">5.1.</span> <span class="nav-text">mssecsvc.exe(母本文件)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tasksche-exe-释放模块"><span class="nav-number">5.2.</span> <span class="nav-text">tasksche.exe(释放模块)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inject-dll-感染模块"><span class="nav-number">5.3.</span> <span class="nav-text">Inject.dll(感染模块)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-技术总结"><span class="nav-number">6.</span> <span class="nav-text">五 技术总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-如何转储shellcode"><span class="nav-number">6.1.</span> <span class="nav-text">1 如何转储shellcode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-传播技术"><span class="nav-number">6.2.</span> <span class="nav-text">2 传播技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-加密流程"><span class="nav-number">6.3.</span> <span class="nav-text">3 加密流程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
