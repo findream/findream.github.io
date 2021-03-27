@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+<meta name="description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一篇文章带你了解反虚拟机技术">
 <meta property="og:url" content="https://findream.github.io/2019/02/26/一篇文章带你了解反虚拟机技术/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+<meta property="og:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-03-27T06:30:48.529Z">
+<meta property="og:updated_time" content="2021-03-27T09:37:22.315Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一篇文章带你了解反虚拟机技术">
-<meta name="twitter:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。 12345678910111213BOOL CheckVMWare()  &amp;#123;      string mac;      get_3pa">
+<meta name="twitter:description" content="VMware痕迹 1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。">
 
 
 
@@ -385,6 +385,7 @@
       
         <h2 id="VMware痕迹"><a href="#VMware痕迹" class="headerlink" title="VMware痕迹"></a>VMware痕迹</h2><ul>
 <li><p>1.检测Mac地址，以00:05:69、00:0c:29和00:50:56开始的MAC地址与VMware相对应；以00:03:ff开始的MAC地址与virtualpc对应；以08:00:27开始的MAC地址与virtualbox对应。</p>
+<a id="more"></a>
 <figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">BOOL CheckVMWare()  </div><div class="line">&#123;  </div><div class="line">    string <span class="keyword">mac</span>;  </div><div class="line">    get_3part_mac(<span class="keyword">mac</span>);    <span class="comment">//res =ioctl(sock,SIOCGIFHWADDR,&amp;ifr)获取Mac地址</span></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">mac</span>==<span class="string">"00-05-69"</span> || <span class="keyword">mac</span>==<span class="string">"00-0c-29"</span> || <span class="keyword">mac</span>==<span class="string">"00-50-56"</span>||<span class="keyword">mac</span>==<span class="string">"00-03-ff"</span>||<span class="keyword">mac</span>=="08-00-27)  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> TRUE;  </div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">else</span>  </div><div class="line">    &#123;  </div><div class="line">        <span class="keyword">return</span> FALSE;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
 <li><p>2.板序列号、主机型号、系统盘所在磁盘名称等其他硬件信息</p>
