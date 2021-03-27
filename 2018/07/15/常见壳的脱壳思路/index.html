@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见的脱壳思路">
+<meta property="og:url" content="https://findream.github.io/2018/07/15/常见壳的脱壳思路/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.imgur.com/F2qs8AH.png">
+<meta property="og:image" content="https://i.imgur.com/TsxAAK0.png">
+<meta property="og:image" content="https://i.imgur.com/TFc7T9k.png">
+<meta property="og:image" content="https://i.imgur.com/fVBLYoo.png">
+<meta property="og:image" content="https://i.imgur.com/MnuhKMh.png">
+<meta property="og:image" content="https://i.imgur.com/kxyT3Yi.png">
+<meta property="og:image" content="https://i.imgur.com/c7q7czO.png">
+<meta property="og:image" content="https://i.imgur.com/XhtxvVD.png">
+<meta property="og:image" content="https://i.imgur.com/D4lMMts.png">
+<meta property="og:image" content="https://i.imgur.com/ZeoVgwB.png">
+<meta property="og:image" content="https://i.imgur.com/eXhv9s1.png">
+<meta property="og:image" content="https://i.imgur.com/Idskw32.png">
+<meta property="og:image" content="https://i.imgur.com/LivmMsk.png">
+<meta property="og:image" content="https://i.imgur.com/W3GxMh1.png">
+<meta property="og:image" content="https://i.imgur.com/4PQhrw5.png">
+<meta property="og:image" content="https://i.imgur.com/usTIm4Q.png">
+<meta property="og:image" content="https://i.imgur.com/a2asdBV.png">
+<meta property="og:image" content="https://i.imgur.com/l1Gplvs.png">
+<meta property="og:image" content="https://i.imgur.com/uuFUal4.png">
+<meta property="og:image" content="https://i.imgur.com/aWj4xB2.png">
+<meta property="og:image" content="https://i.imgur.com/RDlSEvO.png">
+<meta property="og:image" content="https://i.imgur.com/djXvlo2.png">
+<meta property="og:updated_time" content="2018-07-16T16:27:58.941Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见的脱壳思路">
+<meta name="twitter:description" content="前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。">
+<meta name="twitter:image" content="https://i.imgur.com/F2qs8AH.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2018/07/15/常见壳的脱壳思路/"/>
+
+
+
+
+
+  <title>常见的脱壳思路 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/07/15/常见壳的脱壳思路/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">常见的脱壳思路</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T14:02:11+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows-PE/" itemprop="url" rel="index">
+                    <span itemprop="name">windows PE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;去年暑假，学习了如何脱壳，但是没有深入的了解这一块的知识，现在花费差不多三天的时间总结一下。<br><a id="more"></a></p>
+<h1 id="UPX壳"><a href="#UPX壳" class="headerlink" title="UPX壳"></a>UPX壳</h1><h2 id="单步法"><a href="#单步法" class="headerlink" title="单步法"></a>单步法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序流程不断向下，然后遇到POPAX，接着一个段间跳转后，直达EOP。</p>
+<ul>
+<li>不断向下寻找EOP<br>  <img src="https://i.imgur.com/F2qs8AH.png" alt=""></li>
+<li>使用LoadPe转储文件<ul>
+<li>1）右键修正镜像大小</li>
+<li>2）完整转储文件</li>
+</ul>
+</li>
+<li>利用导入表修复工具去修复导入表<ul>
+<li>1）修改EOP</li>
+<li>2）自动搜索</li>
+<li>3）获取输入表</li>
+<li>4）显示无效函数</li>
+<li>5）修复转储文件<br><img src="https://i.imgur.com/TsxAAK0.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="ESP定律法"><a href="#ESP定律法" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序在运行真正代码前会解密已经压缩过的代码，解压程序将一些关键代码数据压栈，解压完成后，解压程序在将这些代码出栈。在压栈出栈处下硬件断点，如果执行，程序必定断在解压完成后的代码前。这就是ESP定律法，主要利用程序运行中，栈指针保持平衡。</p>
+<ul>
+<li>寻找使用ESP寄存器变化的代码，寻找ESP对应的内存地址，然后在地址上下硬件断点(dd,hr)。<br>  <img src="https://i.imgur.com/TFc7T9k.png" alt=""></li>
+<li>f7跑起来，到达段间跳转<br>  <img src="https://i.imgur.com/fVBLYoo.png" alt=""></li>
+<li>单步一下直达EOP</li>
+<li>利用上一步脱壳的方法脱壳。</li>
+</ul>
+<h2 id="二次内存镜像法"><a href="#二次内存镜像法" class="headerlink" title="二次内存镜像法"></a>二次内存镜像法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一次将断点设置在代码段reloc资源节区是为了让加壳程序执行完解压过程，第二次将断点设置在代码段是为了寻找EOP。</p>
+<ul>
+<li>在代码段的资源节区设置在访问上设置中断(内存访问断点)<br>  <img src="https://i.imgur.com/MnuhKMh.png" alt=""></li>
+<li>在代码段的text代码节区设置内存访问断点<br>  <img src="https://i.imgur.com/kxyT3Yi.png" alt=""></li>
+<li>直达EOP<br>  <img src="https://i.imgur.com/c7q7czO.png" alt=""></li>
+<li>脱壳</li>
+</ul>
+<h2 id="一步直达法"><a href="#一步直达法" class="headerlink" title="一步直达法"></a>一步直达法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个方法适用于UPX和部分北斗的壳，这部分壳在压缩的时候，使用了POPAP和PUSHAP这两个指令。</p>
+<h1 id="ASPACK壳"><a href="#ASPACK壳" class="headerlink" title="ASPACK壳"></a>ASPACK壳</h1><h2 id="单步法-1"><a href="#单步法-1" class="headerlink" title="单步法"></a>单步法</h2><h2 id="ESP定律法-1"><a href="#ESP定律法-1" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h2 id="二次内存镜像法-1"><a href="#二次内存镜像法-1" class="headerlink" title="二次内存镜像法"></a>二次内存镜像法</h2><h2 id="一步直达法-1"><a href="#一步直达法-1" class="headerlink" title="一步直达法"></a>一步直达法</h2><h2 id="模拟跟踪法"><a href="#模拟跟踪法" class="headerlink" title="模拟跟踪法"></a>模拟跟踪法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;针对ASPACK壳</p>
+<ul>
+<li>寻找含有SFX节区的节区，记录其地址xxxxx</li>
+<li>命令下输入tc eip&lt; xxxxxx<br>  <img src="https://i.imgur.com/XhtxvVD.png" alt=""></li>
+</ul>
+<h2 id="SFX法"><a href="#SFX法" class="headerlink" title="SFX法"></a>SFX法</h2><ul>
+<li>设置调试器SFX选项，设置成第二项：块方式跟踪到真正入口点(也有可能是第三个选项)<br>  <img src="https://i.imgur.com/D4lMMts.png" alt=""></li>
+</ul>
+<h1 id="NSPACK"><a href="#NSPACK" class="headerlink" title="NSPACK"></a>NSPACK</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSPACK又名北斗，是病毒木马经常使用的压缩壳，本身使用vc写的。跳入oep的特征是：<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">popad</span></div><div class="line"><span class="keyword">popfd</span></div><div class="line"><span class="keyword">jmp</span> xxxxxxxxx</div></pre></td></tr></table></figure></p>
+<h2 id="单步法-2"><a href="#单步法-2" class="headerlink" title="单步法"></a>单步法</h2><h2 id="ESP定律法-2"><a href="#ESP定律法-2" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h2 id="二次内存镜像法-2"><a href="#二次内存镜像法-2" class="headerlink" title="二次内存镜像法"></a>二次内存镜像法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注意，在使用这个方式的时候，由于NSPACK没有压缩资源，也就是没有资源节区，所以直接在text节区下断即可！</p>
+<h2 id="一步直达法-2"><a href="#一步直达法-2" class="headerlink" title="一步直达法"></a>一步直达法</h2><h2 id="模拟跟踪法-1"><a href="#模拟跟踪法-1" class="headerlink" title="模拟跟踪法"></a>模拟跟踪法</h2><h2 id="SFX法-1"><a href="#SFX法-1" class="headerlink" title="SFX法"></a>SFX法</h2><h1 id="FSG壳"><a href="#FSG壳" class="headerlink" title="FSG壳"></a>FSG壳</h1><h2 id="单步法-3"><a href="#单步法-3" class="headerlink" title="单步法"></a>单步法</h2><h2 id="ESP定律法-3"><a href="#ESP定律法-3" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h2 id="适用于FSG的特殊方法"><a href="#适用于FSG的特殊方法" class="headerlink" title="适用于FSG的特殊方法"></a>适用于FSG的特殊方法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;运行完popad后，寻找堆栈窗口第四个参数，那个就是oep。<br>    <img src="https://i.imgur.com/ZeoVgwB.png" alt=""><br>    <img src="https://i.imgur.com/eXhv9s1.png" alt=""></p>
+<h2 id="修复FSG造成的导入表丢失问题"><a href="#修复FSG造成的导入表丢失问题" class="headerlink" title="修复FSG造成的导入表丢失问题"></a>修复FSG造成的导入表丢失问题</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在完成之前的修复后，发现还是无法运行程序，可以考虑修复导入表信息。</p>
+<ul>
+<li>寻找一个导入函数<br>  <img src="https://i.imgur.com/Idskw32.png" alt=""></li>
+<li>前后都是空的，说明这是导入表信息</li>
+<li>在IAT fix中修复，修改RVA和尺寸<br>  <img src="https://i.imgur.com/LivmMsk.png" alt=""></li>
+</ul>
+<h1 id="PECompact2-X"><a href="#PECompact2-X" class="headerlink" title="PECompact2.X"></a>PECompact2.X</h1><h2 id="单步法-4"><a href="#单步法-4" class="headerlink" title="单步法"></a>单步法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个壳用了一个巧妙的方法，把它解压代码放入异常处理例程中了，我们直接跟入处理例程，程序会自动回到用户领空。</p>
+<h2 id="ESP定律法-4"><a href="#ESP定律法-4" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h2 id="BP-VirtualFree法1"><a href="#BP-VirtualFree法1" class="headerlink" title="BP VirtualFree法1"></a>BP VirtualFree法1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>这个方法利用了是解密解压缩过程中，需要对内存进行释放。在此下断的好处是能够在程序解压缩之后断下。</strong></p>
+<ul>
+<li>BP VirtualFree下断点</li>
+<li>shift+f9，忽略异常运行(存在异常)</li>
+<li>取消断点，返回到用户领空</li>
+<li>搜索命令：<strong>push 8000</strong></li>
+<li>F4运行到此处，单步即可</li>
+</ul>
+<h2 id="BP-VirtualFree法2"><a href="#BP-VirtualFree法2" class="headerlink" title="BP VirtualFree法2"></a>BP VirtualFree法2</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一次做代码的恢复，第二次更想是IAT的导入。</p>
+<ul>
+<li>BP VirtualFree下断点</li>
+<li>使用两次shift+F9<ul>
+<li>第一次<br><img src="https://i.imgur.com/W3GxMh1.png" alt=""></li>
+<li>第二次<br><img src="https://i.imgur.com/4PQhrw5.png" alt=""></li>
+</ul>
+</li>
+<li>取消断点</li>
+<li>返回用户空间</li>
+<li>单步<br>  <img src="https://i.imgur.com/usTIm4Q.png" alt=""></li>
+</ul>
+<h2 id="bp-VirtualAlloc法1"><a href="#bp-VirtualAlloc法1" class="headerlink" title="bp VirtualAlloc法1"></a>bp VirtualAlloc法1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在为解压出来的代码分配内存空间，所以可以对VirtualAlloc下断。</p>
+<ul>
+<li>bp VirtualAlloc</li>
+<li>shift+F9</li>
+<li>ALT+F9返回用户代码</li>
+<li>单步</li>
+</ul>
+<h2 id="PECompact使用的特殊方法-1"><a href="#PECompact使用的特殊方法-1" class="headerlink" title="PECompact使用的特殊方法(1)"></a>PECompact使用的特殊方法(1)</h2><ul>
+<li><p>看程序原始入口点</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="number">5.0040</span>A86D &gt;  B8 <span class="number">74</span>DE4500     mov eax,qqspirit<span class="number">.0045</span>DE74</div></pre></td></tr></table></figure>
+</li>
+<li><p>bp 45DE74 下断</p>
+</li>
+<li>单步<br>  <img src="https://i.imgur.com/a2asdBV.png" alt=""></li>
+</ul>
+<h2 id="最后一次异常法"><a href="#最后一次异常法" class="headerlink" title="最后一次异常法"></a>最后一次异常法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;假设程序在第m次运行跑飞，我们查看第m-1次的堆栈情况。</p>
+<ul>
+<li>把所有忽略异常取消</li>
+<li>shift+F9运行程序</li>
+<li>取m-1次的堆栈里面的SE函数</li>
+<li>在SE函数开始处下断。</li>
+<li>单步</li>
+</ul>
+<h1 id="EZIP壳"><a href="#EZIP壳" class="headerlink" title="EZIP壳"></a>EZIP壳</h1><h2 id="单步法-5"><a href="#单步法-5" class="headerlink" title="单步法"></a>单步法</h2><h2 id="ESP定律法-5"><a href="#ESP定律法-5" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h2 id="修复文件"><a href="#修复文件" class="headerlink" title="修复文件"></a>修复文件</h2><ul>
+<li>和上述一样操作</li>
+<li>重新寻找新的RVA和大小<br>  <img src="https://i.imgur.com/l1Gplvs.png" alt=""></li>
+<li>利用LoadPE进行PE合并</li>
+</ul>
+<h1 id="tElock-0-98b1壳"><a href="#tElock-0-98b1壳" class="headerlink" title="tElock 0.98b1壳"></a>tElock 0.98b1壳</h1><h2 id="最后一次异常法-1"><a href="#最后一次异常法-1" class="headerlink" title="最后一次异常法"></a>最后一次异常法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加壳程序通常在程序执行的开始部分采用SEH技术进行异常的处理<strong>为了获取程序控制权，</strong>而最后一次异常是为了将程序控制权交给程序本身，这就是最后一次异常法的基本原理。需要注意一下方面：</p>
+<ul>
+<li>除了关闭调试器的异常选项，还有关闭插件StrongOd的异常选项</li>
+<li>如果在SE句柄函数下断后，一直断不了的话，可以使用SHIFT+F9断下。<br>  <img src="https://i.imgur.com/uuFUal4.png" alt=""></li>
+</ul>
+<h2 id="模拟跟踪法-2"><a href="#模拟跟踪法-2" class="headerlink" title="模拟跟踪法"></a>模拟跟踪法</h2><ul>
+<li>利用最后一次异常法</li>
+<li>使用模拟跟踪法<ul>
+<li>内存中找SFX段，记录段地址xxxxx</li>
+<li>输入tc eip&lt;xxxxx<br><img src="https://i.imgur.com/aWj4xB2.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="两次内存镜像法"><a href="#两次内存镜像法" class="headerlink" title="两次内存镜像法"></a>两次内存镜像法</h2><h1 id="exe32pack壳"><a href="#exe32pack壳" class="headerlink" title="exe32pack壳"></a>exe32pack壳</h1><h2 id="ESP定律法-6"><a href="#ESP定律法-6" class="headerlink" title="ESP定律法"></a>ESP定律法</h2><h1 id="WinUpack壳"><a href="#WinUpack壳" class="headerlink" title="WinUpack壳"></a>WinUpack壳</h1><h2 id="单步法-6"><a href="#单步法-6" class="headerlink" title="单步法"></a>单步法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个壳有个特点：程序在完成代码的解压后，并不直接进入oep，而是执行完IAT的重构后，跳转到判断是否完成IAT重构的判断中，然后执行是否跳转OEP。<br>     <img src="https://i.imgur.com/RDlSEvO.png" alt=""><br>     <img src="https://i.imgur.com/djXvlo2.png" alt=""></p>
+<ul>
+<li>根据跳转的条件判断：eax==0的时候跳转成功。设置条件断点即可！！</li>
+</ul>
+<h1 id="常见语言的入口点"><a href="#常见语言的入口点" class="headerlink" title="常见语言的入口点"></a>常见语言的入口点</h1><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">常见语言的入口点：</div><div class="line"></div><div class="line">VB：</div><div class="line"></div><div class="line">004012D4 &gt;  <span class="number">68</span> <span class="number">54474000</span>     <span class="keyword">push</span> QQ个性网.<span class="number">00404754</span></div><div class="line">004012D9    E8 F0FFFFFF     <span class="keyword">call</span> &lt;<span class="keyword">jmp</span>.&amp;MSVBVM60.#<span class="number">100</span>&gt;</div><div class="line">004012DE    <span class="number">0000</span>            <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="built_in">al</span></div><div class="line">004012E0    <span class="number">0000</span>            <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="built_in">al</span></div><div class="line">004012E2    <span class="number">0000</span>            <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="built_in">al</span></div><div class="line">004012E4    <span class="number">3000</span>            <span class="keyword">xor</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="built_in">al</span></div><div class="line">004012E6    <span class="number">0000</span>            <span class="keyword">add</span> <span class="built_in">byte</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">eax</span>],<span class="built_in">al</span></div><div class="line">004012E8    <span class="number">48</span>              <span class="keyword">dec</span> <span class="built_in">eax</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="symbol">delphi:</span></div><div class="line"></div><div class="line">004A5C54 &gt;  <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">004A5C55    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">004A5C57    83C4 F0         <span class="keyword">add</span> <span class="built_in">esp</span>,-<span class="number">10</span></div><div class="line">004A5C5A    B8 EC594A00     <span class="keyword">mov</span> <span class="built_in">eax</span>,openpro.004A59EC</div><div class="line"></div><div class="line">BC++:</div><div class="line"></div><div class="line"><span class="number">00401678</span> &gt; /EB <span class="number">10</span>           <span class="keyword">jmp</span> short btengine.0040168A</div><div class="line">0040167A   |<span class="number">66</span>:623A         <span class="keyword">bound</span> <span class="built_in">di</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">edx</span>]</div><div class="line"><span class="number">0040167D</span>   |<span class="number">43</span>              <span class="keyword">inc</span> <span class="built_in">ebx</span></div><div class="line">0040167E   |2B2B            <span class="keyword">sub</span> <span class="built_in">ebp</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[<span class="built_in">ebx</span>]</div><div class="line"><span class="number">00401680</span>   |<span class="number">48</span>              <span class="keyword">dec</span> <span class="built_in">eax</span></div><div class="line"><span class="number">00401681</span>   |4F              <span class="keyword">dec</span> <span class="built_in">edi</span></div><div class="line"><span class="number">00401682</span>   |4F              <span class="keyword">dec</span> <span class="built_in">edi</span></div><div class="line"><span class="number">00401683</span>   |4B              <span class="keyword">dec</span> <span class="built_in">ebx</span></div><div class="line"><span class="number">00401684</span>   |<span class="number">90</span>              <span class="keyword">nop</span></div><div class="line"><span class="number">00401685</span>  -|E9 <span class="number">98005400</span>     <span class="keyword">jmp</span> <span class="number">00941722</span></div><div class="line">0040168A   \A1 8B005400     <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[54008B]</div><div class="line">0040168F    C1E0 <span class="number">02</span>         <span class="keyword">shl</span> <span class="built_in">eax</span>,<span class="number">2</span></div><div class="line"><span class="number">00401692</span>    A3 8F005400     <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[54008F],<span class="built_in">eax</span></div><div class="line"><span class="number">00401697</span>    <span class="number">52</span>              <span class="keyword">push</span> <span class="built_in">edx</span></div><div class="line"><span class="number">00401698</span>    6A <span class="number">00</span>           <span class="keyword">push</span> <span class="number">0</span></div><div class="line">0040169A    E8 99D01300     <span class="keyword">call</span> &lt;<span class="keyword">jmp</span>.&amp;KERNEL32.GetModuleHandleA&gt;</div><div class="line">0040169F    8BD0            <span class="keyword">mov</span> <span class="built_in">edx</span>,<span class="built_in">eax</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">VC++:</div><div class="line"></div><div class="line">0040A41E &gt;  <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></div><div class="line">0040A41F    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></div><div class="line">0040A421    6A FF           <span class="keyword">push</span> -<span class="number">1</span></div><div class="line">0040A423    <span class="number">68</span> C8CB4000     <span class="keyword">push</span> 跑跑排行.0040CBC8</div><div class="line">0040A428    <span class="number">68</span> A4A54000     <span class="keyword">push</span> &lt;<span class="keyword">jmp</span>.&amp;MSVCRT._except_handler3&gt;</div><div class="line">0040A42D    <span class="number">64</span>:A1 <span class="number">00000000</span>  <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">0</span>]</div><div class="line">0040A433    <span class="number">50</span>              <span class="keyword">push</span> <span class="built_in">eax</span></div><div class="line">0040A434    <span class="number">64</span>:<span class="number">8925</span> <span class="number">0000000</span>&gt;<span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">fs</span>:[<span class="number">0</span>],<span class="built_in">esp</span></div><div class="line">0040A43B    83EC <span class="number">68</span>         <span class="keyword">sub</span> <span class="built_in">esp</span>,<span class="number">68</span></div><div class="line">0040A43E    <span class="number">53</span>              <span class="keyword">push</span> <span class="built_in">ebx</span></div><div class="line">0040A43F    <span class="number">56</span>              <span class="keyword">push</span> <span class="built_in">esi</span></div><div class="line">0040A440    <span class="number">57</span>              <span class="keyword">push</span> <span class="built_in">edi</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">MASM(汇编):</div><div class="line"></div><div class="line">004035C9 &gt;  6A <span class="number">00</span>           <span class="keyword">push</span> <span class="number">0</span></div><div class="line">004035CB    E8 A20A0000     <span class="keyword">call</span> &lt;<span class="keyword">jmp</span>.&amp;kernel32.GetModuleHandleA&gt;</div><div class="line">004035D0    A3 5B704000     <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[40705B],<span class="built_in">eax</span></div><div class="line">004035D5    <span class="number">68</span> <span class="number">80000000</span>     <span class="keyword">push</span> <span class="number">80</span></div><div class="line">004035DA    <span class="number">68</span> 2C754000     <span class="keyword">push</span> <span class="number">11.</span>0040752C</div><div class="line">004035DF    FF35 5B704000   <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[40705B]</div><div class="line">004035E5    E8 820A0000     <span class="keyword">call</span> &lt;<span class="keyword">jmp</span>.&amp;kernel32.GetModuleFileNameA&gt;</div><div class="line">004035EA    E8 <span class="number">87070000</span>     <span class="keyword">call</span> <span class="number">11.</span>00403D76</div><div class="line">004035EF    6A <span class="number">00</span>           <span class="keyword">push</span> <span class="number">0</span></div><div class="line">004035F1    <span class="number">68</span> 0B364000     <span class="keyword">push</span> <span class="number">11.</span>0040360B</div><div class="line">004035F6    6A <span class="number">00</span>           <span class="keyword">push</span> <span class="number">0</span></div><div class="line">004035F8    6A <span class="number">64</span>           <span class="keyword">push</span> <span class="number">64</span></div><div class="line">004035FA    FF35 5B704000   <span class="keyword">push</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[40705B]</div></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/29/重新配置hexo博客/" rel="next" title="重新配置hexo博客">
+                <i class="fa fa-chevron-left"></i> 重新配置hexo博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2099/12/31/博客总览/" rel="prev" title="博客总览">
+                博客总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UPX壳"><span class="nav-number">2.</span> <span class="nav-text">UPX壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法"><span class="nav-number">2.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法"><span class="nav-number">2.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二次内存镜像法"><span class="nav-number">2.3.</span> <span class="nav-text">二次内存镜像法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一步直达法"><span class="nav-number">2.4.</span> <span class="nav-text">一步直达法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ASPACK壳"><span class="nav-number">3.</span> <span class="nav-text">ASPACK壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-1"><span class="nav-number">3.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-1"><span class="nav-number">3.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二次内存镜像法-1"><span class="nav-number">3.3.</span> <span class="nav-text">二次内存镜像法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一步直达法-1"><span class="nav-number">3.4.</span> <span class="nav-text">一步直达法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟跟踪法"><span class="nav-number">3.5.</span> <span class="nav-text">模拟跟踪法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SFX法"><span class="nav-number">3.6.</span> <span class="nav-text">SFX法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NSPACK"><span class="nav-number">4.</span> <span class="nav-text">NSPACK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-2"><span class="nav-number">4.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-2"><span class="nav-number">4.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二次内存镜像法-2"><span class="nav-number">4.3.</span> <span class="nav-text">二次内存镜像法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一步直达法-2"><span class="nav-number">4.4.</span> <span class="nav-text">一步直达法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟跟踪法-1"><span class="nav-number">4.5.</span> <span class="nav-text">模拟跟踪法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SFX法-1"><span class="nav-number">4.6.</span> <span class="nav-text">SFX法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FSG壳"><span class="nav-number">5.</span> <span class="nav-text">FSG壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-3"><span class="nav-number">5.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-3"><span class="nav-number">5.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#适用于FSG的特殊方法"><span class="nav-number">5.3.</span> <span class="nav-text">适用于FSG的特殊方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修复FSG造成的导入表丢失问题"><span class="nav-number">5.4.</span> <span class="nav-text">修复FSG造成的导入表丢失问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PECompact2-X"><span class="nav-number">6.</span> <span class="nav-text">PECompact2.X</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-4"><span class="nav-number">6.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-4"><span class="nav-number">6.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BP-VirtualFree法1"><span class="nav-number">6.3.</span> <span class="nav-text">BP VirtualFree法1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BP-VirtualFree法2"><span class="nav-number">6.4.</span> <span class="nav-text">BP VirtualFree法2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bp-VirtualAlloc法1"><span class="nav-number">6.5.</span> <span class="nav-text">bp VirtualAlloc法1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PECompact使用的特殊方法-1"><span class="nav-number">6.6.</span> <span class="nav-text">PECompact使用的特殊方法(1)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后一次异常法"><span class="nav-number">6.7.</span> <span class="nav-text">最后一次异常法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EZIP壳"><span class="nav-number">7.</span> <span class="nav-text">EZIP壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-5"><span class="nav-number">7.1.</span> <span class="nav-text">单步法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-5"><span class="nav-number">7.2.</span> <span class="nav-text">ESP定律法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修复文件"><span class="nav-number">7.3.</span> <span class="nav-text">修复文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tElock-0-98b1壳"><span class="nav-number">8.</span> <span class="nav-text">tElock 0.98b1壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#最后一次异常法-1"><span class="nav-number">8.1.</span> <span class="nav-text">最后一次异常法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟跟踪法-2"><span class="nav-number">8.2.</span> <span class="nav-text">模拟跟踪法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两次内存镜像法"><span class="nav-number">8.3.</span> <span class="nav-text">两次内存镜像法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#exe32pack壳"><span class="nav-number">9.</span> <span class="nav-text">exe32pack壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP定律法-6"><span class="nav-number">9.1.</span> <span class="nav-text">ESP定律法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WinUpack壳"><span class="nav-number">10.</span> <span class="nav-text">WinUpack壳</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单步法-6"><span class="nav-number">10.1.</span> <span class="nav-text">单步法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见语言的入口点"><span class="nav-number">11.</span> <span class="nav-text">常见语言的入口点</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
