@@ -106,7 +106,7 @@
 <meta property="og:image" content="http://hacky.wang/blog/20201222/3nG13kNEKFxJ.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20201222/Alny7wACvqPD.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20201222/BlNfWXuzUR6d.png?imageslim">
-<meta property="og:updated_time" content="2021-03-27T09:49:06.253Z">
+<meta property="og:updated_time" content="2021-11-02T13:51:09.909Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SideWinder某次定向攻击事件的一点思考">
 <meta name="twitter:description" content="背景与前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;根据360和微步在线公众号披露的情报称，从今年(2020年)11月份起，SideWinder开始策划针对中国的定向攻击。正如360威胁情报中心公众号所说，本次攻击是SideWinder利用邮件等方式传播带有远程模板的恶意文档发动的一次攻击，具体过程如下，首先利用远程模板注入从远程C">
@@ -402,7 +402,7 @@
       
 
       
-        <h1 id="背景与前言"><a href="#背景与前言" class="headerlink" title="背景与前言"></a>背景与前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据360和微步在线公众号披露的情报称，从今年(2020年)11月份起，SideWinder开始策划针对中国的定向攻击。正如360威胁情报中心公众号所说，本次攻击是SideWinder利用邮件等方式传播带有远程模板的恶意文档发动的一次攻击，具体过程如下，首先利用远程模板注入从远程C2服务器上加载含有CVE-2017-11882漏洞的文档，之后执行恶意payload，加载释放在%temp%中的恶意js文件，该js脚本采用内存反射加载的方式执行C#文件，进而部署恶意后门程序。</p>
+        <h1 id="背景与前言"><a href="#背景与前言" class="headerlink" title="背景与前言"></a>背景与前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据360和微步在线公众号披露的情报称，从今年(2020年)11月份起，SideWinder开始策划针对中国的定向攻击。正如360威胁情报中心公众号所说，本次攻击是SideWinder利用邮件等方式传播带有远程模板的恶意文档发动的一次攻击，具体过程如下，首先利用远程模板注入从远程C2服务器上加载含有CVE-2017-11882漏洞的文档，之后执行恶意payload，加载释放在%temp%中的恶意js文件，该js脚本采用内存反射加载的方式执行C#文件，进而部署恶意后门程序。<br><a id="more"></a></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;觉得这次攻击使用的技术较为新奇，顾在闲暇之时复现了一下本次SideWinder定向攻击，在复现过程了，心中产生了如下3个疑惑：</p>
 <ul>
 <li>1.为何是CVE-2017-11882<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果借用沙箱等动态的方式，通过检测指定的溢出点的数据，自然可以判断出是触发了CVE-2017-11882漏洞。但是如果采用静态分析的方式呢。</li>
