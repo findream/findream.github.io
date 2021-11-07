@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="findream&#39;s blog">
 <meta property="og:description" content="第一步：下载Git和Node 第二歩：在桌面右键启动git 然后安装hexo:1npm install -g hexo-cli">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-03-27T08:15:52.265Z">
+<meta property="og:updated_time" content="2021-11-02T13:53:25.391Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重新配置hexo博客">
 <meta name="twitter:description" content="第一步：下载Git和Node 第二歩：在桌面右键启动git 然后安装hexo:1npm install -g hexo-cli">
@@ -374,6 +374,7 @@
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git<span class="built_in"> config </span>--global user.email <span class="string">"1434905079@qq.com"</span></div></pre></td></tr></table></figure>
 <p><strong>tips:由于github pages启用了https，但是七牛云链接还是之前的http链接，导致所有存储在七牛云图床的图片全部无法显示。解决方案如下：在hexo\themes\landscape\layout_partial\head.ejs文件内容前面添加下面的代码</strong><br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;meta <span class="attribute">name</span>=<span class="string">"referrer"</span> <span class="attribute">content</span>=<span class="string">"no-referrer"</span> /&gt;</div><div class="line">&lt;meta <span class="attribute">http-equiv</span>=<span class="string">"Content-Security-Policy"</span> <span class="attribute">ontent</span>=<span class="string">"upgrade-insecure-requests"</span>&gt;</div></pre></td></tr></table></figure></p>
 <p><a href="http://frank.xin/2020/09/16/httpwithhttps/" target="_blank" rel="external">http://frank.xin/2020/09/16/httpwithhttps/</a></p>
+<p>** 发布博客：hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</p>
 
       
     </div>
