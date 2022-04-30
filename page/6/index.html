@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2017/10/25/Golang Reverse/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/01/29/重新配置hexo博客/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="findream">
@@ -313,7 +313,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/25/Golang Reverse/" itemprop="url">Golang Reverse</a></h1>
+                <a class="post-title-link" href="/2018/01/29/重新配置hexo博客/" itemprop="url">重新配置hexo博客</a></h1>
         
 
         <div class="post-meta">
@@ -325,8 +325,133 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T20:45:11+08:00">
-                2017-10-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-29T20:45:11+08:00">
+                2018-01-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong>第一步：下载Git和Node</strong></p>
+<p><strong>第二歩：在桌面右键启动git 然后安装hexo:<br></strong><br><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g hexo-<span class="keyword">cli</span></div></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/29/重新配置hexo博客/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/01/24/一篇文章带你了解SEH技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/24/一篇文章带你了解SEH技术/" itemprop="url">一篇文章带你了解SEH技术</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T21:20:11+08:00">
+                2018-01-24
               </time>
             
 
@@ -348,8 +473,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang-Reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">Golang Reverse</span>
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
                   </a>
                 </span>
 
@@ -386,16 +511,157 @@
 
       
         
-          <h2 id="0x00-idapython-调试"><a href="#0x00-idapython-调试" class="headerlink" title="0x00 idapython 调试"></a>0x00 idapython 调试</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置好IDA 7.5 免安装版之后，可以正常使用idapython，但是在import idc会报错。修改<code>%IDA_7.5%\python\3\ida_idaapi.py</code>文件，在第80行，添加如下：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sys<span class="selector-class">.modules</span>[<span class="string">"__main__"</span>]<span class="selector-class">.IDAPYTHON_COMPAT_695_API</span> = True</div></pre></td></tr></table></figure></p>
-<p>  <img src="http://hacky.wang/blog/20210711/opAdW5ctvdze.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在vscode添加插件idacode<br>    <img src="http://hacky.wang/blog/20210711/oAt11UWv7kxW.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在IDA pro 安装插件，在<a href="https://github.com/ioncodes/idacode/releases" target="_blank" rel="external">https://github.com/ioncodes/idacode/releases</a>处下载。解压到%IDAPATH%/plugins中。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编辑 <code>idacode_utils/settings.py</code>，把 Python 的可执行文件路径改为自己电脑上 Python 的路径<br>    <img src="http://hacky.wang/blog/20210711/yo6yEXmAtGx2.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重新打开，在输出窗口就能看到是否成功，可能会提示缺少模块，可以通过Pip安装模块debugpy<br>    <img src="http://hacky.wang/blog/20210711/e6bruJAYtJnm.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 安装成功就是这样的。<br>    <img src="http://hacky.wang/blog/20210711/vIx9aM2Dq8tL.png?imageslim" alt="mark"></p>
+          <h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>SEH(“Structured Exception Handling”),即结构化异常处理·是(windows)操作系统提供给程序设计者的强有力的处理程序错误或异常的武器。它不依托于设计语言，只依托于操作系统，这些并不是编译程序本身所固有的,本质上只不过是对windows内在提供的结构化异常处理的包装。</strong><br><strong>参看资料：</strong><br><strong>1.逆向工程核心原理</strong><br><strong>2.<a href="https://www.52pojie.cn/thread-16609-1-1.html" target="_blank" rel="external">https://www.52pojie.cn/thread-16609-1-1.html</a></strong><br><strong>3.<a href="https://bbs.pediy.com/thread-27224.html" target="_blank" rel="external">https://bbs.pediy.com/thread-27224.html</a></strong><br><strong>4.<a href="https://bbs.pediy.com/thread-12449.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-12449.htm</a></strong><br><strong>5.<a href="https://bbs.pediy.com/thread-189193.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-189193.htm</a></strong><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/10/25/Golang Reverse/#more" rel="contents">
+            <a class="btn" href="/2018/01/24/一篇文章带你了解SEH技术/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/" itemprop="url">一篇文章带你了解线程局部存储(TLS)技术</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-02T13:45:11+08:00">
+                2017-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="线程局部存储技术："><a href="#线程局部存储技术：" class="headerlink" title="线程局部存储技术："></a>线程局部存储技术：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于<font color="#DC143C">反调试技术</font>。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的</strong></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -483,7 +749,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -494,7 +760,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -542,7 +808,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

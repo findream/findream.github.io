@@ -294,6 +294,507 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/" itemprop="url">绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-20T14:02:11+08:00">
+                2022-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><a href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）" class="headerlink" title="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）"></a>0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</h2><ul>
+<li>原文链接：<a href="https://mp.weixin.qq.com/s/LN8k0J4lOn-ZV5LmDfSTBQ" target="_blank" rel="external">每周蓝军技术推送（2022.4.9-4.15）</a></li>
+</ul>
+<h2 id="0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><a href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法" class="headerlink" title="0x01 修改内存中的 PE 头来注入 DLL 的一种方法"></a>0x01 修改内存中的 PE 头来注入 DLL 的一种方法</h2><ul>
+<li><p><a href="https://www.x86matthew.com/view_post?id=import_dll_injection" target="_blank" rel="external">这篇文章</a>主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，<br>这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的dll实现dll注入。</p>
+</li>
+<li><p>这个办法缺点：</p>
+<ul>
+<li>1.是只能注入刚刚启动的进程，</li>
+<li>2.还有敏感函数ResumeThead操作。好处就是不需要CreateRemoteThread函数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="0x02-针对Office的DLL劫持研究"><a href="#0x02-针对Office的DLL劫持研究" class="headerlink" title="0x02 针对Office的DLL劫持研究"></a>0x02 针对Office的DLL劫持研究</h2><ul>
+<li><p><a href="https://medium.com/@tamirye94/office-multiple-search-order-dll-hijacking-67e76001ecf1" target="_blank" rel="external">这篇文章</a>就讲了一个搜索顺序类型的dll劫持，而且现在微软并不认为这算是一个漏洞，所以短时间内应该是不会进行修复的。关于这种类型的dll劫持的检测思路可以是这样的：</p>
+</li>
+<li><p>因为Windows安全dll搜索顺序是这样，针对系统程序来说，其使用的dll多位于系统目录，要想目标dll能被劫持，目标dll的释放路径只可能在应用程序目录。</p>
+<pre><code>1、加载应用程序的目录；
+2、系统目录，使用GetSystemDirectory函数获取该目录的路径；
+3、16位系统目录，没有获取该目录路径的函数，但会对该目录进行搜索；
+4、Windows目录，使用GetWindowsDirectory函数获取该目录的路径；
+5、当前目录；
+6、PATH环境变量中列出的目录。
+</code></pre></li>
+<li>所以，我只需要寻找进程所加载dll的路径和进程路径一致的dll程序，并且在其他目录存在相同文件名称的dll，例如%system32%目录和%windows%。即可认为存在此类dll劫持。</li>
+</ul>
+<h2 id="0x03-AMSI-Bypass-的多种方法整理"><a href="#0x03-AMSI-Bypass-的多种方法整理" class="headerlink" title="0x03 AMSI Bypass 的多种方法整理"></a>0x03 AMSI Bypass 的多种方法整理</h2><ul>
+<li><p>结合<a href="https://www.hackingarticles.in/a-detailed-guide-on-amsi-bypass/" target="_blank" rel="external">这篇文章</a>，目前主要的ByPass AMSI的方法有两种，第1种是Patch amsi.dll文件。第2种是使amsi失效的方法。</p>
+</li>
+<li><p>1.通过patch AmsiScanBuffer函数，主要分为c#语言和ps语言。</p>
+</li>
+</ul>
+<p>ref:<a href="https://gist.github.com/FatRodzianko/c8a76537b5a87b850c7d158728717998#file-my-am-bypass-ps1" target="_blank" rel="external">https://gist.github.com/FatRodzianko/c8a76537b5a87b850c7d158728717998#file-my-am-bypass-ps1</a></p>
+<p>ref:<a href="https://github.com/rasta-mouse/AmsiScanBufferBypass/blob/main/AmsiBypass.cs" target="_blank" rel="external">https://github.com/rasta-mouse/AmsiScanBufferBypass/blob/main/AmsiBypass.cs</a></p>
+<ul>
+<li>2.通过反射Patch AmsiScanBuffer函数地址，为了避免被探测，其首先获取了DllGetClassObject的地址，然后通过暴力搜索特征码的方式获取AmsiScanBuffer进行patch</li>
+</ul>
+<p>ref:<a href="https://gist.github.com/shantanu561993/6483e524dc225a188de04465c8512909" target="_blank" rel="external">https://gist.github.com/shantanu561993/6483e524dc225a188de04465c8512909</a></p>
+<ul>
+<li>3.使amsi失效，通过设置System.Management.Automation.AmsiUtils的属性amsiInitFailed或者amsiContext使AMSI失效。</li>
+</ul>
+<p>[Ref].Assembly.GetType(‘System.Management.Automation.AmsiUtils’).GetField(‘amsiInitFailed’,’NonPublic,Static’).SetValue($null,$true)</p>
+<p>Ref:<a href="https://github.com/samratashok/nishang/blob/master/Bypass/Invoke-AmsiBypass.ps1" target="_blank" rel="external">https://github.com/samratashok/nishang/blob/master/Bypass/Invoke-AmsiBypass.ps1</a></p>
+<ul>
+<li>使amsi失效，该方法会导致异常，而且windows已经针对部分字符串进行检测。但是可以混淆绕过。</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$mem</span> = [System.Runtime.InteropServices.Marshal]<span class="symbol">:</span><span class="symbol">:AllocHGlobal</span>(<span class="number">9076</span>)</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiSession"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, <span class="variable">$null</span>);</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiContext"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, [IntPtr]<span class="variable">$mem</span>)</div></pre></td></tr></table></figure>
+<p>##0x04 Windows特权句柄利用分析</p>
+<ul>
+<li><p><a href="https://mp.weixin.qq.com/s/VJEgxfcuDRKMGBdkrXyRlA" target="_blank" rel="external">这篇文章</a>所描述的是，通过Hunt系统中的高完整性级别的句柄，来进行ByPass UAC。其原理和之前推得一篇文章很相似。<br>那篇原理是通过拉起某些自动提升UAC权限的进程，然后通过dump进程句柄实现的。这篇是寻找高完整性句柄，并以此启动进程进行ByPassUAC。</p>
+</li>
+<li><p>再讲一下为什么只需要获取高完整性级别的Handle就可以进行ByPass UAC。ByPassUAC原理就是父子进程的完整性级别是继承的，在创建进程之前的CreateProcess函数，会设置一个名为STARTUPINFOEXW结构体。其保存了一些启动信息。当我们创建进程之前，提前设置STARTUPINFOEXW的lpAttributeList元素，就可以是新创建的进程具有使用泄露句柄的进程完整性级别。关于UpdateProcThreadAttribute用法，可以看这篇文章<a href="https://blog.csdn.net/linlin003/article/details/108864860" target="_blank" rel="external">https://blog.csdn.net/linlin003/article/details/108864860</a></p>
+</li>
+</ul>
+<h2 id="0x05-探索Windows-内核中的系统调用"><a href="#0x05-探索Windows-内核中的系统调用" class="headerlink" title="0x05 探索Windows 内核中的系统调用"></a>0x05 探索Windows 内核中的系统调用</h2><ul>
+<li><p>这篇文章主要讲的是通过syscall绕过EDR产品的原理，因为EDR或者杀毒软件通常会在一些敏感函数下Hook，部分杀软Hook的地方比较偏向应用层，因为内核层搞事情容易蓝屏，而syscall位于ntdll中的Nt*函数，通过直接调用Nt函数，这样就可以绕过部分杀毒软件。</p>
+</li>
+<li><p>目前来说，我比较看好的项目<a href="https://github.com/jthuraisamy/SysWhispers2" target="_blank" rel="external">SysWhisoers2 </a>，国内有大佬也总结了syscall几个很好的项目。<a href="https://tttang.com/archive/1464/#toc_syswhisoers2" target="_blank" rel="external">syscall的前世今生</a></p>
+</li>
+<li><p>但是，Syscall Bypass这种技术，目前对于普通使用者来说难度较大，因为Nt*更接近于底层，没有暴露的API接口使用，部分结构体甚至没有公布，只能通过Re的方法进行了解。所以，需要自己写一套Stub去调用Nt函数。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/11/02/Golang Reverse/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/11/02/Golang Reverse/" itemprop="url">Golang Reverse</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-02T20:45:11+08:00">
+                2021-11-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Golang-Reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">Golang Reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="0x00-idapython-调试"><a href="#0x00-idapython-调试" class="headerlink" title="0x00 idapython 调试"></a>0x00 idapython 调试</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配置好IDA 7.5 免安装版之后，可以正常使用idapython，但是在import idc会报错。修改<code>%IDA_7.5%\python\3\ida_idaapi.py</code>文件，在第80行，添加如下：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sys<span class="selector-class">.modules</span>[<span class="string">"__main__"</span>]<span class="selector-class">.IDAPYTHON_COMPAT_695_API</span> = True</div></pre></td></tr></table></figure></p>
+<p>  <img src="http://hacky.wang/blog/20210711/opAdW5ctvdze.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在vscode添加插件idacode<br>    <img src="http://hacky.wang/blog/20210711/oAt11UWv7kxW.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在IDA pro 安装插件，在<a href="https://github.com/ioncodes/idacode/releases" target="_blank" rel="external">https://github.com/ioncodes/idacode/releases</a>处下载。解压到%IDAPATH%/plugins中。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编辑 <code>idacode_utils/settings.py</code>，把 Python 的可执行文件路径改为自己电脑上 Python 的路径<br>    <img src="http://hacky.wang/blog/20210711/yo6yEXmAtGx2.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重新打开，在输出窗口就能看到是否成功，可能会提示缺少模块，可以通过Pip安装模块debugpy<br>    <img src="http://hacky.wang/blog/20210711/e6bruJAYtJnm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 安装成功就是这样的。<br>    <img src="http://hacky.wang/blog/20210711/vIx9aM2Dq8tL.png?imageslim" alt="mark"></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/11/02/Golang Reverse/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/07/12/C#反射总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/12/C#反射总结/" itemprop="url">C# 反射注入总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-12T20:45:11+08:00">
+                2021-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/病毒分析/" itemprop="url" rel="index">
+                    <span itemprop="name">病毒分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="0x00-C-反射注入总结"><a href="#0x00-C-反射注入总结" class="headerlink" title="0x00 C# 反射注入总结"></a>0x00 C# 反射注入总结</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;反射的流程一共有3种类型：CreateInstance类型，CallByName类型，Invoke类型。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/07/12/C#反射总结/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/04/05/Metasploit免杀和检测的一些新思考/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1313,451 +1814,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/04/28/一篇文章带你了解Dll注入/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/28/一篇文章带你了解Dll注入/" itemprop="url">一篇文章带你了解Dll注入</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-28T15:02:11+08:00">
-                2019-04-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是&lt;一篇文章带你…&gt;系列的第四篇，主要会阐明DLL注入的基本原理和几种主流方式，虽然这些方法已经有点滞后了。但是DLL注入的基本原理是不会改变的。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DLL注入的主要原理就是强制进程自己将需要注入的dll文件注入到自身进程空间内，最好配合Hook技术。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dll注入可以从三个方向入手：第一：在进程创建初期按照导入表加载dll的时候。第二：进程运行时期利用LoadLibrary函数加载，第三：利用某些系统机制：例如windows消息机制等。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/04/28/一篇文章带你了解Dll注入/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/04/18/一篇文章带你理解HOOK技术/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/18/一篇文章带你理解HOOK技术/" itemprop="url">一篇文章带你理解HOOK技术</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T15:02:11+08:00">
-                2019-04-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows安全/" itemprop="url" rel="index">
-                    <span itemprop="name">windows安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.这是《一篇文章带你….》系列的第三篇，也是自己的学习总结，很多不懂的地方找的论坛前辈的资料。代码都是自己手敲，边敲边注释，对一些细节做了微调。前两篇是<a href="https://bbs.pediy.com/thread-251148.htm" target="_blank" rel="external">一篇文章带你学会Armadillo脱壳</a>和<a href="https://bbs.pediy.com/thread-250924.htm" target="_blank" rel="external">一篇文章带你理解PE三表 </a><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/04/18/一篇文章带你理解HOOK技术/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/04/18/一篇文章带你理解PE三表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/18/一篇文章带你理解PE三表/" itemprop="url">一篇文章带你理解PE三表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-18T15:02:11+08:00">
-                2019-04-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows安全/" itemprop="url" rel="index">
-                    <span itemprop="name">windows安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刚刚结束春招，投了好几家公司，结果不是很理想，原因无外乎自身实力和行业寒冬。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这次春招面试题主要集中在PE相关，HOOK技术和DLL注入技术，还有一些杂七杂八的问题上面。从中也暴露处自己技能栈上的不足，通过这一段时间的沉淀希望可以补足。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;四月初就开始谋划写一系列的文章，但是加上在校实习比较忙碌，所以进展很慢，这些文章主要面向受众是那些入坑新人，借此希望能够让那些小伙伴能够少走弯路。同时也能多多总结自身的不足，共同进步。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列文章取啥名？想了很久，决定参考某一师傅的系列文章—&lt;一篇文章带你·····&gt;,主要希望总结PE文件，HOOK,DLL注入，以及其他方面的知识，主要的参考文献是看雪<strong>加密解密第四版</strong>，以及其他资料。(打了广告，希望相关师傅记得打点广告费)</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这系列是我边总结技术边写文章，可能部分内容会以后补全技能栈，例如R0下的DLL注入等。<strong>但是尽量做到不鸽</strong>，关于代码，不提供自己写的代码，原因有二，第一，这些代码网上都有现成的，我只是理解修改部分罢了，也怕自己的代码误导小伙伴们。<strong>第二，拒绝伸手党</strong>。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于自身能力有限，文章中难免出现错误，希望各位师傅少喷我。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/04/18/一篇文章带你理解PE三表/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1808,7 +1864,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-count">53</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1819,7 +1875,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -1867,7 +1923,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

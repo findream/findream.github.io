@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
+<meta property="og:url" content="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-04-30T09:40:44.582Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
+<meta name="twitter:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/"/>
+
+
+
+
+
+  <title>绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-20T14:02:11+08:00">
+                2022-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><a href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）" class="headerlink" title="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）"></a>0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</h2><ul>
+<li>原文链接：<a href="https://mp.weixin.qq.com/s/LN8k0J4lOn-ZV5LmDfSTBQ" target="_blank" rel="external">每周蓝军技术推送（2022.4.9-4.15）</a></li>
+</ul>
+<h2 id="0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><a href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法" class="headerlink" title="0x01 修改内存中的 PE 头来注入 DLL 的一种方法"></a>0x01 修改内存中的 PE 头来注入 DLL 的一种方法</h2><ul>
+<li><p><a href="https://www.x86matthew.com/view_post?id=import_dll_injection" target="_blank" rel="external">这篇文章</a>主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，<br>这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的dll实现dll注入。</p>
+</li>
+<li><p>这个办法缺点：</p>
+<ul>
+<li>1.是只能注入刚刚启动的进程，</li>
+<li>2.还有敏感函数ResumeThead操作。好处就是不需要CreateRemoteThread函数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="0x02-针对Office的DLL劫持研究"><a href="#0x02-针对Office的DLL劫持研究" class="headerlink" title="0x02 针对Office的DLL劫持研究"></a>0x02 针对Office的DLL劫持研究</h2><ul>
+<li><p><a href="https://medium.com/@tamirye94/office-multiple-search-order-dll-hijacking-67e76001ecf1" target="_blank" rel="external">这篇文章</a>就讲了一个搜索顺序类型的dll劫持，而且现在微软并不认为这算是一个漏洞，所以短时间内应该是不会进行修复的。关于这种类型的dll劫持的检测思路可以是这样的：</p>
+</li>
+<li><p>因为Windows安全dll搜索顺序是这样，针对系统程序来说，其使用的dll多位于系统目录，要想目标dll能被劫持，目标dll的释放路径只可能在应用程序目录。</p>
+<pre><code>1、加载应用程序的目录；
+2、系统目录，使用GetSystemDirectory函数获取该目录的路径；
+3、16位系统目录，没有获取该目录路径的函数，但会对该目录进行搜索；
+4、Windows目录，使用GetWindowsDirectory函数获取该目录的路径；
+5、当前目录；
+6、PATH环境变量中列出的目录。
+</code></pre></li>
+<li>所以，我只需要寻找进程所加载dll的路径和进程路径一致的dll程序，并且在其他目录存在相同文件名称的dll，例如%system32%目录和%windows%。即可认为存在此类dll劫持。</li>
+</ul>
+<h2 id="0x03-AMSI-Bypass-的多种方法整理"><a href="#0x03-AMSI-Bypass-的多种方法整理" class="headerlink" title="0x03 AMSI Bypass 的多种方法整理"></a>0x03 AMSI Bypass 的多种方法整理</h2><ul>
+<li><p>结合<a href="https://www.hackingarticles.in/a-detailed-guide-on-amsi-bypass/" target="_blank" rel="external">这篇文章</a>，目前主要的ByPass AMSI的方法有两种，第1种是Patch amsi.dll文件。第2种是使amsi失效的方法。</p>
+</li>
+<li><p>1.通过patch AmsiScanBuffer函数，主要分为c#语言和ps语言。</p>
+</li>
+</ul>
+<p>ref:<a href="https://gist.github.com/FatRodzianko/c8a76537b5a87b850c7d158728717998#file-my-am-bypass-ps1" target="_blank" rel="external">https://gist.github.com/FatRodzianko/c8a76537b5a87b850c7d158728717998#file-my-am-bypass-ps1</a></p>
+<p>ref:<a href="https://github.com/rasta-mouse/AmsiScanBufferBypass/blob/main/AmsiBypass.cs" target="_blank" rel="external">https://github.com/rasta-mouse/AmsiScanBufferBypass/blob/main/AmsiBypass.cs</a></p>
+<ul>
+<li>2.通过反射Patch AmsiScanBuffer函数地址，为了避免被探测，其首先获取了DllGetClassObject的地址，然后通过暴力搜索特征码的方式获取AmsiScanBuffer进行patch</li>
+</ul>
+<p>ref:<a href="https://gist.github.com/shantanu561993/6483e524dc225a188de04465c8512909" target="_blank" rel="external">https://gist.github.com/shantanu561993/6483e524dc225a188de04465c8512909</a></p>
+<ul>
+<li>3.使amsi失效，通过设置System.Management.Automation.AmsiUtils的属性amsiInitFailed或者amsiContext使AMSI失效。</li>
+</ul>
+<p>[Ref].Assembly.GetType(‘System.Management.Automation.AmsiUtils’).GetField(‘amsiInitFailed’,’NonPublic,Static’).SetValue($null,$true)</p>
+<p>Ref:<a href="https://github.com/samratashok/nishang/blob/master/Bypass/Invoke-AmsiBypass.ps1" target="_blank" rel="external">https://github.com/samratashok/nishang/blob/master/Bypass/Invoke-AmsiBypass.ps1</a></p>
+<ul>
+<li>使amsi失效，该方法会导致异常，而且windows已经针对部分字符串进行检测。但是可以混淆绕过。</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$mem</span> = [System.Runtime.InteropServices.Marshal]<span class="symbol">:</span><span class="symbol">:AllocHGlobal</span>(<span class="number">9076</span>)</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiSession"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, <span class="variable">$null</span>);</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiContext"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, [IntPtr]<span class="variable">$mem</span>)</div></pre></td></tr></table></figure>
+<p>##0x04 Windows特权句柄利用分析</p>
+<ul>
+<li><p><a href="https://mp.weixin.qq.com/s/VJEgxfcuDRKMGBdkrXyRlA" target="_blank" rel="external">这篇文章</a>所描述的是，通过Hunt系统中的高完整性级别的句柄，来进行ByPass UAC。其原理和之前推得一篇文章很相似。<br>那篇原理是通过拉起某些自动提升UAC权限的进程，然后通过dump进程句柄实现的。这篇是寻找高完整性句柄，并以此启动进程进行ByPassUAC。</p>
+</li>
+<li><p>再讲一下为什么只需要获取高完整性级别的Handle就可以进行ByPass UAC。ByPassUAC原理就是父子进程的完整性级别是继承的，在创建进程之前的CreateProcess函数，会设置一个名为STARTUPINFOEXW结构体。其保存了一些启动信息。当我们创建进程之前，提前设置STARTUPINFOEXW的lpAttributeList元素，就可以是新创建的进程具有使用泄露句柄的进程完整性级别。关于UpdateProcThreadAttribute用法，可以看这篇文章<a href="https://blog.csdn.net/linlin003/article/details/108864860" target="_blank" rel="external">https://blog.csdn.net/linlin003/article/details/108864860</a></p>
+</li>
+</ul>
+<h2 id="0x05-探索Windows-内核中的系统调用"><a href="#0x05-探索Windows-内核中的系统调用" class="headerlink" title="0x05 探索Windows 内核中的系统调用"></a>0x05 探索Windows 内核中的系统调用</h2><ul>
+<li><p>这篇文章主要讲的是通过syscall绕过EDR产品的原理，因为EDR或者杀毒软件通常会在一些敏感函数下Hook，部分杀软Hook的地方比较偏向应用层，因为内核层搞事情容易蓝屏，而syscall位于ntdll中的Nt*函数，通过直接调用Nt函数，这样就可以绕过部分杀毒软件。</p>
+</li>
+<li><p>目前来说，我比较看好的项目<a href="https://github.com/jthuraisamy/SysWhispers2" target="_blank" rel="external">SysWhisoers2 </a>，国内有大佬也总结了syscall几个很好的项目。<a href="https://tttang.com/archive/1464/#toc_syswhisoers2" target="_blank" rel="external">syscall的前世今生</a></p>
+</li>
+<li><p>但是，Syscall Bypass这种技术，目前对于普通使用者来说难度较大，因为Nt*更接近于底层，没有暴露的API接口使用，部分结构体甚至没有公布，只能通过Re的方法进行了解。所以，需要自己写一套Stub去调用Nt函数。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/02/Golang Reverse/" rel="next" title="Golang Reverse">
+                <i class="fa fa-chevron-left"></i> Golang Reverse
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><span class="nav-number">1.</span> <span class="nav-text">0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><span class="nav-number">2.</span> <span class="nav-text">0x01 修改内存中的 PE 头来注入 DLL 的一种方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-针对Office的DLL劫持研究"><span class="nav-number">3.</span> <span class="nav-text">0x02 针对Office的DLL劫持研究</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-AMSI-Bypass-的多种方法整理"><span class="nav-number">4.</span> <span class="nav-text">0x03 AMSI Bypass 的多种方法整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-探索Windows-内核中的系统调用"><span class="nav-number">5.</span> <span class="nav-text">0x05 探索Windows 内核中的系统调用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
