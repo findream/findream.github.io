@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+<meta name="description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
 <meta property="og:url" content="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+<meta property="og:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-04-30T09:40:44.582Z">
+<meta property="og:updated_time" content="2022-05-23T11:44:50.895Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
-<meta name="twitter:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）  0x01 修改内存中的 PE 头来注入 DLL 的一种方法 这篇文章主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的d">
+<meta name="twitter:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15） 原文链接：每周蓝军技术推送（2022.4.9-4.15）">
 
 
 
@@ -386,6 +386,7 @@
         <h2 id="0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><a href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）" class="headerlink" title="0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）"></a>0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</h2><ul>
 <li>原文链接：<a href="https://mp.weixin.qq.com/s/LN8k0J4lOn-ZV5LmDfSTBQ" target="_blank" rel="external">每周蓝军技术推送（2022.4.9-4.15）</a></li>
 </ul>
+<a id="more"></a>
 <h2 id="0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><a href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法" class="headerlink" title="0x01 修改内存中的 PE 头来注入 DLL 的一种方法"></a>0x01 修改内存中的 PE 头来注入 DLL 的一种方法</h2><ul>
 <li><p><a href="https://www.x86matthew.com/view_post?id=import_dll_injection" target="_blank" rel="external">这篇文章</a>主要原理是：windows在装载程序的时候会根据导入表的数据装载所需要的Dll文件，<br>这篇文章的原理是通过在程序导出表中添加IID数组，然后在Resume主线程的时候，windows装载器便会加载所需要的dll实现dll注入。</p>
 </li>
@@ -430,8 +431,7 @@
 <li>使amsi失效，该方法会导致异常，而且windows已经针对部分字符串进行检测。但是可以混淆绕过。</li>
 </ul>
 <figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$mem</span> = [System.Runtime.InteropServices.Marshal]<span class="symbol">:</span><span class="symbol">:AllocHGlobal</span>(<span class="number">9076</span>)</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiSession"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, <span class="variable">$null</span>);</div><div class="line">[Ref].Assembly.GetType(<span class="string">"System.Management.Automation.AmsiUtils"</span>).GetField(<span class="string">"amsiContext"</span>,<span class="string">"NonPublic,Static"</span>).SetValue(<span class="variable">$null</span>, [IntPtr]<span class="variable">$mem</span>)</div></pre></td></tr></table></figure>
-<p>##0x04 Windows特权句柄利用分析</p>
-<ul>
+<h2 id="0x04-Windows特权句柄利用分析"><a href="#0x04-Windows特权句柄利用分析" class="headerlink" title="0x04 Windows特权句柄利用分析"></a>0x04 Windows特权句柄利用分析</h2><ul>
 <li><p><a href="https://mp.weixin.qq.com/s/VJEgxfcuDRKMGBdkrXyRlA" target="_blank" rel="external">这篇文章</a>所描述的是，通过Hunt系统中的高完整性级别的句柄，来进行ByPass UAC。其原理和之前推得一篇文章很相似。<br>那篇原理是通过拉起某些自动提升UAC权限的进程，然后通过dump进程句柄实现的。这篇是寻找高完整性句柄，并以此启动进程进行ByPassUAC。</p>
 </li>
 <li><p>再讲一下为什么只需要获取高完整性级别的Handle就可以进行ByPass UAC。ByPassUAC原理就是父子进程的完整性级别是继承的，在创建进程之前的CreateProcess函数，会设置一个名为STARTUPINFOEXW结构体。其保存了一些启动信息。当我们创建进程之前，提前设置STARTUPINFOEXW的lpAttributeList元素，就可以是新创建的进程具有使用泄露句柄的进程完整性级别。关于UpdateProcThreadAttribute用法，可以看这篇文章<a href="https://blog.csdn.net/linlin003/article/details/108864860" target="_blank" rel="external">https://blog.csdn.net/linlin003/article/details/108864860</a></p>
@@ -478,6 +478,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/23/绿盟科技-每周蓝军技术推送（2022.4.16-4.22）/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习">
+                绿盟科技-每周蓝军技术推送（2022.4.16-4.22）学习 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -554,7 +558,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">55</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -609,7 +613,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><span class="nav-number">1.</span> <span class="nav-text">0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><span class="nav-number">2.</span> <span class="nav-text">0x01 修改内存中的 PE 头来注入 DLL 的一种方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-针对Office的DLL劫持研究"><span class="nav-number">3.</span> <span class="nav-text">0x02 针对Office的DLL劫持研究</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-AMSI-Bypass-的多种方法整理"><span class="nav-number">4.</span> <span class="nav-text">0x03 AMSI Bypass 的多种方法整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-探索Windows-内核中的系统调用"><span class="nav-number">5.</span> <span class="nav-text">0x05 探索Windows 内核中的系统调用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-绿盟科技-每周蓝军技术推送（2022-4-9-4-15）"><span class="nav-number">1.</span> <span class="nav-text">0x00 绿盟科技-每周蓝军技术推送（2022.4.9-4.15）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-修改内存中的-PE-头来注入-DLL-的一种方法"><span class="nav-number">2.</span> <span class="nav-text">0x01 修改内存中的 PE 头来注入 DLL 的一种方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-针对Office的DLL劫持研究"><span class="nav-number">3.</span> <span class="nav-text">0x02 针对Office的DLL劫持研究</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-AMSI-Bypass-的多种方法整理"><span class="nav-number">4.</span> <span class="nav-text">0x03 AMSI Bypass 的多种方法整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-Windows特权句柄利用分析"><span class="nav-number">5.</span> <span class="nav-text">0x04 Windows特权句柄利用分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-探索Windows-内核中的系统调用"><span class="nav-number">6.</span> <span class="nav-text">0x05 探索Windows 内核中的系统调用</span></a></li></ol></div>
             
 
           </div>
