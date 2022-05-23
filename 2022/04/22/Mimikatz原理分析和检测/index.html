@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="sekurlsa::msv源码分析 Mimikatz的sekurlsa::msv命令是用于获取NTLM协议加密的凭证 其在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中实现。 具体原理">
+<meta name="description" content="前言 这是学习Mimikatz工作原理的无总结笔记。主要包含了sekurlsa::msv,sekurlsa::pth,lsadump::dcsync,票据传递等功能的原理分析和检测。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mimikatz原理分析和检测">
 <meta property="og:url" content="https://findream.github.io/2022/04/22/Mimikatz原理分析和检测/index.html">
 <meta property="og:site_name" content="findream&#39;s blog">
-<meta property="og:description" content="sekurlsa::msv源码分析 Mimikatz的sekurlsa::msv命令是用于获取NTLM协议加密的凭证 其在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中实现。 具体原理">
+<meta property="og:description" content="前言 这是学习Mimikatz工作原理的无总结笔记。主要包含了sekurlsa::msv,sekurlsa::pth,lsadump::dcsync,票据传递等功能的原理分析和检测。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20220215/7ozemelppDsx.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220217/3PHnIpOeBOLI.png?imageslim">
@@ -96,10 +96,10 @@
 <meta property="og:image" content="http://hacky.wang/blog/20220224/IlxDKwvIESBp.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220224/qYBfHpfYehbB.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220224/cgK4nT1YidQt.png?imageslim">
-<meta property="og:updated_time" content="2022-05-23T11:54:22.560Z">
+<meta property="og:updated_time" content="2022-05-23T11:58:32.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mimikatz原理分析和检测">
-<meta name="twitter:description" content="sekurlsa::msv源码分析 Mimikatz的sekurlsa::msv命令是用于获取NTLM协议加密的凭证 其在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中实现。 具体原理">
+<meta name="twitter:description" content="前言 这是学习Mimikatz工作原理的无总结笔记。主要包含了sekurlsa::msv,sekurlsa::pth,lsadump::dcsync,票据传递等功能的原理分析和检测。">
 <meta name="twitter:image" content="http://hacky.wang/blog/20220215/7ozemelppDsx.png?imageslim">
 
 
@@ -392,7 +392,11 @@
       
 
       
-        <h2 id="sekurlsa-msv源码分析"><a href="#sekurlsa-msv源码分析" class="headerlink" title="sekurlsa::msv源码分析"></a>sekurlsa::msv源码分析</h2><ul>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
+<li>这是学习Mimikatz工作原理的无总结笔记。主要包含了<code>sekurlsa::msv</code>,<code>sekurlsa::pth</code>,<code>lsadump::dcsync</code>,票据传递等功能的原理分析和检测。<a id="more"></a>
+</li>
+</ul>
+<h2 id="sekurlsa-msv源码分析"><a href="#sekurlsa-msv源码分析" class="headerlink" title="sekurlsa::msv源码分析"></a>sekurlsa::msv源码分析</h2><ul>
 <li>Mimikatz的sekurlsa::msv命令是用于获取NTLM协议加密的凭证</li>
 <li>其在mimikatz\modules\sekurlsa\kuhl_m_sekurlsa.c中的NTSTATUS kuhl_m_sekurlsa_enum(PKUHL_M_SEKURLSA_ENUM callback, LPVOID pOptionalData)函数中实现。</li>
 <li>具体原理是通过特征码定位Lsass.exe进程的lsasvr.dll中的LogonSessionList全局变量和LogonSessionListCount全局变量的地址，然后解析LogonSessionList结构体即可，LogonSessionList是一个双向链表(LIST_ENTRY)。</li>
@@ -827,7 +831,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sekurlsa-msv源码分析"><span class="nav-number">1.</span> <span class="nav-text">sekurlsa::msv源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-the-Hash攻击-传递Hash攻击"><span class="nav-number">2.</span> <span class="nav-text">Pass the Hash攻击(传递Hash攻击)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sekurlsa-pth源码分析"><span class="nav-number">3.</span> <span class="nav-text">sekurlsa::pth源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NTLM-凭证生成"><span class="nav-number">4.</span> <span class="nav-text">NTLM 凭证生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kerberos认证协议"><span class="nav-number">5.</span> <span class="nav-text">Kerberos认证协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第1次通讯"><span class="nav-number">5.1.</span> <span class="nav-text">Kerberos协议第1次通讯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第2次通讯"><span class="nav-number">5.2.</span> <span class="nav-text">Kerberos协议第2次通讯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第3次通讯"><span class="nav-number">5.3.</span> <span class="nav-text">Kerberos协议第3次通讯</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-The-Ticket"><span class="nav-number">6.</span> <span class="nav-text">Pass The Ticket</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#黄金票据"><span class="nav-number">6.1.</span> <span class="nav-text">黄金票据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsadump-dcsync-源码分析"><span class="nav-number">6.2.</span> <span class="nav-text">lsadump::dcsync 源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kerberos-golden-源码分析"><span class="nav-number">6.3.</span> <span class="nav-text">kerberos::golden 源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-The-Ticket-检测"><span class="nav-number">6.4.</span> <span class="nav-text">Pass The Ticket 检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#白银票据"><span class="nav-number">6.5.</span> <span class="nav-text">白银票据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-The-Key"><span class="nav-number">6.6.</span> <span class="nav-text">Pass The Key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mimikatz检测与防御"><span class="nav-number">7.</span> <span class="nav-text">mimikatz检测与防御</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lsadump-sam-源码分析"><span class="nav-number">8.</span> <span class="nav-text">lsadump::sam 源码分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sekurlsa-msv源码分析"><span class="nav-number">2.</span> <span class="nav-text">sekurlsa::msv源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-the-Hash攻击-传递Hash攻击"><span class="nav-number">3.</span> <span class="nav-text">Pass the Hash攻击(传递Hash攻击)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sekurlsa-pth源码分析"><span class="nav-number">4.</span> <span class="nav-text">sekurlsa::pth源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NTLM-凭证生成"><span class="nav-number">5.</span> <span class="nav-text">NTLM 凭证生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kerberos认证协议"><span class="nav-number">6.</span> <span class="nav-text">Kerberos认证协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第1次通讯"><span class="nav-number">6.1.</span> <span class="nav-text">Kerberos协议第1次通讯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第2次通讯"><span class="nav-number">6.2.</span> <span class="nav-text">Kerberos协议第2次通讯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos协议第3次通讯"><span class="nav-number">6.3.</span> <span class="nav-text">Kerberos协议第3次通讯</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pass-The-Ticket"><span class="nav-number">7.</span> <span class="nav-text">Pass The Ticket</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#黄金票据"><span class="nav-number">7.1.</span> <span class="nav-text">黄金票据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsadump-dcsync-源码分析"><span class="nav-number">7.2.</span> <span class="nav-text">lsadump::dcsync 源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kerberos-golden-源码分析"><span class="nav-number">7.3.</span> <span class="nav-text">kerberos::golden 源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-The-Ticket-检测"><span class="nav-number">7.4.</span> <span class="nav-text">Pass The Ticket 检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#白银票据"><span class="nav-number">7.5.</span> <span class="nav-text">白银票据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pass-The-Key"><span class="nav-number">7.6.</span> <span class="nav-text">Pass The Key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mimikatz检测与防御"><span class="nav-number">8.</span> <span class="nav-text">mimikatz检测与防御</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lsadump-sam-源码分析"><span class="nav-number">9.</span> <span class="nav-text">lsadump::sam 源码分析</span></a></li></ol></div>
             
 
           </div>
