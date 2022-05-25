@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。 0x01 分析过程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;该文件">
+<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CobaltStrike高免杀样本分析">
 <meta property="og:url" content="https://findream.github.io/2022/05/25/CobaltStrike高免杀样本分析/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。 0x01 分析过程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;该文件">
+<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim">
@@ -99,10 +99,10 @@
 <meta property="og:image" content="http://hacky.wang/blog/20220525/Ay4yTDOvlt4L.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/iDDm7IHUMk2j.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/3LNMGFde8eGf.png?imageslim">
-<meta property="og:updated_time" content="2022-05-25T13:52:36.185Z">
+<meta property="og:updated_time" content="2022-05-25T13:57:06.600Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CobaltStrike高免杀样本分析">
-<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。 0x01 分析过程&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;该文件">
+<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
 <meta name="twitter:image" content="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim">
 
 
@@ -395,7 +395,7 @@
       
 
       
-        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。</p>
+        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。<br><a id="more"></a></p>
 <h2 id="0x01-分析过程"><a href="#0x01-分析过程" class="headerlink" title="0x01 分析过程"></a>0x01 分析过程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该文件由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第2层powershell脚本中，依旧是执行Base64加密/编码过的Powershell语句<br>   <img src="http://hacky.wang/blog/20220525/D2dzLkeJRY7N.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过解码得到解码之后的Powershell脚本。第三层Powershell脚本逻辑也很清楚，首先解码一段base64，然后进行xor解密，获得一段shellcode，然后将解密获得的shellcode复制到内存中并执行。<br>   <img src="http://hacky.wang/blog/20220525/M1sraJ1PX2zv.png?imageslim" alt="mark"></p>

@@ -386,17 +386,14 @@
 
       
         
-          
-            <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。</p>
-<h2 id="0x01-分析过程"><a href="#0x01-分析过程" class="headerlink" title="0x01 分析过程"></a>0x01 分析过程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该文件由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第2层powershell脚本中，依旧是执行Base64加密/编码过的Powershell语句<br>   <img src="http://hacky.wang/blog/20220525/D2dzLkeJRY7N.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过解码得到解码之后的Powershell脚本。第三层Powershell脚本逻辑也很清楚，首先解码一段base64，然后进行xor解密，获得一段shellcode，然后将解密获得的shellcode复制到内存中并执行。<br>   <img src="http://hacky.wang/blog/20220525/M1sraJ1PX2zv.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过分析，转储而来的shellcode是典型的cobaltstrike生成stageless类型的shellcode。也就是所谓的分离式免杀的操作。<br>   <img src="http://hacky.wang/blog/20220525/HlfthlTWfRdY.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/d87EH0lvK6Ee.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其本质还是一个download。其会加载winnet.dll模块，然后依次调用<code>wininet!InternetOpenA</code>,<code>wininet!InternetConnectA</code>,<code>KERNEL32!VirtualAllocStub</code>,<code>wininet!InternetReadFile</code>等网络读取函数读取服务端获取的payload。最终在栈顶保存的是读取的payload的地址，待到函数返回，执行流跳转到payload处。<br>   <img src="http://hacky.wang/blog/20220525/4X5BfKPs0xA7.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/yKFGpzN5ieTG.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到下载的bin主要有两部分组成，一个是引导shellcode，第二部分是payload，主要用来引导执行payload。这也是cobaltstrike特征之一。<br>   <img src="http://hacky.wang/blog/20220525/Ay4yTDOvlt4L.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;显然，熟悉beacon的一眼就看到了cobaltstrike特征，这是beacon的PE文件，在默认生成的beacon文件中，这是导出的ReflectiveLoad函数，处理完PE数据之后，最终调用DllEntry函数进行后续的处理。<br>   <img src="http://hacky.wang/blog/20220525/iDDm7IHUMk2j.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/3LNMGFde8eGf.png?imageslim" alt="mark"></p>
-
-          
+          <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2022/05/25/CobaltStrike高免杀样本分析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
