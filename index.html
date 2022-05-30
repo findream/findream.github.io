@@ -294,6 +294,215 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/" itemprop="url">绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-29T14:02:11+08:00">
+                2022-05-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="0x00-每周蓝军技术推送（2022-5-14-5-20）"><a href="#0x00-每周蓝军技术推送（2022-5-14-5-20）" class="headerlink" title="0x00 每周蓝军技术推送（2022.5.14-5.20）"></a>0x00 每周蓝军技术推送（2022.5.14-5.20）</h2><ul>
+<li>这一周的推送，主要学习了三部分内容：</li>
+<li>篡改注册表与ETW，隐匿执行计划任务</li>
+<li>使用NtCreateUserProcess进行PPID欺骗 和BlockDLL</li>
+<li>Windows环境下的自保护探究</li>
+</ul>
+<h2 id="0x01-PPID-Spoofing-amp-BlockDLLs-with-NtCreateUserProcess"><a href="#0x01-PPID-Spoofing-amp-BlockDLLs-with-NtCreateUserProcess" class="headerlink" title="0x01 PPID Spoofing &amp; BlockDLLs with NtCreateUserProcess"></a>0x01 PPID Spoofing &amp; BlockDLLs with NtCreateUserProcess</h2><ul>
+<li><p>在<a href="https://offensivedefence.co.uk/posts/ntcreateuserprocess/" target="_blank" rel="external">这篇文章中</a>，作者介绍了如何使用<code>NtCreateUserProcess</code>这一个未被官方文档化的API函数，NtCreateUserProcess函数是CreateProcessA(W)的底层实现。可以规避部分EDR的检测。</p>
+</li>
+<li><p>作者的灵感来源是来自Capt. Meelo的<a href="https://captmeelo.com/redteam/maldev/2022/05/10/ntcreateuserprocess.html" target="_blank" rel="external">Making NtCreateUserProcess Work</a>一文，NtCreateUserProcess的函数原型如下：</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">NTSTATUS</div><div class="line">NTAPI</div><div class="line">NtCreateUserProcess(</div><div class="line">    <span class="variable">_Out_</span> PHANDLE ProcessHandle,</div><div class="line">    <span class="variable">_Out_</span> PHANDLE ThreadHandle,</div><div class="line">    <span class="variable">_In_</span> ACCESS_MASK ProcessDesiredAccess,</div><div class="line">    <span class="variable">_In_</span> ACCESS_MASK ThreadDesiredAccess,</div><div class="line">    <span class="variable">_In_opt_</span> POBJECT_ATTRIBUTES ProcessObjectAttributes,</div><div class="line">    <span class="variable">_In_opt_</span> POBJECT_ATTRIBUTES ThreadObjectAttributes,</div><div class="line">    <span class="variable">_In_</span> ULONG ProcessFlags,</div><div class="line">    <span class="variable">_In_</span> ULONG ThreadFlags,</div><div class="line">    <span class="variable">_In_</span> PRTL_USER_PROCESS_PARAMETERS ProcessParameters,</div><div class="line">    <span class="variable">_Inout_</span> PPS_CREATE_INFO CreateInfo,</div><div class="line">    <span class="variable">_In_</span> PPS_ATTRIBUTE_LIST AttributeList</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>ProcessHandle</code>和<code>ThreadHandle</code>分别是需要传出的进程和线程句柄，可以为NULL。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>ProcessDesiredAccess</code>和<code>ThreadDesiredAccess</code>是进程和线程访问权限掩码。可以直接为PROCESS_ALL_ACCESS和THREAD_ALL_ACCESS，具体可以参见以下文档,</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights" target="_blank" rel="external">进程安全和访问权限</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/win32/procthread/thread-security-and-access-rights" target="_blank" rel="external">线程安全和访问权限</a></li>
+</ul>
+</li>
+<li><p><code>ProcessObjectAttributes</code>和<code>ThreadObjectAttributes</code>是进程和线程对象属性，指向OBJECT_ATTRIBUTES结构，此处可以为<code>NULL</code></p>
+</li>
+<li><p><code>ProcessFlags</code>和<code>ThreadFlags</code>是进程线程标志，Meelo是查看ProcessHack源码获得的，此处可以为NULL</p>
+</li>
+<li><p><code>ProcessParameters</code>是进程参数信息，指向的是<code>RTL_USER_PROCESS_PARAMETERS</code>结构，通过逆向CreateProcessA函数，可以发现使用<code>RtlCreateProcessParametersEx</code>进行初始化</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">UNICODE_STRING</span> <span class="string">NtImagePath;</span></div><div class="line"><span class="string">RtlInitUnicodeString(&amp;NtImagePath,</span> <span class="string">(PWSTR)L"\\??\\C:\\Windows\\System32\\mmc.exe");</span></div><div class="line"><span class="string">PRTL_USER_PROCESS_PARAMETERS</span> <span class="string">ProcessParameters</span> <span class="string">=</span> <span class="literal">NULL</span><span class="string">;</span></div><div class="line"><span class="string">RtlCreateProcessParametersEx(&amp;ProcessParameters,</span> <span class="string">&amp;NtImagePath,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="literal">NULL</span><span class="string">,</span> <span class="string">RTL_USER_PROCESS_PARAMETERS_NORMALIZED);</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CreateInfo是一个指向<code>PS_CREATE_INFO</code>结构的指针，对于PS_CREATE_INFO结构的初始化也很简单。</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// process create info</span></div><div class="line">PS_CREATE_INFO CreateInfo = &#123; <span class="number">0</span> &#125;;</div><div class="line">CreateInfo.Size = sizeof(CreateInfo);</div><div class="line">CreateInfo.State = PsCreateInitialState;</div></pre></td></tr></table></figure>
+</li>
+<li><p>最后一个参数是<code>AttributeList</code>，AttributeList指向的是PPS_ATTRIBUTE_LIST结构体，这是一个链表结构，可以通过RtlAllocateHeap函数自主申请链表的大小。在第一个节点中,必须要添加PS_ATTRIBUTE_IMAGE_NAME（进程映像名）这个属性。</p>
+<figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PS_ATTRIBUTE_LIST</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">	SIZE_T TotalLength;                 <span class="comment">// sizeof(PS_ATTRIBUTE_LIST)</span></div><div class="line">	PS_ATTRIBUTE Attributes[<span class="number">2</span>];         <span class="comment">// Depends on how many attribute entries should be supplied to NtCreateUserProcess</span></div><div class="line">&#125; PS_ATTRIBUTE_LIST, * PPS_ATTRIBUTE_LIST;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// initialise attribute list</span></div><div class="line">PPS_ATTRIBUTE_LIST AttributeList = (PS_ATTRIBUTE_LIST*)RtlAllocateHeap(RtlProcessHeap(), HEAP_ZERO_MEMORY, sizeof(PS_ATTRIBUTE) * <span class="number">3</span>);</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>TotalLength = sizeof(PS_ATTRIBUTE_LIST);</div><div class="line"><span class="comment">// set image name</span></div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">0</span>].Attribute = PS_ATTRIBUTE_IMAGE_NAME;</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">0</span>].Size = NtImagePath.Length;</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">0</span>].Value = (ULONG_PTR)NtImagePath.Buffer;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>作者在这篇文章中主要实现了两个功能，一个是PPID Spoofing，也就是父进程欺骗，另外一个是BlockDLLs，BlockDLLs简单的来说就是阻止一些非可信的DLL模块加载到进程中。</p>
+</li>
+<li><p>进程隐藏可以通过设置进程的Attribute即可，具体操作如下,将进程的PS_ATTRIBUTE_PARENT_PROCESS(父进程)属性设置为指定的父进程的Handle即可。：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// add parent process attribute</span></div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">1</span>].Attribute = PS_ATTRIBUTE_PARENT_PROCESS;</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">1</span>].Size = sizeof(HANDLE);</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">1</span>].ValuePtr = hParent;</div></pre></td></tr></table></figure>
+</li>
+<li><p>BlockDLLs允许系统根据不同的策略加载不同安全等级的Dll文件，因为一些安全软件会通过往进程中加载dll来进行行为监控，利用这个特性就可以阻止非windows的dll加载，包括安全软件的dll。<a href="https://paper.seebug.org/929/" target="_blank" rel="external">这里</a>可以看到完整的BlockDlls的介绍,主要有两种方法。</p>
+<ul>
+<li><p>通过<code>SetProcessMitigationPolicy</code>函数设置阻止策略。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY policy;</div><div class="line">policy.MitigationOptIn = 1;</div><div class="line">SetProcessMitigationPolicy(ProcessSignaturePolicy, &amp;policy, sizeof(policy))</div></pre></td></tr></table></figure>
+</li>
+<li><p>通过UpdateProcThreadAttribute修改线程属性。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DWORD64 ProtectionLevel = PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON<span class="comment">; //policy.MitigationOptIn</span></div><div class="line">UpdateProcThreadAttribute(<span class="name">si</span>.lpAttributeList, <span class="number">0</span>, PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, <span class="symbol">&amp;ProtectionLevel</span>, sizeof(<span class="name">ProtectionLevel</span>), NULL, NULL)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// blockdlls policy</span></div><div class="line">DWORD64 policy = PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON;</div><div class="line"><span class="comment">// add process mitigation atribute</span></div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">2</span>].Attribute = PS_ATTRIBUTE_MITIGATION_OPTIONS_2;</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">2</span>].Size = sizeof(DWORD64);</div><div class="line">A<span class="function"><span class="title">ttributeList</span>-&gt;</span>Attributes[<span class="number">2</span>].ValuePtr = &amp;policy;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>Ref:<a href="https://offensivedefence.co.uk/posts/ntcreateuserprocess/" target="_blank" rel="external">PPID Spoofing &amp; BlockDLLs with NtCreateUserProcess</a></p>
+</li>
+<li><p>Ref:<a href="[https://paper.seebug.org/929/](https://paper.seebug.org/929/">关于 CS 的 Blockdll 实现的个人 POC</a>)</p>
+</li>
+<li><p>Ref:<a href="https://captmeelo.com/redteam/maldev/2022/05/10/ntcreateuserprocess.html" target="_blank" rel="external">Making NtCreateUserProcess Work</a></p>
+</li>
+<li><p>Ref:<a href="https://github.com/capt-meelo/NtCreateUserProcess/blob/master/main.cpp" target="_blank" rel="external">https://github.com/capt-meelo/NtCreateUserProcess/blob/master/main.cpp</a></p>
+</li>
+</ul>
+<h2 id="0x02-Windows环境下的自保护探究"><a href="#0x02-Windows环境下的自保护探究" class="headerlink" title="0x02 Windows环境下的自保护探究"></a>0x02 Windows环境下的自保护探究</h2><ul>
+<li>这篇文章作者的思路是这样的，在kill 杀软进程的时候，会使用OpenProcess打开杀软进程，在OPenProcessAPI函数底层呢，会调用ObRegisterCallbacks注册回调函数，所以作者的目的就是通过注册回调函数，首先判断当前进程ID是否是杀软自身的PID，如果是的话，则去除Kill进程的权限。<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">O<span class="function"><span class="title">perationInformation</span>-&gt;</span>P<span class="function"><span class="title">arameters</span>-&gt;</span>CreateHandleInformation.DesiredAccess &amp;= ~PROCESS_TERMINATE;</div></pre></td></tr></table></figure></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/05/25/CobaltStrike高免杀样本分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -386,7 +595,7 @@
 
       
         
-          <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。<br>
+          <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果可能更好。第二，对于shellcode的加密方式，不在拘泥于传统的异或或者AES，Base等公开的加密编码算法，也会采用一些好玩的，个性化的编码算法进行shellcode加密。第三，在开辟内存空间的时候，也不在使用传统的VirtualAlloc等R3层的API函数，更多的使用基于底层的API函数，第四，在调用shellcode过程中，也不像往常一样使用常规的方式调用shellcode，而是利用一些API的机制(CreateThread)，或者回调机制(EnumSystemLocalesW)，以及APC。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2022/05/25/CobaltStrike高免杀样本分析/#more" rel="contents">
@@ -1607,152 +1816,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2019/07/18/病毒分析技术_24_Hwp样本分析总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="HaCky">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HaCky的安全备忘录">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/18/病毒分析技术_24_Hwp样本分析总结/" itemprop="url">Hwp_文本类型样本分析总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-18T15:02:11+08:00">
-                2019-07-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/windows安全/" itemprop="url" rel="index">
-                    <span itemprop="name">windows安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;前言略过，日后补齐~~<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/07/18/病毒分析技术_24_Hwp样本分析总结/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1803,7 +1866,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-count">58</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

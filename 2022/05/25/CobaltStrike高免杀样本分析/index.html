@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
+<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CobaltStrike高免杀样本分析">
 <meta property="og:url" content="https://findream.github.io/2022/05/25/CobaltStrike高免杀样本分析/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
+<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim">
@@ -99,10 +99,20 @@
 <meta property="og:image" content="http://hacky.wang/blog/20220525/Ay4yTDOvlt4L.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/iDDm7IHUMk2j.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220525/3LNMGFde8eGf.png?imageslim">
-<meta property="og:updated_time" content="2022-05-25T13:57:06.600Z">
+<meta property="og:image" content="http://hacky.wang/blog/20220528/hnHKiFkl7LGW.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220528/qTyCrfDxjyGe.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220528/4d9ddEWAr28n.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220528/hYXCzF2FThsV.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220528/181EYINyufLB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220530/eb0JbgWba5hY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220530/6zXGpMBrmt4Q.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220530/oHHX0edBXdPT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220530/BalqeFPTQs2s.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220530/xKfvVYsjc1eo.png?imageslim">
+<meta property="og:updated_time" content="2022-05-30T14:11:38.400Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CobaltStrike高免杀样本分析">
-<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在日常的狩猎中，24号捕获到一个高免杀的CobaltStrike样本，其通过执行3层Base64加密的Powershell脚本加载beacon。">
+<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果">
 <meta name="twitter:image" content="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim">
 
 
@@ -395,14 +405,36 @@
       
 
       
-        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在日常的狩猎中，24号捕获到一个高免杀的<a href="https://www.virustotal.com/gui/file/020f1199510a20201782020f525acbfb3536a37355dd2d3d0f669842a52a9b76" target="_blank" rel="external">CobaltStrike样本</a>，其通过执行3层Base64加密的Powershell脚本加载beacon。<br><a id="more"></a></p>
-<h2 id="0x01-分析过程"><a href="#0x01-分析过程" class="headerlink" title="0x01 分析过程"></a>0x01 分析过程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该文件由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
+        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果可能更好。第二，对于shellcode的加密方式，不在拘泥于传统的异或或者AES，Base等公开的加密编码算法，也会采用一些好玩的，个性化的编码算法进行shellcode加密。第三，在开辟内存空间的时候，也不在使用传统的VirtualAlloc等R3层的API函数，更多的使用基于底层的API函数，第四，在调用shellcode过程中，也不像往常一样使用常规的方式调用shellcode，而是利用一些API的机制(CreateThread)，或者回调机制(EnumSystemLocalesW)，以及APC。<br><a id="more"></a></p>
+<h2 id="0x01-分析过程"><a href="#0x01-分析过程" class="headerlink" title="0x01 分析过程"></a>0x01 分析过程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个loader由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第2层powershell脚本中，依旧是执行Base64加密/编码过的Powershell语句<br>   <img src="http://hacky.wang/blog/20220525/D2dzLkeJRY7N.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过解码得到解码之后的Powershell脚本。第三层Powershell脚本逻辑也很清楚，首先解码一段base64，然后进行xor解密，获得一段shellcode，然后将解密获得的shellcode复制到内存中并执行。<br>   <img src="http://hacky.wang/blog/20220525/M1sraJ1PX2zv.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过分析，转储而来的shellcode是典型的cobaltstrike生成stageless类型的shellcode。也就是所谓的分离式免杀的操作。<br>   <img src="http://hacky.wang/blog/20220525/HlfthlTWfRdY.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/d87EH0lvK6Ee.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其本质还是一个download。其会加载winnet.dll模块，然后依次调用<code>wininet!InternetOpenA</code>,<code>wininet!InternetConnectA</code>,<code>KERNEL32!VirtualAllocStub</code>,<code>wininet!InternetReadFile</code>等网络读取函数读取服务端获取的payload。最终在栈顶保存的是读取的payload的地址，待到函数返回，执行流跳转到payload处。<br>   <img src="http://hacky.wang/blog/20220525/4X5BfKPs0xA7.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/yKFGpzN5ieTG.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到下载的bin主要有两部分组成，一个是引导shellcode，第二部分是payload，主要用来引导执行payload。这也是cobaltstrike特征之一。<br>   <img src="http://hacky.wang/blog/20220525/Ay4yTDOvlt4L.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;显然，熟悉beacon的一眼就看到了cobaltstrike特征，这是beacon的PE文件，在默认生成的beacon文件中，这是导出的ReflectiveLoad函数，处理完PE数据之后，最终调用DllEntry函数进行后续的处理。<br>   <img src="http://hacky.wang/blog/20220525/iDDm7IHUMk2j.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/3LNMGFde8eGf.png?imageslim" alt="mark"></p>
+<h2 id="0x02-Example2"><a href="#0x02-Example2" class="headerlink" title="0x02 Example2"></a>0x02 Example2</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.virustotal.com/gui/file/d0db40a4683de999dc11be3c8e5599363f21398a0a25c238dab1a680a2029d1f" target="_blank" rel="external">这个loader</a>使用GoLang编写，该样本并没有去除符号表，首先，检查系统的CPU个数和逻辑分区个数，如果CPU个数和逻辑分区个数小于4的话，则退出。<br>   <img src="http://hacky.wang/blog/20220528/hnHKiFkl7LGW.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后调用HeapCreate开辟内存空间，Golang编译的程序在汇编层面的函数调用方式和C++编译的有些许差异，在x64下，通过[eax]进行压栈传入参数，然后将需要调用的函数传入rax寄存器中，rcx保存的是参数的个数。并调用ZwAllocateVirtualMemory修改内存属性。<br>   <img src="http://hacky.wang/blog/20220528/qTyCrfDxjyGe.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220528/4d9ddEWAr28n.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16个字节组成的Byte[],如果需要将shellcode转化为UUID形式的话，如果shellcode长度不足16的话，将自动补齐。在CobaltStrike免杀样本中，UUID是以字符串形式存在于内存中，其通过API函数<code>UuidFromStringA</code>将其转化为UUID格式。<br>   <img src="http://hacky.wang/blog/20220528/hYXCzF2FThsV.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，通过<code>EnumSystemLocalesW</code>函数通过回调的方式执行shellcode，同样的可以进行回调的还有以下函数<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>, EnumTimeFormatsA</div><div class="line"><span class="number">2</span>, EnumWindows</div><div class="line"><span class="number">3</span>, EnumDesktopWindows</div><div class="line"><span class="number">4</span>, EnumDateFormatsA</div><div class="line"><span class="number">5</span>, EnumChildWindows</div><div class="line"><span class="number">6</span>, EnumThreadWindows</div><div class="line"><span class="number">7</span>, EnumSystemLocales</div><div class="line"><span class="number">8</span>, EnumSystemGeoID</div><div class="line"><span class="number">9</span>, EnumSystemLanguageGroupsA</div><div class="line"><span class="number">10</span>, EnumUILanguagesA</div><div class="line"><span class="number">11</span>, EnumSystemCodePagesA</div><div class="line"><span class="number">12</span>, EnumDesktopsW</div><div class="line"><span class="number">13</span>, EnumSystemCodePagesW</div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20220528/181EYINyufLB.png?imageslim" alt="mark"></p>
+<h1 id="0x03-Example-3"><a href="#0x03-Example-3" class="headerlink" title="0x03 Example_3"></a>0x03 Example_3</h1><ul>
+<li><p>看图标和关键字显然，这是由<code>pyinstaller</code>打包而成的exe文件。目前常见的py打包工具主要有<code>pyinstaller</code>，<code>py2exe</code>,以及<code>cx_Freeze</code><br> <img src="http://hacky.wang/blog/20220530/eb0JbgWba5hY.png?imageslim" alt="mark"></p>
+</li>
+<li><p>针对<code>pyinstaller</code>打包而来的exe，可以使用<code>pyinstxtractor.py</code>进行解包，完成后，会在同目录生成一个extracted结尾的文件夹，在文件夹中，有两个没有后缀的文件，其中必然有一个名为struct文件。<br> <img src="http://hacky.wang/blog/20220530/6zXGpMBrmt4Q.png?imageslim" alt="mark"></p>
+</li>
+<li><p>那个名字为1的文件是一个抹去了时间戳和Magic的pyc文件，而抹去的信息可以在struct文件中找到，只需要复制<code>struct</code>文件的前16个字节复制到<code>1</code>这个文件中，即可。<br> <img src="http://hacky.wang/blog/20220530/oHHX0edBXdPT.png?imageslim" alt="mark"></p>
+</li>
+<li><p>然后使用在线的pyc2py的网站<a href="https://tool.lu/pyc/" target="_blank" rel="external">https://tool.lu/pyc/</a>就可以得到py代码如下。使用伪随机数解密，因为随机数种子是固定的，因为产生的随机数也是固定的。解密秘钥也就是固定的。loader是shellcode装载器，value是解密的shellcode。<br> <img src="http://hacky.wang/blog/20220530/BalqeFPTQs2s.png?imageslim" alt="mark"></p>
+</li>
+<li><p>loader代码如下，很常见的加载方式</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">shellcode = binascii.a2b_hex(value)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.VirtualAlloc</span><span class="selector-class">.restype</span>=ctypes.c_uint64</div><div class="line">rwxpage = ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.VirtualAlloc</span>(<span class="number">0</span>, len(shellcode), <span class="number">0</span>x1000, <span class="number">0</span>x40)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.RtlMoveMemory</span>(ctypes.c_uint64(rwxpage), ctypes.create_string_buffer(shellcode), len(shellcode))</div><div class="line">handle = ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.CreateThread</span>(<span class="number">0</span>, <span class="number">0</span>, ctypes.c_uint64(rwxpage), <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.WaitForSingleObject</span>(handle, -<span class="number">1</span>)</div></pre></td></tr></table></figure>
+</li>
+<li><p>而shellcode是很明显的coabaltstrike的shellcode。<br> <img src="http://hacky.wang/blog/20220530/xKfvVYsjc1eo.png?imageslim" alt="mark"></p>
+</li>
+<li><p>Ref:<a href="https://xz.aliyun.com/t/10450#toc-8" target="_blank" rel="external">https://xz.aliyun.com/t/10450#toc-8</a></p>
+</li>
+</ul>
 
       
     </div>
@@ -436,6 +468,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习">
+                绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -512,7 +548,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-count">58</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -567,7 +603,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-分析过程"><span class="nav-number">2.</span> <span class="nav-text">0x01 分析过程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-分析过程"><span class="nav-number">2.</span> <span class="nav-text">0x01 分析过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Example2"><span class="nav-number">3.</span> <span class="nav-text">0x02 Example2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-Example-3"><span class="nav-number"></span> <span class="nav-text">0x03 Example_3</span></a></div>
             
 
           </div>
