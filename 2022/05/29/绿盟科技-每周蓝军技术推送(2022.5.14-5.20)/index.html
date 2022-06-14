@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究  0x01 PPID Spoofing &amp;amp; BlockDLLs with NtCreateUserProcess 在这篇文章中，作者介绍了如何">
+<meta name="description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究">
 <meta property="og:type" content="article">
 <meta property="og:title" content="绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习">
 <meta property="og:url" content="https://findream.github.io/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究  0x01 PPID Spoofing &amp;amp; BlockDLLs with NtCreateUserProcess 在这篇文章中，作者介绍了如何">
+<meta property="og:description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-05-29T11:53:05.634Z">
+<meta property="og:updated_time" content="2022-06-14T13:10:09.303Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习">
-<meta name="twitter:description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究  0x01 PPID Spoofing &amp;amp; BlockDLLs with NtCreateUserProcess 在这篇文章中，作者介绍了如何">
+<meta name="twitter:description" content="0x00 每周蓝军技术推送（2022.5.14-5.20） 这一周的推送，主要学习了三部分内容： 篡改注册表与ETW，隐匿执行计划任务 使用NtCreateUserProcess进行PPID欺骗 和BlockDLL Windows环境下的自保护探究">
 
 
 
@@ -387,7 +387,8 @@
 <li>这一周的推送，主要学习了三部分内容：</li>
 <li>篡改注册表与ETW，隐匿执行计划任务</li>
 <li>使用NtCreateUserProcess进行PPID欺骗 和BlockDLL</li>
-<li>Windows环境下的自保护探究</li>
+<li>Windows环境下的自保护探究<a id="more"></a>
+</li>
 </ul>
 <h2 id="0x01-PPID-Spoofing-amp-BlockDLLs-with-NtCreateUserProcess"><a href="#0x01-PPID-Spoofing-amp-BlockDLLs-with-NtCreateUserProcess" class="headerlink" title="0x01 PPID Spoofing &amp; BlockDLLs with NtCreateUserProcess"></a>0x01 PPID Spoofing &amp; BlockDLLs with NtCreateUserProcess</h2><ul>
 <li><p>在<a href="https://offensivedefence.co.uk/posts/ntcreateuserprocess/" target="_blank" rel="external">这篇文章中</a>，作者介绍了如何使用<code>NtCreateUserProcess</code>这一个未被官方文档化的API函数，NtCreateUserProcess函数是CreateProcessA(W)的底层实现。可以规避部分EDR的检测。</p>
@@ -485,6 +486,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2022/06/14/绿盟科技-每周蓝军技术推送（2022.5.28-6.2）/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习">
+                绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -560,7 +565,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">58</span>
+                  <span class="site-state-item-count">59</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

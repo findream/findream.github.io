@@ -109,7 +109,7 @@
 <meta property="og:image" content="http://hacky.wang/blog/20220530/oHHX0edBXdPT.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220530/BalqeFPTQs2s.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220530/xKfvVYsjc1eo.png?imageslim">
-<meta property="og:updated_time" content="2022-05-30T14:11:38.400Z">
+<meta property="og:updated_time" content="2022-06-14T13:11:35.494Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CobaltStrike高免杀样本分析">
 <meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果">
@@ -406,7 +406,7 @@
 
       
         <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果可能更好。第二，对于shellcode的加密方式，不在拘泥于传统的异或或者AES，Base等公开的加密编码算法，也会采用一些好玩的，个性化的编码算法进行shellcode加密。第三，在开辟内存空间的时候，也不在使用传统的VirtualAlloc等R3层的API函数，更多的使用基于底层的API函数，第四，在调用shellcode过程中，也不像往常一样使用常规的方式调用shellcode，而是利用一些API的机制(CreateThread)，或者回调机制(EnumSystemLocalesW)，以及APC。<br><a id="more"></a></p>
-<h2 id="0x01-分析过程"><a href="#0x01-分析过程" class="headerlink" title="0x01 分析过程"></a>0x01 分析过程</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个loader由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
+<h2 id="0x01-Example1"><a href="#0x01-Example1" class="headerlink" title="0x01 Example1"></a>0x01 Example1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个loader由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第2层powershell脚本中，依旧是执行Base64加密/编码过的Powershell语句<br>   <img src="http://hacky.wang/blog/20220525/D2dzLkeJRY7N.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过解码得到解码之后的Powershell脚本。第三层Powershell脚本逻辑也很清楚，首先解码一段base64，然后进行xor解密，获得一段shellcode，然后将解密获得的shellcode复制到内存中并执行。<br>   <img src="http://hacky.wang/blog/20220525/M1sraJ1PX2zv.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过分析，转储而来的shellcode是典型的cobaltstrike生成stageless类型的shellcode。也就是所谓的分离式免杀的操作。<br>   <img src="http://hacky.wang/blog/20220525/HlfthlTWfRdY.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/d87EH0lvK6Ee.png?imageslim" alt="mark"></p>
@@ -418,7 +418,7 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16个字节组成的Byte[],如果需要将shellcode转化为UUID形式的话，如果shellcode长度不足16的话，将自动补齐。在CobaltStrike免杀样本中，UUID是以字符串形式存在于内存中，其通过API函数<code>UuidFromStringA</code>将其转化为UUID格式。<br>   <img src="http://hacky.wang/blog/20220528/hYXCzF2FThsV.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，通过<code>EnumSystemLocalesW</code>函数通过回调的方式执行shellcode，同样的可以进行回调的还有以下函数<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>, EnumTimeFormatsA</div><div class="line"><span class="number">2</span>, EnumWindows</div><div class="line"><span class="number">3</span>, EnumDesktopWindows</div><div class="line"><span class="number">4</span>, EnumDateFormatsA</div><div class="line"><span class="number">5</span>, EnumChildWindows</div><div class="line"><span class="number">6</span>, EnumThreadWindows</div><div class="line"><span class="number">7</span>, EnumSystemLocales</div><div class="line"><span class="number">8</span>, EnumSystemGeoID</div><div class="line"><span class="number">9</span>, EnumSystemLanguageGroupsA</div><div class="line"><span class="number">10</span>, EnumUILanguagesA</div><div class="line"><span class="number">11</span>, EnumSystemCodePagesA</div><div class="line"><span class="number">12</span>, EnumDesktopsW</div><div class="line"><span class="number">13</span>, EnumSystemCodePagesW</div></pre></td></tr></table></figure></p>
 <p>   <img src="http://hacky.wang/blog/20220528/181EYINyufLB.png?imageslim" alt="mark"></p>
-<h1 id="0x03-Example-3"><a href="#0x03-Example-3" class="headerlink" title="0x03 Example_3"></a>0x03 Example_3</h1><ul>
+<h2 id="0x03-Example3"><a href="#0x03-Example3" class="headerlink" title="0x03 Example3"></a>0x03 Example3</h2><ul>
 <li><p>看图标和关键字显然，这是由<code>pyinstaller</code>打包而成的exe文件。目前常见的py打包工具主要有<code>pyinstaller</code>，<code>py2exe</code>,以及<code>cx_Freeze</code><br> <img src="http://hacky.wang/blog/20220530/eb0JbgWba5hY.png?imageslim" alt="mark"></p>
 </li>
 <li><p>针对<code>pyinstaller</code>打包而来的exe，可以使用<code>pyinstxtractor.py</code>进行解包，完成后，会在同目录生成一个extracted结尾的文件夹，在文件夹中，有两个没有后缀的文件，其中必然有一个名为struct文件。<br> <img src="http://hacky.wang/blog/20220530/6zXGpMBrmt4Q.png?imageslim" alt="mark"></p>
@@ -548,7 +548,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">58</span>
+                  <span class="site-state-item-count">59</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -603,7 +603,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-分析过程"><span class="nav-number">2.</span> <span class="nav-text">0x01 分析过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Example2"><span class="nav-number">3.</span> <span class="nav-text">0x02 Example2</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-Example-3"><span class="nav-number"></span> <span class="nav-text">0x03 Example_3</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-Example1"><span class="nav-number">2.</span> <span class="nav-text">0x01 Example1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Example2"><span class="nav-number">3.</span> <span class="nav-text">0x02 Example2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-Example3"><span class="nav-number">4.</span> <span class="nav-text">0x03 Example3</span></a></li></ol></div>
             
 
           </div>

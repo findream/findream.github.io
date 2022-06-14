@@ -81,17 +81,19 @@
 
 
 
-<meta name="description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
+<meta name="description" content="0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2） 原文链接：每周蓝军技术推送（2022.5.28-6.2 这一周的内容推送主要是一些工具推荐 释放UDRL（用户定义反射加载器）内存的BOF 基于低熵的香农编码隐藏shellcode Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放 C# 编写的 COM 劫持持久化辅助工具">
 <meta property="og:type" content="article">
-<meta property="og:title" content="&lt;格蠹汇编&gt;_第9章_趣谈托管程序的辅助调试线程">
-<meta property="og:url" content="https://findream.github.io/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/index.html">
+<meta property="og:title" content="绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习">
+<meta property="og:url" content="https://findream.github.io/2022/06/14/绿盟科技-每周蓝军技术推送（2022.5.28-6.2）/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
+<meta property="og:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2） 原文链接：每周蓝军技术推送（2022.5.28-6.2 这一周的内容推送主要是一些工具推荐 释放UDRL（用户定义反射加载器）内存的BOF 基于低熵的香农编码隐藏shellcode Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放 C# 编写的 COM 劫持持久化辅助工具">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-03T03:43:30.221Z">
+<meta property="og:image" content="http://hacky.wang/blog/20220613/Lk1z89W0zf5w.png?imageslim">
+<meta property="og:updated_time" content="2022-06-14T13:09:49.756Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="&lt;格蠹汇编&gt;_第9章_趣谈托管程序的辅助调试线程">
-<meta name="twitter:description" content="前置知识&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做初始线程，应用程序的主函数都是在这个线程里面执行的。">
+<meta name="twitter:title" content="绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习">
+<meta name="twitter:description" content="0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2） 原文链接：每周蓝军技术推送（2022.5.28-6.2 这一周的内容推送主要是一些工具推荐 释放UDRL（用户定义反射加载器）内存的BOF 基于低熵的香农编码隐藏shellcode Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放 C# 编写的 COM 劫持持久化辅助工具">
+<meta name="twitter:image" content="http://hacky.wang/blog/20220613/Lk1z89W0zf5w.png?imageslim">
 
 
 
@@ -121,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="https://findream.github.io/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/"/>
+  <link rel="canonical" href="https://findream.github.io/2022/06/14/绿盟科技-每周蓝军技术推送（2022.5.28-6.2）/"/>
 
 
 
 
 
-  <title><格蠹汇编>_第9章_趣谈托管程序的辅助调试线程 | HaCky的安全备忘录</title>
+  <title>绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习 | HaCky的安全备忘录</title>
   
 
 
@@ -294,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2018/08/27/《格蠹汇编》_第21章_趣谈托管程序的辅助调试线程/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/06/14/绿盟科技-每周蓝军技术推送（2022.5.28-6.2）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="HaCky">
@@ -311,7 +313,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"><格蠹汇编>_第9章_趣谈托管程序的辅助调试线程</h1>
+          <h1 class="post-title" itemprop="name headline">绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习</h1>
         
 
         <div class="post-meta">
@@ -323,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-27T15:02:11+08:00">
-                2018-08-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-06-14T14:02:11+08:00">
+                2022-06-14
               </time>
             
 
@@ -346,8 +348,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/格蠹汇编/" itemprop="url" rel="index">
-                    <span itemprop="name"><格蠹汇编></span>
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
                   </a>
                 </span>
 
@@ -383,24 +385,36 @@
       
 
       
-        <h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当执行windows可执行文件时，OS会创建一个线程，叫做<strong>初始线程</strong>，应用程序的主函数都是在这个线程里面执行的。<br><a id="more"></a></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是对于托管程序来说，在托管程序初始化期间，.Net运行时还会自动创建两个工作线程，一个是系统创建的初始化线程，另外两个是.Net运行时创建的工作线程，一个是与内存回收相关的<strong>终结器线程</strong>，另外一个是支持调试的<strong>辅助调试进程</strong>。</p>
-<h2 id="托管调试模型"><a href="#托管调试模型" class="headerlink" title="托管调试模型"></a>托管调试模型</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;托管程序的调试一共有三种：</p>
-<ul>
-<li>使用非托管调试器调试程序中的非托管代码。</li>
+        <h2 id="0x00-绿盟科技-每周蓝军技术推送（2022-5-28-6-2）"><a href="#0x00-绿盟科技-每周蓝军技术推送（2022-5-28-6-2）" class="headerlink" title="0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2）"></a>0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2）</h2><ul>
+<li>原文链接：<a href="https://mp.weixin.qq.com/s/aZ3Af7xHOuqKGI_R89U0Fg" target="_blank" rel="external">每周蓝军技术推送（2022.5.28-6.2</a></li>
+<li>这一周的内容推送主要是一些工具推荐</li>
+<li>释放UDRL（用户定义反射加载器）内存的BOF</li>
+<li>基于低熵的香农编码隐藏shellcode</li>
+<li>Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放</li>
+<li>C# 编写的 COM 劫持持久化辅助工具<a id="more"></a>
+</li>
 </ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们知道Net程序一共有三部分组成，第一个是非托管代码和数据，第二个是托管代码和数据，第三个是支持托管调试的<strong>运行时控制器[CRThread]。</strong>对于调试程序也分为三部分：本地代码调试器，托管调试器，托管API。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为托管代码最终也是要编译为本地代码，所以利用这个调试模式可以调试本地代码也是调试托管代码。但是需要使用特定插件才可查看托管代码的数据结构</p>
-<ul>
-<li>使用托管调试器调试托管代码</li>
+<h2 id="0x01-调试和逆向ALPC"><a href="#0x01-调试和逆向ALPC" class="headerlink" title="0x01 调试和逆向ALPC"></a>0x01 调试和逆向ALPC</h2><ul>
+<li>ALPC调试比较复杂没有仔细看。除了<a href="https://csandker.io/2022/05/29/Debugging-And-Reversing-ALPC.html" target="_blank" rel="external">这篇文章(调试和逆向ALPC)</a>之外，还有<a href="https://bbs.pediy.com/thread-268225.htm" target="_blank" rel="external">win10 1909逆向（ALPC通信原理浅析</a>等可以参考。</li>
 </ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;托管调试器通过调试器API和被调试进程运行时控制器通信来访问要调试的托管代码和数据。这种模式不会跟踪本地代码。</p>
-<ul>
-<li>混合调试</li>
+<h2 id="0x02-freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF"><a href="#0x02-freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF" class="headerlink" title="0x02 freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF"></a>0x02 freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF</h2><ul>
+<li>这就是一个释放UDRL(用户定义反射加载器)的BOF。</li>
+<li>BOF:即Beacon Object Files。是c编译后的文件，其有点就是小，可以在beacon内部使用，缺点就是会引发beacon崩溃。</li>
+<li>关于BOF，可以看官方出的<a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/beacon-object-files_main.htm" target="_blank" rel="external">文章</a></li>
 </ul>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;速度慢</p>
-<h2 id="联系纽带"><a href="#联系纽带" class="headerlink" title="联系纽带"></a>联系纽带</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RCThread作为调试器与被调试程序通讯的纽带。当我们使用<code>~*命令</code>打印被调试进程所有线程的时候，发现第二个(1号线程)是RcThread，任何利用<code>~ 1n命令</code>挂起该线程，然后再利用VS调试，发现VS失去响应调试失败。</p>
-<h2 id="刺探线程、"><a href="#刺探线程、" class="headerlink" title="刺探线程、"></a>刺探线程、</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当调试器右端需要访问托管程序资源时候，首先需要先获取这些资源的保护锁，如果这个保护锁是由托管程序普通线程拥有的，那么将导致死锁，所以RcThread会创建一个新县城用于帮助Rcthread刺探信息</p>
+<h2 id="0x03-Shelltropy：基于低熵的香农编码隐藏shellcode"><a href="#0x03-Shelltropy：基于低熵的香农编码隐藏shellcode" class="headerlink" title="0x03 Shelltropy：基于低熵的香农编码隐藏shellcode"></a>0x03 Shelltropy：基于低熵的香农编码隐藏shellcode</h2><ul>
+<li>一个概念：信息熵/香农熵：一组信息中随机性的量度，信息越随机，熵越高。</li>
+<li>一个重要结论：bin通过加密混淆或者加壳，会导致信息熵增加。多数恶意软件，信息熵偏高。</li>
+<li>如何降低熵，规避EDR：之前了解过，将加密数据嵌入正常的可执行文件可以避免高熵。</li>
+<li>Shelltropy作者所写的<a href="https://kleiton0x00.github.io/posts/The-more-predictable-you-are-the-less-you-are-able-to-get-detected/" target="_blank" rel="external">文章</a>的思路是通过向高熵的数据中插入低熵的数据，可以将整体的熵降低。但是这么做会使shellcode增大一倍。<br> <img src="http://hacky.wang/blog/20220613/Lk1z89W0zf5w.png?imageslim" alt="mark"></li>
+<li>Ref：<a href="https://github.com/kleiton0x00/Shelltropy/blob/main/README.md" target="_blank" rel="external">https://github.com/kleiton0x00/Shelltropy/blob/main/README.md</a></li>
+</ul>
+<h2 id="0x04-KaynStrike：Cobalt-Strike-Beacon-的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放"><a href="#0x04-KaynStrike：Cobalt-Strike-Beacon-的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放" class="headerlink" title="0x04 KaynStrike：Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放"></a>0x04 KaynStrike：Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放</h2><ul>
+<li><a href="https://github.com/Cracked5pider/KaynStrike" target="_blank" rel="external">KaynStrike</a>设计确实很巧妙，首先，工具分段把PE数据写入当前进程空间，然后拉起一个线程，并将EIP设置成之前那段数据的入口点，Resume之后，便执行了beacon代码，之后，主线程这边采用同样的方法执行NtFreeVirtualMemoryAPI函数，进行free。</li>
+</ul>
+<h2 id="0x05-COM-Hunter：C-编写的-COM-劫持持久化辅助工具"><a href="#0x05-COM-Hunter：C-编写的-COM-劫持持久化辅助工具" class="headerlink" title="0x05 COM-Hunter：C# 编写的 COM 劫持持久化辅助工具"></a>0x05 COM-Hunter：C# 编写的 COM 劫持持久化辅助工具</h2><ul>
+<li><a href="https://github.com/nickvourd/COM-Hunter" target="_blank" rel="external">https://github.com/nickvourd/COM-Hunter</a>阅读了该工具的部分源码，其[内置]了一些可以被COM劫持的CLSID列表，没什么可说的。关于如何狩猎可以被COM劫持的CLSID可以参考<a href="https://www.4hou.com/posts/Mo51" target="_blank" rel="external">持久性COM劫持的实现 - 嘶吼</a>等文章，除此以外<a href="https://github.com/findream/SecStudy/blob/main/ATT-CK/Remote-ComHiJack/ReadMe.md" target="_blank" rel="external">我的github</a>上有一个可以远程狩猎COM劫持的工具。</li>
+</ul>
 
       
     </div>
@@ -425,8 +439,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/27/二进制分析工具angr使用笔记/" rel="next" title="angr使用笔记">
-                <i class="fa fa-chevron-left"></i> angr使用笔记
+              <a href="/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/" rel="next" title="绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习">
+                <i class="fa fa-chevron-left"></i> 绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习
               </a>
             
           </div>
@@ -434,10 +448,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/28/《格蠹汇编》_第25章_如何调试窗口大总管/" rel="prev" title="<格蠹汇编>_第25章_如何调试窗口大总管">
-                <格蠹汇编>_第25章_如何调试窗口大总管 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -569,7 +579,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前置知识"><span class="nav-number">1.</span> <span class="nav-text">前置知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#托管调试模型"><span class="nav-number">2.</span> <span class="nav-text">托管调试模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#联系纽带"><span class="nav-number">3.</span> <span class="nav-text">联系纽带</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#刺探线程、"><span class="nav-number">4.</span> <span class="nav-text">刺探线程、</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-绿盟科技-每周蓝军技术推送（2022-5-28-6-2）"><span class="nav-number">1.</span> <span class="nav-text">0x00 绿盟科技-每周蓝军技术推送（2022.5.28-6.2）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-调试和逆向ALPC"><span class="nav-number">2.</span> <span class="nav-text">0x01 调试和逆向ALPC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF"><span class="nav-number">3.</span> <span class="nav-text">0x02 freeBokuLoader：释放UDRL（用户定义反射加载器）内存的BOF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-Shelltropy：基于低熵的香农编码隐藏shellcode"><span class="nav-number">4.</span> <span class="nav-text">0x03 Shelltropy：基于低熵的香农编码隐藏shellcode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-KaynStrike：Cobalt-Strike-Beacon-的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放"><span class="nav-number">5.</span> <span class="nav-text">0x04 KaynStrike：Cobalt Strike Beacon 的用户定义反射加载器，伪造线程起始地址并在执行入口点后释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-COM-Hunter：C-编写的-COM-劫持持久化辅助工具"><span class="nav-number">6.</span> <span class="nav-text">0x05 COM-Hunter：C# 编写的 COM 劫持持久化辅助工具</span></a></li></ol></div>
             
 
           </div>
