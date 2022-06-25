@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="HaCky的安全备忘录">
 <meta property="og:description" content="0x00 项目简介&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SysWhispers2Demo是通过逆向分析kernel32.dll或者kernelbase.dll文件，从而仿写部分Win32 API的实现逻辑，以解决部分SysWhispers2使用者在利用SysWhispers2做EDR规避时候所遇到的开发困难。SysWhispers2Demo">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-06-25T14:23:10.414Z">
+<meta property="og:updated_time" content="2022-06-25T14:32:29.489Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SysWhispers2Demo 简介">
 <meta name="twitter:description" content="0x00 项目简介&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SysWhispers2Demo是通过逆向分析kernel32.dll或者kernelbase.dll文件，从而仿写部分Win32 API的实现逻辑，以解决部分SysWhispers2使用者在利用SysWhispers2做EDR规避时候所遇到的开发困难。SysWhispers2Demo">
@@ -383,7 +383,7 @@
       
 
       
-        <h2 id="0x00-项目简介"><a href="#0x00-项目简介" class="headerlink" title="0x00 项目简介"></a>0x00 项目简介</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SysWhispers2Demo是通过逆向分析kernel32.dll或者kernelbase.dll文件，从而仿写部分Win32 API的实现逻辑，以解决部分SysWhispers2使用者在利用SysWhispers2做EDR规避时候所遇到的开发困难。SysWhispers2Demo在仿写Win32 API的时候，<strong>部分采用最小开发原则</strong>，即部分参数需要使用微软API文档所约定的默认参数，以减轻仿写的工作量。</p>
+        <h2 id="0x00-项目简介"><a href="#0x00-项目简介" class="headerlink" title="0x00 项目简介"></a>0x00 项目简介</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SysWhispers2Demo是通过逆向分析kernel32.dll或者kernelbase.dll文件，从而仿写部分Win32 API的实现逻辑，以解决部分SysWhispers2使用者在利用SysWhispers2做EDR规避时候所遇到的开发困难。SysWhispers2Demo在仿写Win32 API的时候，<strong>部分采用最小开发原则</strong>，即部分参数需要使用微软API文档所约定的默认参数，以减轻仿写的工作量。项目地址:<a href="https://github.com/findream/SysWhispers2Demo" target="_blank" rel="external">https://github.com/findream/SysWhispers2Demo</a></p>
 <a id="more"></a>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/jthuraisamy/SysWhispers2" target="_blank" rel="external">SysWhispers2</a>主要是由jthuraisamy开发的通过Syscall用来规避EDR。SysWhispers2使用很方便，无需指定windows 操作系统版本，只需要通过syswhispers.py生成Nt*函数所需要的函数参数，调用约定等。但是，Ring3的逻辑需要自己实现，这就是SysWhispers2Demo的目的。</p>
 <h2 id="0x01-文件描述"><a href="#0x01-文件描述" class="headerlink" title="0x01 文件描述"></a>0x01 文件描述</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SysWhispers2Demo主要有3个文件<code>SysWhispers2Demo.cpp</code>,<code>SysWhispers2Demo.h</code>,<code>prototypes.h</code>。</p>
