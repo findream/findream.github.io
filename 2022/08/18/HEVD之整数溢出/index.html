@@ -81,30 +81,20 @@
 
 
 
-<meta name="description" content="0x01 环境安装与HEVD说明&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;安装完VirtualKd和Windbg Preview之后，配置WindbgPreview，首先在启动虚拟机之前，配置Costumer如下：DbgX.Shell.exe /k com:pipe,resets=0,reconnect,port=$(pipename)。然后启">
+<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第一篇文章">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HEVD之栈溢出">
-<meta property="og:url" content="https://findream.github.io/2022/07/16/HEVD之栈溢出漏洞/index.html">
+<meta property="og:title" content="HaCky的安全备忘录">
+<meta property="og:url" content="https://findream.github.io/2022/08/18/HEVD之整数溢出/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x01 环境安装与HEVD说明&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;安装完VirtualKd和Windbg Preview之后，配置WindbgPreview，首先在启动虚拟机之前，配置Costumer如下：DbgX.Shell.exe /k com:pipe,resets=0,reconnect,port=$(pipename)。然后启">
+<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第一篇文章">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/88pOuaHsceok.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/ABYOW7EY0EiO.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/4nSgKhHGpCmm.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/LSCnVV4FxHK7.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/LeGxgvP8T0ok.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/ABM8Dt0a3dkC.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/oFYFtM7SlLfQ.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/3CHfIoNcpwCb.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/m7vPrx9mIecR.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/OjgBcmXNrzLB.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/PIoN4NqXKGQ9.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220720/qjPxVHC365cM.png?imageslim">
-<meta property="og:updated_time" content="2022-07-22T12:10:35.671Z">
+<meta property="og:image" content="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220722/V9QyljolQXJA.png?imageslim">
+<meta property="og:updated_time" content="2022-08-18T11:09:54.082Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HEVD之栈溢出">
-<meta name="twitter:description" content="0x01 环境安装与HEVD说明&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;安装完VirtualKd和Windbg Preview之后，配置WindbgPreview，首先在启动虚拟机之前，配置Costumer如下：DbgX.Shell.exe /k com:pipe,resets=0,reconnect,port=$(pipename)。然后启">
-<meta name="twitter:image" content="http://hacky.wang/blog/20220720/88pOuaHsceok.png?imageslim">
+<meta name="twitter:title" content="HaCky的安全备忘录">
+<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第一篇文章">
+<meta name="twitter:image" content="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim">
 
 
 
@@ -134,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="https://findream.github.io/2022/07/16/HEVD之栈溢出漏洞/"/>
+  <link rel="canonical" href="https://findream.github.io/2022/08/18/HEVD之整数溢出/"/>
 
 
 
 
 
-  <title>HEVD之栈溢出 | HaCky的安全备忘录</title>
+  <title> | HaCky的安全备忘录</title>
   
 
 
@@ -307,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/07/16/HEVD之栈溢出漏洞/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/08/18/HEVD之整数溢出/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="HaCky">
@@ -324,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HEVD之栈溢出</h1>
+          <h1 class="post-title" itemprop="name headline"></h1>
         
 
         <div class="post-meta">
@@ -336,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-07-16T15:02:11+08:00">
-                2022-07-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-08-18T19:05:59+08:00">
+                2022-08-18
               </time>
             
 
@@ -346,28 +336,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞挖掘/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞挖掘</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -396,21 +364,12 @@
       
 
       
-        <h2 id="0x01-环境安装与HEVD说明"><a href="#0x01-环境安装与HEVD说明" class="headerlink" title="0x01 环境安装与HEVD说明"></a>0x01 环境安装与HEVD说明</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装完VirtualKd和Windbg Preview之后，配置WindbgPreview，首先在启动虚拟机之前，配置Costumer如下：<code>DbgX.Shell.exe /k com:pipe,resets=0,reconnect,port=$(pipename)</code>。然后启动虚拟机可能也运行不起WindbgPreview，如果出现这种情况，先设置<code>WinDbg.exe</code>的路径，然后运行调试器，等Windbg起来后，在勾选到<code>Costumer</code>。</p>
-<a id="more"></a>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEVD有编译好的SYS文件以及源码，其中编译好的SYS有两个文件夹，<code>secure</code>是已经修复过的SYS，而<code>vulnerable</code>是指存在漏洞的SYS。源码是修复之后的代码。<br>    <img src="http://hacky.wang/blog/20220720/88pOuaHsceok.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;含有漏洞代码主要位于<code>HackSysExtremeVulnerableDriver</code>中的<code>IrpDeviceIoCtlHandler</code>函数中，这个函数包含了HEVD所有的漏洞类型。<br>    <img src="http://hacky.wang/blog/20220720/ABYOW7EY0EiO.png?imageslim" alt="mark"></p>
-<h2 id="0x02-成因分析"><a href="#0x02-成因分析" class="headerlink" title="0x02 成因分析"></a>0x02 成因分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;栈溢出位于HEVD控制码为0x222003的函数处，也就是<code>sub_44517E</code>,很显然，在<code>sub_44517E</code>函数中，将有R3传入的缓冲区，以及该缓冲区的大小传入函数<code>sub_4451A2</code>,在<code>sub_4451A2</code>函数中，并没有对传入的缓冲区大小进行校验，即判断两个缓冲区大小。导致我们传入大于KernelBuffer的大小的UserBuffer，导致栈溢出。<br>    <img src="http://hacky.wang/blog/20220720/4nSgKhHGpCmm.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220720/LSCnVV4FxHK7.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据IDA的解析结果来看，var_1c占了1C大小的空间，KernelBuffer占据了1C-81C共计800h大小的空间，这样子一共占用了81Ch大小的空间，加上返回地址4h的空间，一共占了820h的空间，所以我们构造栈溢出的话，只需要构造820h+4h的空间即可。<br>    <img src="http://hacky.wang/blog/20220720/LeGxgvP8T0ok.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从源码来看，存在漏洞的版本，直接按照UserBuffer大小将UserBuffer复制给KernelBuffer，而修复之后的版本，是按照KernelBuffer大小将UserBuffer复制给KernelBuffer，由此修复了漏洞。<br>    <img src="http://hacky.wang/blog/20220720/ABM8Dt0a3dkC.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>HEVD！TriggerBufferOverflowStack</code>处下断，以及在Buffer复制的地方下断，首先断在<code>HEVD！TriggerBufferOverflowStack</code>开头，查看栈顶寄存器为0x98075bd4，当运行到memcpy处，查看目的地址，也就是第一个参数地址为0x980753b4，两者相减，大小为0x00000820。也就是说，只需要构造一个大小为0x820+0x04的缓冲区，其中前0x820用于覆盖KernelBuffer，最后4个字节用于栈溢出，只需要将提取的shellcode地址放到最后四个字节处就可以实现漏洞利用。<br>    <img src="http://hacky.wang/blog/20220720/oFYFtM7SlLfQ.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220720/3CHfIoNcpwCb.png?imageslim" alt="mark"></p>
-<h2 id="0x03-漏洞利用"><a href="#0x03-漏洞利用" class="headerlink" title="0x03 漏洞利用"></a>0x03 漏洞利用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，需要打开驱动设备，在没有源码的情况下，在<code>DriverEntry</code>函数中，创建了一个名为<code>\\Device\\HackSysExtremeVulnerableDriver</code>的Device，所以在R3也应该创建<code>\\\\.\\HackSysExtremeVulnerableDriver</code>的Device。<br>    <img src="http://hacky.wang/blog/20220720/m7vPrx9mIecR.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着，如上所说，应该构造符合条件的Shellcode。具体就是构造一个大小为0x820+0x04的缓冲区，其中前0x820用于覆盖KernelBuffer，最后4个字节用于栈溢出，只需要将提取的shellcode地址放到最后四个字节处就可以实现漏洞利用。<br>    <img src="http://hacky.wang/blog/20220720/OjgBcmXNrzLB.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后将payload通过<code>DeviceIoControl</code>传入，Shellcode的原理是通过FS+0x124，获取线程的KTHREAD,然后在通过KTHREAD+0x50获取进程的EPROCESS，然后将当前进程的EPROCESS地址保存在ECX寄存器中。因为EPROCESS是一个链装结构，通过<code>mov eax, [eax + FLINK_OFFSET]</code>这个语句可以定位到下一个EPROCESS链，然后减去0xB8即可定位到EPROCESS结构头。在EPROCESS偏移+0xB4处获取PID，然后和system进程的PID(4)相比，以确定system进程。然后通过0xF8获取system进程token，并将system进程token保存。然后调整栈就可以了。<br>    <img src="http://hacky.wang/blog/20220720/PIoN4NqXKGQ9.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220720/qjPxVHC365cM.png?imageslim" alt="mark"></p>
-<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><ul>
-<li><a href="https://bbs.pediy.com/thread-270172.htm" target="_blank" rel="external">HEVD学习笔记之缓冲区溢出攻击</a></li>
-<li><a href="https://bbs.pediy.com/thread-252484.htm" target="_blank" rel="external">Windows Kernel Exploit 内核漏洞学习(2)-内核栈溢出</a></li>
-</ul>
+        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这是HEVD学习的第一篇文章<br><a id="more"></a></p>
+<h2 id="0x01-成因分析"><a href="#0x01-成因分析" class="headerlink" title="0x01 成因分析"></a>0x01 成因分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;整数包括无符号整数和有符号整数，但是对于计算机来说，区分无符号整数和有符号整数意义不大，比如”-1”,无符号整数来说，其值为<code>4294967295</code>,也就是<code>0xFFFFFFFF</code>,编译器根据数据类型的不同，生成不同的代码，规定了每个数据变量的长度。在自然语义环境中，如果是4294967295加上4，最终会得到4294967299这个数字，但是，在计算机语义中，这个是在这个数据类型中是最大的，加上4就需要向高位拓展。这样就会丢弃拓展的高位。整数溢出就是这样产生的。例如,<code>0xFFFFFFFF</code>加上<code>4</code>之后，得到的数据就是<code>3</code>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>整数溢出漏洞的作用是什么，整数溢出主要是为了绕过可能的长度检查。</strong>如下的例子，如果输入任意正整数，都不可能使得b+c 小于 a，但是如果输入的c是0xFFFFFFF0，因为整数溢出，0xFFFFFFFA+0x9 = 0x3.如此就绕过了长度检查。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">8</span>;</div><div class="line"><span class="keyword">int</span> b = <span class="number">9</span>;</div><div class="line"><span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);</div><div class="line"><span class="keyword">if</span>(b+c &lt; <span class="number">8</span>)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"success"</span>)</div><div class="line">&#125;</div><div class="line"><span class="keyword">else</span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"failed"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEVD的IntegerOverflow位于TriggerIntegerOverflow函数中，直接通过反汇编看，已知函数栈空间为0x820+0x04=0x824,也就是说要实现栈溢出需要0x824+0x04的大小实现。但是在代码中，对缓冲区长度进行了校验，根据自然语义下理解，缓冲区长度加上4要小于0x800，说明缓冲区不可能超过0x800，这样就不会造成栈溢出。<br>    <img src="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是由于整数溢出，当我传入的UserBufferLength为0xFFFFFFFF，加个4，得0x3，这样自然就绕过了大小的限制。</p>
+<h2 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据分析代码，明确使用栈溢出进行利用，使用整数溢出绕过长度检查。查看代码，要使进行缓冲区复制需要两个条件，Buffer内容不为0xBAD0B0B0，长度小于UserBufferLength/4。在使用整数溢出的是和，第二个条件得到满足，但是前面也说了实现栈溢出需要0x824+0x04的大小的缓冲区，所以，构造的payload主要构成是这样的，0x824长度用于填充缓冲，0x04是提权shellcode的地址，最后四个字节内容为0xBAD0B0B0，用于终止缓冲区复制。<br>    <img src="http://hacky.wang/blog/20220722/V9QyljolQXJA.png?imageslim" alt="mark"></p>
 
       
     </div>
@@ -435,8 +394,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2022/06/26/CobaltStrike Beacon生成原理分析/" rel="next" title="CobaltStrike Beacon生成原理分析">
-                <i class="fa fa-chevron-left"></i> CobaltStrike Beacon生成原理分析
+              <a href="/2022/08/18/HEVD之未初始化栈变量/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
@@ -444,10 +403,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2022/07/20/HEVD之任意地址覆盖/" rel="prev" title="HEVD之任意地址覆盖">
-                HEVD之任意地址覆盖 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -524,7 +479,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">71</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -535,7 +490,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -579,7 +534,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-环境安装与HEVD说明"><span class="nav-number">1.</span> <span class="nav-text">0x01 环境安装与HEVD说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-成因分析"><span class="nav-number">2.</span> <span class="nav-text">0x02 成因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">0x03 漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-参考"><span class="nav-number">4.</span> <span class="nav-text">0x04 参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-成因分析"><span class="nav-number">2.</span> <span class="nav-text">0x01 成因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">0x02 漏洞利用</span></a></li></ol></div>
             
 
           </div>

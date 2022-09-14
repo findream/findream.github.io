@@ -81,20 +81,16 @@
 
 
 
-<meta name="description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;整数包括无符号整数和有符号整数，但是对于计算机来说，区分无符号整数和有符号整数意义不大，比如”-1”,无符号整数来说，其值为4294967295,也就是0xFFFFFFFF,编译器根据数据类型的不同，生成不同的代码，规定了每个数据变量的长度。在自然语义环境中，如果是4294967295">
-<meta property="og:type" content="article">
-<meta property="og:title" content="HEVD之整数溢出">
-<meta property="og:url" content="https://findream.github.io/2022/07/22/HEVD之整数溢出/index.html">
+<meta name="description" content="我是最菜的HaCky呀">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HaCky的安全备忘录">
+<meta property="og:url" content="https://findream.github.io/page/8/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;整数包括无符号整数和有符号整数，但是对于计算机来说，区分无符号整数和有符号整数意义不大，比如”-1”,无符号整数来说，其值为4294967295,也就是0xFFFFFFFF,编译器根据数据类型的不同，生成不同的代码，规定了每个数据变量的长度。在自然语义环境中，如果是4294967295">
+<meta property="og:description" content="我是最菜的HaCky呀">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim">
-<meta property="og:image" content="http://hacky.wang/blog/20220722/V9QyljolQXJA.png?imageslim">
-<meta property="og:updated_time" content="2022-07-22T12:08:46.026Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HEVD之整数溢出">
-<meta name="twitter:description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;整数包括无符号整数和有符号整数，但是对于计算机来说，区分无符号整数和有符号整数意义不大，比如”-1”,无符号整数来说，其值为4294967295,也就是0xFFFFFFFF,编译器根据数据类型的不同，生成不同的代码，规定了每个数据变量的长度。在自然语义环境中，如果是4294967295">
-<meta name="twitter:image" content="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim">
+<meta name="twitter:title" content="HaCky的安全备忘录">
+<meta name="twitter:description" content="我是最菜的HaCky呀">
 
 
 
@@ -124,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://findream.github.io/2022/07/22/HEVD之整数溢出/"/>
+  <link rel="canonical" href="https://findream.github.io/page/8/"/>
 
 
 
 
 
-  <title>HEVD之整数溢出 | HaCky的安全备忘录</title>
+  <title>HaCky的安全备忘录</title>
   
 
 
@@ -149,7 +145,8 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -282,9 +279,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -297,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/07/22/HEVD之整数溢出/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="HaCky">
@@ -314,7 +311,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HEVD之整数溢出</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/" itemprop="url">一篇文章带你了解线程局部存储(TLS)技术</a></h1>
         
 
         <div class="post-meta">
@@ -326,8 +325,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-07-22T15:02:11+08:00">
-                2022-07-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-02T13:45:11+08:00">
+                2017-12-02
               </time>
             
 
@@ -349,8 +348,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞挖掘/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞挖掘</span>
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
                   </a>
                 </span>
 
@@ -386,13 +385,17 @@
       
 
       
-        <h2 id="0x01-成因分析"><a href="#0x01-成因分析" class="headerlink" title="0x01 成因分析"></a>0x01 成因分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;整数包括无符号整数和有符号整数，但是对于计算机来说，区分无符号整数和有符号整数意义不大，比如”-1”,无符号整数来说，其值为<code>4294967295</code>,也就是<code>0xFFFFFFFF</code>,编译器根据数据类型的不同，生成不同的代码，规定了每个数据变量的长度。在自然语义环境中，如果是4294967295加上4，最终会得到4294967299这个数字，但是，在计算机语义中，这个是在这个数据类型中是最大的，加上4就需要向高位拓展。这样就会丢弃拓展的高位。整数溢出就是这样产生的。例如,<code>0xFFFFFFFF</code>加上<code>4</code>之后，得到的数据就是<code>3</code>。</p>
-<a id="more"></a>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>整数溢出漏洞的作用是什么，整数溢出主要是为了绕过可能的长度检查。</strong>如下的例子，如果输入任意正整数，都不可能使得b+c 小于 a，但是如果输入的c是0xFFFFFFF0，因为整数溢出，0xFFFFFFFA+0x9 = 0x3.如此就绕过了长度检查。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a = <span class="number">8</span>;</div><div class="line"><span class="keyword">int</span> b = <span class="number">9</span>;</div><div class="line"><span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;c);</div><div class="line"><span class="keyword">if</span>(b+c &lt; <span class="number">8</span>)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"success"</span>)</div><div class="line">&#125;</div><div class="line"><span class="keyword">else</span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"failed"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEVD的IntegerOverflow位于TriggerIntegerOverflow函数中，直接通过反汇编看，已知函数栈空间为0x820+0x04=0x824,也就是说要实现栈溢出需要0x824+0x04的大小实现。但是在代码中，对缓冲区长度进行了校验，根据自然语义下理解，缓冲区长度加上4要小于0x800，说明缓冲区不可能超过0x800，这样就不会造成栈溢出。<br>    <img src="http://hacky.wang/blog/20220722/hx8xVjwNx9xf.png?imageslim" alt="mark"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是由于整数溢出，当我传入的UserBufferLength为0xFFFFFFFF，加个4，得0x3，这样自然就绕过了大小的限制。</p>
-<h2 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据分析代码，明确使用栈溢出进行利用，使用整数溢出绕过长度检查。查看代码，要使进行缓冲区复制需要两个条件，Buffer内容不为0xBAD0B0B0，长度小于UserBufferLength/4。在使用整数溢出的是和，第二个条件得到满足，但是前面也说了实现栈溢出需要0x824+0x04的大小的缓冲区，所以，构造的payload主要构成是这样的，0x824长度用于填充缓冲，0x04是提权shellcode的地址，最后四个字节内容为0xBAD0B0B0，用于终止缓冲区复制。<br>    <img src="http://hacky.wang/blog/20220722/V9QyljolQXJA.png?imageslim" alt="mark"></p>
-
+        
+          <h1 id="线程局部存储技术："><a href="#线程局部存储技术：" class="headerlink" title="线程局部存储技术："></a>线程局部存储技术：</h1><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;线程局部存储技术（Thread Local Storage）很好的解决了多线程程序设计中变量的同步问题。同时，TLS回调函数也适用于<font color="#DC143C">反调试技术</font>。使用TSL技术，可以让进程拥有同一个全局变量，但是在不同的线程却对应着不同的值，这些变量只是对应特定的线程才是有意义的</strong></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/02/一篇文章带你了解线程局部存储(TLS)技术/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
       
     </div>
     
@@ -409,28 +412,12 @@
       
 
       
-      
+
       
 
       
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2022/07/20/HEVD之任意地址覆盖/" rel="next" title="HEVD之任意地址覆盖">
-                <i class="fa fa-chevron-left"></i> HEVD之任意地址覆盖
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-          </div>
-        </div>
       
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -440,11 +427,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span>
+  </nav>
+
 
 
           </div>
@@ -452,10 +442,6 @@
 
 
           
-
-  
-
-
 
         </div>
         
@@ -476,17 +462,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -501,7 +478,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">71</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -512,7 +489,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -546,22 +523,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-成因分析"><span class="nav-number">1.</span> <span class="nav-text">0x01 成因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-漏洞利用"><span class="nav-number">2.</span> <span class="nav-text">0x02 漏洞利用</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -688,10 +649,6 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
-
-
 
   
 

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1715/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UAC 原理与检测">
+<meta property="og:url" content="https://findream.github.io/2021/10/25/UAC原理与检测/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1715/">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/z7uqqQsEBRmb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/ul9jErEPgLjo.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/p7plwzUqoBOL.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/2jSbUrqQ1mqU.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/yeVNlOUQ2Pt3.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/KEoDGBGNpt9A.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220111/YWKRhBPQsn3x.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220112/5rVF4s6pGCwi.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220112/znOHufaDrk5h.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/RLTwYUc6tKHD.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/dj7BqE9bCHjj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/PcHD9VqOl4E9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/JKxGe1rMyKl8.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/rS89HUlo71QR.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/J5hktA8UEj8h.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220114/mhWlLbVjiJnN.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/4eOF7GWwBo0X.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/l4UrJ06yyhk2.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/3HlldGYQgXhC.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/Bo8kDuJikaCV.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/FHU9BkHJMcVL.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/71hRsyQikJh1.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/90GUw1zpEanl.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/lUollWQaximF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/9IeAzXRQCUko.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/NGglGXnELKUC.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/nSQU1nqkY51L.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/5TiR5p3ixslg.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220126/ibbTSTqyrFze.png?imageslim">
+<meta property="og:updated_time" content="2022-09-14T13:16:07.709Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UAC 原理与检测">
+<meta name="twitter:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1715/">
+<meta name="twitter:image" content="http://hacky.wang/blog/20220111/z7uqqQsEBRmb.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/10/25/UAC原理与检测/"/>
+
+
+
+
+
+  <title>UAC 原理与检测 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/10/25/UAC原理与检测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UAC 原理与检测</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-25T20:45:11+08:00">
+                2021-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文转载于跳跳糖安全社区，原文链接为<a href="https://tttang.com/archive/1715/" target="_blank" rel="external">https://tttang.com/archive/1715/</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任何需要管理员访问令牌的程序都必须征得同意(即UAC弹窗)，但是存在一个意外，即父进程和子进程之间存在关系，即子进程从父进程中继承访问令牌，这是UAC 绕过的基础。本文将选择UACME中的3种不同的ByPass UAC的例子，为各位讲解ByPass UAC的原理。然后分析UAC的基本基本原理，继而寻找ByPass UAC的通用解决策略，本文行文仓促，如有错误，请各位积极指正。</p>
+<h2 id="0x01-常见的ByPassUAC-原理"><a href="#0x01-常见的ByPassUAC-原理" class="headerlink" title="0x01 常见的ByPassUAC 原理"></a>0x01 常见的ByPassUAC 原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UACME项目中，主要的ByPass UAC方法主要有<strong>Shell API</strong>，<strong>Dll Hiject</strong>,<strong>Elevated COM interface</strong>,<strong>Whitelisted component</strong>。其中，比较常见的就是前三个。本文将根据UACME3.5.6这个版本的23,41,53号方法进行讲解。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UACME的第23号方法的类型是<strong>Dll Hijack</strong>。除了23号方法以外，UACME中同处于<strong>Dll Hijack</strong>还有18号，22号，26号，30号，37号，39号方法，其中UACME的23号方法主要是利用pkgmgr.exe实现ByPass UAC。其在Windows7下可以被成功利用，实现的方法是ucmDismMethod函数。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在编译完UACME，设置好参数(akagi.exe 23 calc.exe)之后，在MethodsManagerCall函数处下断。可以看到ucmDismMethod会依次调用ucmxGenericAutoelevation(),和ucmxDisemer()函数。其中ucmxGenericAutoelevation()主要是为了将所谓的proxy dll释放到C:\Users\kent\AppData\Local\Temp\dismcore.dl!。然后在利用COM接口——CLSID_FileOperation将文件复制到”C:\Windows\system32\dismcore.dll”。值得注意的是，如果程序是32位的话，会将dismcore.dl!释放到C:\Windows\SysWow64\目录下，如果程序是64位的话，则会释放到C:\Windows\system32。<br>    <img src="http://hacky.wang/blog/20220111/z7uqqQsEBRmb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着调用ucmxDisemer()拉起一个pkgmgr.exe进程，从此完成ByPassUAC<br>    <img src="http://hacky.wang/blog/20220111/ul9jErEPgLjo.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220111/p7plwzUqoBOL.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为什么只需要短短两步就可以完成ByPass UAC？我们使用ProcessMon监控当执行<code>Akagi.exe 23 calc.exe</code>之后，发生了什么。对ProcessMon做出如下配置。<br>    <img src="http://hacky.wang/blog/20220111/2jSbUrqQ1mqU.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以清楚的看到，当akagi.exe拉起pkgmgr.exe之后，pkgmgr.exe会创建dism.exe进程。但是dism.exe又和有什么关系呢？我们试着带着上帝视野的角度看看当时Leo Davidson是怎么找到这个ByPass UAC方法的。<br>    <img src="http://hacky.wang/blog/20220111/yeVNlOUQ2Pt3.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们需要把握两个关键点，第一这是Dll HiJack方法，所以在这个方法中，关于加载Dll的行为一定要密切关注，第二，其所利用到的组件是DismCore.dll。综上两点，我们可到一个关键点，即dism.exe进程加载DismCore.dll的时候发生了ByPass UAC利用。并且从ProcessMon的细节中，也验证了我们的想法。<br>    <img src="http://hacky.wang/blog/20220111/KEoDGBGNpt9A.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;既然要加载dll，抛去那些复杂的注入的方式，常见的加载dll的函数无非就是LoadLibrary相关的函数，我们可以通过ProcessMon提供的Stack功能查看调用情况。很显然，dism.exe使用了LoadLibraryW加载DismCore.dll。<br>    <img src="http://hacky.wang/blog/20220111/YWKRhBPQsn3x.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分析dism.exe，显然，可以将目标定位到CDismWrapper::FindAndLoadDism函数，在CDismWrapper::FindAndLoadDism()中，会调用CreateObjectFromDLL(),然后调用LoadLibraryW加载DismCore.dll，我们只需要覆盖原始的DismCore.dll，那么dism.exe就会加载我们创建的DismCore.dll，即可完成ByPassUAC。<br>    <img src="http://hacky.wang/blog/20220112/5rVF4s6pGCwi.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220112/znOHufaDrk5h.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UACME的第41号方法类型是<strong>Elevated COM interface</strong>,同属于<strong>Elevated COM interface</strong>的还有27号，42号，43号，48号，49号，50号，51号方法。鸡哥在<a href="https://bbs.pediy.com/thread-266375.htm" target="_blank" rel="external">从项目中看BypassUAC和BypassAMSI</a>以及<a href="https://pingmaoer.github.io/2020/07/09/BypassUAC方法论学习/" target="_blank" rel="external">https://pingmaoer.github.io/2020/07/09/BypassUAC方法论学习/</a>已经描述了Elevated COM interface的原理，即就是通过具有自动提权的COM接口对应的Dll创建进程实现ByPass UAC。所以使用这个方法需要两个条件。</p>
+<ul>
+<li>第一：COM的Elevation的Enabled属性为True以及Auto Approval为True</li>
+<li>第二：接口具有执行的功能。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除此以外，UACMe的Yuubari项目还可以帮助寻找可以被利用的COM组件。具体在BypassUAC方法论学习也有相关介绍。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UACME的53号方法需要在windows10下使用，其类型为<strong>Shell API</strong>，同属于<strong>Shell API</strong>类型的还有24号，25号，29号，33号，34号方法。这个类型下有通过修改注册表，通过环境变量，和Shell 劫持实现的，其中大多数通过修改注册表实现。实现的方法是ucmShellRegModMethod。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在设置好调试参数之后，在ucmShellRegModMethod处打个断点，可以看到ucmShellRegModMethod主要在HKCU主键下的\Folder\shell\open\command路径下创建一个符号链接，值就是传入的第三个参数，也就是需要ByPass UAC的程序。然后通过ShellExecuteEx起sdclt.exe进程，完成ByPass UAC之后做好清理即可。<br>    <img src="http://hacky.wang/blog/20220114/RLTwYUc6tKHD.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220114/dj7BqE9bCHjj.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220114/PcHD9VqOl4E9.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，将ProcessMon设置成如下状态，可以看到akagi.exe首先会拉起sdclt.exe，这是已知的，然后添加参数“/name Microsoft.BackupAndRestoreCenter”，拉起“C:\Windows\System32\control.exe”进程。<br>    <img src="http://hacky.wang/blog/20220114/JKxGe1rMyKl8.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220114/rS89HUlo71QR.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着，将ProcessMon设置成如下配置，我们看一下直接创建control.exe进程以及通过ByPass UAC，打开注册表HKCU\Software\Classes\Folder\shell\open\command的差异。如图红色框内，打开注册表的结果是NAME NOT FOUND，但是在绿色方框内，则显示REPARSE。然而我们也注意到在control.exe访问之前，Akagi.exe以及事先设置好了值进去。<br>    <img src="http://hacky.wang/blog/20220114/J5hktA8UEj8h.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220114/mhWlLbVjiJnN.png?imageslim" alt="mark"></p>
+<h2 id="0x02-UAC原理和逆向分析"><a href="#0x02-UAC原理和逆向分析" class="headerlink" title="0x02 UAC原理和逆向分析"></a>0x02 UAC原理和逆向分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;了解过UAC工作原理的师傅都知道，当调用类似于CreateProcess的进程创建函数之后，通过RPC过程调用appinfo文件中的RAiLaunchAdminProcess函数，appinfo主要用于UAC权限验证，如果符合特定的条件，则自动将进程的完整性级别提升到High，否则的话，则会通过UAC弹窗请用户选择。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;说到完整性级别，windows操作系统的进程完整性级别一共有4个，分别是Low(低完整性级别)，Medium(中完整性级别)，High(高完整性级别)，System(系统)。在标准模式下，程序一般都运行在Medum级别，等到UAC提升之后，才会提升到High完整性级别。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在RAiLaunchAdminProcess()中，首先，会调用CheckElevationEnabled检查是否启用了UAC。<br>    <img src="http://hacky.wang/blog/20220126/4eOF7GWwBo0X.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后调用AiCheckSecureApplicationDirectory检查是否在文件路径是否在所有的SecureApplicationDirectory，其实就是比较几个系统路径，例如<code>C:\Program Files\</code>,<code>C:\Windows\</code>,<code>C:\Windows\System32</code>等等。<br> AiCheckSecureApplicationDirectory()函数第一个参数为文件路径，第二个参数是一个标志，如果flag_path为0表示不在可信路径中，如果flag_path 为0x4000，表示在Windows Denfer目录中，或者如果为0x6000，表示在Windows System32目录中。<br>    <img src="http://hacky.wang/blog/20220126/l4UrJ06yyhk2.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/3HlldGYQgXhC.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/Bo8kDuJikaCV.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着调用AiIsEXESafeToAutoApprove函数，该函数的目的是为了检查文件是否有自动提升标志的程序，或者是白名单程序。在函数中，会调用 AipCheckFusion和 AipIsAutoApprovalEXE函数。 AipCheckFusion函数是通过检查文件中autoElevate标志是否为True来判断是否可以自动提升。而AipIsAutoApprovalEXE是检查白名单路径。以及检查某些特殊的mmc文件。<br>    <img src="http://hacky.wang/blog/20220126/FHU9BkHJMcVL.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/71hRsyQikJh1.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/90GUw1zpEanl.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着调用AiCheckLUA()函数，AiCheckLUA()函数适用于判断是否进行UAC弹窗，该函数会传入多个参数，包括：UAC级别，可信目录标记(我自创的说法)，父进程Token句柄，桌面句柄，命令行等参数。<br>    <img src="http://hacky.wang/blog/20220126/lUollWQaximF.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;并调用AiLaunchConsentUI函数，在AiLaunchConsentUI函数中，调用AipGetElevationPromptType通过注册表行为，确定UAC的行为，最终，会通过 AiLaunchProcess函数，拉起一个    consent.exe进程，传入参数主要有Pid，一个有关进程参数路径的结构体，该结构体的初始化可以再 AipSetFixedParams函数中进行。除此以外，还将appinfo服务对应的进程的令牌复制给了consent.exe进程，这样consent.exe进程便拥有了高权限。<br>    <img src="http://hacky.wang/blog/20220126/9IeAzXRQCUko.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/NGglGXnELKUC.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220126/nSQU1nqkY51L.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拉起consent.exe进程之后，该进程处于暂停状态，需要ResumeThread唤醒，之后便出现UAC弹窗，此时appinfo服务端便处于等待状态，知道用户选择是or否。如果返回值为0，则会将句柄传递出来。这就是是 AiCheckLUA最后一个参数，带回来的是高权限Token句柄。<br>    <img src="http://hacky.wang/blog/20220126/5TiR5p3ixslg.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后拉起指定的程序，完成UAC。<br>    <img src="http://hacky.wang/blog/20220126/ibbTSTqyrFze.png?imageslim" alt="mark"></p>
+<h2 id="0x03-ByPass-UAC通用检测策略"><a href="#0x03-ByPass-UAC通用检测策略" class="headerlink" title="0x03 ByPass UAC通用检测策略"></a>0x03 ByPass UAC通用检测策略</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据前言，我们了解到ByPass UAC的基础是访问令牌的继承关系，主要得到了异常的访问令牌的进程关系，就可以认定这是一个ByPass UAC。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，我们需要知道一个进程是否以完整性级别(TokenElevationTypeFull)运行，即就是进程的权限是否被提升。如果进程权限都没有被提升，那么肯定就不存在ByPass UAC。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下<code>GetProcessEleation函数</code>是《windows核心编程》一书中介绍的能够返回提升类型和是否以管理员运行的辅助函数。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> GetProcessEleation(DWORD dwPid ,TOKEN_ELEVATION_TYPE* pElevationType, <span class="built_in">BOOL</span>* pIsadmin)</div><div class="line">&#123;</div><div class="line">	HANDLE hToken = <span class="literal">NULL</span>;</div><div class="line">	<span class="built_in">BOOL</span> bResult = <span class="literal">FALSE</span>;</div><div class="line">	DWORD dwSize = <span class="number">0</span>;</div><div class="line">	<span class="keyword">if</span> (!OpenProcessToken(OpenProcess(PROCESS_ALL_ACCESS, <span class="literal">TRUE</span>, dwPid), TOKEN_QUERY, &amp;hToken))</div><div class="line">	&#123;</div><div class="line">		<span class="comment">//printf("[!]OpenProcessToken:%d \t\n", GetLastError()); </span></div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;	</div><div class="line">	<span class="keyword">if</span> (GetTokenInformation(hToken, TokenElevationType, pElevationType, <span class="keyword">sizeof</span>(TokenElevationType), &amp;dwSize)) &#123;</div><div class="line">		BYTE adminSID[SECURITY_MAX_SID_SIZE];</div><div class="line">		dwSize = <span class="keyword">sizeof</span>(adminSID);</div><div class="line">		<span class="keyword">if</span> (<span class="literal">FALSE</span> == CreateWellKnownSid(WinBuiltinAdministratorsSid, <span class="literal">NULL</span>, &amp;adminSID, &amp;dwSize))</div><div class="line">		&#123;</div><div class="line">			printf(<span class="string">"[!] CreateWellKnownSid:%d \t\n"</span>, GetLastError());</div><div class="line">			<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (*pElevationType == TokenElevationTypeLimited) &#123;</div><div class="line">			HANDLE hUnfilteredToken = <span class="literal">NULL</span>;</div><div class="line">			GetTokenInformation(hToken, TokenLinkedToken, (VOID*)&amp;hUnfilteredToken, <span class="keyword">sizeof</span>(HANDLE), &amp;dwSize);</div><div class="line">			<span class="keyword">if</span> (CheckTokenMembership(hUnfilteredToken, &amp;adminSID, pIsadmin))</div><div class="line">				bResult = <span class="literal">TRUE</span>;</div><div class="line">			CloseHandle(hUnfilteredToken);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span></div><div class="line">		&#123;</div><div class="line">			*pIsadmin = IsUserAnAdmin();</div><div class="line">			bResult = <span class="literal">TRUE</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	CloseHandle(hToken);</div><div class="line">	<span class="keyword">return</span> bResult;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其中，我们关注的函数有两个，一个是<code>OpenProcessToken</code>函数和<code>GetTokenInformation</code>函数，<code>OpenProcessToken</code>函数是为了获取进程的Token，而<code>GetTokenInformation</code>函数获取进程Token信息，通过传入不同的TokenInformationClass信息获取不同的Token信息。<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">BOOL WINAPI GetTokenInformation(</div><div class="line">    <span class="variable">_In_</span> HANDLE TokenHandle,</div><div class="line">    <span class="variable">_In_</span> TOKEN_INFORMATION_CLASS TokenInformationClass,</div><div class="line">    <span class="variable">_Out_writes_bytes_to_opt_</span>(TokenInformationLength, *ReturnLength) LPVOID TokenInformation,</div><div class="line">    <span class="variable">_In_</span> DWORD TokenInformationLength,</div><div class="line">    <span class="variable">_Out_</span> PDWORD ReturnLength</div><div class="line">    );</div><div class="line">BOOL WINAPI OpenProcessToken(</div><div class="line">    <span class="variable">_In_</span> HANDLE ProcessHandle,</div><div class="line">    <span class="variable">_In_</span> DWORD DesiredAccess,</div><div class="line">    <span class="variable">_Outptr_</span> PHANDLE TokenHandle</div><div class="line">    );</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当传入的是TokenElevationType类型，则GetTokenInformation返回值主要有三个。</p>
+<ul>
+<li>TokenEvevationTypeDefault：进程以默认用户运行，或者UAC被禁用</li>
+<li>TokenEvevationTypeFull：进程权限被成功提升</li>
+<li>TokenEvevationTypeLimited：进程以受限权限运行</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所以大致只需要通过上述两个API函数即可获取进程权限是否被提升。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后检查当前进程是否具有微软的数字签名，因为部分微软自带的程序可以不经过UAC弹窗从而自动获取高完整性级别。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先利用WinVerifyTrust函数(在VerifyEmbeddedSignature函数中）判断是否可信，接着获取Pe文件是否具有MicroSoft的签名信息。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;获取文件签名信息的代码可以从<a href="https://github.com/konstantin89/windows-pe-signature-verifying" target="_blank" rel="external">https://github.com/konstantin89/windows-pe-signature-verifying</a>处获取。然后比较签名人是否是<code>Microsoft Windows</code>即可。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">BOOL </span>CheckExeSignature(DWORD dwPid)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">BOOL </span><span class="keyword">bResult </span>= FALSE<span class="comment">;</span></div><div class="line">	//LPWSTR pwszSourceFile = NULL<span class="comment">;</span></div><div class="line">	WCHAR pwszSourceFile[MAX_PATH] = &#123; <span class="number">0</span> &#125;<span class="comment">;</span></div><div class="line">	TCHAR lpFilePath[MAX_PATH] = &#123;<span class="number">0</span>&#125;<span class="comment">;</span></div><div class="line">	GetProcessPath(dwPid, lpFilePath)<span class="comment">;</span></div><div class="line">	<span class="keyword">MultiByteToWideChar(CP_ACP, </span><span class="number">0</span>, lpFilePath, <span class="keyword">strlen(lpFilePath) </span>+ <span class="number">1</span>, pwszSourceFile, sizeof(pwszSourceFile) / sizeof(pwszSourceFile[<span class="number">0</span>]))<span class="comment">;</span></div><div class="line">	<span class="meta">if</span> (VerifyEmbeddedSignature(pwszSourceFile) == ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">bResult </span>= CheckMiscrosoftSignature(pwszSourceFile)<span class="comment">;</span></div><div class="line">	&#125;</div><div class="line">	return <span class="keyword">bResult;</span></div><div class="line"><span class="keyword">&#125;</span></div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着判断父进程路径，如果父进程是属于白名单或者具有自动提升标志的，则异常，否则，在检查一下父进程的完整性级别。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过对AppInfo的逆向分析发现，UAC会针对部分Pe文件进行自动的提权，而大部分ByPass UAC都会利用到这些所谓的白名单文件，所以我们可以针对性的检测这些白名单文件。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AppInfo!AipCheckFusion函数用来检测Pe文件中是否具有“autoElevate”标志。如果为True，则可以免弹窗进行UAC。直接把IDA中的反汇编结果Copy下来，改改就行了。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">BOOL  CheckFusion(TCHAR* lpFilePath)</div><div class="line">&#123;</div><div class="line">	BOOL bResult = <span class="literal">FALSE</span>;</div><div class="line">	HANDLE hFile = CreateFile(lpFilePath, GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);</div><div class="line">	if (hFile == NULL)</div><div class="line">	&#123;</div><div class="line">		return <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	ACTCTXW pActCtx;</div><div class="line">	WCHAR lpwFilePath[MAX_PATH] = &#123; <span class="number">0</span> &#125;;</div><div class="line">	MultiByteToWideChar(CP_ACP, <span class="number">0</span>, lpFilePath, strlen(lpFilePath) + <span class="number">1</span>, lpwFilePath, sizeof(lpwFilePath) / sizeof(lpwFilePath[<span class="number">0</span>]));</div><div class="line">	memset(&amp;pActCtx, <span class="number">0</span>, sizeof(ACTCTXW));</div><div class="line">	pActCtx.cbSize = <span class="number">32</span>;</div><div class="line">	pActCtx.lpSource = lpwFilePath;</div><div class="line">	pActCtx.lpResourceName = MAKEINTRESOURCEW(<span class="number">1</span>);</div><div class="line">	pActCtx.dwFlags = <span class="number">8</span>;</div><div class="line">	HANDLE hMapping = NULL;</div><div class="line">	LPVOID lpStartAddress = NULL;</div><div class="line">	hMapping  = CreateFileMappingW(hFile, <span class="number">0</span>, <span class="number">0x1000002</span>u, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">	if (hMapping)</div><div class="line">	&#123;</div><div class="line">		lpStartAddress = MapViewOfFile(hMapping, <span class="number">4</span>u, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">		if (lpStartAddress)</div><div class="line">		&#123;</div><div class="line">			pActCtx.dwFlags |= <span class="number">0x80</span>u;</div><div class="line">			pActCtx.hModule = (HMODULE)lpStartAddress;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	else</div><div class="line">	&#123;</div><div class="line">		hMapping = <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	HANDLE hActCtx = CreateActCtxW(&amp;pActCtx);</div><div class="line">	WCHAR pvBuffer[MAX_PATH] = &#123;<span class="number">0</span>&#125;;</div><div class="line">	if (hActCtx != INVALID_HANDLE_VALUE)</div><div class="line">	&#123;</div><div class="line">		if (QueryActCtxSettingsW(<span class="number">0</span>, hActCtx, <span class="number">0</span>, L<span class="string">"autoElevate"</span>, pvBuffer, <span class="number">8</span>u, <span class="number">0</span>) &amp;&amp; (pvBuffer[<span class="number">0</span>] == 't' || pvBuffer[<span class="number">0</span>] == 'T'))</div><div class="line">			bResult = <span class="literal">TRUE</span>;</div><div class="line">		ReleaseActCtx(hActCtx);</div><div class="line">	&#125;</div><div class="line">	if (lpStartAddress)</div><div class="line">		UnmapViewOfFile(lpStartAddress);</div><div class="line">	if (hMapping)</div><div class="line">		CloseHandle(hMapping);</div><div class="line">	return bResult;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在AppInfo!AipIsAutoApprovalEXE函数，其实就是比较文件是否是白名单程序。<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">bool __stdcall AipIsAutoApprovalEXE(const unsigned __int16 *Key)</div><div class="line">&#123;</div><div class="line">  bool result; <span class="comment">// al</span></div><div class="line">  <span class="keyword">return</span> _bsearch(Key, &amp;g_lpAutoApproveEXEList, <span class="number">0xC</span>u, <span class="number">4</span>u, AipCompareEXE) != <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB054 unsigned <span class="keyword">short</span> const * * g_lpAutoApproveEXEList dd offset aCttunesvrExe</div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB054                                         ; DATA <span class="string">XREF:</span> AipIsAutoApprovalEXE(ushort const *)+E↑o</div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB054                                         ; <span class="string">"cttunesvr.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB058                 dd offset aInetmgrExe   ; <span class="string">"inetmgr.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB05C                 dd offset aInfdefaultinst ; <span class="string">"infdefaultinstall.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB060                 dd offset aMigsetupExe  ; <span class="string">"migsetup.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB064                 dd offset aMigwizExe    ; <span class="string">"migwiz.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB068                 dd offset aMmcExe       ; <span class="string">"mmc.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB06C                 dd offset aOobeExe      ; <span class="string">"oobe.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB070                 dd offset aPkgmgrExe    ; <span class="string">"pkgmgr.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB074                 dd offset aProvisionshare ; <span class="string">"provisionshare.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB078                 dd offset aProvisionstora ; <span class="string">"provisionstorage.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB07C                 dd offset aSpinstallExe ; <span class="string">"spinstall.exe"</span></div><div class="line">.<span class="string">data:</span><span class="number">6</span>B0FB080                 dd offset aWinsatExe    ; <span class="string">"winsat.exe"</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除此以外呢，还需要检测父进程的完整性即可，只需要调用GetProcessEleation函数即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在R0层呢，只需要通过PsSetCreateProcessNotifyRoutineEx回调获取进程，及其父进程的Pid和ProcessName即可。<br><figure class="highlight thrift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PROCESS_LONNK_READDATA</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">	HANDLE  hProcessId;              <span class="comment">//进程的PID</span></div><div class="line">	TCHAR szProcessName[MAX_PATH];   <span class="comment">//进程名</span></div><div class="line">	HANDLE hParentId;                <span class="comment">//父进程PID</span></div><div class="line">	TCHAR szParentProcessName[MAX_PATH]; <span class="comment">//父进程进程名</span></div><div class="line">&#125;PROCESS_LONNK_READDATA, *PPROCESS_LONNK_READDATA;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;并通过事件，控制向R3发送数据。首先在DriverEntry中创建一个事件。<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//创建事件</span></div><div class="line">UNICODE_STRING EventName = &#123; <span class="number">0</span> &#125;;</div><div class="line">ntStatus = RtlUnicodeStringInit(&amp;EventName, IBINARY_EVENTNAME);</div><div class="line"><span class="keyword">if</span> (!NT_SUCCESS(ntStatus))</div><div class="line">&#123;</div><div class="line">	DbgPrint(<span class="string">"RtlUnicodeStringInit EventName :%d"</span>, ntStatus);</div><div class="line">	return ntStatus;</div><div class="line">&#125;</div><div class="line">PDEVICE_EXTEN <span class="function"><span class="title">pDeviceExten</span> = (PDEVICE_EXTEN)pDeviceObject-&gt;</span>DeviceExtension;</div><div class="line"><span class="keyword">if</span> (pDeviceExten == NULL)</div><div class="line">&#123;</div><div class="line">	DbgPrint(<span class="string">"pDeviceExten Failed"</span>);</div><div class="line">	return ntStatus;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="title">pDeviceExten</span>-&gt;</span><span class="function"><span class="title">pkProcessEvent</span> = IoCreateNotificationEvent(&amp;EventName, &amp;pDeviceExten-&gt;</span>hProcessId);</div><div class="line">K<span class="function"><span class="title">eClearEvent</span>(pDeviceExten-&gt;</span>pkProcessEvent);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当捕获到进程创建，获取完所需的数据之后，通过KeSetEvent将R3程序阻塞。就相当于R0驱动通知了一下R3的程序，有数据过去了，你准备接收一下，这样，R3程序就会接收R0传递的数据。<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">VOID pfnCreateProcessRoutine(</div><div class="line">	PEPROCESS Process,</div><div class="line">	HANDLE ProcessId,</div><div class="line">	PPS_CREATE_NOTIFY_INFO CreateInfo</div><div class="line">	)</div><div class="line">&#123;</div><div class="line">	NTSTATUS ntStatus = STATUS_SUCCESS;</div><div class="line">	<span class="keyword">if</span> (CreateInfo != NULL)</div><div class="line">	&#123;</div><div class="line">		PDEVICE_EXTEN <span class="function"><span class="title">pDeviceExten</span> = (PDEVICE_EXTEN)g_pDeviceObject-&gt;</span>DeviceExtension;</div><div class="line">		<span class="function"><span class="title">pDeviceExten</span>-&gt;</span>hProcessId = ProcessId;</div><div class="line">		<span class="function"><span class="title">pDeviceExten</span>-&gt;</span><span class="function"><span class="title">hParentId</span> = CreateInfo-&gt;</span>ParentProcessId;</div><div class="line">		<span class="comment">//获取父进程的进程名</span></div><div class="line">		PEPROCESS pParentEprocess = NULL;</div><div class="line">		<span class="function"><span class="title">ntStatus</span> = PsLookupProcessByProcessId(pDeviceExten-&gt;</span>hParentId, &amp;pParentEprocess);</div><div class="line">		<span class="keyword">if</span> (pParentEprocess != NULL)</div><div class="line">		&#123;</div><div class="line">			PCHAR tmpParentProcessName = PsGetProcessImageFileName(pParentEprocess);</div><div class="line">			<span class="keyword">if</span> (strlen(tmpParentProcessName) != <span class="number">0</span>)</div><div class="line">			&#123;</div><div class="line">				R<span class="function"><span class="title">tlZeroMemory</span>(pDeviceExten-&gt;</span>szParentProcessName, MAX_PATH);</div><div class="line">				R<span class="function"><span class="title">tlCopyMemory</span>(pDeviceExten-&gt;</span>szParentProcessName, tmpParentProcessName, strlen(tmpParentProcessName));</div><div class="line">				<span class="comment">//pDeviceExten-&gt;szParentProcessName[strlen(tmpParentProcessName) + 1] = '\0';</span></div><div class="line">			&#125;	</div><div class="line">		&#125;</div><div class="line">		ANSI_STRING asProcessName;</div><div class="line">		<span class="function"><span class="title">if</span> (RtlUnicodeStringToAnsiString(&amp;asProcessName, CreateInfo-&gt;</span>ImageFileName, TRUE) == STATUS_SUCCESS)</div><div class="line">		&#123;</div><div class="line">			R<span class="function"><span class="title">tlZeroMemory</span>(pDeviceExten-&gt;</span>szProcessName, MAX_PATH);</div><div class="line">			R<span class="function"><span class="title">tlCopyMemory</span>(pDeviceExten-&gt;</span>szProcessName, asProcessName.Buffer,asProcessName.Length);</div><div class="line">			<span class="comment">//pDeviceExten-&gt;szProcessName[asProcessName.Length + 1] = '\0';</span></div><div class="line">		&#125;</div><div class="line">		K<span class="function"><span class="title">eSetEvent</span>(pDeviceExten-&gt;</span>pkProcessEvent, <span class="number">0</span>, FALSE);</div><div class="line">		K<span class="function"><span class="title">eResetEvent</span>(pDeviceExten-&gt;</span>pkProcessEvent);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="0x05-参考文献"><a href="#0x05-参考文献" class="headerlink" title="0x05 参考文献"></a>0x05 参考文献</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大家可以在<a href="https://www.bilibili.com/video/BV1Fr4y1Q7E8/" target="_blank" rel="external">https://www.bilibili.com/video/BV1Fr4y1Q7E8/</a>观看ByPass UAC检测视频。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;参考文章：</p>
+<ul>
+<li><a href="https://github.com/hfiref0x/UACME" target="_blank" rel="external">UACME</a></li>
+<li><a href="https://github.com/konstantin89/windows-pe-signature-verifying/blob/master/pe-signature-utils/src/native_api_wrappers/TrustVerifyWrapper.cpp" target="_blank" rel="external">https://github.com/konstantin89/windows-pe-signature-verifying/blob/master/pe-signature-utils/src/native_api_wrappers/TrustVerifyWrapper.cpp</a></li>
+<li><a href="https://bbs.pediy.com/thread-266375.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-266375.htm</a></li>
+<li><a href="https://pingmaoer.github.io/2020/07/09/BypassUAC方法论学习/" target="_blank" rel="external">https://pingmaoer.github.io/2020/07/09/BypassUAC方法论学习/</a></li>
+<li><a href="https://www.anquanke.com/post/id/231446" target="_blank" rel="external">在Windbg中明查OS实现UAC验证全流程——三个进程之间的”情爱”[3]</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/12/CSharp反射总结/" rel="next" title="CSharp 反射注入总结">
+                <i class="fa fa-chevron-left"></i> CSharp 反射注入总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/11/02/Golang Reverse/" rel="prev" title="Golang Reverse">
+                Golang Reverse <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">71</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-常见的ByPassUAC-原理"><span class="nav-number">2.</span> <span class="nav-text">0x01 常见的ByPassUAC 原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-UAC原理和逆向分析"><span class="nav-number">3.</span> <span class="nav-text">0x02 UAC原理和逆向分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-ByPass-UAC通用检测策略"><span class="nav-number">4.</span> <span class="nav-text">0x03 ByPass UAC通用检测策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-参考文献"><span class="nav-number">5.</span> <span class="nav-text">0x05 参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

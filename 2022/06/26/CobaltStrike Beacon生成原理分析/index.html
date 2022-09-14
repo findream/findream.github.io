@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。 0x01 二次开发CobaltStrike&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我这是在网上找到的一个由鸡哥反编译的一个Cobalt">
+<meta name="description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。本文首发于跳跳糖安全社区(https://tttang.com/archive/1631/)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CobaltStrike Beacon生成原理分析">
 <meta property="og:url" content="https://findream.github.io/2022/06/26/CobaltStrike Beacon生成原理分析/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。 0x01 二次开发CobaltStrike&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我这是在网上找到的一个由鸡哥反编译的一个Cobalt">
+<meta property="og:description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。本文首发于跳跳糖安全社区(https://tttang.com/archive/1631/)">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20220624/JlMIrVX7WosS.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220624/180Hr5HH5CL2.png?imageslim">
@@ -131,10 +131,10 @@
 <meta property="og:image" content="http://hacky.wang/blog/20220623/aa4p8A9xCnKh.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220623/ULBCsrwcULaa.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220623/SXcP7yx4SrxN.png?imageslim">
-<meta property="og:updated_time" content="2022-06-26T08:32:33.428Z">
+<meta property="og:updated_time" content="2022-08-18T11:04:46.440Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CobaltStrike Beacon生成原理分析">
-<meta name="twitter:description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。 0x01 二次开发CobaltStrike&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我这是在网上找到的一个由鸡哥反编译的一个Cobalt">
+<meta name="twitter:description" content="0x00 前言与背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。本文首发于跳跳糖安全社区(https://tttang.com/archive/1631/)">
 <meta name="twitter:image" content="http://hacky.wang/blog/20220624/JlMIrVX7WosS.png?imageslim">
 
 
@@ -427,7 +427,8 @@
       
 
       
-        <h2 id="0x00-前言与背景"><a href="#0x00-前言与背景" class="headerlink" title="0x00 前言与背景"></a>0x00 前言与背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。</p>
+        <h2 id="0x00-前言与背景"><a href="#0x00-前言与背景" class="headerlink" title="0x00 前言与背景"></a>0x00 前言与背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文没有什么创新，只是在学习beacon生成和调试分析和检测beacon的过程中的一些记录。本文首发于跳跳糖安全社区(<a href="https://tttang.com/archive/1631/" target="_blank" rel="external">https://tttang.com/archive/1631/</a>)</p>
+<a id="more"></a>
 <h2 id="0x01-二次开发CobaltStrike"><a href="#0x01-二次开发CobaltStrike" class="headerlink" title="0x01 二次开发CobaltStrike"></a>0x01 二次开发CobaltStrike</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我这是在网上找到的一个由鸡哥反编译的一个CobaltStrike4.1版本，所以不在需要重新反编译了。如下是工作目录。<code>decomplie_src</code>是存储着CS反编译的代码，<code>lib目录</code>存储着cobaltstrike4.1.jar文件，作为库文件。<code>out</code>作为编译输出的目录，<code>src</code>存放着所需要的源码文件，也就是<code>decomplie_src</code>源码的子集。这里需要使用的工具是IDEA。<br>    <img src="http://hacky.wang/blog/20220624/JlMIrVX7WosS.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先新建一个项目，设置好项目名和路径之后，在Project下面新建两个目录，<code>decomplie_src</code>和<code>lib</code>目录。<br>    <img src="http://hacky.wang/blog/20220624/180Hr5HH5CL2.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220624/MW2SFwlDHsvD.png?imageslim" alt="mark"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;把反编译之后的decomplie_src目录里面的所有java文件复制到项目中的<code>decomplie_src</code>,并把cobaltstrike4.1.jar文件放到项目中的<code>lib</code>目录。<br>    <img src="http://hacky.wang/blog/20220624/u5icDjw78qF9.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对项目进行设置，添加模块依赖，在路径<code>File--&gt;Project Structure--&gt;Modules--&gt;Dependencies</code>设置SDK。然后在Dependencies这个页面点一下”+”号，添加jar包，完成后点应用。<br>    <img src="http://hacky.wang/blog/20220624/MlCs7zXcxrgt.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220624/Njln99Ifj5R0.png?imageslim" alt="mark"></p>
@@ -501,8 +502,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2022/07/16/HEVD之栈溢出漏洞/" rel="prev" title="HEVD之栈溢出">
-                HEVD之栈溢出 <i class="fa fa-chevron-right"></i>
+              <a href="/2022/08/18/HEVD之空指针解引用/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -580,7 +581,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">71</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -591,7 +592,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>

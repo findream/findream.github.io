@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1662/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CobaltStrike Malleable PE">
+<meta property="og:url" content="https://findream.github.io/2022/06/06/CobaltStrike Malleable PE/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1662/">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/hxa1MphY2grr.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/EbHMotGsr3a0.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/qEkEY6sSbP5A.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/GhPeDSNxAakM.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/ePky5vsJ8Gou.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/d3k6KhQYc8Xf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/rtCalYbVwiGu.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/00rW7h5HLjUK.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/l17Wg2J7Ptga.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/kkK6cUEDOxUo.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/bYFLB42ewHks.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/Q14vf6lmHawU.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/CbwJqd5hRMF7.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/tJ8A51A60QX7.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/JXDvesPjVp5c.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/ocvcbKABCAcb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/OfmgiTaClxeI.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/9u2wKr0Hdsvm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/GIC0dckNuHuI.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/wNqDJ4QTvgaf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/sbrwvssKe89k.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/gQJXvIp85hvQ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/DIa1o2psyVts.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/XYVCRl6MJ305.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220630/SpIMi09Hwrg0.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/PQuinvVyJTmh.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/xeG8iUSW0F52.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/9axT1NYmtHAf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/yLA72TN3SkNa.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/FVYcv0WI8gWY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/zHwSy8zPAEO8.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/lczxvdQ8Hgop.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/20nPQGS63FvV.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/zKzpOaWPRmpu.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/eopl9f75azjc.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/M9Tdct8e00WF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/L2GNxc5i7K40.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/qxd5A3PEzrRT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/I82xKiEDi8oL.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/m4U7kD1b6abT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/GxmbUhcc6qh6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/4H56nqEEFBXG.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/D3Lhw45jbKFh.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/TGUkB1VIbkWJ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/1Reaf5xVRncS.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/W4JnHbI5uqtj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220701/MmfhGPJg9vCN.png?imageslim">
+<meta property="og:updated_time" content="2022-09-14T13:19:51.905Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CobaltStrike Malleable PE">
+<meta name="twitter:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1662/">
+<meta name="twitter:image" content="http://hacky.wang/blog/20220630/hxa1MphY2grr.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/06/06/CobaltStrike Malleable PE/"/>
+
+
+
+
+
+  <title>CobaltStrike Malleable PE | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/06/06/CobaltStrike Malleable PE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CobaltStrike Malleable PE</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-06-06T12:02:11+08:00">
+                2022-06-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防对抗/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防对抗</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文转载于跳跳糖安全社区，原文链接为<a href="https://tttang.com/archive/1662/" target="_blank" rel="external">https://tttang.com/archive/1662/</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="0x00-Malleable-PE"><a href="#0x00-Malleable-PE" class="headerlink" title="0x00 Malleable PE"></a>0x00 Malleable PE</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Malleable PE 直译就是可拓展PE，通常来说，很多同学在做免杀的时候，会针对Loader进行免杀，并不会考虑针对beacon进行免杀，这就导致了很多杀软/EDR的内存防护能针对默认设置的beacon进行查杀。C2Profile提供了很好地操作beacon的方法，C2Profile不仅仅可以自定义beacon的通信属性(例如uri，header等等)，还可以对beacon进行操作，从而实现免杀的目的。</p>
+<h2 id="0x01-stage指标"><a href="#0x01-stage指标" class="headerlink" title="0x01 stage指标"></a>0x01 stage指标</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C2Profile文件的stage块控制beacon的相关属性。如下图是官方文档提供的默认stage块。这个默认配置中，大概配置了一下几个属性，<code>userwx</code>,<code>complie_time</code>,<code>image_size_x86</code>,<code>image_size_x64</code>,<code>obfuscate</code>等等。这几个属性可以决定beacon部分PE属性和部分操作。<br>    <img src="http://hacky.wang/blog/20220630/hxa1MphY2grr.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>transform-x86</code>或者<code>transform-x64</code>可以修改反射dll的数据。这两个块支持3个命令，<code>prepend</code>,<code>append</code>,<code>strrep</code>。<code>prepend</code>是在beacon之前添加字节数据，这样可以规避那些单纯检测内存开头部分数据的EDR。<code>append</code>是在beacon数据之后添加额外的数据，而<code>strrep</code>则是替换字符串操作，其实很多厂商会将beacon的导出函数<code>ReflectiveLoader</code>作为检测的一个点，具体可以看flu0rite的<a href="https://xz.aliyun.com/t/9224?page=1" target="_blank" rel="external">记一次cs bypass卡巴斯基内存查杀</a>，这篇文章详细介绍了卡巴针对beacon的内存查杀的特征，其中就有<code>ReflectiveLoader</code>。<br>    <img src="http://hacky.wang/blog/20220630/EbHMotGsr3a0.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除此以外呢，stage还可以将字符串添加到beacon的.rdata段。<br>    <img src="http://hacky.wang/blog/20220630/qEkEY6sSbP5A.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面是针对stage块的一些配置属性。</p>
+<ul>
+<li>checksum：Beacon的PE的检验和</li>
+<li>cleanup：释放反射dll的内存</li>
+<li>compile_time：编译时间</li>
+<li>entry_point：入口点</li>
+<li>image_size_x86(image_size_x64)：Beacon的PE的SizeOfImage(映像大小)</li>
+<li>module_x86(module_x64)：默认情况下，beacon是通过VirtualAlloc开辟内存的，如果设置module_x86属性，就可以Load module_x86指定的模块，然后将beacon复写到该模块的内存区域。</li>
+<li>name：决定beacon dll导出表的名字</li>
+<li>obfuscate：加密beacon Dll的导入表，复写未使用的header内容，以及让ReflectiveLoader将beacon拷贝到新的内存区域</li>
+<li>rich_header：rich_header是<code>PE</code>这个MagicNumber后面的pe数据</li>
+<li>sleep_mask：在sleep之前混淆beacon，避免内存查杀</li>
+<li>smartinject： Beacon 将关键函数指针（如 GetProcAddress 和 LoadLibrary）嵌入到同架构的post-ex DLL中。 这使 post-ex DLL可以在新进程中进行自我引导，而不会出现类似shellcode的行为，如使用PEB寻找kernel32.dll和其中的函数指针。</li>
+<li>stomppe：在加载完beacon之后，修改Characteristic值</li>
+<li>userwx：是否使用RWX权限，RWX容易引起怀疑</li>
+<li>allocator：控制Beacon反射加载器初始化时使用的内存分配函数（VirtualAlloc，HeapAlloc，MapViewOfFile）默认使用VirtualAlloc函数<br>  <img src="http://hacky.wang/blog/20220630/GhPeDSNxAakM.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20220630/ePky5vsJ8Gou.png?imageslim" alt="mark"></li>
+</ul>
+<h2 id="0x02-C2Profile加载"><a href="#0x02-C2Profile加载" class="headerlink" title="0x02 C2Profile加载"></a>0x02 C2Profile加载</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TeamServer负责加载C2Profile文件，IDEA中找到server/TeamServer.java，在绿色三角启动调试，注意，在debug窗口中，点击扳手按钮，以设置调试选项。依次设置VM Optional，可以将TeamServer这个文件的设置直接复制进去，我这里设置的是<code>-XX:ParallelGCThreads=4 -Dcobaltstrike.server_port=50050 -Djavax.net.ssl.keyStore=./cobaltstrike.store -Djavax.net.ssl.keyStorePassword=123456 -XX:+AggressiveHeap -XX:+UseParallelGC</code>。然后添加主类，最后添加要调试的参数即可。<br>    <img src="http://hacky.wang/blog/20220630/d3k6KhQYc8Xf.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/rtCalYbVwiGu.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先判断端口是否有效。然后加载C2Profile文件。<br>    <img src="http://hacky.wang/blog/20220630/00rW7h5HLjUK.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/l17Wg2J7Ptga.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将C2Profile文件按行读取，以’\n’分割。<br>    <img src="http://hacky.wang/blog/20220630/kkK6cUEDOxUo.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后对C2Profile进行解析，首先对Profile这个结构体进行初始化，这里面存储的是一些默认的C2Profile设置。然后调用Loader.parse进行解析读取到的C2Profile文件内容，<br>    <img src="http://hacky.wang/blog/20220630/bYFLB42ewHks.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/Q14vf6lmHawU.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这就是最后解析结果，最后在<code>TeamServer.go()</code>注册监听器(Listeners)，Beacons，Phisher等组件。最后建立监听，等待GUI进行链接。然后建立客户端的认证，然后拉起线程和客户端进行socket链接。<br>    <img src="http://hacky.wang/blog/20220630/CbwJqd5hRMF7.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/tJ8A51A60QX7.png?imageslim" alt="mark"></p>
+<h2 id="0x03-beacon差异性分析"><a href="#0x03-beacon差异性分析" class="headerlink" title="0x03 beacon差异性分析"></a>0x03 beacon差异性分析</h2><h3 id="0x3-1-module-x86"><a href="#0x3-1-module-x86" class="headerlink" title="0x3.1 module_x86"></a>0x3.1 module_x86</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，采用默认的C2Profile生成beacon文件，至于生成beacon的流程可以参考<a href="https://tttang.com/archive/1631/" target="_blank" rel="external">这篇文章</a>。然后测试一下<code>module_x86</code>属性。修改C2Profile文件的stage块。添加<code>set module_x86 &quot;xpsservices.dll&quot;;</code>这个语句。module_x86这个语句的作用是加载module_x86指定的模块，然后将beacon复写到该模块的内存区域。<br>    <img src="http://hacky.wang/blog/20220630/JXDvesPjVp5c.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在MalleablePE.java的<code>pre_process</code>会根据c2profile的set命令获取相对于的值，然后根据值对PE进行对于的操作。<br>    <img src="http://hacky.wang/blog/20220630/ocvcbKABCAcb.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/OfmgiTaClxeI.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>setModuleStomp</code>这个方法中，首先将设置Characteristic为0x4000。然后在PE偏移为0x40的地方，添加大小为0x40的随机数据，接着在将C2Profile解析到的模块名(xpsservices.dll)写入PE偏移为0x40的地方，相当于重新覆盖直接写的随机数据的一部分。由此完成操作。<br>    <img src="http://hacky.wang/blog/20220630/9u2wKr0Hdsvm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对比一下生成的修改过module_x86属性的beacon.bin,和默认C2Profile生成的beacon.bin数据。有效的差异就是在PE+0x40出存在一个模块名。<br>    <img src="http://hacky.wang/blog/20220630/GIC0dckNuHuI.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为了方便调试，生成一个beacon.exe程序，执行到beacon的时候，在PE偏移+0x40处下访问断点，以及针对LoadLibrary(Ex)W(A)下断点，程序中断在<code>003A82DF</code>处，每个断点都不一样。<br>    <img src="http://hacky.wang/blog/20220630/wNqDJ4QTvgaf.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/sbrwvssKe89k.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之后逻辑就很清楚了，首先加载指定的Module，然后通过函数需要，获取导出函数地址，分别将PE头和节区数据复制到目的地址。<br>    <img src="http://hacky.wang/blog/20220630/gQJXvIp85hvQ.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后解析入口点，进行跳转即可<br>    <img src="http://hacky.wang/blog/20220630/DIa1o2psyVts.png?imageslim" alt="mark"></p>
+<h3 id="0x3-2-stomppe"><a href="#0x3-2-stomppe" class="headerlink" title="0x3.2 stomppe"></a>0x3.2 stomppe</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过<code>set stomppe &quot;true&quot;</code>启用stomppe，看官方文档的介绍，stomppe的目的是轻微混淆内存中的Dll beacon，通过查看源码，通过了解<code>PEEditor.setCharacteristic</code>函数发现，该函数目的就是修改PE文件头中的Characteristic属性，这个属性和该文件的类型有关。用PEview查看默认生成的beacon文件，通过该属性值很显然的发现，这是一个32bit的dll可执行文件。感觉这个功能挺鸡肋的。<br>    <img src="http://hacky.wang/blog/20220630/XYVCRl6MJ305.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220630/SpIMi09Hwrg0.png?imageslim" alt="mark"></p>
+<h3 id="0x3-3-sleep-mask"><a href="#0x3-3-sleep-mask" class="headerlink" title="0x3.3 sleep_mask"></a>0x3.3 sleep_mask</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep_mask的作用是在sleep之前加密beacon以规避基于内存特征的查杀。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;中断在<code>BeaconPayload.setupGargle</code>方法处，首先，在setupGargle函数中，重新读取了resources/beacon.dll数据，然后将.text段的EndAddr保存在Settings的序号为41的地址处。<br>    <img src="http://hacky.wang/blog/20220701/PQuinvVyJTmh.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后计算rdata段和.text段之间的间距，如果间距小于256则不行。开始我很迷惑这步的操作，在后面的分析调试过程中，才发现，这个区域存储的是加密函数，而且当时我也好奇，如果要加密几个节区的话，代码段一旦被加密，事后怎么解密呢?其实CobaltStrike的设计者非常巧妙。<br>    <img src="http://hacky.wang/blog/20220701/xeG8iUSW0F52.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后获取了所有的Sections的起始地址和结束地址，并将其保存在序号为42的Settings处。<br>    <img src="http://hacky.wang/blog/20220701/9axT1NYmtHAf.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;生成并调试beacon.exe，通过之前的分析，sleep_mask作用就是在beacon 休眠之前加密beacon，所以只需要在beacon所存放的内存区域设置访问断点即可。具体可以这样操作，假设beacon分配在0x00300000处，首先，针对使程序运行到337D06处，这是程序暴力枚举到beacon区域起始地址，也就是0x00300000处。我们首先需要跳过这部分。然后在0x00300000处下访问断点，运行后断在0x003383D8处，<br>    <img src="http://hacky.wang/blog/20220701/yLA72TN3SkNa.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们首先需要跳过这部分。然后在0x00300000处下访问断点，运行后断在0x003383D8处，显然可以看到依次将抹去了MZ的PE头和节区数据复制到新的区域。<br>    <img src="http://hacky.wang/blog/20220701/FVYcv0WI8gWY.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/zHwSy8zPAEO8.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后在新的beacon的地址，也就是0x00550000处下访问断点。然后运行，此时中断在0x00575533。因为经过多次调试，图片的断点已经不相符了。显然，beacon被加密之后，进行休眠。<br>    <img src="http://hacky.wang/blog/20220701/lczxvdQ8Hgop.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/20nPQGS63FvV.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当休眠结束之后，将加密的beacon还原。然后通过交叉引用，将主要执行这一操作的函数定位到DllMain函数的Sub_591391_OptionalFunc的Sub_594267_SleepMask函数。<br>    <img src="http://hacky.wang/blog/20220701/zKzpOaWPRmpu.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/eopl9f75azjc.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/M9Tdct8e00WF.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/L2GNxc5i7K40.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Sub_8C9728_GetValueInC2Profile函数中，首先根据C2Profile的配置信息在偏移为0x29个元素的地方，取的值，如果取到的值为空的话，说明不需要加密，则直接Sleep，否则的话，进入Sub_8C4262_EncodeBeacon。<br>    <img src="http://hacky.wang/blog/20220701/qxd5A3PEzrRT.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/I82xKiEDi8oL.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub_8C4262_EncodeBeacon在经过jmp后，首先，获取10004262h和10004262h的差值，因为从进程中dump出来的beacon的符号信息不完整，我们重新生成beacon.bin文件，查看这部分信息。很显然，sub_10004262和sub_100041D5函数是连续的，其本质就是为了获取sub_100041D5函数地址。<br>    <img src="http://hacky.wang/blog/20220701/m4U7kD1b6abT.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/GxmbUhcc6qh6.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后通过C2Profile获取.text段末尾的偏移地址，并将100041D5h的数据复制到.text段段尾。在重新生成的beacon.bin中查看100041D5h的内容。很显然其实就是一个加密函数。整个加密逻辑和上面其实是能对应上的。<br>    <img src="http://hacky.wang/blog/20220701/4H56nqEEFBXG.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/D3Lhw45jbKFh.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/TGUkB1VIbkWJ.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着逻辑就很简单了，申请一个长度为0x10的Buffer，然后偏移为0x00的地方存储BaseAddress，在+0x04的地方存储获取的那些节区的地址，最后在偏移为0x08的地方保存生成的Key。将加密函数EncodeFunc和保存上述信息的结构体放到两个全局变量中，就可以在函数外面使用了。<br>    <img src="http://hacky.wang/blog/20220701/1Reaf5xVRncS.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220701/W4JnHbI5uqtj.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将EncodeFunc下硬件执行断点，断下。整体逻辑大概就是这样的，首先去DataStruct的地址，这是一对地址(起始地址和结束地址)，分别取了地址之后，进行判空，以及起始地址要小于结束地址，然后去BaseAddress，因为DataStruct存储的是偏移地址，加上基地址才是各个区段的绝对地址。然后进行加密运算。当加密完成之后，执行Sleep操作，休眠完，在解密相关数据段即可。<br>    <img src="http://hacky.wang/blog/20220701/MmfhGPJg9vCN.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下，CobaltStrike通过获取Section的起始地址和结束地址，并获取.text的结束地址，并将加密函数复制到.text的结束地址到rdata段之间空的地方，因为这个地方不会被加密。该加密函数内部会调用Sleep进行休眠，在休眠之前，加密数据，在休眠之后解密数据，以此往复，实现Sleep_Mask的功能。不得不说，设计的非常巧妙。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://xz.aliyun.com/t/9224?page=1" target="_blank" rel="external">记一次cs bypass卡巴斯基内存查杀</a></li>
+<li><a href="https://wbglil.gitbook.io/cobalt-strike/cobalt-strikekuo-zhan/malleable-c2#malleable-pe-process-injection-and-post-exploitationbeacon-hang-wei" target="_blank" rel="external">https://wbglil.gitbook.io/cobalt-strike/cobalt-strikekuo-zhan/malleable-c2#malleable-pe-process-injection-and-post-exploitationbeacon-hang-wei</a></li>
+<li><a href="https://github.com/rsmudge/Malleable-C2-Profiles/blob/master/normal/reference.profile#L254-L255" target="_blank" rel="external">https://github.com/rsmudge/Malleable-C2-Profiles/blob/master/normal/reference.profile#L254-L255</a></li>
+<li>CobaltStrike4.0用户手册_中文翻译</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)/" rel="next" title="绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习">
+                <i class="fa fa-chevron-left"></i> 绿盟科技-每周蓝军技术推送（2022.5.14-5.20）学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/06/14/绿盟科技-每周蓝军技术推送（2022.5.28-6.2）/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习">
+                绿盟科技-每周蓝军技术推送（2022.5.28-6.2）学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">71</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-Malleable-PE"><span class="nav-number">1.</span> <span class="nav-text">0x00 Malleable PE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-stage指标"><span class="nav-number">2.</span> <span class="nav-text">0x01 stage指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-C2Profile加载"><span class="nav-number">3.</span> <span class="nav-text">0x02 C2Profile加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-beacon差异性分析"><span class="nav-number">4.</span> <span class="nav-text">0x03 beacon差异性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-1-module-x86"><span class="nav-number">4.1.</span> <span class="nav-text">0x3.1 module_x86</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-2-stomppe"><span class="nav-number">4.2.</span> <span class="nav-text">0x3.2 stomppe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-3-sleep-mask"><span class="nav-number">4.3.</span> <span class="nav-text">0x3.3 sleep_mask</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

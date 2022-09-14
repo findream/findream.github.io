@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1624/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WMI的攻守之道">
+<meta property="og:url" content="https://findream.github.io/2021/11/13/WMI攻守之道/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1624/">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20211113/P0UyPjN9vcbt.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/Fb2RO4pHdxuJ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/XHHNo9dOvt29.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/cJyxcHzGtCy5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/A1xhca343OIb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/5eU1GFiefImT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/3oCtYnVTLq49.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/8zFqzgBYgw0D.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211114/5wp3jz3GejPd.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211120/W3utraJcPegW.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211120/psILH4lNIiG9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211120/Jq6qTWnCuu6u.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211120/Egl9pBGLzSTz.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211120/ClSj8cY6CwTc.png?imageslim">
+<meta property="og:updated_time" content="2022-09-14T13:16:03.750Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WMI的攻守之道">
+<meta name="twitter:description" content="本文转载于跳跳糖安全社区，原文链接为https://tttang.com/archive/1624/">
+<meta name="twitter:image" content="http://hacky.wang/blog/20211113/P0UyPjN9vcbt.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/11/13/WMI攻守之道/"/>
+
+
+
+
+
+  <title>WMI的攻守之道 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/11/13/WMI攻守之道/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">WMI的攻守之道</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-13T15:02:11+08:00">
+                2021-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/windows系统/" itemprop="url" rel="index">
+                    <span itemprop="name">windows系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文转载于跳跳糖安全社区，原文链接为<a href="https://tttang.com/archive/1624/" target="_blank" rel="external">https://tttang.com/archive/1624/</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Windows Management Instrumentation(Windows 管理规范) 即WMI，是微软实现的基于Web的企业管理(WBEM)。WMI使用通用信息模型(CIM)来表示系统、应用程序、网络、设备和其他托管组件。WMI支持本地和远程访问。WMI底层基于分布式组件对象模型(DCOM)或者Windows远程管理(WinRM)。程序员们可以使用脚本语言(例如powershell)，或者C++，通过COM技术与WMI进行交互。本文行文仓促，如有错误，请各位积极指正。</p>
+<h2 id="0x01-WMI滥用情况"><a href="#0x01-WMI滥用情况" class="headerlink" title="0x01 WMI滥用情况"></a>0x01 WMI滥用情况</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于WMI的特殊性，WMI可以被广泛的滥用于MITER ATT&amp;CK矩阵中，包括执行，持久化，防御逃避，侦查，横向移动，命令控制。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在[执行]战术中，ATT&amp;CK专门安排了一个技术点专门介绍Windows行为规范T1047。WMI可以通过命令和脚本解释器powershell（T1059.001）进行交互，并且其通信是基于对象组件模型(T1559.001)。并且可以通过Win32_ScheduledJob类创建计划任务(T1053),但这已经不能在Win7以上系统中使用了。<br><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Get-WmiObject -<span class="class"><span class="keyword">class</span> <span class="title">Win32_ScheduledJob</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在[持久化]战术中，可以通过WMI事件订阅(T1546.003)安装筛选器和事件消费者实现持久化。WMI具有远程连接的能力，即外部远程服务(T1133)。并且可以通过注册表在Run键下面创建启动项(T1547.001)<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">Set</span>-WmiInstance -Namespace root\subscription -<span class="keyword">Class</span> __FilterToConsumerBinding -Arguments <span class="built_in">$FilterToConsumerArgs</span></div><div class="line">Invoke-WmiMethod -ComputerName <span class="built_in">$ComputerName</span> -Credential <span class="built_in">$Credential</span> -<span class="keyword">Class</span> StdRegProv -Name CreateKey</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在[防御逃避]中，可以利用WMI通过修改注册表(T1112)的方式禁用或修改工具(T1562.001)，也可以通过Win32_Process类间接创建进程，通过WMI创建的进行其父进程应该为WMI提供者进程(T1202)。<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Invoke-WmiMethod -<span class="keyword">Class</span> Win32_Process -EnableAllPrivileges -Impersonation <span class="number">3</span> -Authentication Packetprivacy -<span class="keyword">Name</span> Create</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在[侦查]中，可以获取系统各方面的信息，可以利用Win32_UserAccount,Win32_LoggedOnUser获取账户信息(T1087)。使用Win32_Directory类获取文件信息(T1083)。使用Win32_Process类获取进程信息(T1057),使用Win32_OperatingSystem，Win32_SystemResourcesetc类进行系统信息侦查(T1082)等等<br><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Get-WmiObject -<span class="class"><span class="keyword">class</span> <span class="title">Win32_UserAccount</span></span></div><div class="line">Get-WmiObject -<span class="class"><span class="keyword">class</span> <span class="title">Win32_Process</span></span></div><div class="line">Get-WmiObject -<span class="class"><span class="keyword">class</span> <span class="title">Win32_Service</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI主要通过Win_Process进行远程命令执行。</p>
+<h2 id="0x02-WMI的工作原理"><a href="#0x02-WMI的工作原理" class="headerlink" title="0x02 WMI的工作原理"></a>0x02 WMI的工作原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据windows在<a href="https://docs.microsoft.com/en-us/windows/win32/wmisdk/wmi-architecture" target="_blank" rel="external">WMI 架构</a>知识文档中所述，WMI架构主要包括3个部分，WMI消费者，WMI基础架构，WMI提供者和托管对象。<br>    <img src="http://hacky.wang/blog/20211113/P0UyPjN9vcbt.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI提供者(WMI Provider)是一个COM对象，负责管理和监视托管对象，向托管对象处发起请求，并其中获取数据，并将数据提供给WMI基础架构。所以称之为提供者(Provider)。托管对象是一个逻辑或者物理的组件，例如进程，操作系统，服务。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI基础架构(WMI infrastructure)是一个Windows系统组件，称为WMI服务(winmgnt),WMI基础结构有两个组件：CIM对象管理器和WMI存储库。WMI存储库存储着一些静态数据。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI消费者是和WMI基础架构进行交互的管理程序或者脚本。WMI消费者通过相关的COM API或者脚本API与WMI基础架构进行交互，用来查询，枚举数据，运行管理程序方法或订阅事件。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;简单概括WMI工作原理就是WMI消费者通过统一的API接口与WMI基础架构进行交互，由WMI基础架构充当WMI消费者，和WMI提供者，WMI存储库之间的中介。如果需要获取的是静态数据，则直接从存储库获取，如果是动态数据，则可以通过WMI提供者获取数据。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI既可以执行本地操作，也可以执行远程操作，这也是攻击者喜欢使用WMI的原因之一，WMI主要支持两种协议，DCOM和WinRM。最开始DCOM协议是WMI使用的默认协议，DCOM又称分布式组件对象模型，其通过135端口建立连接。而后续的WMI中，微软推荐使用WinRM协议进行通信。本次，本文主要通过powershell描述WMI攻击方式。所以重点也将关注DCOM协议。因为powershell内置的WMI命令是使用DCOM协议。</p>
+<h2 id="0x03-WMI攻击"><a href="#0x03-WMI攻击" class="headerlink" title="0x03 WMI攻击"></a>0x03 WMI攻击</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Windows提供了多种和WMI进行交互的方式，例如通过powershell或者VBScript等脚本语言进行交互，比如利用c++通过COM API进行交互，利用C#，通过System.Management命名空间下的几个类和WMI进行交互，除此以外，还有几款成熟的工具用来和WMI进行交互，例如wmic.exe。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文将以WMImplant为例，介绍WMI攻击的原理。WMImplant是一个基于PowerShell的工具，它利用WMI来对目标机器执行操作，而且还作为C2通道来发出命令和接收结果。WMImplant的主要功能有文件操作，横向移动，进程操作，系统操作，以及日志操作。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PowerShell有很多和WMI交互的函数，WMImplant使用的函数主要有如下几个函数。当然，WMImplant使用这些WMI函数，并没有使用CIM函数，因为函数命令是基于低版本的Powershell，而CIM函数只能用于V3以上的版本，但是CIM函数能支持DCOM协议和WinRM协议，而WMI函数只支持DCOM协议。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">Get-WmiObject</span></div><div class="line"><span class="built_in">Set-WmiInstance</span></div><div class="line"><span class="built_in">Invoke-WmiMethod</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMImplant用法很简单,只需要知道目标及其的ComputerName，以及管理员Credential。使用<code>Import-Module .\WMImplant.ps1</code>和<code>Invoke-WMImplant</code>两条命令启动WMImplant。<br>   <img src="http://hacky.wang/blog/20211114/Fb2RO4pHdxuJ.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后使用<code>change_user</code>命令设置domain/user和password。<br>   <img src="http://hacky.wang/blog/20211114/XHHNo9dOvt29.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMImplant的文件操作主要有一下操作，其中，经常使用的有<code>cat</code>命令,<code>download</code>命令,<code>ls</code>命令,<code>upload</code>命令。<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">cat                                 -   Reads <span class="keyword">the</span> contents <span class="keyword">of</span> <span class="keyword">a</span> <span class="built_in">file</span></div><div class="line">copy                                -   Copies <span class="keyword">a</span> <span class="built_in">file</span> <span class="built_in">from</span> <span class="literal">one</span> location <span class="built_in">to</span> another</div><div class="line">download                            -   Download <span class="keyword">a</span> <span class="built_in">file</span> <span class="built_in">from</span> <span class="keyword">the</span> targeted machine</div><div class="line">ls                                  -   File/Directory listing <span class="keyword">of</span> <span class="keyword">a</span> specific <span class="built_in">directory</span></div><div class="line">search                              -   Search <span class="keyword">for</span> <span class="keyword">a</span> <span class="built_in">file</span> <span class="keyword">on</span> <span class="title">a</span> <span class="title">user-specified</span> <span class="title">drive</span></div><div class="line">upload                              -   Upload <span class="keyword">a</span> <span class="built_in">file</span> <span class="built_in">to</span> <span class="keyword">the</span> targeted machine</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls命令的主要作用是列举指定目录下的目录和文件，依次指定指定的ComputerName和目录。其基本原理是从Win32_Directory类中获取目录的信息。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">filter = <span class="string">"Drive='<span class="variable">$Drive</span>' and Path='<span class="variable">$DirPath</span>'"</span></span></div><div class="line"><span class="meta">$</span><span class="bash">a= Get-WmiObject -Class Win32_Directory -Filter <span class="variable">$filter</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="http://hacky.wang/blog/20211114/cJyxcHzGtCy5.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;而cat命令的作用是读取文件内容，但是WMI本身是不具有回显的功能，通常有两种情况解决WMI回显的问题，第一种是将回显结果写入文件，然后通过SMB读取文件，但是因为使用了SMB协议，所以会额外多添加一个445端口。第二种方法是将回显结果写入注册表，然后通过WMI相关注册表操作函数读取注册表的内容，从而实现回显。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMImplant也是通过远程创建进程将结果写入注册表的方式实现回显，具体操作如下,首先利用StdRegProv类的CreateKey方法创建一个注册表项。<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$reg</span>_create =  Invoke-WmiMethod -ComputerName <span class="built_in">$ComputerName</span> -Credential <span class="built_in">$Credential</span> -<span class="keyword">Class</span> StdRegProv -Name CreateKey -ArgumentList <span class="built_in">$HKCU</span>, <span class="built_in">$Item</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后构造一个远程命令,其主要目的是利用<code>Get-Content</code>函数读取文件内容，然后将其编码，之后利用<code>Set-ItemProperty</code>函数将其写入注册表中。<br><figure class="highlight nsis"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$remote_command</span> = <span class="string">'<span class="variable">$fct</span> = Get-Content -Encoding byte -Path '</span><span class="string">''</span> + <span class="string">"<span class="variable">$File</span>"</span> + <span class="string">''</span><span class="string">'; <span class="variable">$fctenc</span> = [Int[]][Char[]]<span class="variable">$fct</span> -Join '</span><span class="string">','</span><span class="string">'; Set-ItemProperty -Path HKCU:\SOFTWARE\EvilKey -Name Result  -Value <span class="variable">$fctenc</span>;'</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着调用<code>Invoke-WMIObfuscatedPSCommand</code>函数执行上述远程命令。Invoke-WMIObfuscatedPSCommand函数主要是基于利用Win32_Proces类的Create方法创建进程从而执行远程命令。<br>   <img src="http://hacky.wang/blog/20211114/A1xhca343OIb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后便是利用<code>StdRegProv</code>类的<code>GetStringValue</code>读取键的值。<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$regvalue</span> = Invoke-WmiMethod -ComputerName <span class="built_in">$ComputerName</span> -Credential <span class="built_in">$Credential</span> -<span class="keyword">class</span> StdRegProv -Name GetStringValue  -ArgumentList <span class="built_in">$HKCU</span>, <span class="built_in">$KeyPath</span>, <span class="built_in">$ResultKey</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>download</code>命令和<code>upload</code>命令的原理是一样的，都是借助注册表保存文件的内容。然后利用Set-Content函数将保存在注册表的内容写入文件。只是<code>download命令</code>是在本地执行Set-Content函数。而<code>upload</code>命令是在远程机器执行Set-Content函数。<br><figure class="highlight nsis"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//upload远程执行Set-Content函数</div><div class="line"><span class="variable">$remote_command</span> = <span class="string">'<span class="variable">$Hive</span> = 2147483650; <span class="variable">$key</span> = '</span><span class="string">''</span> + <span class="string">"<span class="variable">$regpath</span>'"</span> + <span class="string">'; <span class="variable">$value</span> = '</span><span class="string">''</span> + <span class="string">"<span class="variable">$registryupname</span>"</span> + <span class="string">''</span><span class="string">'; <span class="variable">$out</span> = Invoke-WmiMethod -Namespace '</span><span class="string">'root\default'</span><span class="string">' -Class '</span><span class="string">'StdRegProv'</span><span class="string">' -Name '</span><span class="string">'GetStringValue'</span><span class="string">' -ArgumentList <span class="variable">$Hive</span>, <span class="variable">$key</span>, <span class="variable">$value</span>; <span class="variable">$decode</span> = [byte[]][int[]]<span class="variable">$out</span>.sValue.Split('</span><span class="string">','</span><span class="string">') -Join '</span><span class="string">' '</span><span class="string">'; [byte[]] <span class="variable">$decoded</span> = <span class="variable">$decode</span> -split '</span><span class="string">' '</span><span class="string">'; Set-Content -Encoding byte -Path '</span> + <span class="string">"<span class="variable">$Upload_Dir</span>"</span> + <span class="string">' -Value <span class="variable">$decoded</span>; Remove-ItemProperty -Path '</span> + <span class="string">"'<span class="variable">$fullregistrypath</span>'"</span> + <span class="string">' -Name '</span> + <span class="string">"'<span class="variable">$registryupname</span>'"</span></div><div class="line">//download本地执行Set-Content函数</div><div class="line">Set-Content -Encoding byte -Path <span class="variable">$Download_file_path</span> -Value <span class="variable">$decoded</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据WMImplant的介绍，横向移动有如下命令,其中经常使用的是command_exec。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">command_exec                        -   <span class="builtin-name">Run</span> a command line command <span class="keyword">and</span> receive the output</div><div class="line">disable_wdigest                     -   Removes registry value UseLogonCredential</div><div class="line">disable_winrm                       -   Disables WinRM on the targeted system</div><div class="line">enable_wdigest                      -   Adds registry value UseLogonCredential</div><div class="line">enable_winrm                        -   Enables WinRM on the targeted system</div><div class="line">registry_mod                        -   Modify the registry on the targeted machine</div><div class="line">remote_posh                         -   <span class="builtin-name">Run</span> a PowerShell<span class="built_in"> script </span>on a remote machine <span class="keyword">and</span> receive the output</div><div class="line">sched_job                           -   Manipulate scheduled jobs</div><div class="line">service_mod                         -   Create, delete, <span class="keyword">or</span> modify<span class="built_in"> system </span>services</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>Invoke-WMIObfuscatedPSCommand</code>函数简单的介绍过，其底层就是使用Win32_Process类的Create方法实现的。剩下就是构造一个远程命令,这个命令主要就是利用 Invoke-Command的<code>-sc</code>参数。<code>-sc</code>参数可以添加一个代码块。这样就可以执行Powershell代码块。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">remote_command = <span class="string">"powershell `<span class="variable">$command1</span> =  &#123;<span class="variable">$ExecCommand</span>&#125;; `<span class="variable">$command2</span> = Invoke-Command -sc `<span class="variable">$command1</span> | Out-String; Set-ItemProperty -Path HKCU:\SOFTWARE\EvilKey -Name Result  -Value `<span class="variable">$command2</span>"</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除此以外,powershell自带-Command参数，也可以添加代码块，还可以进行加密。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">remote_command = <span class="string">"powershell.exe powershell -Command &#123;<span class="variable">$command</span>&#125;"</span></span></div><div class="line"><span class="meta">$</span><span class="bash">bytes = [System.Text.Encoding]::Unicode.GetBytes(<span class="variable">$command</span>)</span></div><div class="line"><span class="meta">$</span><span class="bash">encodedCommand = [Convert]::ToBase64String(<span class="variable">$bytes</span>)</span></div><div class="line"><span class="meta">$</span><span class="bash">process = Invoke-WmiMethod -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span> -Class Win32_Process -EnableAllPrivileges -Impersonation 3 -Authentication Packetprivacy -Name Create -Argumentlist <span class="variable">$remote_command</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;假如需要利用powershell在远程机器创建一个文件，需要使用到如下代码块。使用WMImplant远程执行，效果如下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$filepath</span> =<span class="string">'C:\BaiduNetdiskDownload\123.txt'</span>;</div><div class="line">New-Item <span class="variable">$filepath</span> -<span class="built_in">type</span> file<span class="string">"</span></div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20211114/5eU1GFiefImT.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20211114/3oCtYnVTLq49.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当然，也许，你不需要执行一个代码块，仅仅需要执行一个<code>whoami命令</code>。command_exec命令也是可以胜任的。<br>   <img src="http://hacky.wang/blog/20211114/8zFqzgBYgw0D.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20211114/5wp3jz3GejPd.png?imageslim" alt="mark"></p>
+<h2 id="0x04-WMI事件订阅机制"><a href="#0x04-WMI事件订阅机制" class="headerlink" title="0x04 WMI事件订阅机制"></a>0x04 WMI事件订阅机制</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WMI事件分为两类，本地事件订阅和永久性事件订阅。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本地事件订阅的生命周期是进程生命周期，而永久性事件订阅可以在任何事件接收WMI事件，其保存在WMI存储库中，永久性事件订阅使用一组永久的过滤器捕获WMI事件，即事件筛选器(Event Filter)，一个永久的事件消费者(Event Constumer),以及两者之间的绑定关系。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;事件筛选器是一个__EventFilter类，用于描述WMI将哪些事件传递给事件消费者，即通过WQL语句筛选出触发事件消费者的条件。事件过滤器可以指定内部或外部事件；并且过滤器可以引用源自命名空间的事件。事件筛选器包括四个参数EventNamespace(事件命名空间)，Name(筛选器名称),Query(筛选过滤语句),QueryLanguage(语句类型)<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">EventNamespace = 'root/cimv2'</div><div class="line">Name = $FilterName</div><div class="line">Query = $Query</div><div class="line">QueryLanguage = 'WQL'</div><div class="line">$Filter = Set-WmiInstance -Namespace root\subscription -Class __EventFilter -Arguments $EventFilterArgs</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;事件消费者，即事件被触发之后，需要选择执行的行为，主要包含以下事件消费者，分别可以对应事件执行不同的操作，分别是运行脚本，发送电子邮件，写入日志，记录NT事件日志，命令行运行程序。</p>
+<ul>
+<li>ActiveScriptEventConsumer(脚本事件消费者)</li>
+<li>LogFileEventConsumer(日志文件事件消费者)</li>
+<li>NTEventLogEventConsumer(NT事件日志事件消费者)</li>
+<li>SMTPEventConsumer(邮件事件消费者)</li>
+<li>CommandLineEventConsumer(命令行事件消费者)</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其中，永久性事件订阅中，经常使用ActiveScriptEventConsumer和 CommandLineEventConsumer两类事件消费者。本文中使用的是CommandLineEventConsumer。命令行事件消费者主要有以下四个参数,Name(事件消费者名)，ExecutablePath(执行路径)，CommandLineTemplate(命令行)，RunInteractively(交互式运行)<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Name = $ConsumerName</div><div class="line">ExecutablePath = $ExecutablePath</div><div class="line">CommandLineTemplate = $CommandLineTemplate</div><div class="line">RunInteractively=<span class="string">"false"</span></div><div class="line"></div><div class="line">Set-WmiInstance -Namespace <span class="string">"root\subscription"</span> -Class 'CommandLineEventConsumer' -Arguments  $ConsumerArgs</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>__FilterToConsumerBinding</code>建立筛选器和事件消费者的绑定关系。<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$FilterToConsumerBinding</span> = <span class="keyword">Set</span>-WmiInstance -Namespace root\subscription -<span class="keyword">Class</span> __FilterToConsumerBinding -Arguments <span class="built_in">$FilterToConsumerArgs</span></div></pre></td></tr></table></figure></p>
+<h2 id="0x05-WMI的检测"><a href="#0x05-WMI的检测" class="headerlink" title="0x05 WMI的检测"></a>0x05 WMI的检测</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们介绍过WMI现行支持两套技术，分别为DCOM协议和WinRM。DCOM协议简单的话是基于RPC协议，但是又不是完全独立于RPC协议的。他使用了RPC协议的结构体，与RPC共用了数据头和数据体。所以DCOM协议常被称为ORPC。RPC是一种编程模型，主要用于应用程序实现远程过程调用，微软的DCEPRC即是对远程过程调用的一种实现和扩展。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OPC通信采用Client/Server的通信结构。如下图所示是OPC通信的流程图。首先OPC客户端先通过TCP向OPC服务端发起TCP请求，在建立连接之后，建立绑定。接着通过IRemoteActivation接口的RemoteCreateInstance方法进行DCOM激活。<br>    <img src="http://hacky.wang/blog/20211120/W3utraJcPegW.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20211120/psILH4lNIiG9.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20211120/Jq6qTWnCuu6u.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过查看数据报文，发现DCOM激活存在一下6中激活属性，其中SecurityInfoData包含着连接的计算机名，InstantiationInfoData中属性中包含了实例化对象的CLSID。</p>
+<ul>
+<li>SpecialPropertiesData</li>
+<li>InstantiationInfoData</li>
+<li>ActivationContextInfoData</li>
+<li>SecurityInfoData</li>
+<li>LocationInfoData</li>
+<li>ScmRequestInfoData<br>  <img src="http://hacky.wang/blog/20211120/Egl9pBGLzSTz.png?imageslim" alt="mark"><br>  <img src="http://hacky.wang/blog/20211120/ClSj8cY6CwTc.png?imageslim" alt="mark"></li>
+</ul>
+<h2 id="0x05-参数"><a href="#0x05-参数" class="headerlink" title="0x05 参数"></a>0x05 参数</h2><ul>
+<li><a href="https://github.com/FortyNorthSecurity/WMImplant" target="_blank" rel="external">https://github.com/FortyNorthSecurity/WMImplant</a></li>
+<li><a href="http://www.smatrix.org/forum/forum.php?mod=viewthread&amp;tid=887&amp;extra=page%3D1" target="_blank" rel="external">http://www.smatrix.org/forum/forum.php?mod=viewthread&amp;tid=887&amp;extra=page%3D1</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/06/WMI检测思路与实现/" rel="next" title="WMI检测思路与实现">
+                <i class="fa fa-chevron-left"></i> WMI检测思路与实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
+                绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">71</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-WMI滥用情况"><span class="nav-number">2.</span> <span class="nav-text">0x01 WMI滥用情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-WMI的工作原理"><span class="nav-number">3.</span> <span class="nav-text">0x02 WMI的工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-WMI攻击"><span class="nav-number">4.</span> <span class="nav-text">0x03 WMI攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-WMI事件订阅机制"><span class="nav-number">5.</span> <span class="nav-text">0x04 WMI事件订阅机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-WMI的检测"><span class="nav-number">6.</span> <span class="nav-text">0x05 WMI的检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-参数"><span class="nav-number">7.</span> <span class="nav-text">0x05 参数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

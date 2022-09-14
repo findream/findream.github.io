@@ -81,20 +81,20 @@
 
 
 
-<meta name="description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;任意地址覆盖，指的是代码没有验证地址是否有效直接使用。通过构造payload，将用来提权的Shellcode的地址覆盖到可以导致内核代码执行的区域从而实现提权。">
+<meta name="description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第四篇文章">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HEVD之任意地址覆盖">
-<meta property="og:url" content="https://findream.github.io/2022/07/20/HEVD之任意地址覆盖/index.html">
+<meta property="og:title" content="HaCky的安全备忘录">
+<meta property="og:url" content="https://findream.github.io/2022/08/18/HEVD之任意地址覆盖/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;任意地址覆盖，指的是代码没有验证地址是否有效直接使用。通过构造payload，将用来提权的Shellcode的地址覆盖到可以导致内核代码执行的区域从而实现提权。">
+<meta property="og:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第四篇文章">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20220720/gglXAaml6Ltv.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220720/EmKALOaM0m6g.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20220720/TCkVreVYvKrV.png?imageslim">
-<meta property="og:updated_time" content="2022-07-22T12:09:00.066Z">
+<meta property="og:updated_time" content="2022-08-18T11:09:50.661Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HEVD之任意地址覆盖">
-<meta name="twitter:description" content="0x01 成因分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;任意地址覆盖，指的是代码没有验证地址是否有效直接使用。通过构造payload，将用来提权的Shellcode的地址覆盖到可以导致内核代码执行的区域从而实现提权。">
+<meta name="twitter:title" content="HaCky的安全备忘录">
+<meta name="twitter:description" content="0x00 背景&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 这是HEVD学习的第四篇文章">
 <meta name="twitter:image" content="http://hacky.wang/blog/20220720/gglXAaml6Ltv.png?imageslim">
 
 
@@ -125,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="https://findream.github.io/2022/07/20/HEVD之任意地址覆盖/"/>
+  <link rel="canonical" href="https://findream.github.io/2022/08/18/HEVD之任意地址覆盖/"/>
 
 
 
 
 
-  <title>HEVD之任意地址覆盖 | HaCky的安全备忘录</title>
+  <title> | HaCky的安全备忘录</title>
   
 
 
@@ -298,7 +298,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/07/20/HEVD之任意地址覆盖/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/08/18/HEVD之任意地址覆盖/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="HaCky">
@@ -315,7 +315,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HEVD之任意地址覆盖</h1>
+          <h1 class="post-title" itemprop="name headline"></h1>
         
 
         <div class="post-meta">
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-07-20T15:02:11+08:00">
-                2022-07-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-08-18T19:05:59+08:00">
+                2022-08-18
               </time>
             
 
@@ -337,28 +337,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞挖掘/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞挖掘</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -387,8 +365,8 @@
       
 
       
-        <h2 id="0x01-成因分析"><a href="#0x01-成因分析" class="headerlink" title="0x01 成因分析"></a>0x01 成因分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任意地址覆盖，指的是代码没有验证地址是否有效直接使用。通过构造payload，将用来提权的Shellcode的地址覆盖到可以导致内核代码执行的区域从而实现提权。</p>
-<a id="more"></a>
+        <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 这是HEVD学习的第四篇文章<br><a id="more"></a></p>
+<h2 id="0x01-成因分析"><a href="#0x01-成因分析" class="headerlink" title="0x01 成因分析"></a>0x01 成因分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;任意地址覆盖，指的是代码没有验证地址是否有效直接使用。通过构造payload，将用来提权的Shellcode的地址覆盖到可以导致内核代码执行的区域从而实现提权。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该漏洞位于HEVD控制码为0x22200B的函数<code>sub_444BCE</code>处,在<code>sub_444BCE</code>函数中，将R3传来的缓冲区传入了<code>sub_444BEE</code>,乍一看，很难发现这段代码有什么问题，就是单纯的将What成员复制给了Where成员，但是在内核中，没有针对地址的有效性进行验证，直接使用的话，这是非常危险的。<br>    <img src="http://hacky.wang/blog/20220720/gglXAaml6Ltv.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从源码来看，漏洞版本就是没有对地址进行检查，而修复的版本，可以看到对需要读取的地址，使用ProbeForRead和ProbeForWrite进行了检查，ProbeForRead和ProbeForWrite的作用就是检查用户模式缓冲区是否位于用户态，并验证对齐。<br>    <img src="http://hacky.wang/blog/20220720/EmKALOaM0m6g.png?imageslim" alt="mark"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在学习这个漏洞的时候，我一直想不明白，就光一个内存写入怎么就触发漏洞了，后来其实才明白原理，其实内存写入这个动作并不会触发漏洞，关键是写入的这个地址(也就是代码里面的What)才是危险的，我们可以这样构造，首先What这个地方存储的是ShellCode的地址，然后在找一个地方，只要可以执行就好了，因为通过这个任意地址覆盖，将Shellcode的地址覆盖到那个可以执行的地址上，那么通过触发，就可以执行Shellcode了。而<code>HalDispatchTable+0x4</code>就是这样一个地址。</p>
@@ -430,8 +408,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2022/07/16/HEVD之栈溢出漏洞/" rel="next" title="HEVD之栈溢出">
-                <i class="fa fa-chevron-left"></i> HEVD之栈溢出
+              <a href="/2022/08/18/HEVD之空指针解引用/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
@@ -440,8 +418,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2022/07/22/HEVD之整数溢出/" rel="prev" title="HEVD之整数溢出">
-                HEVD之整数溢出 <i class="fa fa-chevron-right"></i>
+              <a href="/2022/08/18/HEVD之栈溢出漏洞/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -519,7 +497,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-count">71</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -530,7 +508,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -574,7 +552,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-成因分析"><span class="nav-number">1.</span> <span class="nav-text">0x01 成因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-漏洞利用"><span class="nav-number">2.</span> <span class="nav-text">0x02 漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-参考"><span class="nav-number">3.</span> <span class="nav-text">0x03 参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-背景"><span class="nav-number">1.</span> <span class="nav-text">0x00 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-成因分析"><span class="nav-number">2.</span> <span class="nav-text">0x01 成因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">0x02 漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-参考"><span class="nav-number">4.</span> <span class="nav-text">0x03 参考</span></a></li></ol></div>
             
 
           </div>
