@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文首发于跳跳糖安全社区https://tttang.com/archive/1786/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CobaltStrike BOF生成原理分析">
+<meta property="og:url" content="https://findream.github.io/2022/06/26/Cobalt Strike BOF原理分析/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文首发于跳跳糖安全社区https://tttang.com/archive/1786/">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20221006/mDIFeQ5nddDi.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221006/MptBSPCSbpal.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221006/w8Esfhuxpqen.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/vekIhsaPBo9u.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/pUGP2rSrapKT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/n4LkdTY9m5vR.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/nArcas0kygdP.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/bAOTHyCmqais.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/qG4GLthj00qY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/W4shAFvgNzou.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/JI701R83bkMS.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/7cJRR5CvXTdj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220620/S7APY2D3K5Al.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/dSnpaJImNvt7.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/exGqnQP1GMpi.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/WBk5efP42kHE.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/ObjoluTJl3MY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/wJHauWaHdJli.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/9WaE6eHifaRK.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/KnJymTWvmyj9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/2nH6quhrrMif.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/WxNuQYEu6DnF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/up02oD67Upiy.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/T8PSHxAlkHVT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/noddhlG1332V.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20220621/P4VHTIPSQbHE.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/K1EkkcUr1ty5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/JkLeI6gSyarK.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/kVUxJSQWSpiv.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/mHYYLhIpySQN.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/vOqlGeHHW0Qb.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/HWJnw2B9Csga.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/uqr4o9zaz4v5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/FxhAB2MGbTOw.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221008/Xrq72Vs8oyip.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221022/HLDiM7zQzzEN.png?imageslim">
+<meta property="og:updated_time" content="2022-11-12T06:55:55.497Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CobaltStrike BOF生成原理分析">
+<meta name="twitter:description" content="本文首发于跳跳糖安全社区https://tttang.com/archive/1786/">
+<meta name="twitter:image" content="http://hacky.wang/blog/20221006/mDIFeQ5nddDi.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/06/26/Cobalt Strike BOF原理分析/"/>
+
+
+
+
+
+  <title>CobaltStrike BOF生成原理分析 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/06/26/Cobalt Strike BOF原理分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CobaltStrike BOF生成原理分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-06-26T14:02:11+08:00">
+                2022-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/攻防技术/" itemprop="url" rel="index">
+                    <span itemprop="name">攻防技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文首发于跳跳糖安全社区<a href="https://tttang.com/archive/1786/" target="_blank" rel="external">https://tttang.com/archive/1786/</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="0x01-Beacon-Object-File"><a href="#0x01-Beacon-Object-File" class="headerlink" title="0x01 Beacon Object File"></a>0x01 Beacon Object File</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOF(Beacon 对象文件)是C/C++编译，但未链接产生的Obj文件，BOF运行在Beacon进程中，并执行内部的Beacon API和Win32 API函数。BOF本质是COFF Obj文件，其符合COFF文件格式规范，结构类似于windows PE文件格式。在被Cobalt Strike加载和使用过程中，BOF是一段地址无关的Shellcode，BOF本身体积比较小，在传输过程中，适用于那些传输带宽小的模式，然后其本身运行在beacon进程内部，不会重新创建进程，也可以有效规避EDR。</p>
+<h2 id="0x02-如何开发BOF"><a href="#0x02-如何开发BOF" class="headerlink" title="0x02 如何开发BOF"></a>0x02 如何开发BOF</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面是官方提供的一个demo<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></div><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"beacon.h"</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">go</span><span class="params">(<span class="keyword">char</span> * args, <span class="keyword">int</span> alen)</span> </span>&#123;</div><div class="line">	BeaconPrintf(CALLBACK_OUTPUT, <span class="string">"Hello World: %s"</span>, args);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以使用Visual Studio或者MinGW进行编译,最后生成.obj文件。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cl<span class="selector-class">.exe</span> /c /GS- hello<span class="selector-class">.c</span> /Fo hello.obj</div><div class="line">i686-w64-mingw32-gcc -c hello<span class="selector-class">.c</span> -o hello.o</div><div class="line">x86_64-w64-mingw32-gcc -c hello<span class="selector-class">.c</span> -o hello.o</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在cl.exe生成obj文件的时候，可能遇到<code>fatal error C1034: stdio.h: 不包括路径集</code>问题，产生这个的原因是没有设置对应的INCLUDE和LIB环境变量。而且不能仅仅设置Vs的Include的路径，还要设置SDK的路径。具体如下：<a href="https://blog.csdn.net/weixin_41115751/article/details/89817123" target="_blank" rel="external">https://blog.csdn.net/weixin_41115751/article/details/89817123</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在生成.obj之后，使用inline-execute + obj_path 执行obj文件</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOF内部自带4种API，<code>数据解析API</code>，主要解析Aggressor Script 使用bof_pack函数打包的参数。<code>打印输出API</code>，主要起到打印输出的作用。格式化API，以及内部API。内部API主要包含一些令牌句柄的使用，以及进程注入相关的API。具体细节可以参考<a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/beacon-object-files_main.htm" target="_blank" rel="external">官方的Bof文档</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据解析API主要包含：</p>
+<ul>
+<li>char <em> BeaconDataExtract (datap </em> parser, int * size)</li>
+<li>int BeaconDataInt (datap * parser)</li>
+<li>int BeaconDataLength (datap * parser)</li>
+<li>void BeaconDataParse (datap <em> parser, char </em> buffer, int size)</li>
+<li>short BeaconDataShort (datap * parser)</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在beacon.h中可以看到这些API原型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Token Functions */</span></div><div class="line"><span class="function">DECLSPEC_IMPORT BOOL   <span class="title">BeaconUseToken</span><span class="params">(HANDLE token)</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT <span class="keyword">void</span>   <span class="title">BeaconRevertToken</span><span class="params">()</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT BOOL   <span class="title">BeaconIsAdmin</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/* Spawn+Inject Functions */</span></div><div class="line"><span class="function">DECLSPEC_IMPORT <span class="keyword">void</span>   <span class="title">BeaconGetSpawnTo</span><span class="params">(BOOL x86, <span class="keyword">char</span> * buffer, <span class="keyword">int</span> length)</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT <span class="keyword">void</span>   <span class="title">BeaconInjectProcess</span><span class="params">(HANDLE hProc, <span class="keyword">int</span> pid, <span class="keyword">char</span> * payload, <span class="keyword">int</span> p_len, <span class="keyword">int</span> p_offset, <span class="keyword">char</span> * arg, <span class="keyword">int</span> a_len)</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT <span class="keyword">void</span>   <span class="title">BeaconInjectTemporaryProcess</span><span class="params">(PROCESS_INFORMATION * pInfo, <span class="keyword">char</span> * payload, <span class="keyword">int</span> p_len, <span class="keyword">int</span> p_offset, <span class="keyword">char</span> * arg, <span class="keyword">int</span> a_len)</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT BOOL   <span class="title">BeaconSpawnTemporaryProcess</span><span class="params">(BOOL x86, BOOL ignoreToken, STARTUPINFO * si, PROCESS_INFORMATION * pInfo)</span></span>;</div><div class="line"><span class="function">DECLSPEC_IMPORT <span class="keyword">void</span>   <span class="title">BeaconCleanupProcess</span><span class="params">(PROCESS_INFORMATION * pInfo)</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/* Utility Functions */</span></div><div class="line"><span class="function">DECLSPEC_IMPORT BOOL   <span class="title">toWideChar</span><span class="params">(<span class="keyword">char</span> * src, <span class="keyword">wchar_t</span> * dst, <span class="keyword">int</span> max)</span></span>;</div></pre></td></tr></table></figure></p>
+<h2 id="0x03-动态函数解析-DFR"><a href="#0x03-动态函数解析-DFR" class="headerlink" title="0x03 动态函数解析(DFR)"></a>0x03 动态函数解析(DFR)</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;动态函数解析，即Dynamic Function Resolution (DFR)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下demo的功能是查找当前域，需要使用两个API函数DsGetDcNameA,NetApiBufferFree都是由NETAPI32模块进行导出。</p>
+<ul>
+<li>DECLSPEC_IMPORT：导入函数的关键字</li>
+<li>WINAPI：函数调用约定，一般API函数都是这个</li>
+<li>NETAPI32：函数所在的模块名</li>
+<li>DsGetDcNameA/NetApiBufferFree：函数名称</li>
+</ul>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span> </span></div><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span> </span></div><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;dsgetdc.h&gt;</span> </span></div><div class="line">/<span class="meta">#<span class="meta-keyword">include</span> <span class="string">"beacon.h"</span> </span></div><div class="line">DECLSPEC_IMPORT DWORD WINAPI NETAPI32$DsGetDcNameA(LPVOID, LPVOID, LPVOID, LPVOID, ULONG, LPVOID)<span class="comment">; </span></div><div class="line">DECLSPEC_IMPORT DWORD WINAPI NETAPI32$NetApiBufferFree(LPVOID)<span class="comment">; </span></div><div class="line">void go(char * args, <span class="built_in">int</span> alen) &#123; </div><div class="line">	DWORD dwRet<span class="comment">; </span></div><div class="line">	PDOMAIN_CONTROLLER_INFO pdcInfo；</div><div class="line">	dwRet = NETAPI32$DsGetDcNameA(<span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="number">0</span>, &amp;pdcInfo)<span class="comment">; </span></div><div class="line">	<span class="keyword">if</span> (ERROR_SUCCESS == dwRet) &#123; </div><div class="line">		BeaconPrintf(CALLBACK_OUTPUT, <span class="string">"%s"</span>, pdcInfo-&gt;DomainName)<span class="comment">; </span></div><div class="line">	&#125; </div><div class="line">	NETAPI32$NetApiBufferFree(pdcInfo)<span class="comment">; </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以使用<a href="https://github.com/dtmsecurity/bof_helper" target="_blank" rel="external">bof_help</a>这个工具自动修改符合BOF格式的函数原型。但目前来说可能不是很好用了。参考自<a href="https://idiotc4t.com/weaponization/bof-weaponization" target="_blank" rel="external">https://idiotc4t.com/weaponization/bof-weaponization</a></p>
+<h2 id="0x04-Obj文件解析"><a href="#0x04-Obj文件解析" class="headerlink" title="0x04 Obj文件解析"></a>0x04 Obj文件解析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBj文件的文件类型是COFF Object，使用<code>dumpbin /all obj_path</code>解析Obj文件格式。Obj文件首先是_IMAGE_FILE_HEADER，保存着整个文件基本信息，然后依次保存着每个节区的<code>SECTION HEADER</code>和节区内容。然后接着就是重定位表，符号表。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件头格式如下：<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_FILE_HEADER &#123;</div><div class="line">    <span class="type">WORD</span>    <span class="type">Machine</span>;</div><div class="line">    <span class="type">WORD</span>    <span class="type">NumberOfSections</span>;</div><div class="line">    <span class="type">DWORD</span>   <span class="type">TimeDateStamp</span>;</div><div class="line">    <span class="type">DWORD</span>   <span class="type">PointerToSymbolTable</span>;</div><div class="line">    <span class="type">DWORD</span>   <span class="type">NumberOfSymbols</span>;</div><div class="line">    <span class="type">WORD</span>    <span class="type">SizeOfOptionalHeader</span>;</div><div class="line">    <span class="type">WORD</span>    <span class="type">Characteristics</span>;</div><div class="line">&#125; <span class="type">IMAGE_FILE_HEADER</span>, *<span class="type">PIMAGE_FILE_HEADER</span>;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>Machine为0x14c，表示这是一个x86的Obj</li>
+<li>NumberOfSections为4，说明有4个Section</li>
+<li>TimeDateStamp是时间戳</li>
+<li>PointerToSymbolTable;指向符号表</li>
+<li>NumberOfSymbols：符号个数<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">FILE HEADER VALUES</div><div class="line">             <span class="number">14</span>C machine (x86)</div><div class="line">               <span class="number">4</span> <span class="built_in">number</span> <span class="keyword">of</span> sections</div><div class="line">        <span class="number">63</span>*E60*D <span class="built_in">time</span> <span class="built_in">date</span> stamp Thu ***  <span class="number">6</span> <span class="number">13</span>:*:<span class="number">29</span> <span class="number">20</span>**</div><div class="line">             <span class="number">1E6</span> <span class="built_in">file</span> pointer <span class="keyword">to</span> symbol table</div><div class="line">               D <span class="built_in">number</span> <span class="keyword">of</span> symbols</div><div class="line">               <span class="number">0</span> size <span class="keyword">of</span> optional header</div><div class="line">               <span class="number">0</span> characteristics</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;节区头的结构体如下：<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">typedef struct _IMAGE_SECTION_HEADER &#123;</div><div class="line">    <span class="keyword">BYTE </span>   Name[IMAGE_SIZEOF_SHORT_NAME]<span class="comment">;</span></div><div class="line">    union &#123;</div><div class="line">            DWORD   PhysicalAddress<span class="comment">;</span></div><div class="line">            DWORD   VirtualSize<span class="comment">;</span></div><div class="line">    &#125; Misc<span class="comment">;</span></div><div class="line">    DWORD   VirtualAddress<span class="comment">;</span></div><div class="line">    DWORD   SizeOfRawData<span class="comment">;</span></div><div class="line">    DWORD   PointerToRawData<span class="comment">;</span></div><div class="line">    DWORD   PointerToRelocations<span class="comment">;</span></div><div class="line">    DWORD   PointerToLinenumbers<span class="comment">;</span></div><div class="line">    WORD    NumberOfRelocations<span class="comment">;</span></div><div class="line">    WORD    NumberOfLinenumbers<span class="comment">;</span></div><div class="line">    DWORD   Characteristics<span class="comment">;</span></div><div class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<ul>
+<li>Name:表示节区的名字</li>
+<li>SizeOfRawData：表示节区数据的大小</li>
+<li>PointerToRawData：表示节区数据的偏移或者指针。<br>  <img src="http://hacky.wang/blog/20221006/mDIFeQ5nddDi.png?imageslim" alt="mark"></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text段<br>    <img src="http://hacky.wang/blog/20221006/MptBSPCSbpal.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重定位表<br>    <img src="http://hacky.wang/blog/20221006/w8Esfhuxpqen.png?imageslim" alt="mark"></p>
+<h2 id="0x05-服务端BOF实现原理"><a href="#0x05-服务端BOF实现原理" class="headerlink" title="0x05 服务端BOF实现原理"></a>0x05 服务端BOF实现原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先是如何定位入口点，如果熟悉Cobalt Strike伪源码的，应该知道Cobalt Strike的命令分发执行位于BeaconConsole.java的<code>public void actionPerformed(ActionEvent var1)</code>函数，如果不熟悉Cobalt Strike伪源码呢，使用notepad++的文件夹搜索功能，搜索<code>inline-execute</code>也可以定位到<code>public void actionPerformed(ActionEvent var1)</code>函数。<br>    <img src="http://hacky.wang/blog/20220620/vekIhsaPBo9u.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;显然，可以看见，当执行<code>inline-execute</code>命令时，首先会将命令中的objectfile的路径解析出来，然后作为参数传入<code>InlineExecuteObject</code>函数。<br>    <img src="http://hacky.wang/blog/20220620/pUGP2rSrapKT.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>InlineExecuteObject</code>函数中，首先，调用DataUtils.getBeacon获取Beacon的各种信息，这里使用到的是CPU架构。然后传入<code>this.InlineExecuteObject</code>函数中。最终调用go()这个函数。<br>    <img src="http://hacky.wang/blog/20220620/n4LkdTY9m5vR.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在go这个函数中，依次获取架构，是x64还是x86，并判断Obj的架构和beacon的架构是否一致，一致才可以继续<br>    <img src="http://hacky.wang/blog/20220620/nArcas0kygdP.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后读取Object文件，分别解析Code段，RData段，Data段，和Relocations段，复制这些段的数据，复制原理如下，首先，通过解析Header中的数据，可以获取各个段的起始地址和大小，这样就可以获取各个段的范围，然后就可以获取指定段的内容。<br>    <img src="http://hacky.wang/blog/20220620/bAOTHyCmqais.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220620/qG4GLthj00qY.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>getRelocations()</code>函数中，会根据不同的段，插入不同的Magic Number。例如，如果是.rdata，则会插入1024，如果是.data，则会插入1025，如果是.text，则会插入1026，如果是DynamicFunction，则会插入1027，最后以插入1028结尾。<br>    <img src="http://hacky.wang/blog/20220620/W4shAFvgNzou.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同时，可以看到插入数据的结构，首先是插入的Type(类型)，然后插入一个Magic Number,第三是插入偏移，最后插入在段中的偏移。有个例外，针对DynamicFunction这块的处理可能需要插入其他的数据。<br>    <img src="http://hacky.wang/blog/20220620/JI701R83bkMS.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着是构造命令，依次添加命令号，添加obj的入口点，添加code，添加Rdata，添加data，添加Relocations，和Arguments，这个Arguments没理解是什么东西。<br>    <img src="http://hacky.wang/blog/20220620/7cJRR5CvXTdj.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220620/S7APY2D3K5Al.png?imageslim" alt="mark"></p>
+<h2 id="0x06-beacon端调用原理分析"><a href="#0x06-beacon端调用原理分析" class="headerlink" title="0x06 beacon端调用原理分析"></a>0x06 beacon端调用原理分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beacon分为loader和payload，loader可以自行开发，payload采用反射注入的方式进行加载，默认情况下，导出表有两个函数，一个是<code>ReflectiveLoader</code>另外一个是<code>DllEntryPoint</code>。在执行payload的时候，优先执行ReflectiveLoader，在处理完PE数据后，跳转到<code>DllEntryPoint</code>函数，然后根据dll加载的原因选择进行数据的初始化，还是进行工作。<br>    <img src="http://hacky.wang/blog/20220621/dSnpaJImNvt7.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在4.1的Cobalt Strike生成的beacon中，大概在这个地方(Sub_336560_CommandDisPatch)进行命令操作。<br>    <img src="http://hacky.wang/blog/20220621/exGqnQP1GMpi.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是服务端传来的原始数据，显然，前四个字节正好是100，为命令号，和cobaltstrike发送命令数据的结构一致。<br>    <img src="http://hacky.wang/blog/20220621/WBk5efP42kHE.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220621/ObjoluTJl3MY.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在函数<code>Sub_336560_CommandDisPatch</code>中，显然可以看到，首先解析出命令号，然后将除了命令号以外的数据作为第二个参数传入，将结果作为第三个参数传入，用以获取执行的结果。<br>    <img src="http://hacky.wang/blog/20220621/wJHauWaHdJli.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据命令号，选择不同需要执行的函数，此处将该函数命名为<code>Sub_32D020_inline_execute</code>,在<code>Sub_32D020_inline_execute</code>中，首先依次解析Code段，RData段，Data段，Relocations段，和Arguments。<br>    <img src="http://hacky.wang/blog/20220621/9WaE6eHifaRK.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;随后，便开始解析Relocations段，cobaltstrike通过不同的硬编码数据将不同的数据类型进行分割，0x400表示.rdata段，0x401表示.data段，0x402表示.text段，0x403表示DynamicFunction，0x404则表示结束。<br>    <img src="http://hacky.wang/blog/20220621/KnJymTWvmyj9.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>Sub_32D4F4_WriteOffset</code>函数的目的是修改代码段中的一些常量或者DynamicFunction的地址，因为在汇编层级，这些地址都是偏移量，所以需要计算偏移量并写入代码中，才能实现调用。<br>    <img src="http://hacky.wang/blog/20220621/2nH6quhrrMif.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220621/WxNuQYEu6DnF.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后执行shellcode<br>    <img src="http://hacky.wang/blog/20220621/up02oD67Upiy.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是传入的数据。显然，第一行是命令号和EntryPoint，然后下面是code段和rdata段，再下面是Relocations段。<br>    <img src="http://hacky.wang/blog/20220621/T8PSHxAlkHVT.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20220621/noddhlG1332V.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后在对比一下原始的code段，和需要执行的shellcode的区别，很显然，关于常量的偏移地址是不同的。也就是说此处做了重定位。<br>    <img src="http://hacky.wang/blog/20220621/P4VHTIPSQbHE.png?imageslim" alt="mark"></p>
+<h2 id="0x07-检测思路"><a href="#0x07-检测思路" class="headerlink" title="0x07 检测思路"></a>0x07 检测思路</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;常规的工具(BeaconEye)可能没有什么好的检测思路，我之前设想过，通过beaconEye有没有可能检测BOF，但是后来仔细想了一下发现不行，因为BeaconEye通过检测内存中的特征码实现的，但是BOF在调用执行完shellcode的时候就被释放了，可能无法检测。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从流量角度看，传入的流量数据，起始的命令号(100)以及getRelocations中的Magic Number是否可以作为检测依据？</p>
+<h2 id="0x08-execuate-assembly"><a href="#0x08-execuate-assembly" class="headerlink" title="0x08 execuate-assembly"></a>0x08 execuate-assembly</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在CobaltStrike3中，新增了名为<code>execuate-assembly</code>命令，该命令本质是实现了在内存中加载.Net程序集。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行<code>execute-assembly</code>命令之后，判断是否存在参数，如果存在参数，得到CSharp程序路径和参数，分别传入ExecuteAssembly，如果不存在参数，只需要传入CSharp程序路径。<br>    <img src="http://hacky.wang/blog/20221008/K1EkkcUr1ty5.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>ExecuteAssembly</code>函数中，首先读取Charp程序，并判断其是否是一个.NET程序，然后根据Beacon判断是否是64位系统，如果是X64的话，则会加载X64的装载程序初始化CRL环境并加载.NET程序<br>    <img src="http://hacky.wang/blog/20221008/JkLeI6gSyarK.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;读取<code>resources/invokeassembly.dll</code>文件，该程序的作用是初始化CLR以及加载.Net程序集，然后将<code>invokeassembly.dll</code>,<code>CSharp程序</code>，以及一些配置信息一起发送给beacon。<br>    <img src="http://hacky.wang/blog/20221008/kVUxJSQWSpiv.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beacon.exe，第70号命令即为<code>execte-assembly</code>,其逻辑也很简单，在解析玩配置信息之后，拉起一个Rundll32进程，然后将invokeassembly.dll注入进去，invokeassembly.dll就会在rundll32中初始化环境并加载程序集了。<br>    <img src="http://hacky.wang/blog/20221008/mHYYLhIpySQN.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转储了invokeassembly.dll，拖到IDA中，发现其和beacon一样采用了反射注入的方式。直接定位到关键函数。<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">__int64 __fastcall sub_180001470(__int64 a1,<span class="built_in"> const </span>void *a2, unsigned<span class="built_in"> int </span>a3)</div><div class="line">&#123;</div><div class="line">[.....]</div><div class="line">  v6 = GetStdHandle(0xFFFFFFF5);</div><div class="line">  SetStdHandle(0xFFFFFFF4, v6);</div><div class="line"> <span class="built_in"> if </span>( !sub_180001294(&amp;v16) )</div><div class="line">  &#123;</div><div class="line">    result = Sub_1800022B8_Output(<span class="string">"[-] Failed to create the runtime host\n"</span>, v7);</div><div class="line">   <span class="built_in"> goto </span><span class="class">LABEL_27;</span></div><div class="line">  &#125;</div><div class="line">  v9 = (*(*v16 + 80i64))(v16);</div><div class="line"> <span class="built_in"> if </span>( v9 &lt; 0 )</div><div class="line">  &#123;</div><div class="line">    v10 = <span class="string">"[-] CLR failed to start w/hr 0x%08lx\n"</span>;</div><div class="line">LABEL_5:</div><div class="line">    result = Sub_1800022B8_Output(v10, v9);</div><div class="line">   <span class="built_in"> goto </span><span class="class">LABEL_27;</span></div><div class="line">  &#125;</div><div class="line"> <span class="built_in"> if </span>( v18 )</div><div class="line">    ((*v18)[2])(v18);</div><div class="line">  v18 = 0i64;</div><div class="line">  v9 = (*(*v16 + 104i64))(v16, &amp;v18);</div><div class="line"> <span class="built_in"> if </span>( v9 &lt; 0 )</div><div class="line">  &#123;</div><div class="line">    v10 = <span class="string">"[-] ICorRuntimeHost::GetDefaultDomain failed w/hr 0x%08lx\n"</span>;</div><div class="line">   <span class="built_in"> goto </span><span class="class">LABEL_5;</span></div><div class="line">  &#125;</div><div class="line">  v11 = v18;</div><div class="line"> <span class="built_in"> if </span>( !v18 )</div><div class="line">  &#123;</div><div class="line">    sub_180001DA0(0x80004003i64);</div><div class="line">    __debugbreak();</div><div class="line">  &#125;</div><div class="line"> <span class="built_in"> if </span>( v22 )</div><div class="line">    (*(*v22 + 16i64))(v22);</div><div class="line">  v22 = 0i64;</div><div class="line">  v12 = *v11;</div><div class="line">  v13 = sub_180001000(&amp;v22);</div><div class="line">  v9 = (*v12)(v11, &amp;unk_180010510, v13);</div><div class="line"> <span class="built_in"> if </span>( v9 &lt; 0 )</div><div class="line">  &#123;</div><div class="line">    v10 = <span class="string">"[-] Failed to get default AppDomain w/hr 0x%08lx\n"</span>;</div><div class="line">   <span class="built_in"> goto </span><span class="class">LABEL_5;</span></div><div class="line">  &#125;</div><div class="line">  rgsabound.cElements = v3;</div><div class="line">  rgsabound.l<span class="class">Lbound = 0;</span></div><div class="line">  v14 = SafeArrayCreate(0x11u, 1u, &amp;rgsabound);</div><div class="line">  SafeArrayLock(v14);</div><div class="line">  memmove(v14-&gt;pvData, a2, v3);</div><div class="line">  SafeArrayUnlock(v14);</div><div class="line">[.....]</div><div class="line"> <span class="built_in"> if </span>( v17 )</div><div class="line">    (*(*v17 + 16i64))(v17);</div><div class="line">  v17 = 0i64;</div><div class="line">  v9 = (*(*v15 + 360i64))(v15, v14, &amp;v17);</div><div class="line"> <span class="built_in"> if </span>( v9 &lt; 0 )</div><div class="line">  &#123;</div><div class="line">    v10 = <span class="string">"[-] Failed to load the assembly w/hr 0x%08lx\n"</span>;</div><div class="line">   <span class="built_in"> goto </span><span class="class">LABEL_5;</span></div><div class="line">  &#125;</div><div class="line">  v20 = v17;</div><div class="line"> <span class="built_in"> if </span>( v17 )</div><div class="line">    (*(*v17 + 8i64))(v17);</div><div class="line">[.....]</div><div class="line"> <span class="built_in"> if </span>( v17 )</div><div class="line">    result = (*(*v17 + 16i64))(v17);</div><div class="line"> <span class="built_in"> if </span>( v22 )</div><div class="line">    result = (*(*v22 + 16i64))(v22);</div><div class="line"> <span class="built_in"> if </span>( v18 )</div><div class="line">    result = ((*v18)[2])(v18);</div><div class="line"> <span class="built_in"> return </span>result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先初始化CLR环境，根据不同的版本采用不同的函数初始化CLR环境，<br>    <img src="http://hacky.wang/blog/20221008/vOqlGeHHW0Qb.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动CLR环境<br>    <img src="http://hacky.wang/blog/20221008/HWJnw2B9Csga.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;获取默认的程序域<br>    <img src="http://hacky.wang/blog/20221008/uqr4o9zaz4v5.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加载assembly<br>    <img src="http://hacky.wang/blog/20221008/FxhAB2MGbTOw.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;获取入口点，并执行。<br>    <img src="http://hacky.wang/blog/20221008/Xrq72Vs8oyip.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;idiotc4t在<a href="https://idiotc4t.com/defense-evasion/cobaltstrike-executeassembly-realization" target="_blank" rel="external">Execute-Assembly实现</a>中仔细描述了如何编写一段内存加载.Net程序集。首先初始化CLR环境,CLR全称为公共语言运行库，即Common Language Runtime。CLR托管在进程中，是加载和运行.Net程序集的地方，关于CLR的概述可以参考<a href="https://learn.microsoft.com/en-us/dotnet/standard/clr" target="_blank" rel="external">微软关于CLR的描述</a>。常见的windows进程并不会加载CLR环境，可以使用ProcessExplorer或者ProcessHacker等工具查看是否加载CLR环境。加载CLR环境主要分四步:<br>    <img src="http://hacky.wang/blog/20221022/HLDiM7zQzzEN.png?imageslim" alt="mark"></p>
+<ul>
+<li>1) 调用CLRCreateInstance函数以实例化<code>ICLRMetaHost</code>或<code>ICLRMetaHostPolicy</code>接口，CLRCreateInstance函数原型如下，第一个参数为clsid，第二个参数是 riid，第三个参数是返回的接口。</li>
+</ul>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function">HRESULT <span class="title">CLRCreateInstance</span>(<span class="params">  </span></span></div><div class="line"><span class="function"><span class="params">    [<span class="keyword">in</span>]  REFCLSID  clsid,  </span></span></div><div class="line"><span class="function"><span class="params">    [<span class="keyword">in</span>]  REFIID     riid,  </span></span></div><div class="line"><span class="function"><span class="params">    [<span class="keyword">out</span>] LPVOID  * ppInterface  </span></span></div><div class="line"><span class="function"><span class="params"></span>)</span>;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>2) 调用<code>ICLRMetaHost::EnumerateInstalledRuntimes</code>, <code>ICLRMetaHost::GetRuntime</code>或者<code>ICLRMetaHostPolicy::GetRequestedRuntime</code>方法以获取有效的ICLRRuntimeInfo指针。以<code>ICLRMetaHost::GetRuntime</code>为例，第一个参数为pwzVersion，表示 .NET Framework 的版本，riid为标识符，此参数的唯一有效值是 IID_ICLRRuntimeInfo。第三个参数是返回的ICLRRuntimeInfo接口的指针。</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">HRESULT GetRuntime (  </div><div class="line">    [<span class="keyword">in</span>] LPCWSTR pwzVersion,  </div><div class="line">    [<span class="keyword">in</span>] REFIID riid,  </div><div class="line">    [<span class="keyword">out</span>,iid<span class="number">_</span><span class="keyword">is</span>(riid), retval] LPVOID *ppRuntime  </div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>3) 调用<code>GetInterface</code>获取<code>ICorRuntimeHost</code>或者<code>ICLRRuntimeHost</code>。rclsid为接口的CLSID,riid是接口的iid，ppUnk返回的接口的指针。加载.Net程序集可以使用两种接口<code>ICorRuntimeHost</code>或者<code>ICLRRuntimeHost</code>。使用<code>ICorRuntimeHost</code>的有点是可以兼容V1.0的程序集，但是<code>ICLRRuntimeHost</code>在代码实现上会比较容易。</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">HRESULT GetInterface(  </div><div class="line">[<span class="keyword">in</span>]  REFCLSID rclsid,  </div><div class="line">[<span class="keyword">in</span>]  REFIID   riid,  </div><div class="line">[<span class="keyword">out</span>, iid<span class="number">_</span><span class="keyword">is</span>(riid), retval] LPVOID *ppUnk);</div></pre></td></tr></table></figure>
+</li>
+<li><p>4）启动CLR环境集</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">CLRCreateInstance(<span class="name">CLSID_CLRMetaHost</span>, IID_ICLRMetaHost, (<span class="name">VOID**</span>)<span class="symbol">&amp;iMetaHost</span>)<span class="comment">;</span></div><div class="line">iMetaHost-&gt;GetRuntime(<span class="name">L</span><span class="string">"v4.0.30319"</span>, IID_ICLRRuntimeInfo, (<span class="name">VOID**</span>)<span class="symbol">&amp;iRuntimeInfo</span>)<span class="comment">;</span></div><div class="line">iRuntimeInfo-&gt;GetInterface(<span class="name">CLSID_CorRuntimeHost</span>, IID_ICorRuntimeHost, (<span class="name">VOID**</span>)<span class="symbol">&amp;iRuntimeHost</span>)<span class="comment">;</span></div><div class="line">iRuntimeHost-&gt;Start()<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;程序域为安全性、可靠性和版本控制以及卸载程序集提供了隔离边界，需要将程序集加载到对应的程序域中，才能执行其中包含的代码，这也就是为啥要获取程序集的原因了。程序集的加载方式决定了它的即时 (JIT) 编译代码是否可以由进程中的多个应用程序域共享，以及程序集是否可以从进程中卸载。具体关于程序域和程序集可以参考<a href="https://learn.microsoft.com/en-us/dotnet/framework/app-domains/application-domains" target="_blank" rel="external">微软关于程序域和程序集的概述</a>，通过调用<code>GetDefaultDomain</code>获取默认的程序集，并通过调用<code>QueryInterface</code>检索该程序集的接口。<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iRuntimeHost-&gt;GetDefaultDomain(<span class="name">&amp;pAppDomain</span>)<span class="comment">;</span></div><div class="line">pAppDomain-&gt;QueryInterface(<span class="name">__uuidof</span>(<span class="name">_AppDomain</span>), (<span class="name">VOID**</span>)<span class="symbol">&amp;pDefaultAppDomain</span>)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在拥有运行时环境CLR，已经可以被托管的容器程序域之后，可以加载程序集了。调用<code>Load_3</code>函数加载程序集安全数组，并获取入口点。<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">HRESULT Load_3 (</div><div class="line">    SAFEARRAY* rawAssembly,</div><div class="line">    Assembly **pRetVal )</div><div class="line"></div><div class="line">pDefaultAppDomain-&gt;Load_3(<span class="name">pSafeArray</span>, <span class="symbol">&amp;pAssembly</span>)<span class="comment">;</span></div><div class="line">pAssembly-&gt;get_EntryPoint(<span class="name">&amp;pMethodInfo</span>)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，调用Invoke_3执行程序集的入口点。<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">HRESULT hr = pMethodInfo-&gt;Invoke_3(<span class="name">vObj</span>, args, <span class="symbol">&amp;vRet</span>)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<h2 id="0x09-参考"><a href="#0x09-参考" class="headerlink" title="0x09 参考"></a>0x09 参考</h2><ul>
+<li><a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/beacon-object-files_main.htm" target="_blank" rel="external">官方文档-Beacon Object Files</a></li>
+<li><a href="https://www.trustedsec.com/blog/a-developers-introduction-to-beacon-object-files/" target="_blank" rel="external">A DEVELOPER’S INTRODUCTION TO BEACON OBJECT FILES</a></li>
+<li><a href="https://www.freebuf.com/articles/network/282744.html" target="_blank" rel="external">CobaltStirke BOF技术剖析（一）｜BOF实现源码级分析</a></li>
+<li><a href="https://idiotc4t.com/weaponization/bof-weaponization" target="_blank" rel="external">https://idiotc4t.com/weaponization/bof-weaponization</a></li>
+<li><a href="https://idiotc4t.com/defense-evasion/cobaltstrike-executeassembly-realization" target="_blank" rel="external">Execute-Assembly实现</a></li>
+<li><a href="https://3gstudent.github.io/从内存加载.NET程序集(execute-assembly" target="_blank" rel="external">从内存加载.NET程序集的利用分析</a>的利用分析)</li>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/standard/clr" target="_blank" rel="external">微软关于CLR的描述</a></li>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/framework/app-domains/application-domains" target="_blank" rel="external">微软关于程序域和程序集的概述</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/06/26/CobaltStrike Beacon生成原理分析/" rel="next" title="CobaltStrike Beacon生成原理分析">
+                <i class="fa fa-chevron-left"></i> CobaltStrike Beacon生成原理分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/07/05/HEVD学习/" rel="prev" title="HEVD学习">
+                HEVD学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-Beacon-Object-File"><span class="nav-number">1.</span> <span class="nav-text">0x01 Beacon Object File</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-如何开发BOF"><span class="nav-number">2.</span> <span class="nav-text">0x02 如何开发BOF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-动态函数解析-DFR"><span class="nav-number">3.</span> <span class="nav-text">0x03 动态函数解析(DFR)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-Obj文件解析"><span class="nav-number">4.</span> <span class="nav-text">0x04 Obj文件解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-服务端BOF实现原理"><span class="nav-number">5.</span> <span class="nav-text">0x05 服务端BOF实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-beacon端调用原理分析"><span class="nav-number">6.</span> <span class="nav-text">0x06 beacon端调用原理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-检测思路"><span class="nav-number">7.</span> <span class="nav-text">0x07 检测思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-execuate-assembly"><span class="nav-number">8.</span> <span class="nav-text">0x08 execuate-assembly</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x09-参考"><span class="nav-number">9.</span> <span class="nav-text">0x09 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

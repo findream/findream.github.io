@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x1 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文主要通过逆向分析的方法分析PsExec的技术实现和有关PsExec和类PsExec工具的检测方法，当然其中也会掺杂一些乱七八糟的点，都是学习PsExec的一些总结。本文行文仓促，如有错误，请各位积极指正。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度剖析PsExec">
+<meta property="og:url" content="https://findream.github.io/2021/12/24/深入剖析PsExec/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="0x1 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文主要通过逆向分析的方法分析PsExec的技术实现和有关PsExec和类PsExec工具的检测方法，当然其中也会掺杂一些乱七八糟的点，都是学习PsExec的一些总结。本文行文仓促，如有错误，请各位积极指正。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/HYIGiuLiGr31.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/3d2u7mXrPerT.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/TideqtWTknz1.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/xL6c7yimyDQR.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/3rPBOidtreM1.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/Qq0kSCgl8c7h.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/nRJY9bL4cWI4.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/s2SVzF5Ngp7K.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/LWHQcxwSk9dg.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/JgHqfs9uRAju.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/HAQhx6YIHQnj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/yVFrVO5Gq9IB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/Xjk0cWLfWuer.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/FpNDmhsL2ITM.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/PL6PjMk5j6Gm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/RcTR0DRWnj8L.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/ltyd7jhtInfF.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/KG1dSP0DTxxe.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210627/Hv2iqmDQGOBp.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/PeLFcFJGY1At.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/tssdODMiAqm8.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/Wt0Ci2NDWGh8.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/nWM5Ko8lg9zK.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/1WkoWRaBoCj4.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/W8P72SdgqeXX.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/iHDFJxc6k3Nj.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210711/nFar24tJw0Af.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/wkJPdLW2156h.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/rEDn0uWoryBR.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/xnXeOIfdKbq5.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/eWeCzUzi9o42.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/0M5lYKnDpwwd.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/CGN9Yw6CHLow.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/qR7Vz1t6fHlR.jpg?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/mfe3BtJLzqCl.jpg?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210718/P3Hz7Bu2vf9J.jpg?imageslim">
+<meta property="og:updated_time" content="2022-11-12T06:58:10.534Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度剖析PsExec">
+<meta name="twitter:description" content="0x1 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;本文主要通过逆向分析的方法分析PsExec的技术实现和有关PsExec和类PsExec工具的检测方法，当然其中也会掺杂一些乱七八糟的点，都是学习PsExec的一些总结。本文行文仓促，如有错误，请各位积极指正。">
+<meta name="twitter:image" content="http://hacky.wang/blog/20210627/HYIGiuLiGr31.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/12/24/深入剖析PsExec/"/>
+
+
+
+
+
+  <title>深度剖析PsExec | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/12/24/深入剖析PsExec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深度剖析PsExec</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-12-24T20:45:11+08:00">
+                2021-12-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x1-前言"><a href="#0x1-前言" class="headerlink" title="0x1 前言"></a>0x1 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文主要通过逆向分析的方法分析PsExec的技术实现和有关PsExec和类PsExec工具的检测方法，当然其中也会掺杂一些乱七八糟的点，都是学习PsExec的一些总结。本文行文仓促，如有错误，请各位积极指正。</p>
+<a id="more"></a>
+<h2 id="0x2-什么是PsExec"><a href="#0x2-什么是PsExec" class="headerlink" title="0x2 什么是PsExec"></a>0x2 什么是PsExec</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在微软文档中，PsExec 是一种轻量级的 telnet 替代品，可让您在其他系统上执行进程，并与控制台应用程序完全交互，而无需手动安装客户端软件。国内也有很多大佬写过PsExec原理分析的文章，RcoIl通过分析数据包的方式为我们介绍了PsExec实现的原理。具体可以参考<a href="http://rcoil.me/2019/08/【知识回顾】深入了解%20PsExec/" target="_blank" rel="external">http://rcoil.me/2019/08/【知识回顾】深入了解%20PsExec/</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RcoIl通过分析流量，大致将PsExec的执行过程分为3个部分,而PSEXESVC 服务充当一个重定向器（包装器）。它在远程系统上运行指定的可执行文件</p>
+<ul>
+<li>将 PSEXESVC.exe 上传到 ADMIN$ （指向 /admin$/system32/PSEXESVC.EXE）共享文件夹内</li>
+<li>远程创建用于运行 PSEXESVC.exe 的服务</li>
+<li>远程启动服务</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下，就是PsExec通过ADMIN$将一个PSEXESVC文件上传到目标机器，然后通过命名管道的机制，将攻击者输入的命令重定向执行被攻击者机器的文件。但是实际上我还是不知道PsExec是怎么通过ADMIN$进行上传文件的，也不知道怎么通过管道机制使被攻击者机器执行命令的。</p>
+<h2 id="0x3-如何传递PsExecSvr"><a href="#0x3-如何传递PsExecSvr" class="headerlink" title="0x3 如何传递PsExecSvr"></a>0x3 如何传递PsExecSvr</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PsExec是Mark Russinovich编写的 Sysinternals Suite中的工具，可以在<a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec" target="_blank" rel="external">https://docs.microsoft.com/en-us/sysinternals/downloads/psexec</a>处下载。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除去对参数，和运行环境做一些校验外，直接定位到PsExec最为关键的代码sub_7040。<br>    <img src="http://hacky.wang/blog/20210627/HYIGiuLiGr31.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在sub_7040，首先会构造远程文件的地址，然后将服务名，服务文件路径，用户名，密码等相关信息作为参数传入sub_41D0。而sub_41D0这个函数正是投送PSEXESVC.exe的原因所在。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，sub_41D0会将参数重新赋值到局部变量，这是很常见的操作，这些变量分别是</p>
+<ul>
+<li>filepath_svcpe：即PSEXESVC.exe文件的路径</li>
+<li>lpDisplayName：即服务的DisplayName，友好名称</li>
+<li>psz_PSEXESVC：就是那串字符串，表示文件名(一般为PSEXESVC.exe)</li>
+<li>RemoteComputerName：远程主机名</li>
+<li>lpUserName：用户名</li>
+<li>lpPassWord：密码</li>
+<li>lpServiceName：服务名<br>  <img src="http://hacky.wang/blog/20210627/3d2u7mXrPerT.png?imageslim" alt="mark"></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着判断远程主机名是否就是本地主机名，如果是本地主机的话，就会通过gethostname，gethostbyname，inet_ntoa等函数转化为点分十进制地址，然后进行下一步的链接。当然，如果远程主机就是本地主机的话是不需要将PSEXESVC.exe直接上传到远程主机的，所以直接创建进程<br>    <img src="http://hacky.wang/blog/20210627/TideqtWTknz1.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果待定的远程主机名不是本地主机名的话，执行开线程链接。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Thread_ConnectRemoteHostBySMB2(相对地址为0x4A50)中，首先建立IPC$连接，并从资源中释放PSEXESVC.exe<br>    <img src="http://hacky.wang/blog/20210627/xL6c7yimyDQR.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210627/3rPBOidtreM1.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当PSEXESVC.exe释放之后，创建DisplayName = “PSEXESVC”的服务<br>    <img src="http://hacky.wang/blog/20210627/Qq0kSCgl8c7h.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后向远程主机创建authentication key<br>    <img src="http://hacky.wang/blog/20210627/nRJY9bL4cWI4.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着通过CopyFileW直接复制到远程主机路径，亦可通过WriteFile写入远程主机<br>    <img src="http://hacky.wang/blog/20210627/s2SVzF5Ngp7K.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210627/LWHQcxwSk9dg.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着创建三个命名管道用于和PSEXESVC进行通讯，分别是stdin，stdout，stderr<br>     <img src="http://hacky.wang/blog/20210627/JgHqfs9uRAju.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;随后分别拉起三个线程，用于三个命名管道的数据传输(并不是这三个管道之间进行传输)，第一个参数为phKey，如果有phkey则需要将数据解密在进行传输，否则的话直接进行传输即可，第二个参数管道句柄。<br>     <img src="http://hacky.wang/blog/20210627/HAQhx6YIHQnj.png?imageslim" alt="mark"><br>     <img src="http://hacky.wang/blog/20210627/yVFrVO5Gq9IB.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;剩下的就是一些退出操作，比如停止及删除服务，删除文件等操作<br>     <img src="http://hacky.wang/blog/20210627/Xjk0cWLfWuer.png?imageslim" alt="mark"><br>     <img src="http://hacky.wang/blog/20210627/FpNDmhsL2ITM.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值得注意的是，PsExec使用了ADMIN$传输PSEXESVC.exe，但是仅仅使用WNetAddConnection2W添加了一个关于IPC$的链接，并在退出之时关闭了IPC$的链接。<br>     <img src="http://hacky.wang/blog/20210627/PL6PjMk5j6Gm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总结一下，其实PsExec就是通过Admin$共享将文件传输到远程主机，Admin$相当于虚拟了一个文件夹，也可以理解成Admin$是C:\Windows的符号链接。如果将Admin$理解成一个符号链接，并指向的是C:\Windows，那么我们可以在上面执行任何关于文件的操作，包括创建,写入,删除文件,这些都是可以通过Windows提供的API实现。Admin$本质其实是利用SMB协议实现的，当我去链接windowx xp的机器的时候，可以看到使用的是SMB1的协议，而当我链接windows7的时候使用的却是SMB2的协议。<br>    <img src="http://hacky.wang/blog/20210627/RcTR0DRWnj8L.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有师傅也注意到了，为什么使用Admin$上传文件，但是为什么不需要使用WNetAddConnection2W添加一个Admin$链接。这也是我在分析时候的一个困惑，于是，我做了以下实验。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，使用net use \192.168.80.128\ipc$ “password” /user:”domain/username”建立一个远程连接。<br>    <img src="http://hacky.wang/blog/20210627/ltyd7jhtInfF.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后上传一份文件上去,可以看见文件以及上传成功。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CopyFile(<span class="string">"图19.png"</span>,<span class="string">"<span class="subst">\\</span><span class="subst">\\</span>192.168.80.128<span class="subst">\\</span>admin$<span class="subst">\\</span>aaa.png"</span>,<span class="literal">FALSE</span>)</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>    <img src="http://hacky.wang/blog/20210627/KG1dSP0DTxxe.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着，我删除上述链接，并创建一个Admin$的远程链接，然后在上传一份bbb.png的文件，可以发现无论ipc$还是admin$都是可以上传成功的。我觉得ipc$亦或是admin$在此处的作用都是为了验证用户名和密码是否有效，验证完成之后，可以直接通过Admin$上传文件。这也是有的文章上面说可以先建立一个ipc$链接，然后在执行PsExec的原因所在了。<br>    <img src="http://hacky.wang/blog/20210627/Hv2iqmDQGOBp.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除此以外，为什么一定是要利用创建服务的方式去实现呢，实现驻留的方法也有很多，但为什么一定是服务呢，我在<a href="http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/" target="_blank" rel="external">这篇文章</a>中找到了原因，当使用Admin$共享的时候，如果要执行复制到远程主机的文件的时候，这些文件之一必须是服务。</p>
+<h2 id="0x4-如何执行命令"><a href="#0x4-如何执行命令" class="headerlink" title="0x4 如何执行命令"></a>0x4 如何执行命令</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;传递和返回结果的原理就很简单了，本质就如很多文章所说的，通过命名管道实现从本地主机到远程主机发送和接收数据。具体是这样的。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先分别创建stdin，stdout，stderr三个管道，并连接这三个命名管道用于接收和传递数据!<br>    <a href="http://hacky.wang/blog/20210711/v5IxhMxmTGkm.png?imageslim" target="_blank" rel="external">mark</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后传递一些参数进sub_67B0中，这些参数分别是：</p>
+<ul>
+<li>phKey,</li>
+<li>&amp;Msg,</li>
+<li>hPipe_Service,</li>
+<li>hNamedPipe_stdin,</li>
+<li>hNamedPipe_stdout,</li>
+<li>hNamedPipe_stderr,</li>
+<li>hEvent,</li>
+<li>hHandle<br>  <img src="http://hacky.wang/blog/20210711/PeLFcFJGY1At.png?imageslim" alt="mark"></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先phKey是表示秘钥句柄，其可能是通过sub_404420中的CryptDeriveKey，或者是sub_4059C0中的CryptImportKey函数产生。<br>    <img src="http://hacky.wang/blog/20210711/tssdODMiAqm8.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;了解&amp;Msg参数，其实是需要了解第三个参数hPipe_Service。hPipe_Service其实是服务于服务本身的一个管道，PsExec一共会创建四个管道，其中一个用于服务自身，另外三个管道用于重定向。因为这个管道是以模块名为管道名称的，所以这个管道是服务于自身的一个管道。<br>    <img src="http://hacky.wang/blog/20210711/Wt0Ci2NDWGh8.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着看Msg就很好理解了，在sub_404720中，第二个参数是服务本身的管道，显然，这是从管道中读取相关信息。<br>    <img src="http://hacky.wang/blog/20210711/nWM5Ko8lg9zK.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是三个用于转发的管道，和事件句柄和线程句柄，和本文并没有多少关系。<br>    <img src="http://hacky.wang/blog/20210711/1WkoWRaBoCj4.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在sub_405AF0函数中，创建三个普通的管道，这三个管道并不是命名管道，作用是用于向进程发送数据，以及接受返回结果的作用。可以看到StartupInfo的dwFlags是USESHOWINDOW &amp; USESTDHANDLES。USESTDHANDLES表示着需要使用进程的三个管道。<br>    <img src="http://hacky.wang/blog/20210711/W8P72SdgqeXX.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着拉起三个线程，用于从普通管道读取数据，然后将数据写回到命名管道中，完成数据的传递。<br>    <img src="http://hacky.wang/blog/20210711/iHDFJxc6k3Nj.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后创建进程，后续三个线程监听管道的数据即可。<br>    <img src="http://hacky.wang/blog/20210711/nFar24tJw0Af.png?imageslim" alt="mark"></p>
+<h2 id="0x5-如何检测PsExec"><a href="#0x5-如何检测PsExec" class="headerlink" title="0x5 如何检测PsExec"></a>0x5 如何检测PsExec</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在前面，我们了解到PsExec通过SMB协议将PSEXESVC.exe传递到远程主机，并将其创建为一个服务，然后通过创建四个命名管道进行数据通信，然后通过CreateProcessAsUser创建带有管道的进程来监听或者发送命令。所以综上，我们可以通过三个维度来检测是否是PsExec程序。</p>
+<ul>
+<li>创建的子进程是否存在管道</li>
+<li>父进程也就是PSEXESVC.exe，是否是服务</li>
+<li>父进程是否存在命名管道</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过测试，对于类似于PsExec一样是可以检测的。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据之前的分析，PsExec最终会调用CreateProcessAsUserW拉起进程，并在StartupInfo设置重定向管道。所以，我们可以在通过Hook CreateProcessAsUserW函数或者类似函数CreateProcess，判断StartUpinfo是否存在重定向管道。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过分析CreateProcessAsUserW函数和CreateProcess函数发现，其最终会调用CreateProcessInternalW函数。并发现，其最终会调用Nt层的函数NtCreateUserProcess实现进程创建。<br>    <img src="http://hacky.wang/blog/20210718/wkJPdLW2156h.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210718/rEDn0uWoryBR.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为不仅要考虑PsExec，还要考虑其他类似于PsExec的工具，我打算在Nt层进行Hook。所以，我决定将NtCreateUserProcess作为我的目标</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是确定参数StartUpInfo这个参数是如何传递给NtCreateUserProcess的，通过分析lpStartupInfo会最终传递到BasepCreateProcessParameters函数处理，然后返回。然后再将返回的ProcessParameters作为参数传递给NtCreateUserProcess。<br>    <img src="http://hacky.wang/blog/20210718/xnXeOIfdKbq5.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210718/eWeCzUzi9o42.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在BasepCreateProcessParameters中，发现其就是在StartupInfo做了校验和复制。<br>    <img src="http://hacky.wang/blog/20210718/0M5lYKnDpwwd.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于了解windows内核的师傅，肯定了解其中的运行机制，也了解ProcessParameters结构的内容<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">typedef struct _RTL_USER_PROCESS_PARAMETERS</div><div class="line">&#123;</div><div class="line">	ULONG MaximumLength<span class="comment">;</span></div><div class="line">	ULONG Length<span class="comment">;</span></div><div class="line">	ULONG Flags<span class="comment">;</span></div><div class="line">	ULONG DebugFlags<span class="comment">;</span></div><div class="line">	PVOID ConsoleHandle<span class="comment">;</span></div><div class="line">	ULONG ConsoleFlags<span class="comment">;</span></div><div class="line">	PVOID StandardInput<span class="comment">;</span></div><div class="line">	PVOID StandardOutput<span class="comment">;</span></div><div class="line">	PVOID StandardError<span class="comment">;</span></div><div class="line">	CURDIR CurrentDirectory<span class="comment">;</span></div><div class="line">	UNICODE_STRING DllPath<span class="comment">;</span></div><div class="line">	UNICODE_STRING ImagePathName<span class="comment">;</span></div><div class="line">	UNICODE_STRING CommandLine<span class="comment">;</span></div><div class="line">	PVOID Environment<span class="comment">;</span></div><div class="line">	ULONG StartingX<span class="comment">;</span></div><div class="line">	ULONG StartingY<span class="comment">;</span></div><div class="line">	ULONG CountX<span class="comment">;</span></div><div class="line">	ULONG CountY<span class="comment">;</span></div><div class="line">	ULONG CountCharsX<span class="comment">;</span></div><div class="line">	ULONG CountCharsY<span class="comment">;</span></div><div class="line">	ULONG FillAttribute<span class="comment">;</span></div><div class="line">	ULONG WindowFlags<span class="comment">;</span></div><div class="line">	ULONG <span class="keyword">ShowWindowFlags;</span></div><div class="line"><span class="keyword">	</span>UNICODE_STRING WindowTitle<span class="comment">;</span></div><div class="line">	UNICODE_STRING DesktopInfo<span class="comment">;</span></div><div class="line">	UNICODE_STRING <span class="keyword">ShellInfo;</span></div><div class="line"><span class="keyword">	</span>UNICODE_STRING RuntimeData<span class="comment">;</span></div><div class="line">	RTL_DRIVE_LETTER_CURDIR CurrentDirectores[<span class="number">32</span>]<span class="comment">;</span></div><div class="line">	ULONG EnvironmentSize<span class="comment">;</span></div><div class="line">&#125; RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为，我需要对系统全局的进程创建进行Hook，所以我决定采用SSDT Hook来达成这一目的,最重要的原因是我之前写过类似的Demo，可以直接使用。当然，使用回调一样是可以解决问题的，关于SSDTHook原理和编程，网络上也有很多讲解。当Hook NtCreateUserProcess之后，继而检查ProcessParameters-&gt;StandardInput，ProcessParameters-&gt;StandardOutput，ProcessParameters-&gt;StandardError是否为空即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;相对于PsExecSvc.exe，NtCreateUserProcess创建的进程是其子进程，所以PsExecSvc.exe算是NtCreateUserProcess创建的进程的父进程。NtCreateUserProcess函数原型如下,很显然，第一个参数是创建进程的ProcessHandle。所以，我们需要函数返回的ProcessHandle获取其父进程的进程数据(Pid或者Handle)<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">NTSTATUS NTAPI NtCreateUserProcess(</div><div class="line">	<span class="keyword">OUT</span> PHANDLE ProcessHandle,</div><div class="line">	<span class="keyword">OUT</span> PHANDLE ThreadHandle,</div><div class="line">	<span class="keyword">IN</span> ACCESS_MASK ProcessDesiredAccess,</div><div class="line">	<span class="keyword">IN</span> ACCESS_MASK ThreadDesiredAccess,</div><div class="line">	<span class="keyword">IN</span> POBJECT_ATTRIBUTES ProcessObjectAttributes <span class="keyword">OPTIONAL</span>,</div><div class="line">	<span class="keyword">IN</span> POBJECT_ATTRIBUTES ThreadObjectAttributes <span class="keyword">OPTIONAL</span>,</div><div class="line">	<span class="keyword">IN</span> ULONG CreateProcessFlags,</div><div class="line">	<span class="keyword">IN</span> ULONG CreateThreadFlags,</div><div class="line">	<span class="keyword">IN</span> PRTL_USER_PROCESS_PARAMETERS ProcessParameters,</div><div class="line">	<span class="keyword">IN</span> PVOID Parameter9,</div><div class="line">	<span class="keyword">IN</span> PNT_PROC_THREAD_ATTRIBUTE_LIST AttributeList</div><div class="line">	)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以通过 ZwQueryInformationProcess 获取父进程Pid，具体可以这样做。<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">PROCESS_BASIC_INFORMATION pbi<span class="comment">;</span></div><div class="line"></div><div class="line">UNICODE_STRING routineName<span class="comment">;</span></div><div class="line">RtlInitUnicodeString(&amp;routineName, L<span class="string">"ZwQueryInformationProcess"</span>)<span class="comment">;</span></div><div class="line">ZwQueryInformationProcess = (QUERY_INFO_PROCESS)MmGetSystemRoutineAddress(&amp;routineName)<span class="comment">;</span></div><div class="line">ntStatus = ZwQueryInformationProcess(*ProcessHandle, <span class="number">0</span>, (PVOID)&amp;pbi, sizeof(PROCESS_BASIC_INFORMATION), NULL)<span class="comment">;</span></div><div class="line">if (!ntStatus)</div><div class="line">&#123;</div><div class="line">	upPid = pbi.InheritedFromUniqueProcessId<span class="comment">;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来，就可以判断返回的Pid的进程是否是服务，这一步，网上也有现成的代码。具体来说，就是通过EnumServicesStatusEx函数获取整个服务列表的LPENUM_SERVICE_STATUS_PROCESS，而LPENUM_SERVICE_STATUS_PROCESS保存着对于进程的Pid。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> IsServicesByPid(DWORD dwPid)</div><div class="line">&#123;</div><div class="line">	SC_HANDLE hSCM = <span class="literal">NULL</span>;</div><div class="line">	hSCM = OpenSCManager(<span class="literal">NULL</span>, <span class="literal">NULL</span>, SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);</div><div class="line">	<span class="keyword">if</span> (hSCM == <span class="literal">NULL</span>)</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">"[!] OpenSCManager:%d"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	DWORD dwBufSize = <span class="number">0</span>;                <span class="comment">// 传入的缓冲长度</span></div><div class="line">	DWORD dwBufNeed = <span class="number">0</span>;                <span class="comment">// 需要的缓冲长度</span></div><div class="line">	DWORD dwNumberOfService = <span class="number">0</span>;        <span class="comment">// 返回的服务个数</span></div><div class="line">	EnumServicesStatusEx(hSCM, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL,</div><div class="line">		<span class="literal">NULL</span>, dwBufSize, &amp;dwBufNeed, &amp;dwNumberOfService, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line"></div><div class="line">	<span class="keyword">char</span> *pBuf = <span class="literal">NULL</span>;</div><div class="line">	dwBufSize = dwBufNeed + <span class="keyword">sizeof</span>(ENUM_SERVICE_STATUS_PROCESS);</div><div class="line">	pBuf = (<span class="keyword">char</span> *)malloc(dwBufSize);</div><div class="line">	memset(pBuf, <span class="number">0</span>, dwBufSize);</div><div class="line"></div><div class="line">	<span class="built_in">BOOL</span> bRet = <span class="literal">FALSE</span>;</div><div class="line">	bRet = EnumServicesStatusEx(hSCM, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL,</div><div class="line">		(LPBYTE)pBuf, dwBufSize, &amp;dwBufNeed, &amp;dwNumberOfService, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">	<span class="keyword">if</span> (bRet == <span class="literal">FALSE</span>)</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">" EnumServicesStatusEx %d"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">	LPENUM_SERVICE_STATUS_PROCESS pServiceInfo = (LPENUM_SERVICE_STATUS_PROCESS)pBuf;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; dwNumberOfService; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (dwPid == pServiceInfo[i].ServiceStatusProcess.dwProcessId)</div><div class="line">		&#123;</div><div class="line">			printf(<span class="string">"[*]Find Service Name %s Of ProcessId"</span>, pServiceInfo[i].lpDisplayName);</div><div class="line">			<span class="keyword">return</span> <span class="literal">TRUE</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来，就是判断PsExecSvc.exe是否具有命名管道，命名管道实际上就是Type为”File”的句柄，所以，只需要遍历进程的句柄表，然后检查句柄类型为File，且句柄名称带有NamedPipe的，就是存在命名管道。可以使用Process Explorer来搜索命名管道。<br>    <img src="http://hacky.wang/blog/20210718/CGN9Yw6CHLow.png?imageslim" alt="mark"></p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//获取句柄名</span></div><div class="line">Status = ZwQueryObject((HANDLE)hDuplicate,</div><div class="line">	ObjectNameInformation,</div><div class="line">	BufferForObjectName,</div><div class="line">	sizeof(BufferForObjectName),</div><div class="line">	<span class="keyword">NULL</span>);</div><div class="line"></div><div class="line">ObjectName = (POBJECT_NAME_INFORMATION)BufferForObjectName;</div><div class="line"><span class="keyword">if</span> (Status == STATUS_INFO_LENGTH_MISMATCH || !NT_SUCCESS(Status))</div><div class="line">	<span class="keyword">continue</span>;</div><div class="line">PWCHAR HandleType_File = L<span class="string">"File"</span>;</div><div class="line"><span class="keyword">CHAR</span> cObjectName[MAX_PATH] = &#123; <span class="number">0</span> &#125;;</div><div class="line"><span class="keyword">if</span> (wcscmp((PWCHAR)ObjectType-&gt;TypeName.Buffer, HandleType_File) == <span class="number">0</span>)</div><div class="line">&#123;</div><div class="line">	wsprintfA(cObjectName, <span class="string">"%S"</span>, (PWCHAR)ObjectName-&gt;Name.Buffer);</div><div class="line">	<span class="keyword">if</span> (strstr(cObjectName, <span class="string">"\\Device\\NamedPipe"</span>))</div><div class="line">	&#123;</div><div class="line">		printf(<span class="string">"[*]Type:%ls|Name:%ls|Handle:%X\n"</span>, ObjectType-&gt;TypeName.Buffer, ObjectName-&gt;Name.Buffer, (DWORD)dwHandle);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">TRUE</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;只需要将获取的Pid传到R3，然后检查服务和命名管道符合这三个维度就可以基本判断其可能是PsExec类似软件。<br>     <img src="http://hacky.wang/blog/20210718/qR7Vz1t6fHlR.jpg?imageslim" alt="mark"><br>     <img src="http://hacky.wang/blog/20210718/mfe3BtJLzqCl.jpg?imageslim" alt="mark"><br>     <img src="http://hacky.wang/blog/20210718/P3Hz7Bu2vf9J.jpg?imageslim" alt="mark"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/13/WMI攻守之道/" rel="next" title="WMI的攻守之道">
+                <i class="fa fa-chevron-left"></i> WMI的攻守之道
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/20/绿盟科技-每周蓝军技术推送（2022.4.9-4.15）/" rel="prev" title="绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习">
+                绿盟科技-每周蓝军技术推送（2022.4.9-4.15）学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-前言"><span class="nav-number">1.</span> <span class="nav-text">0x1 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x2-什么是PsExec"><span class="nav-number">2.</span> <span class="nav-text">0x2 什么是PsExec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x3-如何传递PsExecSvr"><span class="nav-number">3.</span> <span class="nav-text">0x3 如何传递PsExecSvr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x4-如何执行命令"><span class="nav-number">4.</span> <span class="nav-text">0x4 如何执行命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x5-如何检测PsExec"><span class="nav-number">5.</span> <span class="nav-text">0x5 如何检测PsExec</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

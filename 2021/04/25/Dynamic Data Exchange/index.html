@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x1 Dynamic Data Exchange0x1.1 什么是 Dynamic Data Exchange&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Dynamic Data Exchange(DDE)，译为动态数据交换。DDE是一种Inter-Process Communication机制下的一种客服端服务器协议。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dynamic Data Exchange">
+<meta property="og:url" content="https://findream.github.io/2021/04/25/Dynamic Data Exchange/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="0x1 Dynamic Data Exchange0x1.1 什么是 Dynamic Data Exchange&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Dynamic Data Exchange(DDE)，译为动态数据交换。DDE是一种Inter-Process Communication机制下的一种客服端服务器协议。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/mH8WCWnLcoFm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/MoVbH3u7slN0.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/Ws0wRyS8IMJw.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/3HryPBy3ss1E.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/uk5j7ucr8EgB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/G0sBxM76SMP9.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/mcXFiLryfrTM.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/1xuMipTzcK1r.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/NdMJXvTPI2Ax.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/dicsl809pLUp.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/mEXO42xiFd4o.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/tjMrT3SIQeBy.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/ncVNrbWXxOA6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/hHN5tBqyRFpm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/r6VJ5RC0WcUA.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/0ywyNcCWW7A3.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/h9HpqJKpYoNf.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210521/2ayKQFBNr1x6.png?imageslim">
+<meta property="og:updated_time" content="2022-11-12T06:56:55.758Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dynamic Data Exchange">
+<meta name="twitter:description" content="0x1 Dynamic Data Exchange0x1.1 什么是 Dynamic Data Exchange&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Dynamic Data Exchange(DDE)，译为动态数据交换。DDE是一种Inter-Process Communication机制下的一种客服端服务器协议。">
+<meta name="twitter:image" content="http://hacky.wang/blog/20210521/mH8WCWnLcoFm.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/04/25/Dynamic Data Exchange/"/>
+
+
+
+
+
+  <title>Dynamic Data Exchange | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/04/25/Dynamic Data Exchange/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Dynamic Data Exchange</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-25T20:45:11+08:00">
+                2021-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x1-Dynamic-Data-Exchange"><a href="#0x1-Dynamic-Data-Exchange" class="headerlink" title="0x1 Dynamic Data Exchange"></a>0x1 Dynamic Data Exchange</h2><h3 id="0x1-1-什么是-Dynamic-Data-Exchange"><a href="#0x1-1-什么是-Dynamic-Data-Exchange" class="headerlink" title="0x1.1 什么是 Dynamic Data Exchange"></a>0x1.1 什么是 Dynamic Data Exchange</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dynamic Data Exchange(DDE)，译为动态数据交换。DDE是一种Inter-Process Communication机制下的一种客服端服务器协议。</p>
+<a id="more"></a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在MicroSoft Office 2016 之前的Office版本是默认开启的，但是随着DDE功能的滥用，在2017年，微软安全团队已经禁用Word下的DDE功能，但是仍然留有方式，以便用户正常的开启DDE功能，即通过如下注册表来设置是否启用DDE功能。具体详情可以在<a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-disables-dde-feature-in-word-to-prevent-further-malware-attacks/" target="_blank" rel="external">Microsoft Disables DDE Feature in Word to Prevent Further Malware Attacks</a>看到<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">\H</span>KEY_CURRENT_USER<span class="symbol">\S</span>oftware<span class="symbol">\M</span>icrosoft<span class="symbol">\O</span>ffice<span class="symbol">\v</span>ersion<span class="symbol">\W</span>ord<span class="symbol">\S</span>ecurity AllowDDE(DWORD)</div><div class="line">AllowDDE（DWORD）= 0：禁用DDE。安装更新后，这是默认设置。</div><div class="line">AllowDDE（DWORD）= 1：允许对已经运行的程序进行DDE请求，但阻止需要启动另一个可执行程序的DDE请求。</div><div class="line">AllowDDE（DWORD）= 2：完全允许DDE请求。</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DDE和宏是不同的两种技术，通过嵌入DDE命令是不会被扫描到存在宏代码的。本文行文仓促，如有错误，请各位积极指正。</p>
+<h3 id="0x1-2-Dynamic-Data-Exchange-的利用"><a href="#0x1-2-Dynamic-Data-Exchange-的利用" class="headerlink" title="0x1.2 Dynamic Data Exchange 的利用"></a>0x1.2 Dynamic Data Exchange 的利用</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;早在2017年，William在他的文章<a href="http://willgenovese.com/office-ddeauto-attacks/" target="_blank" rel="external">Office DDEAUTO attacks</a>中就详细描述了在Word，Outlook，Calendar Invites上的利用。并在文章的末尾标明了一些会导致DDE被滥用的文件格式:doc（x/m）、dot（x/m）、rtf、Word XML。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Office Word中，William按下CTRL+F9很轻易的构造了一个含有DDE的word文档。如图所示，在花括号中，输入<code>DDEAUTO c:\windows\system32\cmd.exe &quot;/k notepad.exe</code>，然后保存即可。当然因为doc,docx,rtf都是使用office word打开的，所以可以保存三种不同格式的文档。<br>    <img src="http://hacky.wang/blog/20210521/mH8WCWnLcoFm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这样，我们就构造了doc，docx，rtf三种带有DDE的文档。打开之后应该就是下面这个样子。但是我们怎么能查看到这些文档中带有的恶意代码呢？首先保证你有一个分析环境，保证样本所有的恶意行为都在你的掌握之中，这样就不会因为自己的手残点了一个是，造成恶劣的后果。<br>    <img src="http://hacky.wang/blog/20210521/MoVbH3u7slN0.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为Word会提醒你是否需要更新，记住，全部点否即可。如此的话，就可以看到这样的情况。这只是测试.doc,如果遇上真实的样本，肯定有着极其丰富的内容，肯定是不容易找到的。在Word光标附近，右键，切换域代码即可看到恶意代码的内容。<br>    <img src="http://hacky.wang/blog/20210521/Ws0wRyS8IMJw.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210521/3HryPBy3ss1E.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通常，在excel中，使用<code>=DDE()</code>公式的方式构造带有DDE功能的文档，在2014年，Contextis就公开了他的研究。如下图所示，直接在空格里面输入<code>=dde(cmd|&#39;/k calc.exe&#39;!.A1)</code>即可构造和上面功能一样的excel文件，同理，除了可以生成xls文件外，还可以生成xlsx文件。<br>    <img src="http://hacky.wang/blog/20210521/uk5j7ucr8EgB.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;打开之后呢，就是这样的效果，但是修改之后的痕迹很容易被发现，所以还需要有一些社会工程学的技巧尽可能的隐藏这样的痕迹。<br>    <img src="http://hacky.wang/blog/20210521/G0sBxM76SMP9.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接下来就是如何构造含有DDE的ppt和pptx文档。网上找了好多也没有找到如何构造PowerPoint的DDE的方法。但是微软的这句话给了我一丝灵感<code>PowerPoint can import an outline in .docx, .rtf, or .txt format.</code>,翻译过来的意思就是PowerPoint可以导入.docx，.rtf或.txt格式的大纲。这让我想到William在构造Outlook，以及OneNote也是用这样的方法进行DDE的。本身我们已经有了携带有DDE功能的docx或者rtf，只要我们将这些文件作为对象插入PowerPoint中，那就相当于构造了一个携带有dde功能的powerpoint文档了。说干就干。在PowerPoint中选择插入对象选项卡，并浏览已经构造好的docx文件。这样就可以了。然后点击插入的docx文件就可以弹出Notepad.exe了。<br>    <img src="http://hacky.wang/blog/20210521/mcXFiLryfrTM.png?imageslim" alt="mark"></p>
+<h3 id="0x1-2-如何检测-Dynamic-Data-Exchange"><a href="#0x1-2-如何检测-Dynamic-Data-Exchange" class="headerlink" title="0x1.2 如何检测 Dynamic Data Exchange"></a>0x1.2 如何检测 Dynamic Data Exchange</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在常见的Office组件中，Word，Excel，PPT文档主要的就是两种格式，一种是带有拓展的，一种是不带有拓展的。其中带有拓展的是在Office2007及其以后的版本使用的文档规范，称之为OpenXML，这种文档采用XML组织起文件结构。另外一种格式就是OLE，即对象链接和嵌入技术，这种并不是采用xml组织文件结构，而是采用类似于电脑文件存储的方式组织。而OpenXMl从文件大小上来看也比OLE文件要小得多。并且可以通过压缩软件打开。关于OpenXML和OLE文件可以翻阅微软文档或者<a href="https://www.anquanke.com/post/id/175548" target="_blank" rel="external">Office文件格式基础知识（1）</a><br>    <img src="http://hacky.wang/blog/20210521/1xuMipTzcK1r.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OpenXML具有很好的辨识度，可以直接查看存储的内容，编写出检测代码也比较方便。先为各位介绍OpenXML文档的识别与检测。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;之前说了OpenXML都是可以使用压缩软件打开，例如这样的。其中DDE代码就存在\word\document.xml文件中。通过搜索关键字’cmd’,可以看到带有DDE功能的代码都在tag=’r’以及tag=’instrText’中。我们就可以以此作为检测依据。而针对XML文件，可以使用ElementTree进行解析，ElementTree提供一个深度遍历所有节点的函数——iter(),利用它就可以遍历所有的节点，只要当前节点的tag为’r’,以及存在tag为’instrText’的子节点，那么’instrText’的内容就是DDE代码。<br>    <img src="http://hacky.wang/blog/20210521/NdMJXvTPI2Ax.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210521/dicsl809pLUp.png?imageslim" alt="mark"><br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">tree = ET.parse(self<span class="selector-class">.zipper</span><span class="selector-class">.open</span>(<span class="string">"word/document.xml"</span>))</div><div class="line"><span class="keyword">for</span> elem <span class="keyword">in</span> tree.iter():</div><div class="line">   <span class="keyword">if</span> elem<span class="selector-class">.tag</span><span class="selector-class">.split</span>(<span class="string">'&#125;'</span>)[<span class="number">1</span>] ==<span class="string">'r'</span>:</div><div class="line">     <span class="keyword">for</span> sub <span class="keyword">in</span> elem:</div><div class="line">        <span class="keyword">if</span> sub<span class="selector-class">.tag</span><span class="selector-class">.split</span>(<span class="string">'&#125;'</span>)[<span class="number">1</span>] == <span class="string">"instrText"</span>:</div><div class="line">           text = sub<span class="selector-class">.text</span><span class="selector-class">.strip</span>().replace(<span class="string">'\n'</span>, <span class="string">''</span>).replace(<span class="string">'\r'</span>, <span class="string">''</span>)</div><div class="line">           <span class="keyword">if</span> <span class="string">"QUOTE"</span> <span class="keyword">in</span> text:</div><div class="line">               text = self.clean_quote(text)</div><div class="line">           self<span class="selector-class">.ddetext</span> += text</div><div class="line">self<span class="selector-class">.zipper</span><span class="selector-class">.close</span>()</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;又因为<code>w=&quot;http://schemas.openxmlformats.org/wordprocessingml/2006/main&quot;</code>，所以需要截取’}’后面的那部分内容，这个大家做个试验，打印一下elem.tag的内容就清楚了。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于xlsx文件呢，dde代码是存储在\xl\externalLinks目录下的xml文件中，每一个链接对应着不同的xml文件，比如我构造的excel文档，他有两个链接，他既可以执行calc.exe 又可以执行notepad.exe。所以在\xl\externalLinks目录下面存在两个不同的xml文件。在Link1.xml中，当tag为’ddeLink’说明存在dde代码，其中ddeService=”cmd”。ddeTopic=”/k calc.exe”。同理，只需要遍历xml所有节点，找到ddeLink即可检测。<br>    <img src="http://hacky.wang/blog/20210521/mEXO42xiFd4o.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210521/tjMrT3SIQeBy.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210521/ncVNrbWXxOA6.png?imageslim" alt="mark"><br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">tree = ET.parse(self<span class="selector-class">.zipper</span><span class="selector-class">.open</span>(<span class="string">"xl/externalLinks/externalLink1.xml"</span>))</div><div class="line"><span class="keyword">for</span> elem <span class="keyword">in</span> tree.iter():</div><div class="line">    <span class="keyword">if</span> elem<span class="selector-class">.tag</span><span class="selector-class">.split</span>(<span class="string">'&#125;'</span>)[<span class="number">1</span>] ==<span class="string">'ddeLink'</span>:</div><div class="line">        <span class="keyword">if</span> <span class="string">"ddeService"</span> <span class="keyword">in</span> elem<span class="selector-class">.attrib</span><span class="selector-class">.keys</span>() and <span class="string">"ddeTopic"</span> <span class="keyword">in</span> elem<span class="selector-class">.attrib</span><span class="selector-class">.keys</span>():</div><div class="line">            <span class="keyword">if</span> elem<span class="selector-class">.attrib</span>[<span class="string">"ddeService"</span>]:</div><div class="line">                self<span class="selector-class">.ddetext</span> += elem<span class="selector-class">.attrib</span>[<span class="string">"ddeService"</span>]</div><div class="line">            <span class="keyword">if</span> elem<span class="selector-class">.attrib</span>[<span class="string">"ddeTopic"</span>]:</div><div class="line">                self<span class="selector-class">.ddetext</span> += elem<span class="selector-class">.attrib</span>[<span class="string">"ddeTopic"</span>]</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;而针对PPTX呢，因为PPTX是将其他dde文档作为对象插入的，所以只需要提取出那些dde文档，然后针对性的检测那部分文档即可。插入的文档位于\ppt\embeddings目录中。可以利用zipper的.extract()方法将目录下的文件提取到指定目录，然后检测该文件是否存在dde代码即可。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">zipper = zipfile.ZipFile(filename)</div><div class="line">subfiles = zipper.namelist()</div><div class="line"><span class="keyword">for</span> subfile <span class="keyword">in</span> subfiles:</div><div class="line">    <span class="keyword">if</span> targetdir <span class="keyword">in</span> subfile:</div><div class="line">        zipper.extract(subfile,<span class="string">"C:/Users/Public/"</span>,None)</div><div class="line">        zipper.<span class="built_in">close</span>()</div><div class="line">        <span class="built_in">print</span>(<span class="built_in">os</span>.<span class="built_in">path</span>.join(<span class="string">"C:/Users/Public/"</span>,subfile))</div><div class="line">        <span class="keyword">return</span> <span class="built_in">os</span>.<span class="built_in">path</span>.join(<span class="string">"C:/Users/Public/"</span>,subfile)</div><div class="line"><span class="keyword">return</span> None</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除了这三种OpenXML格式呢，rtf富文本格式也是明文存在的。如图，是一个rtf文件的内容，rtf文件的Magic标志位为’{\rt’，在测试的例子中，我们搜索’cmd.exe’，显然可以找到我们编写的dde代码。【图14，图15】<br>    <img src="http://hacky.wang/blog/20210521/hHN5tBqyRFpm.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20210521/r6VJ5RC0WcUA.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在rtf文件中，是以’{‘和’}’作为分界的。并且空格在文件中无意义。这些我们提取出可以作为检测条件的部分如下，可以看到’\field’和’\fldrslt’,以及’fldinst’可以作为检测的Key，只需要检测到这三个部分，并将’\fldinst’中间的这些属性排除，就可以得到dde代码了。是不是很简单<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&#123;<span class="symbol">\f</span>ield&#123;<span class="symbol">\*</span><span class="symbol">\f</span>ldinst &#123;<span class="symbol">\r</span>tlch<span class="symbol">\f</span>cs1 <span class="symbol">\a</span>f13 <span class="symbol">\l</span>trch<span class="symbol">\f</span>cs0 <span class="symbol">\c</span>f19<span class="symbol">\l</span>och<span class="symbol">\a</span>f44<span class="symbol">\h</span>ich<span class="symbol">\a</span>f44<span class="symbol">\d</span>bch<span class="symbol">\a</span>f44<span class="symbol">\c</span>hshdng0<span class="symbol">\c</span>hcfpat0<span class="symbol">\c</span>hcbpat8<span class="symbol">\i</span>nsrsid14360340 <span class="symbol">\h</span>ich<span class="symbol">\a</span>f44<span class="symbol">\d</span>bch<span class="symbol">\a</span>f44<span class="symbol">\l</span>och<span class="symbol">\f</span>44 DDEAUTO c:</div><div class="line"><span class="symbol">\\</span><span class="symbol">\\</span>windows<span class="symbol">\\</span><span class="symbol">\\</span>system32<span class="symbol">\\</span><span class="symbol">\\</span>cmd.exe "/k notepad.exe" &#125;&#125;&#123;<span class="symbol">\f</span>ldrslt &#125;&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DOC文档采用的是OLE格式，我们可以简单的将OLE理解成硬盘的文件系统，将整个文件理解成一个磁盘分区，磁盘里面有很多个文件或者文件夹，把文件夹理解成仓库(Storages),将文件理解成流(Stream)。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以使用OffVis工具来解析OLE文件，OffVis可以解析OLE类型的Word，Excel，PowerPoint文件。可以看到OffVis将dde_test.doc文件解析成4部分【图16】：<br>    <img src="http://hacky.wang/blog/20210521/0ywyNcCWW7A3.png?imageslim" alt="mark"></p>
+<ul>
+<li>OleHeader：符合文档头，其大小为0x200个字节，请各位记住这个数字，其存储了整个文档的诸多关键信息。</li>
+<li>FAT[]:这是一个数组，里面存储着诸多的Sectors，Sectors称之为数据扇区。</li>
+<li>MiniFAT：暂时没用到</li>
+<li>DirectoryEntry:目录入口，可以简单理解目录是寻找文件或者文件夹的入口，因为每一个目录入口都指向复合文档的一个仓库或流。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是OLE文件DirectoryEntry结构的内容，其中，我们需要关注的是如下几个属性【图17】<br>    <img src="http://hacky.wang/blog/20210521/h9HpqJKpYoNf.png?imageslim" alt="mark"></p>
+<ul>
+<li>EleName:表示目录名称</li>
+<li>Type:表示目录的类型，其中Type=2，说明这是一个Stream。</li>
+<li>StartSect:表示第一个Sector的编号，可以表征该目录对应数据的Offset，其计算公式应为：0x200+StartSect*SizeOfSector</li>
+<li>SizeLow：表示大小</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在OffVis中搜索“cmd.exe”，发现dde代码位于0xA00处，经过分析，可以发现，这段数据位于第3号DirectoryEntry指向的数据。而这样第3号DirectoryEntry的类型为Stream，我们就可以将寻找dde的过程提取总结出来，即【图18】：<br>    <img src="http://hacky.wang/blog/20210521/2ayKQFBNr1x6.png?imageslim" alt="mark"></p>
+<ul>
+<li>首先解析DirectoryEntry[],寻找其中Type=Stream(2)的DirectoryEntry</li>
+<li>然后获取该DirectoryEntry的StartSect和SizeLow，通过这两个成员，获取DirectoryEntry指向的数据。</li>
+<li>接着遍历这些数据，这些数据有3种不同的特征数据，分别是FIELD_START(0x13)，FIELD_SEP(0x14)，FIELD_END(0x15)，如下图，很显然，dde代码是位于FIELD_START和FIELD_SEP以及FIELD_END之间。即检测到了FIELD_START，但是没有检测到FIELD_SEP和FIELD_END，并且数据是可见字符。这样便可以提取dde代码。<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    <span class="comment"># index increases 1 when every traversal</span></div><div class="line">    index += <span class="number">1</span></div><div class="line">    char = stream.read(<span class="number">1</span>)</div><div class="line">    <span class="comment"># char is None means end of stream</span></div><div class="line">    <span class="keyword">if</span> len(char) ==<span class="number">0</span>:</div><div class="line">        <span class="keyword">break</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        char = ord(char)   </div><div class="line">    <span class="comment"># Start</span></div><div class="line">    <span class="keyword">if</span> char == OLE_FIELD_START:</div><div class="line">        is_start = <span class="keyword">True</span></div><div class="line">        is_sep = <span class="keyword">False</span></div><div class="line">        field_contents = <span class="string">u''</span></div><div class="line">        <span class="keyword">continue</span></div><div class="line">    <span class="keyword">elif</span> is_start == <span class="keyword">False</span>:</div><div class="line">        <span class="keyword">continue</span></div><div class="line">    <span class="comment"># Step</span></div><div class="line">    <span class="keyword">if</span> char == OLE_FIELD_SEP:</div><div class="line">        is_sep = <span class="keyword">True</span></div><div class="line">    <span class="comment"># End</span></div><div class="line">    <span class="keyword">if</span> char == OLE_FIELD_END:</div><div class="line">        <span class="keyword">if</span> field_contents:</div><div class="line">            field_contents = self.process_doc_field(data=field_contents)</div><div class="line">            <span class="keyword">if</span> field_contents:</div><div class="line">                dde_result.append(field_contents)</div><div class="line">        is_end = <span class="keyword">True</span></div><div class="line">        is_start = <span class="keyword">False</span></div><div class="line">        is_sep = <span class="keyword">False</span></div><div class="line">        field_contents = <span class="keyword">None</span></div><div class="line">    <span class="keyword">if</span> is_start == <span class="keyword">True</span> <span class="keyword">and</span> is_sep == <span class="keyword">False</span> <span class="keyword">and</span> is_end == <span class="keyword">False</span>:</div><div class="line">        <span class="keyword">if</span> char &gt; <span class="number">31</span> <span class="keyword">and</span> char &lt; <span class="number">127</span>:</div><div class="line">            field_contents += unichr(char)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于OLE复合文档格式，可以在StriveMario的<a href="http://strivemario.work/archives/48765.html" target="_blank" rel="external">复合文档Ole对象二进制储存格式</a>一文中，找到非常详细的介绍。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xls文档和doc文档在寻找DDE的逻辑上是一致的，首先遍历DirectoryEntry寻找Type为Stream的那一个，然后遍历其中的Record。寻找Type为430的那一个Record的。然后在解析Record的Data内容即可。从xls_parser.py中可以看到，当ctab为0x00，且存在virt_path的时候，说明link的类型为LINK_TYPE_OLE_DDE<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"># parse data</div><div class="line"><span class="keyword">if</span> <span class="keyword">self</span>.size &lt; <span class="number">4</span>:</div><div class="line">    <span class="keyword">raise</span> ValueError(<span class="string">'not enough data (size is &#123;0&#125; but need &gt;= 4)'</span></div><div class="line">                     .format(<span class="keyword">self</span>.size))</div><div class="line"><span class="keyword">self</span>.ctab, <span class="keyword">self</span>.cch = unpack(<span class="string">'&lt;HH'</span>, <span class="keyword">self</span>.data[:<span class="number">4</span>])</div><div class="line"><span class="keyword">if</span> <span class="number">0</span> &lt; <span class="keyword">self</span>.cch &lt;= <span class="number">0</span>xff:</div><div class="line">    # this <span class="keyword">is</span> the length <span class="keyword">of</span> virt_path</div><div class="line">    <span class="keyword">self</span>.virt_path, _ = read_unicode(<span class="keyword">self</span>.data, <span class="number">4</span>, <span class="keyword">self</span>.cch)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">    <span class="keyword">self</span>.virt_path, _ = u<span class="string">''</span>, <span class="number">4</span></div><div class="line"># ignore variable rgst</div><div class="line"><span class="keyword">if</span> <span class="keyword">self</span>.cch == <span class="number">0</span>x401:    # ctab <span class="keyword">is</span> undefined <span class="keyword">and</span> <span class="keyword">to</span> be ignored</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_SELF</div><div class="line">elif <span class="keyword">self</span>.ctab == <span class="number">0</span>x1 <span class="keyword">and</span> <span class="keyword">self</span>.cch == <span class="number">0</span>x3A01:</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_ADDIN</div><div class="line">    # next records must be ExternName <span class="keyword">with</span> all <span class="keyword">add</span>-<span class="keyword">in</span> functions</div><div class="line">elif <span class="keyword">self</span>.virt_path == u<span class="string">'\u0020'</span>:   # space ; ctab can be anything</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_UNUSED</div><div class="line">elif <span class="keyword">self</span>.virt_path == u<span class="string">'\u0000'</span>:</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_SAMESHEET</div><div class="line">elif <span class="keyword">self</span>.ctab == <span class="number">0</span>x0 <span class="keyword">and</span> <span class="keyword">self</span>.virt_path:</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_OLE_DDE</div><div class="line">elif <span class="keyword">self</span>.ctab &gt; <span class="number">0</span> <span class="keyword">and</span> <span class="keyword">self</span>.virt_path:</div><div class="line">    <span class="keyword">self</span>.support_link_type = <span class="keyword">self</span>.LINK_TYPE_EXTERNAL</div></pre></td></tr></table></figure></p>
+<h3 id="0x1-3-后记"><a href="#0x1-3-后记" class="headerlink" title="0x1.3 后记"></a>0x1.3 后记</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paloalto在<a href="https://unit42.paloaltonetworks.com/unit42-sofacy-groups-parallel-attacks/" target="_blank" rel="external">Sofacy Group’s Parallel Attacks</a>这篇文章提到可以理由QUOTE字段进行混淆。为了对抗基于检测DDE的检测方法，也可以构造一个不含有‘DDE’的文档。大家可以在<a href="https://staaldraad.github.io/2017/10/23/msword-field-codes/" target="_blank" rel="external">MSWord - Obfuscation with Field Codes</a>这篇文章中看到。这两部分内容我不准备继续深入下去了。因为苦逼的打工人要去找房子了，呜呜呜。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/05/Metasploit免杀和检测的一些新思考/" rel="next" title="Metasploit免杀和检测的一些思考">
+                <i class="fa fa-chevron-left"></i> Metasploit免杀和检测的一些思考
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/12/CSharp反射总结/" rel="prev" title="CSharp 反射注入总结">
+                CSharp 反射注入总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x1-Dynamic-Data-Exchange"><span class="nav-number">1.</span> <span class="nav-text">0x1 Dynamic Data Exchange</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-1-什么是-Dynamic-Data-Exchange"><span class="nav-number">1.1.</span> <span class="nav-text">0x1.1 什么是 Dynamic Data Exchange</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-2-Dynamic-Data-Exchange-的利用"><span class="nav-number">1.2.</span> <span class="nav-text">0x1.2 Dynamic Data Exchange 的利用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-2-如何检测-Dynamic-Data-Exchange"><span class="nav-number">1.3.</span> <span class="nav-text">0x1.2 如何检测 Dynamic Data Exchange</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-3-后记"><span class="nav-number">1.4.</span> <span class="nav-text">0x1.3 后记</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

