@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x00 COM模型&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Component Object Model 译为组件对象模型，是一种独立于语言的一种二进制操作模型，攻击者通常使用组件对象模型(即COM)来执行本地代码。由于COM组件是语言独立的。所以，这些接口经常通过各种语言调用来进行代码执行，以及无文件下载以及持久性等诸多隐秘的操作，而被滥用。通常通过指定CLSID">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Component Object Model">
+<meta property="og:url" content="https://findream.github.io/2021/05/25/Component Object Model/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="0x00 COM模型&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Component Object Model 译为组件对象模型，是一种独立于语言的一种二进制操作模型，攻击者通常使用组件对象模型(即COM)来执行本地代码。由于COM组件是语言独立的。所以，这些接口经常通过各种语言调用来进行代码执行，以及无文件下载以及持久性等诸多隐秘的操作，而被滥用。通常通过指定CLSID">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/U2dIxDluIdwp.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/4Y7DxsYUf643.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/169EsSeYx5OI.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/x6HalfKNrX8j.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/ayaXa1suN6PQ.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20210503/XlRkYiRMepbL.png?imageslim">
+<meta property="og:updated_time" content="2022-12-11T05:56:13.518Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Component Object Model">
+<meta name="twitter:description" content="0x00 COM模型&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Component Object Model 译为组件对象模型，是一种独立于语言的一种二进制操作模型，攻击者通常使用组件对象模型(即COM)来执行本地代码。由于COM组件是语言独立的。所以，这些接口经常通过各种语言调用来进行代码执行，以及无文件下载以及持久性等诸多隐秘的操作，而被滥用。通常通过指定CLSID">
+<meta name="twitter:image" content="http://hacky.wang/blog/20210503/U2dIxDluIdwp.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2021/05/25/Component Object Model/"/>
+
+
+
+
+
+  <title>Component Object Model | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2021/05/25/Component Object Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Component Object Model</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-25T20:45:11+08:00">
+                2021-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00-COM模型"><a href="#0x00-COM模型" class="headerlink" title="0x00 COM模型"></a>0x00 COM模型</h2><p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Component Object Model 译为组件对象模型，是一种独立于语言的一种二进制操作模型，攻击者通常使用组件对象模型(即COM)来执行本地代码。由于COM组件是语言独立的。所以，这些接口经常通过各种语言调用来进行代码执行，以及无文件下载以及持久性等诸多隐秘的操作，而被滥用。通常通过指定CLSID（标识GUID）或ProgID（程序标识符）来获得COM对象。</strong></p>
+<a id="more"></a>
+<h2 id="0x01-寻找可以被使用COM组件"><a href="#0x01-寻找可以被使用COM组件" class="headerlink" title="0x01 寻找可以被使用COM组件"></a>0x01 寻找可以被使用COM组件</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FireEye 曾在2019年写了两篇文章<a href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html" target="_blank" rel="external">Hunting COM Objects</a>，以及<a href="https://www.fireeye.com/blog/threat-research/201906/hunting-com-objects-part-two.html" target="_blank" rel="external">Hunting COM Objects (Part Two)</a>来描述如何寻找未被公开的COM组件接口。并公布了采用powershell编写的脚本。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">New-PSDrive</span> -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR</div><div class="line"><span class="built_in">Get-ChildItem</span> -Path HKCR:\CLSID -Name | Select -Skip <span class="number">1</span> &gt; clsids.txt</div><div class="line"><span class="variable">$Position</span>  = <span class="number">1</span></div><div class="line"><span class="variable">$Filename</span> = <span class="string">"win10-clsid-members.txt"</span></div><div class="line"><span class="variable">$inputFilename</span> = <span class="string">"clsids.txt"</span></div><div class="line"><span class="keyword">ForEach</span>(<span class="variable">$CLSID</span> <span class="keyword">in</span> <span class="built_in">Get-Content</span> <span class="variable">$inputFilename</span>) &#123;</div><div class="line">      <span class="built_in">Write-Output</span> <span class="string">"$(<span class="variable">$Position</span>) - $(<span class="variable">$CLSID</span>)"</span></div><div class="line">      <span class="built_in">Write-Output</span> <span class="string">"------------------------"</span> | <span class="built_in">Out-File</span> <span class="variable">$Filename</span> -Append</div><div class="line">      <span class="built_in">Write-Output</span> $(<span class="variable">$CLSID</span>) | <span class="built_in">Out-File</span> <span class="variable">$Filename</span> -Append</div><div class="line">      <span class="variable">$handle</span> = [activator]::CreateInstance([type]::GetTypeFromCLSID(<span class="variable">$CLSID</span>))</div><div class="line">      <span class="variable">$handle</span> | <span class="built_in">Get-Member</span> | <span class="built_in">Out-File</span> <span class="variable">$Filename</span> -Append</div><div class="line">      <span class="variable">$Position</span> += <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为COM对象的信息(CLSID,ProgID)被存储在注册表HKEY_CLASSES_ROOT\CLSID{clsid}中，所以通过遍历HKEY_CLASSES_ROOT\CLSID所有的CLSID就可以所有的COM对象。CLSID具有唯一性，用于表征不同的COM对象。通过几个不同的维度进行组合拼接而成。而ProgID也可以被用于检索COM。但是CLSID 和 ProgID 不具有一一对应性。InprocServer32指向的是存储COM的二级制文件，这些文件通常是DLL文件或者EXE文件。<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>lnprocServer32</div><div class="line"><span class="bullet">* </span>TypeLib</div><div class="line"><span class="bullet">* </span>version</div><div class="line"><span class="bullet">* </span>progID</div></pre></td></tr></table></figure></p>
+<h2 id="0x02-寻找COM组件进阶"><a href="#0x02-寻找COM组件进阶" class="headerlink" title="0x02 寻找COM组件进阶"></a>0x02 寻找COM组件进阶</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;但是上述脚本只是通过CLSID遍历处于表面的COM组件，就是FireEye的第二篇文章所说，<strong>“However, this only scratches the surface of what is accessible through these COM objects, as each object may return other objects that cannot be directly created on their own.”</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过FireEye给的寻找递归COM对象这一部分，作者滥用MMC20.Application COM对象中的ExecuteShellCommand方法来运行另外的程序。又根据文章的提示，翻看了原文，发现<a href="https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/" target="_blank" rel="external">原文</a>作者enigma0x3是通过Get-CimInstance Win32_DCOMApplication来检索用PowerShell的DCOM应用程序的完整列表.但是我始终不明白为什么要选择MMC20.Application COM这个对象。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>提出问题：能不能尽可能多的遍历COM的Method，从中寻找可能被滥用的Method.</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后我在自己机器中复现了利用过程，如图1所示，并没有找到合适的Method去滥用。这也是FireEye那个脚本的局限性。<br>   <img src="http://hacky.wang/blog/20210503/U2dIxDluIdwp.png?imageslim" alt="mark"><br>接着，如图2所示，在$Instance.Document.ActiveView中可以发现可以被利用的Method。<br>   <img src="http://hacky.wang/blog/20210503/4Y7DxsYUf643.png?imageslim" alt="mark"><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">Instance = [activator]::CreateInstance([<span class="built_in">type</span>]::GetTypeFromProgID(<span class="string">"MMC20.Application"</span>))</span></div><div class="line"><span class="meta">$</span><span class="bash">Instance | gm</span></div><div class="line"><span class="meta">$</span><span class="bash">Instance.Document.ActiveView | gm</span></div><div class="line"><span class="meta">$</span><span class="bash">Instance.Document.ActiveView.ExecuteShellCommand(<span class="string">"cmd.exe"</span>,<span class="variable">$null</span>,<span class="string">"/c calc"</span>,<span class="string">"7"</span>)</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为“ExecuteShellCommand”这个方法位于$Instance.Document.ActiveView中。所以上面的那个脚本并不可以获取这样的Method。还有就是文章中使用通过ProgID来获取Type，继而创建Instance。但是ProgID不具有对应性(部分COM可能没有ProgID)，所以使用CLSID进行遍历。下面的脚本可以帮助获取CLSID和ProgID的对应关系。<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">New-PSDrive</span> -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR</div><div class="line"><span class="built_in">Get-ChildItem</span> -Path HKCR:\CLSID -Name | Select -Skip <span class="number">1</span> &gt; clsids2.txt</div><div class="line"></div><div class="line"><span class="variable">$Filename</span> = <span class="string">"win10-ProgID-members.txt"</span></div><div class="line"><span class="variable">$inputFilename</span> = <span class="string">"clsids2.txt"</span></div><div class="line"><span class="variable">$Position</span>  = <span class="number">1</span></div><div class="line"><span class="variable">$count</span> = <span class="number">0</span></div><div class="line"><span class="variable">$MethodList</span> = @()</div><div class="line"><span class="keyword">ForEach</span>(<span class="variable">$CLSID</span> <span class="keyword">in</span> <span class="built_in">Get-Content</span> <span class="variable">$inputFilename</span>)</div><div class="line">&#123;</div><div class="line">    <span class="comment">#Write-Output "$($Position) - $($CLSID)"</span></div><div class="line">    <span class="comment">#$CLSID = "&#123;00024502-0000-0000-C000-000000000046&#125;"</span></div><div class="line">	<span class="variable">$CHILD_REG</span> = <span class="built_in">Get-ChildItem</span> -Path (<span class="string">"HKCR:\CLSID"</span> + <span class="string">"\"</span> + <span class="variable">$CLSID</span>) -Name</div><div class="line">	<span class="keyword">if</span>(<span class="variable">$CHILD_REG</span> <span class="nomarkup">-match</span> <span class="string">"ProgID"</span>)</div><div class="line">	&#123;</div><div class="line">	   <span class="variable">$ProgID</span> = (<span class="built_in">Get-ItemProperty</span> (<span class="string">"HKCR:\CLSID"</span> + <span class="string">"\"</span> + <span class="variable">$CLSID</span> + <span class="string">'\'</span> + <span class="string">"ProgID"</span>)).<span class="string">"(default)"</span></div><div class="line">       <span class="built_in">Write-Output</span> <span class="string">"$(<span class="variable">$ProgID</span>) - $(<span class="variable">$CLSID</span>)"</span></div><div class="line">       <span class="keyword">if</span>(<span class="variable">$ProgID</span>.contains(<span class="string">"MMC20.Application"</span>))</div><div class="line">       &#123;</div><div class="line">       		<span class="built_in">Write-Output</span> <span class="string">"$(<span class="variable">$ProgID</span>) - $(<span class="variable">$CLSID</span>)"</span></div><div class="line">       &#125;</div><div class="line">	&#125;</div><div class="line">	<span class="variable">$Position</span> += <span class="number">1</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">Write-Output</span> <span class="string">"OK"</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从复现寻找“ExecuteShellCommand”方法中思考，可以写一个脚本，通过递归遍历所有的Property，来获取可能被利用的Method，这些可能存在的Method可能存在以下的关键字。同时，还需要在CLSID和ProgID中选择一个作为遍历的维度或者说遍历的因素。因为CLSID的唯一性，选取CLSID作为遍历因素。以及，每一个COM组件底层的Property都很“深”。所以还需要限制嵌套的深度，不然程序就会一直处于递归状态。具体powershell代码如下<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">function</span> GetInstanceMethod(<span class="variable">$Instance</span>)</div><div class="line">&#123;</div><div class="line">    <span class="variable">$count</span> = <span class="variable">$count</span> + <span class="number">1</span></div><div class="line">    <span class="keyword">if</span>((<span class="variable">$Instance</span> <span class="nomarkup">-eq</span> <span class="literal">$null</span>) -or ((<span class="variable">$count</span> <span class="nomarkup">-gt</span> <span class="number">3</span>)))</div><div class="line">    &#123;</div><div class="line">        <span class="variable">$count</span> = <span class="variable">$count</span> - <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    &#125;</div><div class="line">    <span class="comment"># Print  All Methods Of Current Instance</span></div><div class="line">    <span class="keyword">if</span>((<span class="variable">$Instance</span> | gm -MemberType <span class="string">"Method"</span>) <span class="nomarkup">-ne</span> <span class="literal">$null</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="variable">$Method</span> = <span class="variable">$Instance</span> | gm -MemberType <span class="string">"Method"</span></div><div class="line">        GetSpecialMethod(<span class="variable">$Method</span>)</div><div class="line">    &#125;</div><div class="line">    <span class="variable">$PropertyList</span> = <span class="variable">$Instance</span> | gm -MemberType <span class="string">"Property"</span></div><div class="line">    <span class="keyword">if</span>(<span class="variable">$PropertyList</span> <span class="nomarkup">-eq</span> <span class="literal">$null</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="variable">$count</span> = <span class="variable">$count</span> - <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">ForEach</span>(<span class="variable">$EachProperty</span> <span class="keyword">in</span> <span class="variable">$PropertyList</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="variable">$Name</span> = <span class="variable">$EachProperty</span>.<span class="string">"Name"</span></div><div class="line">        <span class="keyword">if</span>(<span class="variable">$Name</span> <span class="nomarkup">-eq</span> <span class="string">"Application"</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="variable">$Name</span> = <span class="variable">$EachProperty</span>.<span class="string">"Name"</span></div><div class="line">        &#125;</div><div class="line">        <span class="variable">$NextInstance</span> = <span class="variable">$Instance</span>.<span class="variable">$Name</span></div><div class="line">        <span class="keyword">if</span>((<span class="variable">$NextInstance</span> <span class="nomarkup">-eq</span> <span class="literal">$null</span>) -or (<span class="variable">$NextInstance</span>.GetType().<span class="string">"Name"</span> <span class="nomarkup">-ne</span> <span class="string">"__ComObject"</span>))</div><div class="line">        &#123;</div><div class="line">           <span class="keyword">if</span>(<span class="variable">$NextInstance</span>.GetType().<span class="string">"Name"</span> <span class="nomarkup">-eq</span> <span class="string">"ApplicationClass"</span>)</div><div class="line">           &#123;</div><div class="line">              <span class="keyword">if</span>(GetInstanceMethod(<span class="variable">$NextInstance</span>) <span class="nomarkup">-eq</span> <span class="number">0</span>)</div><div class="line">              &#123;</div><div class="line">                 <span class="keyword">break</span></div><div class="line">              &#125;</div><div class="line">           &#125;</div><div class="line">           <span class="keyword">else</span></div><div class="line">           &#123; </div><div class="line">               <span class="keyword">continue</span></div><div class="line">           &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(GetInstanceMethod(<span class="variable">$NextInstance</span>) <span class="nomarkup">-eq</span> <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">break</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="variable">$count</span> = <span class="variable">$count</span> - <span class="number">1</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="0x03-验证所寻找到的COM组件"><a href="#0x03-验证所寻找到的COM组件" class="headerlink" title="0x03 验证所寻找到的COM组件"></a>0x03 验证所寻找到的COM组件</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;需要注意的是，部分COM滥用的Method已经被公开。这里只验证脚本的有效性。</p>
+<h3 id="0x01-3-01-13709620-C279-11CE-A49E-444553540000"><a href="#0x01-3-01-13709620-C279-11CE-A49E-444553540000" class="headerlink" title="0x01-3-01 {13709620-C279-11CE-A49E-444553540000}"></a>0x01-3-01 {13709620-C279-11CE-A49E-444553540000}</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLSID为{13709620-C279-11CE-A49E-444553540000}的COM，从他的InprocServer32值来判断应该属于shell32.dll的COM。可以看到包含有一个已经符合条件的Method——ShellExecute。如图4所示，显然这是可以使用的。<br>   <img src="http://hacky.wang/blog/20210503/169EsSeYx5OI.png?imageslim" alt="mark"><br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&#123;13709620-C279-11CE-A49E-444553540000&#125;</span>  <span class="comment">/////////////////////////////////////</span></div><div class="line"></div><div class="line">   TypeName: System.__ComObject#<span class="comment">&#123;866738b9-6cf2-4de8-8767-f794ebe74f4e&#125;</span></div><div class="line">Name    MemberType Definition     </div><div class="line">----    ---------- ----------     </div><div class="line">FileRun <span class="function"><span class="keyword">Method</span>     <span class="title">void</span> <span class="title">FileRun</span> <span class="params">()</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">   <span class="title">TypeName</span>:</span> System.__ComObject#<span class="comment">&#123;866738b9-6cf2-4de8-8767-f794ebe74f4e&#125;</span></div><div class="line"></div><div class="line">Name             MemberType Definition                       </div><div class="line">----             ---------- ----------                       </div><div class="line">IsServiceRunning <span class="function"><span class="keyword">Method</span>     <span class="title">Variant</span> <span class="title">IsServiceRunning</span> <span class="params">(string)</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">   <span class="title">TypeName</span>:</span> System.__ComObject#<span class="comment">&#123;866738b9-6cf2-4de8-8767-f794ebe74f4e&#125;</span></div><div class="line"></div><div class="line">Name         MemberType Definition                                             </div><div class="line">----         ---------- ----------                                             </div><div class="line">ShellExecute <span class="function"><span class="keyword">Method</span>     <span class="title">void</span> <span class="title">ShellExecute</span> <span class="params">(string, Variant, Variant, Variant...</span></span></div></pre></td></tr></table></figure></p>
+<h3 id="0x01-3-02-1A671297-FA74-4422-80FA-6C5D8CE4DE04"><a href="#0x01-3-02-1A671297-FA74-4422-80FA-6C5D8CE4DE04" class="headerlink" title="0x01-3-02 {1A671297-FA74-4422-80FA-6C5D8CE4DE04}"></a>0x01-3-02 {1A671297-FA74-4422-80FA-6C5D8CE4DE04}</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLSID为{1A671297-FA74-4422-80FA-6C5D8CE4DE04},是AutoItX3的COM对象。如图5所示，是该COM所有的Method。<br>   <img src="http://hacky.wang/blog/20210503/x6HalfKNrX8j.png?imageslim" alt="mark"><br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&#123;1A671297-FA74-4422-80FA-6C5D8CE4DE04&#125;</span>     <span class="comment">/////////////////////////</span></div><div class="line"></div><div class="line">   TypeName: System.__ComObject#<span class="comment">&#123;3d54c6b8-d283-40e0-8fab-c97f05947ee8&#125;</span></div><div class="line"></div><div class="line">Name MemberType Definition                   </div><div class="line">---- ---------- ----------                   </div><div class="line">Run  <span class="function"><span class="keyword">Method</span>     <span class="title">int</span> <span class="title">Run</span> <span class="params">(string, string, int)</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">   <span class="title">TypeName</span>:</span> System.__ComObject#<span class="comment">&#123;3d54c6b8-d283-40e0-8fab-c97f05947ee8&#125;</span></div><div class="line"></div><div class="line">Name  MemberType Definition                                                  </div><div class="line">----  ---------- ----------                                                  </div><div class="line">RunAs <span class="function"><span class="keyword">Method</span>     <span class="title">int</span> <span class="title">RunAs</span> <span class="params">(string, string, string, int, string, string, int)</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 如图9所示，在导出函数Run中，发现调用CreateProcess等创建进程的函数，继而判断其可以被作为CreateProcess的滥用Method。<br>   <img src="http://hacky.wang/blog/20210503/ayaXa1suN6PQ.png?imageslim" alt="mark"></p>
+<h3 id="0x01-3-03-F5078F35-C551-11D3-89B9-0000F81FE221"><a href="#0x01-3-03-F5078F35-C551-11D3-89B9-0000F81FE221" class="headerlink" title="0x01-3-03 {F5078F35-C551-11D3-89B9-0000F81FE221}"></a>0x01-3-03 {F5078F35-C551-11D3-89B9-0000F81FE221}</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是FireEye在第一篇文章中所提到的滥用COM进行无文件下载和执行的COM。其CLSID和文章中所给的一致，皆为{F5078F35-C551-11D3-89B9-0000F81FE221}。具体使用方法，参考<a href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html" target="_blank" rel="external">Hunting COM Objects</a><br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">------------------------</div><div class="line"><span class="comment">&#123;F5078F35-C551-11D3-89B9-0000F81FE221&#125;</span></div><div class="line"></div><div class="line"></div><div class="line">   TypeName: System.__ComObject#<span class="comment">&#123;ed8c108d-4349-11d2-91a4-00c04f7969e8&#125;</span></div><div class="line"></div><div class="line">Name MemberType Definition         </div><div class="line">---- ---------- ----------         </div><div class="line">send <span class="function"><span class="keyword">Method</span>     <span class="title">void</span> <span class="title">send</span> <span class="params">(Variant)</span></span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;而有关任务调度的COM使用方法也在FireEye的第一篇文章中,这里也不进行演示<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">------------------------</div><div class="line"><span class="comment">&#123;0F87369F-A4E5-4CFC-BD3E-73E6154572DD&#125;</span></div><div class="line"></div><div class="line">   TypeName: System.__ComObject#<span class="comment">&#123;2faba4c7-4da9-4013-9697-20cc3fd40f85&#125;</span></div><div class="line"></div><div class="line">Name            MemberType Definition                                  </div><div class="line">----            ---------- ----------                                  </div><div class="line">GetRunningTasks <span class="function"><span class="keyword">Method</span>     <span class="title">IRunningTaskCollection</span> <span class="title">GetRunningTasks</span> <span class="params">(int)</span></span></div><div class="line"><span class="function"></span></div><div class="line"><span class="function">   <span class="title">TypeName</span>:</span> System.__ComObject#<span class="comment">&#123;2faba4c7-4da9-4013-9697-20cc3fd40f85&#125;</span></div><div class="line"></div><div class="line">Name    MemberType Definition                    </div><div class="line">----    ---------- ----------                    </div><div class="line">NewTask <span class="function"><span class="keyword">Method</span>     <span class="title">ITaskDefinition</span> <span class="title">NewTask</span> <span class="params">(uint)</span></span></div></pre></td></tr></table></figure></p>
+<h3 id="0x01-3-04-49B2791A-B1AE-4C90-9B8E-E860BA07F889"><a href="#0x01-3-04-49B2791A-B1AE-4C90-9B8E-E860BA07F889" class="headerlink" title="0x01-3-04 {49B2791A-B1AE-4C90-9B8E-E860BA07F889}"></a>0x01-3-04 {49B2791A-B1AE-4C90-9B8E-E860BA07F889}</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;而在FireEye第二篇文章所给的例子中，在MMC20.Application COM对象中滥用未被公开的ExecuteShellCommand方法运行可执行文件。在我的机器上，对应的CLSID 为{49B2791A-B1AE-4C90-9B8E-E860BA07F889}，可以发现已经检索到了对应的ExecuteShellCommand方法。结果如图10所示<br>   <img src="http://hacky.wang/blog/20210503/XlRkYiRMepbL.png?imageslim" alt="mark"><br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">-</span><span class="bullet">-----------------------</span></div><div class="line"><span class="string">&#123;49B2791A-B1AE-4C90-9B8E-E860BA07F889&#125;</span></div><div class="line"><span class="attr">   TypeName:</span> <span class="string">System.__ComObject#&#123;6efc2da2-b38c-457e-9abb-ed2d189b8c38&#125;</span></div><div class="line"></div><div class="line"><span class="string">Name</span>                     <span class="string">MemberType</span> <span class="string">Definition</span>                                 </div><div class="line"><span class="bullet">-</span><span class="meta">---</span>                     <span class="bullet">----------</span> <span class="bullet">----------</span>                                 </div><div class="line"><span class="string">ExecuteScopeNodeMenuItem</span> <span class="string">Method</span>     <span class="string">void</span> <span class="string">ExecuteScopeNodeMenuItem</span> <span class="string">(string,</span> <span class="string">V...</span></div><div class="line"></div><div class="line"><span class="attr">   TypeName:</span> <span class="string">System.__ComObject#&#123;6efc2da2-b38c-457e-9abb-ed2d189b8c38&#125;</span></div><div class="line"></div><div class="line"><span class="string">Name</span>                     <span class="string">MemberType</span> <span class="string">Definition</span>                            </div><div class="line"><span class="bullet">-</span><span class="meta">---</span>                     <span class="bullet">----------</span> <span class="bullet">----------</span>                            </div><div class="line"><span class="string">ExecuteSelectionMenuItem</span> <span class="string">Method</span>     <span class="string">void</span> <span class="string">ExecuteSelectionMenuItem</span> <span class="string">(string)</span></div><div class="line"></div><div class="line"><span class="attr">   TypeName:</span> <span class="string">System.__ComObject#&#123;6efc2da2-b38c-457e-9abb-ed2d189b8c38&#125;</span></div><div class="line"></div><div class="line"><span class="string">Name</span>                <span class="string">MemberType</span> <span class="string">Definition</span>                                      </div><div class="line"><span class="bullet">-</span><span class="meta">---</span>                <span class="bullet">----------</span> <span class="bullet">----------</span>                                      </div><div class="line"><span class="string">ExecuteShellCommand</span> <span class="string">Method</span>     <span class="string">void</span> <span class="string">ExecuteShellCommand</span> <span class="string">(string,</span> <span class="string">string,</span> <span class="string">str...</span></div></pre></td></tr></table></figure></p>
+<h2 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文最主要的部分在于如何编写一个脚本去检索所有可能的Method,FireEye也只是简单描述了一下，脚本所跑出的结果需要大家一一验证，并不保证每个方法都是可以被滥用的。关于寻找可以被滥用的Method，也有许多不同的方法和工具，第三部分讲解的例子也多是基于公开的被滥用的Method。根据关注点的不同，可以适当的更改Method的关键字从而检索不同类型的Method，网络相关？进程执行？宏执行？计划任务?都可以。<a href="https://www.freebuf.com/articles/network/256372.html" target="_blank" rel="external">可以利用的Method示例</a>。<br>Ref:<br>   <a href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html" target="_blank" rel="external">Hunting COM Objects</a><br>   <a href="https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/" target="_blank" rel="external">lateral-movement-using-the-mmc20-application-com-object</a><br>   等等</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/04/25/Dynamic Data Exchange/" rel="next" title="Dynamic Data Exchange">
+                <i class="fa fa-chevron-left"></i> Dynamic Data Exchange
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/07/05/从COM劫持到COR_PROFILE/" rel="prev" title="从COM劫持到COR_PROFILE">
+                从COM劫持到COR_PROFILE <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-COM模型"><span class="nav-number">1.</span> <span class="nav-text">0x00 COM模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-寻找可以被使用COM组件"><span class="nav-number">2.</span> <span class="nav-text">0x01 寻找可以被使用COM组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-寻找COM组件进阶"><span class="nav-number">3.</span> <span class="nav-text">0x02 寻找COM组件进阶</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-验证所寻找到的COM组件"><span class="nav-number">4.</span> <span class="nav-text">0x03 验证所寻找到的COM组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-3-01-13709620-C279-11CE-A49E-444553540000"><span class="nav-number">4.1.</span> <span class="nav-text">0x01-3-01 {13709620-C279-11CE-A49E-444553540000}</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-3-02-1A671297-FA74-4422-80FA-6C5D8CE4DE04"><span class="nav-number">4.2.</span> <span class="nav-text">0x01-3-02 {1A671297-FA74-4422-80FA-6C5D8CE4DE04}</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-3-03-F5078F35-C551-11D3-89B9-0000F81FE221"><span class="nav-number">4.3.</span> <span class="nav-text">0x01-3-03 {F5078F35-C551-11D3-89B9-0000F81FE221}</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-3-04-49B2791A-B1AE-4C90-9B8E-E860BA07F889"><span class="nav-number">4.4.</span> <span class="nav-text">0x01-3-04 {49B2791A-B1AE-4C90-9B8E-E860BA07F889}</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-小结"><span class="nav-number">5.</span> <span class="nav-text">0x04 小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
