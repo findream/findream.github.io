@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="HaCky的安全备忘录">
 <meta property="og:description" content="Persistence学习总结">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2023-02-28T13:26:08.853Z">
+<meta property="og:updated_time" content="2023-02-28T13:29:30.960Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Persistence">
 <meta name="twitter:description" content="Persistence学习总结">
@@ -462,7 +462,7 @@
 <figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[<span class="number">1</span>] 先在`HKEY_CLASS_ROOT`寻找目标的文件格式</div><div class="line">[<span class="number">2</span>] 然后在`HKCR\[filetype]\shell\open\command`的默认项中添加路径</div></pre></td></tr></table></figure>
 </li>
 <li><p>设置屏幕保护程序</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[<span class="number">1</span>] 在`HKEY_CURRENT_USER\Control Panel\Desktop`下添加</div><div class="line">[<span class="number">2</span>] SCRNSAVE.EXE：路径</div><div class="line">[<span class="number">3</span>] ScreenSaveActive = <span class="number">1</span>表示屏幕保护是启动状态，<span class="number">0</span>表示表示屏幕保护是关闭状态</div><div class="line">[<span class="number">4</span>] ScreenSaverTimeout = 指定屏幕保护程序启动前系统的空闲事件，单位为秒，默认为<span class="number">900</span></div><div class="line">``` </div><div class="line"></div><div class="line">* WMI事件订阅</div></pre></td></tr></table></figure>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[<span class="number">1</span>] 在`HKEY_CURRENT_USER\\Control Panel\\Desktop`下添加</div><div class="line">``` </div><div class="line"></div><div class="line">* WMI事件订阅</div></pre></td></tr></table></figure>
 </li>
 </ul>
 <p>[1] EventFilter 事件筛选器<br>[2] EventConsumer 事件消费者<br>[3] FilterToConsumerBinding 绑定关系<br>[4] 注:微软文档有错误，所以导致一众大佬复现不了<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="bullet">* </span>辅助功能(Shift后门)</div></pre></td></tr></table></figure></p>
