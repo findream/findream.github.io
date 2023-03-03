@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高级注入技术小结">
+<meta property="og:url" content="https://findream.github.io/2022/10/25/高级注入技术/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20230303/V9L9jeynDY76.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20230303/pjeGDHgcekqI.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20230303/ruXzIPFIwOsU.png?imageslim">
+<meta property="og:updated_time" content="2023-03-03T12:17:25.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="高级注入技术小结">
+<meta name="twitter:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta name="twitter:image" content="http://hacky.wang/blog/20230303/V9L9jeynDY76.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/10/25/高级注入技术/"/>
+
+
+
+
+
+  <title>高级注入技术小结 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/10/25/高级注入技术/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">高级注入技术小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-25T20:45:11+08:00">
+                2022-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文主要总结了几种不太常见的高级注入技术<ul>
+<li>Module Stomping(LoadLibrary)</li>
+<li>Module Stomping(NtMapViewOfSection)</li>
+<li>AtomBombing</li>
+<li>Process Hollowing</li>
+<li>Process Doppelgänging</li>
+<li>Transacted Hollowing</li>
+<li>Process Ghosting等</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x01-Module-Stomping-LoadLibrary"><a href="#0x01-Module-Stomping-LoadLibrary" class="headerlink" title="0x01 Module Stomping(LoadLibrary)"></a>0x01 Module Stomping(LoadLibrary)</h3><ul>
+<li>Module Stomping 模块踩踏，通过加载一个合法的Dll模块，然后使用payload去覆盖dll</li>
+<li>优点：<ul>
+<li>1) 有效载荷映射为 MEM_IMAGE，对于 EXE 或 DLL 来说看起来是合法的</li>
+<li>2）使用原始访问权限映射的部分(无RWX)</li>
+<li>3）冒充合法的Dll(进程模块界面无法检出)</li>
+</ul>
+</li>
+<li>步骤：<ul>
+<li>1）调用<code>LoadLibrary</code>函数加载合法dll，并得到基地址</li>
+<li>2）调用<code>LoadLibrary</code>函数或者<code>NtMapViewOfSection</code>获取非法dll，并得到基地址</li>
+<li>3）调用<code>memset</code>将合法dll的内存区域清空，并将非法dll内存复制到合法dll内存</li>
+<li>4) 根据pe信息，获取非法dll(覆盖后)的入口点</li>
+<li>5）根据入口点执行</li>
+</ul>
+</li>
+<li><a href="https://github.com/Hagrid29/PELoader" target="_blank" rel="external">https://github.com/Hagrid29/PELoader</a></li>
+</ul>
+<h3 id="0x02-Module-Stomping-NtMapViewOfSection"><a href="#0x02-Module-Stomping-NtMapViewOfSection" class="headerlink" title="0x02 Module Stomping(NtMapViewOfSection)"></a>0x02 Module Stomping(NtMapViewOfSection)</h3><ul>
+<li>通过<code>NtMapViewOfSection</code>函数为dll创建一个内存映射，然后使用payload覆盖dll</li>
+<li>优点：<ul>
+<li>1) Module Stomping(LoadLibrary)全部</li>
+<li>2) 未连接到模块列表（对于Module32First/Module32Next 不可见）</li>
+</ul>
+</li>
+<li>步骤：<ul>
+<li>1) 调用<code>NtMapViewOfSection</code>函数加载合法dll，并得到基地址   </li>
+<li>2）调用<code>LoadLibrary</code>函数或者<code>NtMapViewOfSection</code>获取非法dll，并得到基地址</li>
+<li>3）调用<code>memset</code>将合法dll的内存区域清空，并将非法dll内存复制到合法dll内存</li>
+<li>4) 根据pe信息，获取非法dll(覆盖后)的入口点</li>
+<li>5）根据入口点执行</li>
+</ul>
+</li>
+<li><a href="https://github.com/Hagrid29/PELoader" target="_blank" rel="external">https://github.com/Hagrid29/PELoader</a></li>
+<li><a href="https://github.com/hasherezade/module_overloading" target="_blank" rel="external">https://github.com/hasherezade/module_overloading</a></li>
+</ul>
+<h3 id="0x03-GhostWriting"><a href="#0x03-GhostWriting" class="headerlink" title="0x03 GhostWriting"></a>0x03 GhostWriting</h3><ul>
+<li>1) 通过<code>GetShellWindows</code>+<code>GetWindowThreadProcessId</code>+<code>OpenThread</code>获得explorer.exe的线程句柄</li>
+<li><p>2) 搜索ntdll代码段的指定的汇编指令</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">MOV</span> [REG1],REG2</div><div class="line"><span class="keyword">RET</span></div><div class="line">//<span class="keyword">or</span></div><div class="line"><span class="keyword">MOV</span> [REG1],REG2</div><div class="line"><span class="keyword">POP</span> REGx</div><div class="line"><span class="keyword">POP</span> REGx</div><div class="line">...</div><div class="line"><span class="keyword">RET</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><a href="http://47.117.131.13/index.php/archives/497/" target="_blank" rel="external">http://47.117.131.13/index.php/archives/497/</a></p>
+</li>
+<li><p><a href="https://github.com/c0de90e7/GhostWriting" target="_blank" rel="external">https://github.com/c0de90e7/GhostWriting</a></p>
+</li>
+</ul>
+<h3 id="0x04-AtomBombing"><a href="#0x04-AtomBombing" class="headerlink" title="0x04 AtomBombing"></a>0x04 AtomBombing</h3><ul>
+<li>AtomBombing通过利用APC异步过程调用以及windows原子表(atom tables)实现的高级代码注入</li>
+<li><p>AtomBombing主要实施x个阶段的工作</p>
+<ul>
+<li>1) 寻找一个处于警告状态的线程，因为APC注入需要一个处于Alertable状态的线程</li>
+<li>2) 构造一个ROP链【重点】</li>
+<li>3) 通过APC结合windows atom表，代替WriteProcessMemory的功能</li>
+<li>4）通过SetThreadContext和ResumeThread执行ShellCode</li>
+</ul>
+</li>
+<li><p>Step1：将ShellCode写入远程进程</p>
+<ul>
+<li>Tal Liberman发现<code>GlobalAddAtom</code>和<code>GlobalGetAtomName</code>代替WriteProcessMemory将Shellcode写入目标进程,通过调用<code>GlobalAddAtom</code>将ShellCode保存在全局原子表中，目标进程可以通过<code>GlobalGetAtomName</code>读取该表中的Shellcode。</li>
+<li>现在问题就是如何使得目标进程调用<code>GlobalGetAtomName</code>，通过APC异步过程调用的方式，使远程进程主动调用<code>GlobalGetAtomName</code>获取ShellCode。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Step2：保存并执行ShellCode</p>
+<ul>
+<li>目标进程保存执行Shellcode主要有两种方法：<ul>
+<li>1) 寻找一段具有RWX的内存，这个可以通过Hook一个导出函数实现</li>
+<li>2) 调用VirtualAllocEx分配一段内存</li>
+</ul>
+</li>
+<li>Tal Liberman创造性的使用ROP链执行ShellCode，主要分3步：<ul>
+<li>1）申请RWX内存</li>
+<li>2）将从<code>GlobalGetAtomName</code>获取的Shellcode拷贝到RWX内存</li>
+<li>3）执行<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//ROP链</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">ROPCHAIN</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">	<span class="comment">// Return address of Memcpy</span></div><div class="line">	PVOID pvMemcpy;</div><div class="line">	<span class="comment">//</span></div><div class="line">	<span class="comment">// Params for ntdll!ZwAllocateMemory</span></div><div class="line">	HANDLE ZwAllocateMemoryhProcess;</div><div class="line">	PVOID ZwAllocateMemoryBaseAddress;</div><div class="line">	ULONG_PTR ZwAllocateMemoryZeroBits;</div><div class="line">	PSIZE_T ZwAllocateMemoryRegionSize;</div><div class="line">	ULONG ZwAllocateMemoryAllocationType;</div><div class="line">	ULONG ZwAllocateMemoryProtect;</div><div class="line">	<span class="comment">//</span></div><div class="line">	<span class="comment">//ret这个指令</span></div><div class="line">	PVOID pvRetGadget;</div><div class="line">	<span class="comment">//</span></div><div class="line">	<span class="comment">// Params for ntdll!memcpy	</span></div><div class="line">	PVOID MemcpyDestination;</div><div class="line">	PVOID MemcpySource;</div><div class="line">	SIZE_T MemcpyLength;</div><div class="line">&#125; ROPCHAIN, *PROPCHAIN;</div><div class="line"><span class="comment">//构建ROP链函数</span></div><div class="line"><span class="function">ESTATUS <span class="title">main_BuildROPChain</span><span class="params">(</span></span></div><div class="line"><span class="function"><span class="params">	PVOID pvROPLocation, </span></span></div><div class="line"><span class="function"><span class="params">	PVOID pvShellcodeLocation, </span></span></div><div class="line"><span class="function"><span class="params">	PROPCHAIN ptRopChain</span></span></div><div class="line"><span class="function"><span class="params">	)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	ESTATUS eReturn = ESTATUS_INVALID;</div><div class="line">	ROPCHAIN tRopChain = &#123; <span class="number">0</span> &#125;;</div><div class="line">	<span class="comment">// Params for ntdll!ZwAllocateMemory</span></div><div class="line">	tRopChain.ZwAllocateMemoryhProcess = GetCurrentProcess();</div><div class="line">	tRopChain.ZwAllocateMemoryBaseAddress = (PUCHAR)pvROPLocation + FIELD_OFFSET(</div><div class="line">																			ROPCHAIN, </div><div class="line">																			MemcpyDestination</div><div class="line">																			);</div><div class="line">	tRopChain.ZwAllocateMemoryZeroBits = <span class="literal">NULL</span>;</div><div class="line">	tRopChain.ZwAllocateMemoryRegionSize = (PSIZE_T)((PUCHAR)pvROPLocation + FIELD_OFFSET(</div><div class="line">																					ROPCHAIN, </div><div class="line">																					MemcpyLength)</div><div class="line">																					);</div><div class="line">	tRopChain.ZwAllocateMemoryAllocationType = MEM_COMMIT;</div><div class="line">	tRopChain.ZwAllocateMemoryProtect = PAGE_EXECUTE_READWRITE;</div><div class="line">	<span class="comment">// Params for ntdll!ZwAllocateMemory</span></div><div class="line">	tRopChain.MemcpyDestination = (PVOID)<span class="number">0x00</span>;</div><div class="line">	tRopChain.MemcpySource = pvShellcodeLocation;</div><div class="line">	tRopChain.MemcpyLength = <span class="keyword">sizeof</span>(SHELLCODE);</div><div class="line">	<span class="comment">//address of ntdll!memcpy</span></div><div class="line">	eReturn = GetFunctionAddressFromDll(</div><div class="line">		NTDLL, </div><div class="line">		MEMCPY, </div><div class="line">		&amp;tRopChain.pvMemcpy</div><div class="line">		);</div><div class="line">	<span class="keyword">if</span> (ESTATUS_FAILED(eReturn))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">goto</span> lblCleanup;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"ntdll!memcpy: 0x%X"</span>, tRopChain.pvMemcpy);</div><div class="line">	<span class="comment">//寻找Ret指令的字节码</span></div><div class="line">	eReturn = main_FindRetGadget(&amp;tRopChain.pvRetGadget);</div><div class="line">	<span class="keyword">if</span> (ESTATUS_FAILED(eReturn))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">goto</span> lblCleanup;</div><div class="line">	&#125;</div><div class="line">	eReturn = ESTATUS_SUCCESS;</div><div class="line">	*ptRopChain = tRopChain;</div><div class="line"><span class="comment">//</span></div><div class="line">lblCleanup:</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">return</span> eReturn;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Step3:执行ShellCode</p>
+<ul>
+<li><p>AtomBombing技术是通过SetThreadContext将EIP设置为ZwAllocateVirtualMemory，然后将ESP设置为ROP链实现Shellcode执行的。方法非常巧妙，<strong>以下必须要结合ROP链结构体_ROPCHAIN阅读</strong>。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//将线程的EIP设置为ZwAllocateVirtualMemory</span></div><div class="line">tContext.Eip = (DWORD) GetProcAddress(GetModuleHandleA(<span class="string">"ntdll.dll"</span>), <span class="string">"ZwAllocateVirtualMemory"</span>);</div><div class="line">tContext.Ebp = (DWORD)(PUCHAR)pvRemoteROPChainAddress;</div><div class="line">tContext.Esp = (DWORD)(PUCHAR)pvRemoteROPChainAddress;</div><div class="line"><span class="comment">//首先执行ZwAllocateVirtualMemory，根据堆栈关系最终执行ShellCode</span></div><div class="line">printf(<span class="string">"[*] Hijacking the remote thread to execute the shellcode (by executing the ROP chain).<span class="subst">\n</span><span class="subst">\n</span><span class="subst">\n</span>"</span>);</div><div class="line">eReturn = main_ApcSetThreadContext(hProcess, hAlertableThread, &amp;tContext, pvRemoteContextAddress);</div></pre></td></tr></table></figure>
+</li>
+<li><p>1) 执行<code>ZwAllocateVirtualMemory</code>，根据上文的_ROPCHAIN结构体ROP链，此时栈顶保存的是<code>memcpy</code>的地址，接下来是<code>ZwAllocateVirtualMemory</code>的参数</p>
+</li>
+<li>2）执行<code>ZwAllocateVirtualMemory</code>完成后,因为栈顶是<code>memcpy</code>地址，ret后，执行流指向memcpy。此时栈顶保存的是搜索到的<code>ret</code>这个指令的地址，然后是memcpy的参数</li>
+<li>3）执行完ret之后，根据栈的信息，执行流指向ShellCode，此时完成注入</li>
+</ul>
+</li>
+<li><p><a href="https://www.fortinet.com/blog/threat-research/atombombing-brand-new-code-injection-technique-for-windows" target="_blank" rel="external">AtomBombing – A Brand New Code Injection Technique for Windows</a></p>
+</li>
+<li><a href="https://github.com/BreakingMalwareResearch/atom-bombing" target="_blank" rel="external">https://github.com/BreakingMalwareResearch/atom-bombing</a></li>
+<li><a href="ps://3gstudent.github.io/AtomBombing利用分析" target="_blank" rel="external">AtomBombing利用分析</a></li>
+</ul>
+<h3 id="0x05-Process-Hollowing"><a href="#0x05-Process-Hollowing" class="headerlink" title="0x05 Process Hollowing"></a>0x05 Process Hollowing</h3><ul>
+<li>1) CreateProcess(“svchost.exe”, …, CREATE_SUSPENDED, …);</li>
+<li>2) NtUnmapViewOfSection(…);</li>
+<li>3）VirtualAllocEx(…);</li>
+<li>4) For each section{WriteProcessMemory(…, EVIL_EXE, …);}</li>
+<li>5) Relocate Image*</li>
+<li>6) Set base address in PEB*/PE</li>
+<li>7) SetThreadContext(…);</li>
+<li>8) ResumeThread(…);</li>
+</ul>
+<h3 id="0x06-Process-Doppelganging"><a href="#0x06-Process-Doppelganging" class="headerlink" title="0x06 Process Doppelgänging"></a>0x06 Process Doppelgänging</h3><ul>
+<li><p>Process Doppelgänging其本质是利用TxF的回滚特性，将恶意载荷通过Section创建创建，并根据回滚特性恢复原样的一个技术，关注Process Doppelgänging技术细节之前，首先应该关注<code>NtCreateProcessEx</code>函数。该函数第6个参数是一个SectionHandle句柄。该句柄来自于<code>transacted file</code></p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">NTSTATUS</div><div class="line">NTAPI</div><div class="line">NtCreateProcessEx(OUT PHANDLE ProcessHandle,</div><div class="line">                  <span class="keyword">IN</span> ACCESS_MASK DesiredAccess,</div><div class="line">                  <span class="keyword">IN</span> POBJECT_ATTRIBUTES ObjectAttributes <span class="keyword">OPTIONAL</span>,</div><div class="line">                  <span class="keyword">IN</span> HANDLE ParentProcess,</div><div class="line">                  <span class="keyword">IN</span> <span class="built_in">ULONG</span> Flags,</div><div class="line">                  <span class="keyword">IN</span> HANDLE SectionHandle <span class="keyword">OPTIONAL</span>,</div><div class="line">                  <span class="keyword">IN</span> HANDLE DebugPort <span class="keyword">OPTIONAL</span>,</div><div class="line">                  <span class="keyword">IN</span> HANDLE ExceptionPort <span class="keyword">OPTIONAL</span>,</div><div class="line">                  <span class="keyword">IN</span> <span class="built_in">BOOLEAN</span> InJob)</div></pre></td></tr></table></figure>
+</li>
+<li><p>原理流程,以下过程第一步在验证概念中没有显示</p>
+<ul>
+<li>1) 先用恶意程序写覆盖白程序</li>
+<li>2）然后将覆盖后的文件加载到内存</li>
+<li>3）加载完成后回滚磁盘上的文件为写覆盖之前的文件</li>
+<li>4）最后利用(2)加载到内存中的Section创建进程，最终达到执行恶意程序并绕过杀软检查的目的。</li>
+</ul>
+</li>
+<li><p>实现过程</p>
+<ul>
+<li><p>1）调用<code>NtCreateTransaction</code>创建transaction</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//The ZwCreateTransaction routine creates a transaction object.</span></div><div class="line">__kernel_entry <span class="type">NTSYSCALLAPI</span> <span class="type">NTSTATUS</span> <span class="type">NtCreateTransaction</span>(</div><div class="line">  [out]          <span class="type">PHANDLE</span>            <span class="type">TransactionHandle</span>,</div><div class="line">  [<span class="keyword">in</span>]           <span class="type">ACCESS_MASK</span>        <span class="type">DesiredAccess</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">POBJECT_ATTRIBUTES</span> <span class="type">ObjectAttributes</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">LPGUID</span>             <span class="type">Uow</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">HANDLE</span>             <span class="type">TmHandle</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">ULONG</span>              <span class="type">CreateOptions</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">ULONG</span>              <span class="type">IsolationLevel</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">ULONG</span>              <span class="type">IsolationFlags</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">PLARGE_INTEGER</span>     <span class="type">Timeout</span>,</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">optional</span>] <span class="type">PUNICODE_STRING</span>    <span class="type">Description</span></div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>2) 调用<code>CreateFileTransacted</code>，<code>WriteFile</code>和<code>NtCreateSection</code>等在这个transaction内填入payload</p>
+</li>
+<li><p>3）调用<code>NtRollbackTransaction</code>设置事务回滚</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//The ZwRollbackTransaction routine initiates a <span class="keyword">rollback</span> operation <span class="keyword">for</span> a specified transaction.</div><div class="line">__kernel_entry NTSYSCALLAPI NTSTATUS NtRollbackTransaction(</div><div class="line">  [<span class="keyword">in</span>] HANDLE  TransactionHandle,</div><div class="line">  [<span class="keyword">in</span>] <span class="built_in">BOOLEAN</span> <span class="keyword">Wait</span></div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>4) 调用<code>NtCreateProcessEx</code>和<code>RtlCreateProcessParametersEx</code>以内存Section创建进程。</p>
+</li>
+<li>5）根据PEB读取入口点，调用<code>NtCreateThreadEx</code>执行入口点函数</li>
+</ul>
+</li>
+<li><p>弱点：最终还是要依赖<code>NtCreateThreadEx</code></p>
+</li>
+<li><p><a href="https://www.anquanke.com/post/id/94003" target="_blank" rel="external">来自BlackHat新姿势：Process Doppelgänging攻击技术与贴身防护</a></p>
+</li>
+<li><a href="https://3gstudent.github.io/Process-Doppelganging利用介绍" target="_blank" rel="external">Process-Doppelganging利用介绍</a></li>
+<li><a href="https://github.com/3gstudent/Inject-dll-by-Process-Doppelganging/blob/master/inject.c" target="_blank" rel="external">https://github.com/3gstudent/Inject-dll-by-Process-Doppelganging/blob/master/inject.c</a></li>
+</ul>
+<h3 id="0x07-Transacted-Hollowing"><a href="#0x07-Transacted-Hollowing" class="headerlink" title="0x07 Transacted Hollowing"></a>0x07 Transacted Hollowing</h3><ul>
+<li>Transacted Hollowing是一种集合了<code>Process Hollowing</code>和<code>Process Doppelgänging</code>之间的混合体。</li>
+<li>1) 首先使用<code>Process Doppelgänging</code>中的NTFS函数得到一个<code>Section</code><ul>
+<li>1) CreateTransaction</li>
+<li>2) CreateFileTransactedW</li>
+<li>3) NtCreateSection</li>
+<li>4) RollbackTransaction</li>
+</ul>
+</li>
+<li><p>2) 然后以挂起方式创建目标进程</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">CreateProcessInternalW(hToken,</div><div class="line">    <span class="literal">NULL</span>, <span class="comment">//lpApplicationName</span></div><div class="line">    (LPWSTR)cmdLine, <span class="comment">//lpCommandLine</span></div><div class="line">    <span class="literal">NULL</span>, <span class="comment">//lpProcessAttributes</span></div><div class="line">    <span class="literal">NULL</span>, <span class="comment">//lpThreadAttributes</span></div><div class="line">    FALSE, <span class="comment">//bInheritHandles</span></div><div class="line">    CREATE_SUSPENDED <span class="string">| DETACHED_PROCESS | CREATE_NO_WINDOW, //dwCreationFlags</span></div><div class="line">    <span class="literal">NULL</span>, <span class="comment">//lpEnvironment </span></div><div class="line">    startDir, <span class="comment">//lpCurrentDirectory</span></div><div class="line">    <span class="meta">&amp;si, <span class="comment">//lpStartupInfo</span></span></div><div class="line">    <span class="meta">&amp;pi, <span class="comment">//lpProcessInformation</span></span></div><div class="line">    <span class="meta">&amp;hNewToken</span></div><div class="line">)</div></pre></td></tr></table></figure>
+</li>
+<li><p>3) 类似Process Hollowing，使用<code>NtMapViewOfSection</code>将Section映射入挂起的进程</p>
+</li>
+<li><p>4）通过Wow64GetThreadContext/Wow64SetThreadContext设置入口点</p>
+</li>
+<li><p><a href="https://github.com/hasherezade/transacted_hollowing/blob/main/main.cpp" target="_blank" rel="external">https://github.com/hasherezade/transacted_hollowing/blob/main/main.cpp</a></p>
+</li>
+<li><a href="https://www.freebuf.com/articles/system/181971.html" target="_blank" rel="external">https://www.freebuf.com/articles/system/181971.html</a></li>
+</ul>
+<h3 id="0x08-Process-Ghosting"><a href="#0x08-Process-Ghosting" class="headerlink" title="0x08 Process Ghosting"></a>0x08 Process Ghosting</h3><ul>
+<li><p>现代Windows创建进程的基本流程是这样的：</p>
+<ul>
+<li>1）打开可执行文件，获取文件句柄<code>hFile = CreateFile(“C:\Windows\System32\svchost.exe”)</code></li>
+<li>2) 为文件创建映像，即将文件部分内容映射入内存<code>hSection = NtCreateSection(hFile, SEC_IMAGE)</code></li>
+<li>3) 使用映像部分创建一个进程,hProcess = NtCreateProcessEx(hSection)</li>
+<li>4) 为进程设置环境变量</li>
+<li>5）为进程创建一个主线程NtCreateThreadEx</li>
+</ul>
+</li>
+<li><p>Process Ghosting，顾名思义，进程是一个幽灵一般，没有实体部分。即没有文件。</p>
+</li>
+<li><p>windows中删除文件的方法(并不是实际上的Del)</p>
+<ul>
+<li>1）使用<code>CreateFile/NtOpenFile</code>创建文件的时候，将<code>OpenOptions</code>设置为<code>FILE_DELETE_ON_CLOSE</code>,<code>FILE_SUPERSEDE</code>,<code>FILE_FLAG_DELETE_ON_CLOSE</code></li>
+<li>2) 当通过NtSetInformationFile调用FileDispositionInformation文件信息类时，将FILE_DISPOSITION_INFORMATION结构中的 DeleteFile 字段设置为 TRUE 。</li>
+</ul>
+</li>
+<li><p>但是，只有当Section映射入进程，并关闭句柄，删除标志才能生效。</p>
+</li>
+<li><p>攻击流程：</p>
+<ul>
+<li>1）创建一个文件</li>
+<li>2）使用NtSetInformationFile(FileDispositionInformation)将文件置于删除挂起状态。注意：尝试使用 FILE_DELETE_ON_CLOSE 不会删除文件。</li>
+<li>3）将负载可执行文件写入文件。内容不会保留，因为文件已处于删除挂起状态。删除挂起状态还会阻止外部文件打开尝试。</li>
+<li>4）为文件创建图像部分。</li>
+<li>5）关闭删除挂起句柄，删除文件。</li>
+<li>6）使用图像部分创建一个进程。</li>
+<li>7）分配流程参数和环境变量。</li>
+<li>8）创建一个线程在进程中执行。</li>
+</ul>
+</li>
+<li><p>和<code>Process Doppelgänging技术</code>本质上都是将文件进行删除，<code>Process Ghosting</code>利用文件删除标志实现，而<code>Process Doppelgänging技术</code>是利用NTFS的回滚机制</p>
+</li>
+<li><p><a href="https://github.com/hasherezade/process_ghosting" target="_blank" rel="external">https://github.com/hasherezade/process_ghosting</a></p>
+</li>
+<li><a href="https://www.elastic.co/cn/blog/process-ghosting-a-new-executable-image-tampering-attack" target="_blank" rel="external">hat you need to know about Process Ghosting, a new executable image tampering attack</a></li>
+</ul>
+<h3 id="0x09-Ghostly-Hollowing"><a href="#0x09-Ghostly-Hollowing" class="headerlink" title="0x09 Ghostly Hollowing"></a>0x09 Ghostly Hollowing</h3><ul>
+<li>Ghostly Hollowing是Process Ghosting技术的结合。<br>  <img src="http://hacky.wang/blog/20230303/V9L9jeynDY76.png?imageslim" alt="mark"></li>
+<li><a href="https://github.com/hasherezade/transacted_hollowing/" target="_blank" rel="external">https://github.com/hasherezade/transacted_hollowing/</a></li>
+<li><a href="https://github.com/Hagrid29/herpaderply_hollowing/blob/main/README.md" target="_blank" rel="external">https://github.com/Hagrid29/herpaderply_hollowing/blob/main/README.md</a></li>
+</ul>
+<h3 id="0x10-Process-Herpaderping"><a href="#0x10-Process-Herpaderping" class="headerlink" title="0x10 Process Herpaderping"></a>0x10 Process Herpaderping</h3><ul>
+<li><p>背景：基于现有安全软件更高效的检测恶意软件，在程序运行期间提供了两层保护</p>
+<ul>
+<li>利用PsSetCreateProcessNotifyRoutinsEx回调函数，该回调函数在进程通过NtThreadEx创建主线程的时候被调用。该回调函数针对磁盘文件进行检测，<strong>但是在回调函数被调用之前，可以通过修改磁盘文件内容，从而规避这种检测。</strong></li>
+<li>利用驱动程序在接收到IRP_MJ_CLEANUP（对应关闭文件句柄）时，检查文件内容是否发生改变。</li>
+</ul>
+</li>
+<li><p>原理：综上描述，安全软件在进程创建主线程之后触发PsSetCreateProcessNotifyRoutinsEx回调函数进行检查，但是在之前对磁盘文件进行修改，修改为一个正常的文件，安全软件会认为进程是一个正常文件映射的，从而绕过检查。</p>
+</li>
+<li><p>步骤：</p>
+<ul>
+<li>1）将二级制文件payload写入磁盘，并获取文件句柄</li>
+<li>2）将文件映射入内存</li>
+<li>3）使用映像部分创建一个进程,hProcess = NtCreateProcessEx(hSection)</li>
+<li>4）使用1）中的文件句柄，修改文件，此时为正常文件。此时安全软件的文件检查得以绕过</li>
+<li>5）创建进程的主线程</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a href="https://www.4hou.com/posts/qDzy" target="_blank" rel="external">https://www.4hou.com/posts/qDzy</a></li>
+<li><a href="https://jxy-s.github.io/herpaderping/res/DivingDeeper.html" target="_blank" rel="external">Process Herpaderping Technical Deep Dive</a></li>
+<li><a href="http://www.hackdig.com/02/hack-284105.htm" target="_blank" rel="external">从Herpaderping规避技术看防御之难</a></li>
+<li><a href="https://bbs.kanxue.com/thread-271554.htm" target="_blank" rel="external">高级进程注入总结</a></li>
+</ul>
+<h3 id="0x11-Herpaderply-Hollowing"><a href="#0x11-Herpaderply-Hollowing" class="headerlink" title="0x11 Herpaderply Hollowing"></a>0x11 Herpaderply Hollowing</h3><ul>
+<li><p>Herpaderply Hollowing是<code>Process Hollowing</code>和<code>Process Herpaderping</code>的混合体。<br>  <img src="http://hacky.wang/blog/20230303/pjeGDHgcekqI.png?imageslim" alt="mark"></p>
+</li>
+<li><p>步骤：</p>
+<ul>
+<li>1）将二级制文件payload写入磁盘，并获取文件句柄</li>
+<li>2）将文件映射入内存</li>
+<li>3）使用映像部分创建一个进程,hProcess = NtCreateProcessEx(hSection)</li>
+<li>4）使用1）中的文件句柄，修改文件，此时为正常文件。此时安全软件的文件检查得以绕过</li>
+<li>5）以挂起方式创建进程</li>
+<li>6）将Section映射入挂起的进程</li>
+<li>7）运行payload</li>
+</ul>
+</li>
+<li><p><a href="https://github.com/Hagrid29/herpaderply_hollowing" target="_blank" rel="external">https://github.com/Hagrid29/herpaderply_hollowing</a></p>
+</li>
+</ul>
+<h3 id="0x12-Process-Lockering"><a href="#0x12-Process-Lockering" class="headerlink" title="0x12 Process Lockering"></a>0x12 Process Lockering</h3><ul>
+<li>步骤：<ul>
+<li>1）读取payload</li>
+<li>2）将payload写入一个另外一个空文件，用于Lock。</li>
+<li>3）通过<code>DuplicateHandle</code>复制一个文件句柄，并返回新文件的句柄，此时文件处于锁定状态</li>
+<li>4）通过3）中获取的文件句柄，创建一个新的section</li>
+<li>5）通过NtCreateProcessEx(HSection)创建进程</li>
+<li>6）通过PEB寻找入口点，执行payload</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x13-Locker-Hollowing"><a href="#0x13-Locker-Hollowing" class="headerlink" title="0x13 Locker Hollowing"></a>0x13 Locker Hollowing</h3><ul>
+<li>Locker Hollowing 是 Process Hollowing 和 Process Lockering 的混合体。<br>  <img src="http://hacky.wang/blog/20230303/ruXzIPFIwOsU.png?imageslim" alt="mark"></li>
+<li><a href="https://github.com/Hagrid29/herpaderply_hollowing" target="_blank" rel="external">https://github.com/Hagrid29/herpaderply_hollowing</a></li>
+</ul>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li><a href="https://www.blackhat.com/docs/eu-17/materials/eu-17-Liberman-Lost-In-Transaction-Process-Doppelganging.pdf" target="_blank" rel="external">https://www.blackhat.com/docs/eu-17/materials/eu-17-Liberman-Lost-In-Transaction-Process-Doppelganging.pdf</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/08/16/CVE-2015-2546内核提权漏洞分析/" rel="next" title="CVE-2015-2546内核提权漏洞分析">
+                <i class="fa fa-chevron-left"></i> CVE-2015-2546内核提权漏洞分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/11/08/持久化总结/" rel="prev" title="Persistence">
+                Persistence <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-Module-Stomping-LoadLibrary"><span class="nav-number">1.</span> <span class="nav-text">0x01 Module Stomping(LoadLibrary)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-Module-Stomping-NtMapViewOfSection"><span class="nav-number">2.</span> <span class="nav-text">0x02 Module Stomping(NtMapViewOfSection)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-GhostWriting"><span class="nav-number">3.</span> <span class="nav-text">0x03 GhostWriting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-AtomBombing"><span class="nav-number">4.</span> <span class="nav-text">0x04 AtomBombing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-Process-Hollowing"><span class="nav-number">5.</span> <span class="nav-text">0x05 Process Hollowing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x06-Process-Doppelganging"><span class="nav-number">6.</span> <span class="nav-text">0x06 Process Doppelgänging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x07-Transacted-Hollowing"><span class="nav-number">7.</span> <span class="nav-text">0x07 Transacted Hollowing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x08-Process-Ghosting"><span class="nav-number">8.</span> <span class="nav-text">0x08 Process Ghosting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x09-Ghostly-Hollowing"><span class="nav-number">9.</span> <span class="nav-text">0x09 Ghostly Hollowing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x10-Process-Herpaderping"><span class="nav-number">10.</span> <span class="nav-text">0x10 Process Herpaderping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x11-Herpaderply-Hollowing"><span class="nav-number">11.</span> <span class="nav-text">0x11 Herpaderply Hollowing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x12-Process-Lockering"><span class="nav-number">12.</span> <span class="nav-text">0x12 Process Lockering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x13-Locker-Hollowing"><span class="nav-number">13.</span> <span class="nav-text">0x13 Locker Hollowing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">14.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
