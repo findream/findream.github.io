@@ -81,20 +81,20 @@
 
 
 
-<meta name="description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta name="description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高级注入技术小结">
 <meta property="og:url" content="https://findream.github.io/2022/10/25/高级注入技术/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta property="og:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20230303/V9L9jeynDY76.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20230303/pjeGDHgcekqI.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20230303/ruXzIPFIwOsU.png?imageslim">
-<meta property="og:updated_time" content="2023-03-03T12:17:25.615Z">
+<meta property="og:updated_time" content="2023-03-03T12:21:41.602Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="高级注入技术小结">
-<meta name="twitter:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等    0x01 Module Stompin">
+<meta name="twitter:description" content="本文主要总结了几种不太常见的高级注入技术 Module Stomping(LoadLibrary) Module Stomping(NtMapViewOfSection) AtomBombing Process Hollowing Process Doppelgänging Transacted Hollowing Process Ghosting等">
 <meta name="twitter:image" content="http://hacky.wang/blog/20230303/V9L9jeynDY76.png?imageslim">
 
 
@@ -399,6 +399,7 @@
 </ul>
 </li>
 </ul>
+<a id="more"></a>
 <h3 id="0x01-Module-Stomping-LoadLibrary"><a href="#0x01-Module-Stomping-LoadLibrary" class="headerlink" title="0x01 Module Stomping(LoadLibrary)"></a>0x01 Module Stomping(LoadLibrary)</h3><ul>
 <li>Module Stomping 模块踩踏，通过加载一个合法的Dll模块，然后使用payload去覆盖dll</li>
 <li>优点：<ul>
