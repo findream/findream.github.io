@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="主要记载了常见的Bypass EDR的方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bypass EDR">
+<meta property="og:url" content="https://findream.github.io/2022/11/25/Bypass EDR and AV/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="主要记载了常见的Bypass EDR的方法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20230301/R5iAsQOhtjoH.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20230301/imcHIXxa2TPQ.png?imageslim">
+<meta property="og:updated_time" content="2023-03-03T12:25:47.541Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bypass EDR">
+<meta name="twitter:description" content="主要记载了常见的Bypass EDR的方法。">
+<meta name="twitter:image" content="http://hacky.wang/blog/20230301/R5iAsQOhtjoH.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2022/11/25/Bypass EDR and AV/"/>
+
+
+
+
+
+  <title>Bypass EDR | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/11/25/Bypass EDR and AV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Bypass EDR</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-11-25T20:45:11+08:00">
+                2022-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ATT-CK/" itemprop="url" rel="index">
+                    <span itemprop="name">ATT&CK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>主要记载了常见的Bypass EDR的方法。</li>
+</ul>
+<a id="more"></a>
+<h3 id="0x01-API函数总结"><a href="#0x01-API函数总结" class="headerlink" title="0x01 API函数总结"></a>0x01 API函数总结</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;敏感的API函数调用容易被EDR检测，如果使用不常使用的API函数可以减少被EDR产品检测的可能性。参考文章：<a href="https://github.com/ReversingID/Shellcode-Loader" target="_blank" rel="external">https://github.com/ReversingID/Shellcode-Loader</a></p>
+<ul>
+<li><p>allocation：</p>
+<ul>
+<li><p>AllocADsMem</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LPVOID AllocADsMem (<span class="name">DWORD</span> cb)<span class="comment">;</span></div><div class="line">BOOL FreeADsMem (<span class="name">LPVOID</span> pMem)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CoTaskMemAlloc</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LPVOID CoTaskMemAlloc (<span class="name">SIZE_T</span> cb)<span class="comment">;</span></div><div class="line">void CoTaskMemFree (<span class="name">LPVOID</span> pv)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CreateFileMapping  /MapViewOfFile / MapViewOfFileEx / MapViewOfFile2 / MapViewOfFile3</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">HANDLE CreateFileMappingA (<span class="name">HANDLE</span> hFile, LPSECURITY_ATTRIBUTES lpFileMappingAttributes, DWORD flProtect, DWORD dwMaximumSizeHigh, DWORD dwMaximumSizeLow, LPCSTR lpName)<span class="comment">;</span></div><div class="line">HANDLE CreateFileMappingW (<span class="name">HANDLE</span> hFile, LPSECURITY_ATTRIBUTES lpFileMappingAttributes, DWORD flProtect, DWORD dwMaximumSizeHigh, DWORD dwMaximumSizeLow, LPCWSTR lpName)<span class="comment">;</span></div><div class="line">LPVOID MapViewOfFile (<span class="name">HANDLE</span> hFileMappingObject, DWORD dwDesiredAccess, DWORD dwFileOffsetHigh, DWORD dwFileOffsetLow, SIZE_T dwNumberOfBytesToMap)<span class="comment">;</span></div><div class="line">LPVOID MapViewOfFileEx (<span class="name">HANDLE</span> hFileMappingObject, DWORD dwDesiredAccess, DWORD dwFileOffsetHigh, DWORD dwFileOffsetLow, SIZE_T dwNumberOfBytesToMap, LPVOID lpBaseAddress)<span class="comment">;</span></div><div class="line">PVOID MapViewOfFile2 (<span class="name">HANDLE</span> FileMappingHandle, HANDLE ProcessHandle, ULONG64 Offset, PVOID BaseAddress, SIZE_T ViewSize, ULONG AllocationType, ULONG PageProtection)<span class="comment">;</span></div><div class="line">PVOID MapViewOfFile3 (<span class="name">HANDLE</span> FileMapping, HANDLE Process, PVOID BaseAddress, ULONG64 Offset, SIZE_T ViewSize, ULONG AllocationType, ULONG PageProtection, MEM_EXTENDED_PARAMETER ExtendedParameters, ULONG ParameterCount)<span class="comment">;</span></div><div class="line">PVOID MapViewOfFileNuma2 (<span class="name">HANDLE</span> FileMappingHandle, HANDLE ProcessHandle, ULONG64 Offset, PVOID BaseAddress, SIZE_T ViewSize, ULONG AllocationType, ULONG PageProtection, ULONG PreferredNode)<span class="comment">;</span></div><div class="line">BOOL UnmapViewOfFile (<span class="name">LPCVOID</span> lpBaseAddress)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>GlobalAlloc_GHND</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">HGLOBAL GlobalAlloc (<span class="name">UINT</span> uFlags, SIZE_T dwBytes)<span class="comment">;</span></div><div class="line">LPVOID GlobalLock (<span class="name">HGLOBAL</span> hMem)<span class="comment">;</span></div><div class="line">BOOL GlobalUnlock (<span class="name">HGLOBAL</span> hMem)<span class="comment">;</span></div><div class="line">HGLOBAL GlobalFree (<span class="name">HGLOBAL</span> hMem)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>GlobalAlloc_GPTR</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">HGLOBAL GlobalAlloc (<span class="name">UINT</span> uFlags, SIZE_T dwBytes)<span class="comment">;</span></div><div class="line">HGLOBAL GlobalFree (<span class="name">HGLOBAL</span> hMem)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>HeapAlloc</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">LPVOID HeapAlloc (<span class="name">HANDLE</span> hHeap, DWORD dwFlags, SIZE_T dwBytes)<span class="comment">;</span></div><div class="line">HANDLE HeapCreate (<span class="name">DWORD</span> flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize)<span class="comment">;</span></div><div class="line">BOOL HeapFree (<span class="name">HANDLE</span> hHeap, DWORD dwFlags, _Frees_ptr_opt_ LPVOID lpMem)<span class="comment">;</span></div><div class="line">BOOL HeapDestroy (<span class="name">HANDLE</span> hHeap)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>NtAllocateVirtualMemory</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NTSTATUS NtAllocateVirtualMemory (HANDLE ProcessHandle, PVOID <span class="keyword">BaseAddress, </span>ULONG ZeroBits, PULONG RegionSize, ULONG AllocationType, ULONG Protect)<span class="comment">;</span></div><div class="line">NTSTATUS NtProtectVirtualMemory (HANDLE ProcessHandle, PVOID * <span class="keyword">BaseAddress, </span>PULONG NumberOfBytesToProtect, ULONG NewAccessProtection, PULONG OldAccessProtection)<span class="comment">;</span></div><div class="line">NTSTATUS NtFreeVirtualMemory (HANDLE ProcessHandle, PVOID * <span class="keyword">BaseAddress, </span>PULONG RegionSize, ULONG FreeType)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>NtCreateSection</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">NTSTATUS NtCreateSection (PHANDLE SectionHandle, <span class="built_in">ULONG</span> DesiredAccess, POBJECT_ATTRIBUTES ObjectAttributes, PLARGE_INTEGER MaximumSize, <span class="built_in">ULONG</span> PageAttributess, <span class="built_in">ULONG</span> SectionAttributes, HANDLE FileHandle);</div><div class="line">NTSTATUS NtMapViewOfSection (HANDLE SectionHandle, HANDLE ProcessHandle, PVOID *BaseAddress, <span class="built_in">ULONG</span> ZeroBits, <span class="built_in">ULONG</span> CommitSize, PLARGE_INTEGER SectionOffset, PULONG ViewSize, DWORD InheritDisposition, <span class="built_in">ULONG</span> AllocationType, <span class="built_in">ULONG</span> Protect);</div><div class="line">NTSTATUS NtUnmapViewOfSection (HANDLE ProcessHandle, PVOID BaseAddress);</div><div class="line">NTSTATUS NtClose (HANDLEObjectHandle);</div></pre></td></tr></table></figure>
+</li>
+<li><p>NtCreateSectionEx</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">NTSTATUS NtCreateSectionEx (PHANDLE SectionHandle, ACCESS_MASK DesiredAccess, POBJECT_ATTRIBUTES ObjectAttributes, PLARGE_INTEGER MaximumSize, <span class="built_in">ULONG</span> SectionPageProtection, <span class="built_in">ULONG</span> AllocationAttributes, HANDLE FileHandle, PMEM_EXTENDED_PARAMETER ExtendedParameters, <span class="built_in">ULONG</span> ExtendedParameterCount);</div><div class="line">NTSTATUS NtMapViewOfSectionEx (HANDLE SectionHandle, HANDLE ProcessHandle, PVOID *BaseAddress, <span class="built_in">ULONG</span> ZeroBits, <span class="built_in">ULONG</span> CommitSize, PLARGE_INTEGER SectionOffset, PULONG ViewSize, DWORD InheritDisposition, <span class="built_in">ULONG</span> AllocationType, <span class="built_in">ULONG</span> Protect);</div><div class="line">NTSTATUS NtUnmapViewOfSectionEx (HANDLE ProcessHandle, PVOID BaseAddress);</div><div class="line">NTSTATUS NtClose (HANDLEObjectHandle);</div></pre></td></tr></table></figure>
+</li>
+<li><p>RtlAllocateHeap</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">PVOID RtlAllocateHeap (<span class="name">PVOID</span> HeapHandle, ULONG Flags, SIZE_T Size)<span class="comment">;</span></div><div class="line">PVOID RtlCreateHeap (<span class="name">ULONG</span> Flags, PVOID HeapBase, SIZE_T ReserveSize, SIZE_T CommitSize, PVOID Lock, PRTL_HEAP_PARAMETERS Parameters)<span class="comment">;</span></div><div class="line">LOGICAL RtlFreeHeap (<span class="name">PVOID</span> HeapHandle, ULONG Flags, PVOID BaseAddress)<span class="comment">;</span></div><div class="line">PVOID RtlDestroyHeap (<span class="name">PVOID</span> HeapHandle)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>VirtualAlloc</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">LPVOID VirtualAlloc (<span class="name">LPVOID</span> lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect)<span class="comment">;</span></div><div class="line">BOOL VirtualProtect (<span class="name">LPVOID</span> lpAddress, SIZE_T dwSize, DWORD  flNewProtect, PDWORD lpflOldProtect)<span class="comment">;</span></div><div class="line">BOOL VirtualFree(<span class="name">LPVOID</span> lpAddress, SIZE_T dwSize, DWORD dwFreeType)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>VirtualAlloc2</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">LPVOID VirtualAlloc2(HANDLE Process, PVOID <span class="keyword">BaseAddress, </span>SIZE_T Size, ULONG AllocationType, ULONG PageProtection, MEM_EXTENDED_PARAMETER <span class="keyword">ExtendedParameters, </span>ULONG ParameterCount)<span class="comment">;</span></div><div class="line"><span class="keyword">BOOL </span>VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD  flNewProtect, PDWORD lpflOldProtect)<span class="comment">;</span></div><div class="line"><span class="keyword">BOOL </span>VirtualFree(LPVOID lpAddress, SIZE_T dwSize, DWORD dwFreeType)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>VirtualAllocEx</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">LPVOID VirtualAllocEx(<span class="name">HANDLE</span> hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD  flAllocationType, DWORD flProtect)<span class="comment">;</span></div><div class="line">BOOL VirtualProtectEx(<span class="name">HANDLE</span> hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD  flNewProtect, PDWORD lpflOldProtect)<span class="comment">;</span></div><div class="line">BOOL VirtualFreeEx(<span class="name">HANDLE</span> hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD  dwFreeType)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>execution</p>
+<ul>
+<li><p>callback</p>
+<ul>
+<li><p>CallWindowProc</p>
+<figure class="highlight hsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LRESULT CallWindowProcA (WNDPROC lpPrevWndFunc, <span class="keyword">HWND</span> <span class="keyword">hWnd</span>, UINT Msg, <span class="keyword">WPARAM</span> <span class="keyword">wParam</span>, <span class="keyword">LPARAM</span> <span class="keyword">lParam</span>)<span class="comment">;</span></div><div class="line">LRESULT CallWindowProcW (WNDPROC lpPrevWndFunc, <span class="keyword">HWND</span> <span class="keyword">hWnd</span>, UINT Msg, <span class="keyword">WPARAM</span> <span class="keyword">wParam</span>, <span class="keyword">LPARAM</span> <span class="keyword">lParam</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CopyFile2</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">HRESULT CopyFile2 (<span class="name">PCWSTR</span> pwszExistingFileName, PCWSTR pwszNewFileName, COPYFILE2_EXTENDED_PARAMETERS pExtendedParameters)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>eg….</p>
+</li>
+</ul>
+</li>
+<li><p>event</p>
+<ul>
+<li><p>CreateThreadpoolTimer</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">PTP_TIMER CreateThreadpoolTimer(PTP_TIMER_CALLBACK pfnti, PVOID pv, PTP_CALLBACK_ENVIRON pcbe)<span class="comment">;</span></div><div class="line">void SetThreadpoolTimer(PTP_TIMER pti, PFILETIME pftDueTime, DWORD msPeriod, DWORD msWindowLength)<span class="comment">;</span></div><div class="line">HANDLE CreateEventA(LPSECURITY_ATTRIBUTES lpEventAttributes, <span class="keyword">BOOL </span><span class="keyword">bManualReset, </span><span class="keyword">BOOL </span><span class="keyword">bInitialState, </span>LPCSTR lpName)<span class="comment">;</span></div><div class="line">DWORD <span class="keyword">WaitForSingleObject </span>(HANDLE hHandle, DWORD dwMilliseconds)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CreateTimerQueue</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">HANDLE CreateTimerQueue ()<span class="comment">;</span></div><div class="line"><span class="keyword">BOOL </span>CreateTimerQueueTimer(PHANDLE phNewTimer, HANDLE TimerQueue, <span class="keyword">WAITORTIMERCALLBACK </span>Callback, PVOID Parameter, DWORD DueTime, DWORD Period, ULONG Flags)<span class="comment">;</span></div><div class="line">HANDLE CreateEventA(LPSECURITY_ATTRIBUTES lpEventAttributes, <span class="keyword">BOOL </span><span class="keyword">bManualReset, </span><span class="keyword">BOOL </span><span class="keyword">bInitialState, </span>LPCSTR lpName)<span class="comment">;</span></div><div class="line">DWORD <span class="keyword">WaitForSingleObject </span>(HANDLE hHandle, DWORD dwMilliseconds)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>QueueUserAPC</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DWORD QueueUserAPC(<span class="name">PAPCFUNC</span> pfnAPC, HANDLE hThread, ULONG_PTR dwData)<span class="comment">;</span></div><div class="line">NTSTATUS NtTestAlert()<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>exception</p>
+<ul>
+<li><p>AddVectoredExceptionhandler</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">PVOID <span class="title">AddVectoredExceptionHandler</span> <span class="params">(ULONG First, PVECTORED_EXCEPTION_HANDLER Handler)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">RaiseException</span> <span class="params">(DWORD dwExceptionCode, DWORD dwExceptionFlags, DWORD nNumberOfArguments, <span class="keyword">const</span> ULONG_PTR *lpArguments)</span></span>;</div><div class="line"><span class="function">ULONG <span class="title">RemoveVectoredExceptionHandler</span> <span class="params">(PVOID Handle)</span></span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>SetUnhandledExceptionFilter</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">SetUnhandledExceptionFilter</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>fiber(纤程)</p>
+<ul>
+<li><p>CreateFiber</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LPVOID CreateFiber(<span class="name">SIZE_T</span> dwStackSize, LPFIBER_START_ROUTINE lpStartAddress, LPVOID lpParameter)<span class="comment">;</span></div><div class="line">LPVOID ConvertThreadToFiber(<span class="name">LPVOID</span> lpParameter)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>CreateFiberEx</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LPVOID CreateFiberEx (<span class="name">SIZE_T</span> dwStackCommitSize, SIZE_T dwStackReserveSize, LPFIBER_START_ROUTINE lpStartAddress, LPVOID lpParameter)<span class="comment">;</span></div><div class="line">LPVOID ConvertThreadToFiber(<span class="name">LPVOID</span> lpParameter)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>FlsAlloc</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DWORD FlsAlloc (<span class="name">PFLS_CALLBACK_FUNCTION</span> lpCallback)<span class="comment">;</span></div><div class="line">BOOL FlsSetValue (<span class="name">DWORD</span> dwFlsIndex, PVOID lpFlsData)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>invoke</p>
+</li>
+<li><p>thread</p>
+<ul>
+<li>CreateThread</li>
+<li>CreateThreadEx</li>
+<li>NtCreateThread</li>
+<li>CreateRemoteThread</li>
+<li><p>EtwCreateEtwThread</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">HANDLE EtwpCreateEtwThread (<span class="name">LPVOID</span> routine, LPVOID param)<span class="comment">;</span></div><div class="line">DWORD WaitForSingleObject (<span class="name">HANDLE</span> hHandle, DWORD dwMilliseconds)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>RtlCreateUserThread</p>
+</li>
+<li><p>SHCreateThread</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">BOOL </span><span class="keyword">SHCreateThread </span>(LPTHREAD_START_ROUTINE pfnThreadProc, void * pData, <span class="keyword">SHCT_FLAGS </span>flags, LPTHREAD_START_ROUTINE pfnCallback)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>SHCreateThreadWithHandle</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>permission</p>
+<ul>
+<li><p>NtProtectVirtualMemory</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NTSTATUS NtProtectVirtualMemory (HANDLE ProcessHandle, PVOID * <span class="keyword">BaseAddress, </span>PULONG NumberOfBytesToProtect, ULONG NewAccessProtection, PULONG OldAccessProtection)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>VirtualProtect</p>
+</li>
+<li>VirtualProtectEx</li>
+</ul>
+</li>
+<li><p>writing</p>
+<ul>
+<li>compression / decompress</li>
+<li><p>conversion(压缩)</p>
+<ul>
+<li><p>RtlEthernetStringToAddress</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NTSTATUS RtlEthernetStringToAddressA (<span class="name">PCSTR</span> S, PCSTR * Terminator, DL_EUI48 * Addr)<span class="comment">;</span></div><div class="line">NTSTATUS RtlEthernetStringToAddressW ( <span class="name">PCWSTR</span> S, LPCWSTR * Terminator, DL_EUI48 * Addr)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>RtlIpv4StringToAddress</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NTSTATUS RtlIpv4StringToAddressA (<span class="name">PCSTR</span> S, BOOLEAN Strict, PCSTR * Terminator, in_addr * Addr)<span class="comment">;</span></div><div class="line">NTSTATUS RtlIpv4StringToAddressW ( <span class="name">PCWSTR</span> S, BOOLEAN Strict, LPCWSTR * Terminator, in_addr * Addr)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>RtlIpv4StringToAddressEx</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">NTSTATUS</span> RtlIpv4StringToAddressExA (PCSTR <span class="keyword">AddressString, </span><span class="keyword">BOOLEAN </span><span class="keyword">Strict, </span>in_addr *<span class="keyword">Address, </span><span class="keyword">PUSHORT </span>Port)<span class="comment">;</span></div><div class="line"><span class="symbol">NTSTATUS</span> RtlIpv4StringToAddressExW (PCWSTR <span class="keyword">AddressString, </span><span class="keyword">BOOLEAN </span><span class="keyword">Strict, </span>in_addr *<span class="keyword">Address, </span><span class="keyword">PUSHORT </span>Port)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>RtlIpv6StringToAddress</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NTSTATUS RtlIpv6StringToAddressA (<span class="name">PCSTR</span> S, PCSTR * Terminator, in6_addr * Addr)<span class="comment">;</span></div><div class="line">NTSTATUS RtlIpv6StringToAddressW ( <span class="name">PCWSTR</span> S, LPCWSTR * Terminator, in6_addr * Addr)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>UuidFromString</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">RPC_STATUS UuidFromStringA (<span class="name">RPC_CSTR</span> StringUuid, UUID *Uuid);</div><div class="line">RPC_STATUS UuidFromStringW (RPC_WSTR StringUuid, UUID *Uuid)<span class="comment">;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>copy</p>
+<ul>
+<li>CopyMemory</li>
+<li>CreatePipe/WriteFile/ReadFile</li>
+<li>MoveMemory</li>
+<li>NtWriteVirtualMemory</li>
+<li>RtlMoveMemory</li>
+<li>WriteProcessMemory</li>
+<li>memcpy</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0x02-加密算法"><a href="#0x02-加密算法" class="headerlink" title="0x02 加密算法"></a>0x02 加密算法</h3><ul>
+<li>对称加密算法</li>
+</ul>
+<h3 id="0x03-syscall技术以及运行时解析"><a href="#0x03-syscall技术以及运行时解析" class="headerlink" title="0x03 syscall技术以及运行时解析"></a>0x03 syscall技术以及运行时解析</h3><ul>
+<li><a href="https://github.com/jthuraisamy/SysWhispers2" target="_blank" rel="external">https://github.com/jthuraisamy/SysWhispers2</a></li>
+<li><a href="https://tttang.com/archive/1464/" target="_blank" rel="external">syscall的前世今生</a></li>
+</ul>
+<h3 id="0x04-VEH联合syscall打乱栈回溯"><a href="#0x04-VEH联合syscall打乱栈回溯" class="headerlink" title="0x04 VEH联合syscall打乱栈回溯"></a>0x04 VEH联合syscall打乱栈回溯</h3><ul>
+<li><a href="https://github.com/Dec0ne/HWSyscalls" target="_blank" rel="external">https://github.com/Dec0ne/HWSyscalls</a></li>
+</ul>
+<h3 id="0x05-使用未被EDR产品检测的高级注入技术"><a href="#0x05-使用未被EDR产品检测的高级注入技术" class="headerlink" title="0x05 使用未被EDR产品检测的高级注入技术"></a>0x05 使用未被EDR产品检测的高级注入技术</h3><ul>
+<li><a href="http://hacky.ren/2022/10/25/高级注入技术/" target="_blank" rel="external">http://hacky.ren/2022/10/25/高级注入技术/</a></li>
+</ul>
+<h3 id="0x06-PPID-Spoofing-欺骗"><a href="#0x06-PPID-Spoofing-欺骗" class="headerlink" title="0x06 PPID Spoofing(欺骗)"></a>0x06 PPID Spoofing(欺骗)</h3><ul>
+<li><p>PPID Spoofing基于CreateProcess的lpStartupInfo参数可以被重新定义，lpStartupInfo参数指向_STARTUPINFOEXA，_STARTUPINFOEXA的<code>lpAttributeList</code>可以通过<code>InitializeProcThreadAttributeList</code>函数创建，并且通过<code>UpdateProcThreadAttribute</code>修改。</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">typedef struct _STARTUPINFOEXA &#123;</div><div class="line">  <span class="type">STARTUPINFOA</span>                 <span class="type">StartupInfo</span>;</div><div class="line">  <span class="type">LPPROC_THREAD_ATTRIBUTE_LIST</span> lpAttributeList;</div><div class="line">&#125; <span class="type">STARTUPINFOEXA</span>, *<span class="type">LPSTARTUPINFOEXA</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>当<code>UpdateProcThreadAttribute</code>的<code>lpValue</code>设置为父进程句柄，即可实现PPID Spoofing欺骗</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> UpdateProcThreadAttribute(</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">out</span>]       LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList,</div><div class="line">  [<span class="keyword">in</span>]            DWORD                        dwFlags,</div><div class="line">  [<span class="keyword">in</span>]            DWORD_PTR                    Attribute,</div><div class="line">  [<span class="keyword">in</span>]            PVOID                        lpValue,</div><div class="line">  [<span class="keyword">in</span>]            SIZE_T                       cbSize,</div><div class="line">  [<span class="keyword">out</span>, optional] PVOID                        lpPreviousValue,</div><div class="line">  [<span class="keyword">in</span>, optional]  PSIZE_T                      lpReturnSize</div><div class="line">);</div><div class="line"><span class="comment">//</span></div><div class="line"><span class="keyword">int</span> main() &#123;</div><div class="line">    STARTUPINFOEXA si;</div><div class="line">    PROCESS_INFORMATION pi;</div><div class="line">    SIZE_T attributeSize;</div><div class="line">    ZeroMemory(&amp;si, <span class="keyword">sizeof</span>(STARTUPINFOEXA));</div><div class="line">    LPCWSTR parentProcess = L<span class="string">"OneDrive.exe"</span>;</div><div class="line">    DWORD parentPID = getPPID(parentProcess);</div><div class="line">    printf(<span class="string">"[+] Spoofing %ws (PID: %u) as the parent process.\n"</span>, parentProcess, parentPID);</div><div class="line">    HANDLE parentProcessHandle = OpenProcess(MAXIMUM_ALLOWED, <span class="literal">false</span>, parentPID);</div><div class="line">    InitializeProcThreadAttributeList(<span class="literal">NULL</span>, <span class="number">1</span>, <span class="number">0</span>, &amp;attributeSize);</div><div class="line">    si.lpAttributeList = (LPPROC_THREAD_ATTRIBUTE_LIST)HeapAlloc(GetProcessHeap(), <span class="number">0</span>, attributeSize);</div><div class="line">    InitializeProcThreadAttributeList(si.lpAttributeList, <span class="number">1</span>, <span class="number">0</span>, &amp;attributeSize);</div><div class="line">    UpdateProcThreadAttribute(si.lpAttributeList, <span class="number">0</span>, PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, &amp;parentProcessHandle, <span class="keyword">sizeof</span>(HANDLE), <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">    si.StartupInfo.cb = <span class="keyword">sizeof</span>(STARTUPINFOEXA);</div><div class="line">    LPCWSTR spawnProcess = L<span class="string">"C:\\Windows\\System32\\notepad.exe"</span>;</div><div class="line">    CreateProcess(spawnProcess, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">TRUE</span>, EXTENDED_STARTUPINFO_PRESENT, <span class="literal">NULL</span>, <span class="literal">NULL</span>, (STARTUPINFO*)&amp;si, &amp;pi);</div><div class="line">    printf(<span class="string">"[+] Spawning %ws (PID: %u)\n"</span>, spawnProcess, pi.dwProcessId);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>可以使用ETW进行检测，ETW数据中可以使用的数据主要有，如果EventHeader ProcessId和ParentProcessID相同，则没有进行欺骗，如果不同说明进行了欺骗</p>
+<ul>
+<li>EventHeader ProcessId 产生事件的进程</li>
+<li>ProcessID 创建的进程</li>
+<li>ParentProcessID 父进程</li>
+</ul>
+</li>
+<li><img src="http://hacky.wang/blog/20230301/R5iAsQOhtjoH.png?imageslim" alt="mark"></li>
+<li><p><img src="http://hacky.wang/blog/20230301/imcHIXxa2TPQ.png?imageslim" alt="mark"></p>
+</li>
+<li><p><a href="https://blog.f-secure.com/detecting-parent-pid-spoofing/" target="_blank" rel="external">detecting-parent-pid-spoofing</a></p>
+</li>
+<li><a href="https://forum.butian.net/share/1076" target="_blank" rel="external">Parent Process ID (PPID) Spoofing</a></li>
+</ul>
+<h3 id="0x07-Dll-Block"><a href="#0x07-Dll-Block" class="headerlink" title="0x07 Dll Block"></a>0x07 Dll Block</h3><ul>
+<li>旨在组织EDR将dll注入进程，以缓解进程被Hook</li>
+<li>1) 为子进程实现Dll Block:和PPID欺骗一样，通过调用<code>UpdateProcThreadAttribute</code>将设置线程tributes,将<code>Attribute</code>设置为<code>PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY</code>,并将value设置为<code>PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON</code>,值得注意的是<strong>这个方法只能为子进程设置BlockDlls</strong>，因为最终<code>CreateProcessA</code>创建子进程并设置线程属性。<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">BOOL</span> UpdateProcThreadAttribute(</div><div class="line">  [<span class="keyword">in</span>, <span class="keyword">out</span>]       LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList,</div><div class="line">  [<span class="keyword">in</span>]            DWORD                        dwFlags,</div><div class="line">  [<span class="keyword">in</span>]            DWORD_PTR                    Attribute,</div><div class="line">  [<span class="keyword">in</span>]            PVOID                        lpValue,</div><div class="line">  [<span class="keyword">in</span>]            SIZE_T                       cbSize,</div><div class="line">  [<span class="keyword">out</span>, optional] PVOID                        lpPreviousValue,</div><div class="line">  [<span class="keyword">in</span>, optional]  PSIZE_T                      lpReturnSize</div><div class="line">);</div><div class="line"><span class="comment">//example</span></div><div class="line"><span class="keyword">int</span> main()</div><div class="line">&#123;</div><div class="line">	PROCESS_INFORMATION pi = &#123;&#125;;</div><div class="line">	STARTUPINFOEXA si = &#123;&#125;;</div><div class="line">	SIZE_T attributeSize = <span class="number">0</span>;</div><div class="line"><span class="comment">//</span></div><div class="line">	InitializeProcThreadAttributeList(<span class="literal">NULL</span>, <span class="number">1</span>, <span class="number">0</span>, &amp;attributeSize);</div><div class="line">	PPROC_THREAD_ATTRIBUTE_LIST attributes = (PPROC_THREAD_ATTRIBUTE_LIST)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, attributeSize);</div><div class="line">	InitializeProcThreadAttributeList(attributes, <span class="number">1</span>, <span class="number">0</span>, &amp;attributeSize);</div><div class="line"><span class="comment">//</span></div><div class="line">	DWORD64 policy = PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON;</div><div class="line">	UpdateProcThreadAttribute(attributes, <span class="number">0</span>, PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, &amp;policy, <span class="keyword">sizeof</span>(DWORD64), <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">	si.lpAttributeList = attributes;</div><div class="line"><span class="comment">//</span></div><div class="line">	CreateProcessA(<span class="literal">NULL</span>, (LPSTR)<span class="string">"notepad"</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">TRUE</span>, EXTENDED_STARTUPINFO_PRESENT, <span class="literal">NULL</span>, <span class="literal">NULL</span>, &amp;si.StartupInfo, &amp;pi);</div><div class="line">	HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, attributes);</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line">``` </div><div class="line"></div><div class="line">* <span class="number">2</span>）为本进程设置BlockDll，通过`SetProcessMitigationPolicy`函数设置阻止策略,将策略设置为`ProcessSignaturePolicy`即可。</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>BOOL SetProcessMitigationPolicy(<br>  [in] PROCESS_MITIGATION_POLICY MitigationPolicy,<br>  [in] PVOID                     lpBuffer,<br>  [in] SIZE_T                    dwLength<br>);<br>ROCESS_MITIGATION_BINARY_SIGNATURE_POLICY policy;<br>policy.MitigationOptIn = 1;<br>SetProcessMitigationPolicy(ProcessSignaturePolicy, &amp;policy, sizeof(policy))<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">* <span class="number">3</span>) 针对Blockdll的**检测**：通过`GetProcessMitigationPolicy`进行检测,将`PROCESS_MITIGATION_POLICY`设置为ProcessSignaturePolicy，读取value，如果是`ProcessSignaturePolicy`则说明是BlockDll。</div></pre></td></tr></table></figure></p>
+<p>BOOL GetProcessMitigationPolicy(<br>  [in]  HANDLE                    hProcess,<br>  [in]  PROCESS_MITIGATION_POLICY MitigationPolicy,<br>  [out] PVOID                     lpBuffer,<br>  [in]  SIZE_T                    dwLength<br>);<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="bullet">* </span>4）部分EDR存在微软的签名，此时会绕过BlockDll，通过引入ACG,ACG即漏洞利用保护参考,[<span class="string">开启ACG时</span>](<span class="link">https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy</span>)，进程无法生成动态代码或修改现有的可执行代码。即Alloc内存会失败。</div><div class="line"></div><div class="line"><span class="bullet">* </span>5）<span class="strong">**检测**</span>同BlockDll </div><div class="line"></div><div class="line"><span class="bullet">* </span>[<span class="string">Preventing 3rd Party DLLs from Injecting into your Malware</span>](<span class="link">https://www.ired.team/offensive-security/defense-evasion/preventing-3rd-party-dlls-from-injecting-into-your-processes</span>)</div><div class="line"><span class="bullet">* </span>[<span class="string">http://hacky.ren/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20)</span>](<span class="link">http://hacky.ren/2022/05/29/绿盟科技-每周蓝军技术推送(2022.5.14-5.20</span>))</div><div class="line"><span class="bullet">* </span>[<span class="string">检测BlockDll和ACG</span>](<span class="link">https://tttang.com/archive/1618</span>)</div><div class="line"></div><div class="line"><span class="section">### 0x08 过静态检测</span></div><div class="line"><span class="bullet">* </span>1) ShellCode加密/混淆</div><div class="line"><span class="bullet">* </span>2) 加壳(Pack)</div><div class="line"><span class="bullet">* </span>3) 多态变形</div><div class="line"><span class="bullet">* </span>4）Shellcode存储在资源段</div><div class="line"><span class="bullet">* </span>5）减少熵</div><div class="line"></div><div class="line"><span class="section">### 0x09 过动态检测</span></div><div class="line"><span class="bullet">* </span>1）Bypass AMSI</div><div class="line"><span class="bullet">* </span>2）网络分段式执行</div><div class="line"><span class="bullet">* </span>3）间接系统调用 </div><div class="line"><span class="bullet">* </span>4）延迟执行</div><div class="line"><span class="bullet">* </span>5）Bypass ETW</div><div class="line"><span class="bullet">* </span>6）D/Invoke</div><div class="line"><span class="bullet">* </span>7）LOLBIN</div><div class="line"><span class="bullet">* </span>8）检查沙箱/虚拟机</div><div class="line"></div><div class="line"></div><div class="line"><span class="section">### 0x10 D/Invoke</span></div><div class="line"><span class="bullet">* </span>P/Invoke 即Platform Invoke，其允许.NET 应用程序访问非托管库(DLL) 中的数据和API，即通过使用P/Invoke，C#开发人员可以轻松调用标准 Windows API。由于.Net程序更加容易从内存中执行，由此不需要将文件落地即可实现更加高级的功能。</div><div class="line"><span class="bullet">* </span>P/Invoke缺点：</div><div class="line"><span class="code">    * 1）P/Invoke所需要Windows API函数都静态存放在.Net程序集的导入表中，可以被观察到，如果文件不落地可能影响不大。</span></div><div class="line"><span class="code">    * 2）P/Inovle执行的Windows API函数，如果EDR等安全软件提前Hook，则也有可能被检测。</span></div><div class="line"></div><div class="line"><span class="bullet">* </span>D/Invole：Dynic Invoke 即动态执行，允许程序手动加载Dll文件，手动获取Windows API地址，类似于LoadLibrary/GetProcAddress模式。</div><div class="line"></div><div class="line"><span class="bullet">* </span>执行函数，以下代码演示了使用DInvoke库执行<span class="code">`NtCreateThread`</span>API函数:</div><div class="line"><span class="code">    * 1) 首先调用`GetLibraryAddress`获取NtCreateThread地址</span></div><div class="line"><span class="code">    * 2）调用`GetDelegateForFunctionPointer`获取委派</span></div><div class="line"><span class="code">    * 3）调用`NtCreateThreadEx`</span></div></pre></td></tr></table></figure></p>
+<p> //Get a pointer to the NtCreateThreadEx function.<br>IntPtr pFunction = Execution.DynamicInvoke.Generic.GetLibraryAddress(@”ntdll.dll”, “NtCreateThreadEx”);<br>//<br>//Create an instance of a NtCreateThreadEx delegate from our function pointer.<br>DELEGATES.NtCreateThreadEx createThread = (NATIVE_DELEGATES.NtCreateThreadEx)Marshal.GetDelegateForFunctionPointer(<br>   pFunction, typeof(NATIVE_DELEGATES.NtCreateThreadEx));<br>//<br>//Invoke NtCreateThreadEx using the delegate<br>createThread(ref threadHandle,<br>    Win32.WinNT.ACCESS_MASK.SPECIFIC_RIGHTS_ALL | Win32.WinNT.ACCESS_MASK.STANDARD_RIGHTS_ALL,<br>    IntPtr.Zero,<br>    process.Handle, baseAddr, IntPtr.Zero, suspended, 0, 0, 0, IntPtr.Zero);<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">* 加载模块</span></div><div class="line"><span class="comment">    * 1）GetPebLdrModuleEntry：通过在 PEB 中搜索对它的引用来搜索当前加载模块的基地址</span></div><div class="line"><span class="comment">    * 2）GetLibraryAddress：首先检查模块是否被加载，如果没有加载则会调用`LoadModuleFromDisk`加载，然后使用`GetExportAddress`查找模块中的函数,参数可以是函数名，函数序号，Hash。</span></div><div class="line"><span class="comment">    * 3）GetLoadedModuleAddress：加载模块基地址</span></div><div class="line"><span class="comment">    * 4）LoadModuleFromDisk：使用LdrLoaddll加载一个dll，但是会产生一个模块加载事件，不建议使用</span></div><div class="line"><span class="comment">    * 5）GetSyscallStub：映射新副本ntdll.dll并从新副本复制系统调用包装器的字节。这可用于直接执行系统调用</span></div><div class="line"><span class="comment">    * 6) GetExportAddress:从模块在内存中的基地址开始，解析模块的PE头文件，定位到特定的函数。可以采用字符串、序号或哈希作为您希望调用的函数的标识符。</span></div><div class="line"><span class="comment">    * 7）MapModuleToMemory：手动将模块映射到动态分配的内存中，正确对齐 PE 部分，更正内存权限，并修复导入地址表。可以采用字节数组或磁盘上文件的名称。</span></div><div class="line"><span class="comment">    * 8）MapModuleToMemoryAddress：手动将内存中已有的模块（包含在字节数组中）映射到内存中的特定位置。</span></div><div class="line"><span class="comment">    * 9）OverloadModule：使用模块重载将模块映射到由磁盘上的诱饵 DLL 支持的内存中。选择一个尚未加载、已签名且存在于%WINDIR%\System32. 在模块中执行代码的线程看起来像是在执行来自合法 DLL 的代码。可以采用字节数组或磁盘上文件的名称。</span></div></pre></td></tr></table></figure></p>
+<p>namespace SpTestcase<br>{<br>    class Program<br>    {<br>        static void Main(string[] args)<br>        {<br>            // Details<br>            String testDetail = @”</p>
+<pre><code>#=================&gt;
+# Hello there!
+# I find things dynamically; base
+# addresses and function pointers.
+#=================&gt;
+&quot;;
+Console.WriteLine(testDetail);
+</code></pre><p>//<br>            // Get NTDLL base from the PEB<br>            Console.WriteLine(“[?] Resolve Ntdll base from the PEB..”);<br>            IntPtr hNtdll = SharpSploit.Execution.DynamicInvoke.Generic.GetPebLdrModuleEntry(“ntdll.dll”);<br>            Console.WriteLine(“[&gt;] Ntdll base address : “ + string.Format(“{0:X}”, hNtdll.ToInt64()) + “\n”);<br>//<br>            // Search function by name<br>            Console.WriteLine(“[?] Specifying the name of a DLL (\”ntdll.dll\”), resolve a function by walking the export table in-memory..”);<br>            Console.WriteLine(“[+] Search by name –&gt; NtCommitComplete”);<br>            IntPtr pNtCommitComplete = SharpSploit.Execution.DynamicInvoke.Generic.GetLibraryAddress(“ntdll.dll”, “NtCommitComplete”, true);<br>            Console.WriteLine(“[&gt;] pNtCommitComplete : “ + string.Format(“{0:X}”, pNtCommitComplete.ToInt64()) + “\n”);<br>//<br>            Console.WriteLine(“[+] Search by ordinal –&gt; 0x260 (NtSetSystemTime)”);<br>            IntPtr pNtSetSystemTime = SharpSploit.Execution.DynamicInvoke.Generic.GetLibraryAddress(“ntdll.dll”, 0x260, true);<br>            Console.WriteLine(“[&gt;] pNtSetSystemTime : “ + string.Format(“{0:X}”, pNtSetSystemTime.ToInt64()) + “\n”);<br>//<br>            Console.WriteLine(“[+] Search by keyed hash –&gt; 138F2374EC295F225BD918F7D8058316 (RtlAdjustPrivilege)”);<br>            Console.WriteLine(“[&gt;] Hash : HMACMD5(Key).ComputeHash(FunctionName)”);<br>            String fHash = SharpSploit.Execution.DynamicInvoke.Generic.GetAPIHash(“RtlAdjustPrivilege”, 0xaabb1122);<br>            IntPtr pRtlAdjustPrivilege = SharpSploit.Execution.DynamicInvoke.Generic.GetLibraryAddress(“ntdll.dll”, fHash, 0xaabb1122);<br>            Console.WriteLine(“[&gt;] pRtlAdjustPrivilege : “ + string.Format(“{0:X}”, pRtlAdjustPrivilege.ToInt64()) + “\n”);<br>//<br>            // Search for function from base address of DLL<br>            Console.WriteLine(“[?] Specifying the base address of DLL in memory ({0:X}), resolve function by walking its export table…”, hNtdll.ToInt64());<br>            Console.WriteLine(“[+] Search by name –&gt; NtCommitComplete”);<br>            IntPtr pNtCommitComplete2 = SharpSploit.Execution.DynamicInvoke.Generic.GetExportAddress(hNtdll, “NtCommitComplete”);<br>            Console.WriteLine(“[&gt;] pNtCommitComplete : “ + string.Format(“{0:X}”, pNtCommitComplete2.ToInt64()) + “\n”);<br>//<br>            // Pause execution<br>            Console.WriteLine(“[*] Pausing execution..”);<br>            Console.ReadLine();<br>        }<br>    }<br>}<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">* 内存调用执行</span></div><div class="line"><span class="comment">* Bypass Hook</span></div><div class="line"><span class="comment">    * 1) 正常使用PInvoke</span></div></pre></td></tr></table></figure></p>
+<p>// Call OpenProcess using PInvoke<br>Console.WriteLine(“[?] Call OpenProcess via PInvoke …”);<br>hProc = OpenProcess(SharpSploit.Execution.Win32.Kernel32.ProcessAccessFlags.PROCESS_ALL_ACCESS, false, id);<br>Console.WriteLine(“[&gt;] Process handle : “ + string.Format(“{0:X}”, hProc.ToInt64()) + “\n”);<br>// Pause execution<br>Console.WriteLine(“[*] Pausing execution..”);<br>Console.ReadLine();<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>2) 通过DInvoke(GetLibraryAddress方法)</div></pre></td></tr></table></figure></p>
+<p>// Call OpenProcess using GetLibraryAddress (underneath the hood)<br>Console.WriteLine(“[?] Call OpenProcess from the loaded module list using System.Diagnostics.Process.GetCurrentProcess().Modules …”);<br>hProc = SharpSploit.Execution.DynamicInvoke.Win32.OpenProcess(SharpSploit.Execution.Win32.Kernel32.ProcessAccessFlags.PROCESS_ALL_ACCESS, false, id);<br>Console.WriteLine(“[&gt;] Process handle : “ + string.Format(“{0:X}”, hProc.ToInt64()) + “\n”);<br>// Pause execution<br>Console.WriteLine(“[*] Pausing execution..”);<br>Console.ReadLine();<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>3）通过DInvoke(PEB获取基址)</div></pre></td></tr></table></figure></p>
+<p>// Search function by name from module in PEB<br>Console.WriteLine(“[?] Specifying the name of a DLL (\”kernel32.dll\”), search the PEB for the loaded module and resolve a function by walking the export table in-memory…”);<br>Console.WriteLine(“[+] Search by name –&gt; OpenProcess”);<br>IntPtr pkernel32 = SharpSploit.Execution.DynamicInvoke.Generic.GetPebLdrModuleEntry(“kernel32.dll”);<br>IntPtr pOpenProcess = SharpSploit.Execution.DynamicInvoke.Generic.GetExportAddress(pkernel32, “OpenProcess”);<br>//Call OpenProcess<br>hProc = (IntPtr)SharpSploit.Execution.DynamicInvoke.Generic.DynamicFunctionInvoke(pOpenProcess, typeof(SharpSploit.Execution.DynamicInvoke.Win32.Delegates.OpenProcess), ref paramaters);<br>Console.WriteLine(“[&gt;] Process Handle : “ + string.Format(“{0:X}”, hProc.ToInt64()) + “\n”);<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>4) 映射Kernel32.dll</div></pre></td></tr></table></figure></p>
+<p>// Manually map kernel32.dll<br>// Search function by name from module in PEB<br>Console.WriteLine(“[?] Manually map a fresh copy of a DLL (\”kernel32.dll\”), and resolve a function by walking the export table in-memory…”);<br>Console.WriteLine(“[+] Search by name –&gt; OpenProcess”);<br>SharpSploit.Execution.PE.PE_MANUAL_MAP moduleDetails = SharpSploit.Execution.ManualMap.Map.MapModuleToMemory(“C:\Windows\System32\kernel32.dll”);<br>Console.WriteLine(“[&gt;] Module Base : “ + string.Format(“{0:X}”, moduleDetails.ModuleBase.ToInt64()) + “\n”);<br>//Call OpenProcess<br>hProc = (IntPtr)SharpSploit.Execution.DynamicInvoke.Generic.CallMappedDLLModuleExport(moduleDetails.PEINFO, moduleDetails.ModuleBase, “OpenProcess”, typeof(SharpSploit.Execution.DynamicInvoke.Win32.Delegates.OpenProcess), paramaters);<br>Console.WriteLine(“[&gt;] Process Handle : “ + string.Format(“{0:X}”, hProc.ToInt64()) + “\n”);<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">* </span>5) 覆写Kernel32</div></pre></td></tr></table></figure></p>
+<p>// Map kernel32.dll using Module Overloading<br>// Search function by name from module in PEB<br>Console.WriteLine(“[?] Use Module Overloading to map a fresh copy of a DLL (\”kernel32.dll\”) into memory backed by another file on disk. Resolve a function by walking the export table in-memory…”);<br>Console.WriteLine(“[+] Search by name –&gt; OpenProcess”);<br>moduleDetails = SharpSploit.Execution.ManualMap.Overload.OverloadModule(“C:\Windows\System32\kernel32.dll”);<br>Console.WriteLine(“[&gt;] Module Base : “ + string.Format(“{0:X}”, moduleDetails.ModuleBase.ToInt64()) + “\n”);<br>//Call OpenProcess<br>hProc = (IntPtr)SharpSploit.Execution.DynamicInvoke.Generic.CallMappedDLLModuleExport(moduleDetails.PEINFO, moduleDetails.ModuleBase, “OpenProcess”, typeof(SharpSploit.Execution.DynamicInvoke.Win32.Delegates.OpenProcess), paramaters);<br>Console.WriteLine(“[&gt;] Process Handle : “ + string.Format(“{0:X}”, hProc.ToInt64()) + “\n”);<br>```</p>
+<ul>
+<li>系统调用执行，利用<code>GetSyscallStub</code></li>
+<li><p>ShellCode执行</p>
+<ul>
+<li><code>SharpSploit.Execution.ShellCode.ShellCodeExecute</code></li>
+<li><code>DynamicFunctionInvoke</code>委派执行ShellCode</li>
+</ul>
+</li>
+<li><p><a href="https://thewover.github.io/Dynamic-Invoke/" target="_blank" rel="external">https://thewover.github.io/Dynamic-Invoke/</a></p>
+</li>
+<li><a href="https://github.com/FuzzySecurity/BlueHatIL-2020/tree/master/Usage" target="_blank" rel="external">https://github.com/FuzzySecurity/BlueHatIL-2020/tree/master/Usage</a>上述例子的源码</li>
+<li><a href="https://github.com/TheWover/DInvoke" target="_blank" rel="external">https://github.com/TheWover/DInvoke</a></li>
+<li><a href="https://github.com/cobbr/SharpSploit" target="_blank" rel="external">https://github.com/cobbr/SharpSploit</a></li>
+</ul>
+<h3 id="0x10-LOLBin"><a href="#0x10-LOLBin" class="headerlink" title="0x10 LOLBin"></a>0x10 LOLBin</h3><ul>
+<li>Living off the land Binaries,主要描述为windows自带二进制文件，被恶意利用，从事不属于该文件所工作的范畴。</li>
+<li>常见的情况：<ul>
+<li>下载</li>
+<li>解密</li>
+<li>Bypass UAC等</li>
+</ul>
+</li>
+<li><a href="http://blog.topsec.com.cn/lolbins%E8%AF%A6%E8%A7%A3/" target="_blank" rel="external">http://blog.topsec.com.cn/lolbins%E8%AF%A6%E8%A7%A3/</a></li>
+<li><a href="https://www.anquanke.com/post/id/223232" target="_blank" rel="external">https://www.anquanke.com/post/id/223232</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/11/08/持久化总结/" rel="next" title="Persistence">
+                <i class="fa fa-chevron-left"></i> Persistence
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/11/26/Cobalt Strike BOF原理分析/" rel="prev" title="CobaltStrike BOF生成原理分析">
+                CobaltStrike BOF生成原理分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-API函数总结"><span class="nav-number">1.</span> <span class="nav-text">0x01 API函数总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-加密算法"><span class="nav-number">2.</span> <span class="nav-text">0x02 加密算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-syscall技术以及运行时解析"><span class="nav-number">3.</span> <span class="nav-text">0x03 syscall技术以及运行时解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-VEH联合syscall打乱栈回溯"><span class="nav-number">4.</span> <span class="nav-text">0x04 VEH联合syscall打乱栈回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-使用未被EDR产品检测的高级注入技术"><span class="nav-number">5.</span> <span class="nav-text">0x05 使用未被EDR产品检测的高级注入技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x06-PPID-Spoofing-欺骗"><span class="nav-number">6.</span> <span class="nav-text">0x06 PPID Spoofing(欺骗)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x07-Dll-Block"><span class="nav-number">7.</span> <span class="nav-text">0x07 Dll Block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x10-LOLBin"><span class="nav-number">8.</span> <span class="nav-text">0x10 LOLBin</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
