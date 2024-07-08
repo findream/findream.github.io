@@ -81,19 +81,19 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。 &amp;emsp;&amp;emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击">
+<meta name="description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MHT样本分析与威胁狩猎感悟">
 <meta property="og:url" content="https://findream.github.io/2024/07/08/MHT样本分析/index.html">
 <meta property="og:site_name" content="HaCky的安全备忘录">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。 &amp;emsp;&amp;emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://hacky.wang/blog/20240708/e7MDFnGtvPMa.png?imageslim">
 <meta property="og:image" content="http://hacky.wang/blog/20240708/Agyf4eFB0C62.png?imageslim">
-<meta property="og:updated_time" content="2024-07-08T13:02:31.647Z">
+<meta property="og:updated_time" content="2024-07-08T13:06:25.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MHT样本分析与威胁狩猎感悟">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。 &amp;emsp;&amp;emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。">
 <meta name="twitter:image" content="http://hacky.wang/blog/20240708/e7MDFnGtvPMa.png?imageslim">
 
 
@@ -386,7 +386,7 @@
       
 
       
-        <p>&emsp;&emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。</p>
+        <p>&emsp;&emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。<br><a id="more"></a></p>
 <p>&emsp;&emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击者偶尔使用MHT文档作为载体发起鱼叉和水坑攻击。</p>
 <p>&emsp;&emsp;从结构上来讲，MHT文件是由multipart组成的，类型有text/html、text/css、application/octet-stream、image等，每个multipart可使用base64进行编码。</p>
 <h4 id="样例1-针对Office的攻击样本分析"><a href="#样例1-针对Office的攻击样本分析" class="headerlink" title="样例1 针对Office的攻击样本分析"></a>样例1 针对Office的攻击样本分析</h4><p>&emsp;&emsp;APT32组织在2017年使用maldoc_office.htm(<a href="https://www.virustotal.com/gui/file/1210384a9d0ca2e089efab14f2e9f6d55a3824031c1e589b96f854fb96411288" target="_blank" rel="external">ce50e544430e7265a45fab5a1f31e529</a>)作为攻击入口载荷，内嵌VBS代码作为后续的攻击向量。</p>
