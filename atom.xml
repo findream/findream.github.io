@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://findream.github.io/"/>
-  <updated>2023-05-02T07:22:31.803Z</updated>
+  <updated>2024-07-08T13:02:31.647Z</updated>
   <id>https://findream.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MHT样本分析与威胁狩猎感悟</title>
+    <link href="https://findream.github.io/2024/07/08/MHT%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/"/>
+    <id>https://findream.github.io/2024/07/08/MHT样本分析/</id>
+    <published>2024-07-08T07:02:11.000Z</published>
+    <updated>2024-07-08T13:02:31.647Z</updated>
+    
+    <content type="html"><![CDATA[<p>&emsp;&emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。</p><p>&emsp;&emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击者偶尔使用MHT文档作为载体发起鱼叉和水坑攻击。</p><p>&emsp;&emsp;从结构上来讲，MHT文件是由multipart组成的，类型有text/html、text/css、application/octet-stream、image等，每个multipart可使用base64进行编码。</p><h4 id="样例1-针对Office的攻击样本分析"><a href="#样例1-针对Office的攻击样本分析" class="headerlink" title="样例1 针对Office的攻击样本分析"></a>样例1 针对Office的攻击样本分析</h4><p>&emsp;&emsp;APT32组织在2017年使用maldoc_office.htm(<a href="https://www.virustotal.com/gui/file/1210384a9d0ca2e089efab14f2e9f6d55a3824031c1e589b96f854fb96411288" target="_blank" rel="external">ce50e544430e7265a45fab5a1f31e529</a>)作为攻击入口载荷，内嵌VBS代码作为后续的攻击向量。</p><p>&emsp;&emsp;观察maldoc_office.htm文件，发现其内部存在4个可疑的multipart对象，其中一个MIME-TYPE为“application/vnd.ms-officetheme”，可知这是一个office主题，还有两个MIME-TYPE为“image/png”，这是两个图片，另外最值得可疑的是一个“application/x-mso”的类型。将该类型的Base64进行解码，然后在偏移为0x32往后的内容实用gzip解码。就会生成ole对象，然后使用olevba即可查看宏代码。<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">data</span> = base64.b64decode(<span class="title">editdata</span>)</span></div><div class="line"><span class="title">with</span> open(<span class="string">"decode.bin"</span>,<span class="string">"wb"</span>) <span class="keyword">as</span> fp:</div><div class="line">fp.write(zlib.decompress(<span class="class"><span class="keyword">data</span>[50:]))</span></div></pre></td></tr></table></figure></p><p><img src="http://hacky.wang/blog/20240708/e7MDFnGtvPMa.png?imageslim" alt="mark"></p><h4 id="样例2-MalDoc-In-PDF"><a href="#样例2-MalDoc-In-PDF" class="headerlink" title="样例2 MalDoc In PDF"></a>样例2 MalDoc In PDF</h4><p>&emsp;&emsp;<a href="https://ata.360.net/report/476502040414208" target="_blank" rel="external">1d97e352ae420aae5b3db5c151e7458d</a>实际上还是一个MHT文件，使用PDF查看工具打开会失败，通过工具查看，同样可以看到里面存在一个类型为“application/x-mso”的multipart对象。<br><img src="http://hacky.wang/blog/20240708/Agyf4eFB0C62.png?imageslim" alt="mark"></p><h4 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h4><p>&emsp;&emsp;我们在观察日志信息的时候，如果进程明显是文档软件的进程，并且拉起了可疑的子进程，第一考虑的应该是文档存在宏的情况，第二应该考虑的是漏洞的情况，而不是考虑白加黑利用的情况，尤其进程又在原始安装目录下面，这其实就是认知不足造成的。<br>&emsp;&emsp;还有就是，例如MalDoc In PDF，这个在去年日本研究员就提出来了，自己也跟进了，但是自己思想上没有跟进，MHT可以使用word打开，wps应该也可以打开，这样就存在可以被利用的攻击面，但是我们在狩猎的时候，并没有把这个考虑进去，就失去了发现这个0D的机会。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&amp;emsp;&amp;emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。&lt;/p&gt;
+&lt;p&gt;&amp;emsp;&amp;e
+      
+    
+    </summary>
+    
+      <category term="威胁狩猎" scheme="https://findream.github.io/categories/%E5%A8%81%E8%83%81%E7%8B%A9%E7%8C%8E/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Execute-Assembly 攻守之道</title>
@@ -44,8 +68,8 @@
   
   <entry>
     <title>Sliver源码分析</title>
-    <link href="https://findream.github.io/2023/03/02/Sliver%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/"/>
-    <id>https://findream.github.io/2023/03/02/Sliver原理分析/</id>
+    <link href="https://findream.github.io/2023/03/02/Sliver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    <id>https://findream.github.io/2023/03/02/Sliver源码分析/</id>
     <published>2023-03-02T12:45:11.000Z</published>
     <updated>2023-05-03T14:00:56.804Z</updated>
     
@@ -439,26 +463,6 @@
     </summary>
     
       <category term="攻防技术" scheme="https://findream.github.io/categories/%E6%94%BB%E9%98%B2%E6%8A%80%E6%9C%AF/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>CobaltStrike高免杀样本分析</title>
-    <link href="https://findream.github.io/2022/05/25/CobaltStrike%E9%AB%98%E5%85%8D%E6%9D%80%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/"/>
-    <id>https://findream.github.io/2022/05/25/CobaltStrike高免杀样本分析/</id>
-    <published>2022-05-25T06:02:11.000Z</published>
-    <updated>2022-06-14T13:11:35.494Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果可能更好。第二，对于shellcode的加密方式，不在拘泥于传统的异或或者AES，Base等公开的加密编码算法，也会采用一些好玩的，个性化的编码算法进行shellcode加密。第三，在开辟内存空间的时候，也不在使用传统的VirtualAlloc等R3层的API函数，更多的使用基于底层的API函数，第四，在调用shellcode过程中，也不像往常一样使用常规的方式调用shellcode，而是利用一些API的机制(CreateThread)，或者回调机制(EnumSystemLocalesW)，以及APC。<br><a id="more"></a></p><h2 id="0x01-Example1"><a href="#0x01-Example1" class="headerlink" title="0x01 Example1"></a>0x01 Example1</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这个loader由C#编写，通过<code>powerShell.AddScript(@string);</code>加载加密过的Powershell脚本，然后通过<code>powerShell.BeginInvoke</code>执行。<br>   <img src="http://hacky.wang/blog/20220525/qaXTWKJGj3oG.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/igppaXzAbCFp.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第2层powershell脚本中，依旧是执行Base64加密/编码过的Powershell语句<br>   <img src="http://hacky.wang/blog/20220525/D2dzLkeJRY7N.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过解码得到解码之后的Powershell脚本。第三层Powershell脚本逻辑也很清楚，首先解码一段base64，然后进行xor解密，获得一段shellcode，然后将解密获得的shellcode复制到内存中并执行。<br>   <img src="http://hacky.wang/blog/20220525/M1sraJ1PX2zv.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经过分析，转储而来的shellcode是典型的cobaltstrike生成stageless类型的shellcode。也就是所谓的分离式免杀的操作。<br>   <img src="http://hacky.wang/blog/20220525/HlfthlTWfRdY.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/d87EH0lvK6Ee.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其本质还是一个download。其会加载winnet.dll模块，然后依次调用<code>wininet!InternetOpenA</code>,<code>wininet!InternetConnectA</code>,<code>KERNEL32!VirtualAllocStub</code>,<code>wininet!InternetReadFile</code>等网络读取函数读取服务端获取的payload。最终在栈顶保存的是读取的payload的地址，待到函数返回，执行流跳转到payload处。<br>   <img src="http://hacky.wang/blog/20220525/4X5BfKPs0xA7.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/yKFGpzN5ieTG.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到下载的bin主要有两部分组成，一个是引导shellcode，第二部分是payload，主要用来引导执行payload。这也是cobaltstrike特征之一。<br>   <img src="http://hacky.wang/blog/20220525/Ay4yTDOvlt4L.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;显然，熟悉beacon的一眼就看到了cobaltstrike特征，这是beacon的PE文件，在默认生成的beacon文件中，这是导出的ReflectiveLoad函数，处理完PE数据之后，最终调用DllEntry函数进行后续的处理。<br>   <img src="http://hacky.wang/blog/20220525/iDDm7IHUMk2j.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220525/3LNMGFde8eGf.png?imageslim" alt="mark"></p><h2 id="0x02-Example2"><a href="#0x02-Example2" class="headerlink" title="0x02 Example2"></a>0x02 Example2</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="https://www.virustotal.com/gui/file/d0db40a4683de999dc11be3c8e5599363f21398a0a25c238dab1a680a2029d1f" target="_blank" rel="external">这个loader</a>使用GoLang编写，该样本并没有去除符号表，首先，检查系统的CPU个数和逻辑分区个数，如果CPU个数和逻辑分区个数小于4的话，则退出。<br>   <img src="http://hacky.wang/blog/20220528/hnHKiFkl7LGW.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后调用HeapCreate开辟内存空间，Golang编译的程序在汇编层面的函数调用方式和C++编译的有些许差异，在x64下，通过[eax]进行压栈传入参数，然后将需要调用的函数传入rax寄存器中，rcx保存的是参数的个数。并调用ZwAllocateVirtualMemory修改内存属性。<br>   <img src="http://hacky.wang/blog/20220528/qTyCrfDxjyGe.png?imageslim" alt="mark"><br>   <img src="http://hacky.wang/blog/20220528/4d9ddEWAr28n.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16个字节组成的Byte[],如果需要将shellcode转化为UUID形式的话，如果shellcode长度不足16的话，将自动补齐。在CobaltStrike免杀样本中，UUID是以字符串形式存在于内存中，其通过API函数<code>UuidFromStringA</code>将其转化为UUID格式。<br>   <img src="http://hacky.wang/blog/20220528/hYXCzF2FThsV.png?imageslim" alt="mark"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，通过<code>EnumSystemLocalesW</code>函数通过回调的方式执行shellcode，同样的可以进行回调的还有以下函数<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>, EnumTimeFormatsA</div><div class="line"><span class="number">2</span>, EnumWindows</div><div class="line"><span class="number">3</span>, EnumDesktopWindows</div><div class="line"><span class="number">4</span>, EnumDateFormatsA</div><div class="line"><span class="number">5</span>, EnumChildWindows</div><div class="line"><span class="number">6</span>, EnumThreadWindows</div><div class="line"><span class="number">7</span>, EnumSystemLocales</div><div class="line"><span class="number">8</span>, EnumSystemGeoID</div><div class="line"><span class="number">9</span>, EnumSystemLanguageGroupsA</div><div class="line"><span class="number">10</span>, EnumUILanguagesA</div><div class="line"><span class="number">11</span>, EnumSystemCodePagesA</div><div class="line"><span class="number">12</span>, EnumDesktopsW</div><div class="line"><span class="number">13</span>, EnumSystemCodePagesW</div></pre></td></tr></table></figure></p><p>   <img src="http://hacky.wang/blog/20220528/181EYINyufLB.png?imageslim" alt="mark"></p><h2 id="0x03-Example3"><a href="#0x03-Example3" class="headerlink" title="0x03 Example3"></a>0x03 Example3</h2><ul><li><p>看图标和关键字显然，这是由<code>pyinstaller</code>打包而成的exe文件。目前常见的py打包工具主要有<code>pyinstaller</code>，<code>py2exe</code>,以及<code>cx_Freeze</code><br> <img src="http://hacky.wang/blog/20220530/eb0JbgWba5hY.png?imageslim" alt="mark"></p></li><li><p>针对<code>pyinstaller</code>打包而来的exe，可以使用<code>pyinstxtractor.py</code>进行解包，完成后，会在同目录生成一个extracted结尾的文件夹，在文件夹中，有两个没有后缀的文件，其中必然有一个名为struct文件。<br> <img src="http://hacky.wang/blog/20220530/6zXGpMBrmt4Q.png?imageslim" alt="mark"></p></li><li><p>那个名字为1的文件是一个抹去了时间戳和Magic的pyc文件，而抹去的信息可以在struct文件中找到，只需要复制<code>struct</code>文件的前16个字节复制到<code>1</code>这个文件中，即可。<br> <img src="http://hacky.wang/blog/20220530/oHHX0edBXdPT.png?imageslim" alt="mark"></p></li><li><p>然后使用在线的pyc2py的网站<a href="https://tool.lu/pyc/" target="_blank" rel="external">https://tool.lu/pyc/</a>就可以得到py代码如下。使用伪随机数解密，因为随机数种子是固定的，因为产生的随机数也是固定的。解密秘钥也就是固定的。loader是shellcode装载器，value是解密的shellcode。<br> <img src="http://hacky.wang/blog/20220530/BalqeFPTQs2s.png?imageslim" alt="mark"></p></li><li><p>loader代码如下，很常见的加载方式</p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">shellcode = binascii.a2b_hex(value)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.VirtualAlloc</span><span class="selector-class">.restype</span>=ctypes.c_uint64</div><div class="line">rwxpage = ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.VirtualAlloc</span>(<span class="number">0</span>, len(shellcode), <span class="number">0</span>x1000, <span class="number">0</span>x40)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.RtlMoveMemory</span>(ctypes.c_uint64(rwxpage), ctypes.create_string_buffer(shellcode), len(shellcode))</div><div class="line">handle = ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.CreateThread</span>(<span class="number">0</span>, <span class="number">0</span>, ctypes.c_uint64(rwxpage), <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</div><div class="line">ctypes<span class="selector-class">.windll</span><span class="selector-class">.kernel32</span><span class="selector-class">.WaitForSingleObject</span>(handle, -<span class="number">1</span>)</div></pre></td></tr></table></figure></li><li><p>而shellcode是很明显的coabaltstrike的shellcode。<br> <img src="http://hacky.wang/blog/20220530/xKfvVYsjc1eo.png?imageslim" alt="mark"></p></li><li><p>Ref:<a href="https://xz.aliyun.com/t/10450#toc-8" target="_blank" rel="external">https://xz.aliyun.com/t/10450#toc-8</a></p></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;0x00-背景&quot;&gt;&lt;a href=&quot;#0x00-背景&quot; class=&quot;headerlink&quot; title=&quot;0x00 背景&quot;&gt;&lt;/a&gt;0x00 背景&lt;/h2&gt;&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;近期，在狩猎中，捕获到一批高度免杀的CobaltStrike样本，经过分析，目前这些免杀样本具备以下几种特征，第一，不在拘泥于传统的C++作为编程语言，也会采用C#或者Golang，或者脚本语言也会在整个攻击链中使用不同的语言，使用C++可能对使用者的要求有所提高，但是免杀效果可能更好。第二，对于shellcode的加密方式，不在拘泥于传统的异或或者AES，Base等公开的加密编码算法，也会采用一些好玩的，个性化的编码算法进行shellcode加密。第三，在开辟内存空间的时候，也不在使用传统的VirtualAlloc等R3层的API函数，更多的使用基于底层的API函数，第四，在调用shellcode过程中，也不像往常一样使用常规的方式调用shellcode，而是利用一些API的机制(CreateThread)，或者回调机制(EnumSystemLocalesW)，以及APC。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="windows 攻防" scheme="https://findream.github.io/categories/windows-%E6%94%BB%E9%98%B2/"/>
     
     
   </entry>

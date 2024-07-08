@@ -294,6 +294,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2024/07/08/MHT样本分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2024/07/08/MHT样本分析/" itemprop="url">MHT样本分析与威胁狩猎感悟</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2024-07-08T15:02:11+08:00">
+                2024-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/威胁狩猎/" itemprop="url" rel="index">
+                    <span itemprop="name">威胁狩猎</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>&emsp;&emsp;近期，我们在日常APT狩猎的过程中，关联到一个特殊的MHT文件，巧合的是该文件和公司另外一个团队披露的国产办公软件0day相关联的文档是同一个(同一类)。该恶意样本为MHT格式，鉴于我们对该类型文件缺乏认识，特此总结。</p>
+<p>&emsp;&emsp;MHT文档又称为聚合HTML文档、Web档案或单一文件网页。MHT文档可以由浏览器和Office软件创建。因此，在野攻击事件中，攻击者偶尔使用MHT文档作为载体发起鱼叉和水坑攻击。</p>
+<p>&emsp;&emsp;从结构上来讲，MHT文件是由multipart组成的，类型有text/html、text/css、application/octet-stream、image等，每个multipart可使用base64进行编码。</p>
+<h4 id="样例1-针对Office的攻击样本分析"><a href="#样例1-针对Office的攻击样本分析" class="headerlink" title="样例1 针对Office的攻击样本分析"></a>样例1 针对Office的攻击样本分析</h4><p>&emsp;&emsp;APT32组织在2017年使用maldoc_office.htm(<a href="https://www.virustotal.com/gui/file/1210384a9d0ca2e089efab14f2e9f6d55a3824031c1e589b96f854fb96411288" target="_blank" rel="external">ce50e544430e7265a45fab5a1f31e529</a>)作为攻击入口载荷，内嵌VBS代码作为后续的攻击向量。</p>
+<p>&emsp;&emsp;观察maldoc_office.htm文件，发现其内部存在4个可疑的multipart对象，其中一个MIME-TYPE为“application/vnd.ms-officetheme”，可知这是一个office主题，还有两个MIME-TYPE为“image/png”，这是两个图片，另外最值得可疑的是一个“application/x-mso”的类型。将该类型的Base64进行解码，然后在偏移为0x32往后的内容实用gzip解码。就会生成ole对象，然后使用olevba即可查看宏代码。<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">data</span> = base64.b64decode(<span class="title">editdata</span>)</span></div><div class="line"><span class="title">with</span> open(<span class="string">"decode.bin"</span>,<span class="string">"wb"</span>) <span class="keyword">as</span> fp:</div><div class="line">	fp.write(zlib.decompress(<span class="class"><span class="keyword">data</span>[50:]))</span></div></pre></td></tr></table></figure></p>
+<p><img src="http://hacky.wang/blog/20240708/e7MDFnGtvPMa.png?imageslim" alt="mark"></p>
+<h4 id="样例2-MalDoc-In-PDF"><a href="#样例2-MalDoc-In-PDF" class="headerlink" title="样例2 MalDoc In PDF"></a>样例2 MalDoc In PDF</h4><p>&emsp;&emsp;<a href="https://ata.360.net/report/476502040414208" target="_blank" rel="external">1d97e352ae420aae5b3db5c151e7458d</a>实际上还是一个MHT文件，使用PDF查看工具打开会失败，通过工具查看，同样可以看到里面存在一个类型为“application/x-mso”的multipart对象。<br><img src="http://hacky.wang/blog/20240708/Agyf4eFB0C62.png?imageslim" alt="mark"></p>
+<h4 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h4><p>&emsp;&emsp;我们在观察日志信息的时候，如果进程明显是文档软件的进程，并且拉起了可疑的子进程，第一考虑的应该是文档存在宏的情况，第二应该考虑的是漏洞的情况，而不是考虑白加黑利用的情况，尤其进程又在原始安装目录下面，这其实就是认知不足造成的。<br>&emsp;&emsp;还有就是，例如MalDoc In PDF，这个在去年日本研究员就提出来了，自己也跟进了，但是自己思想上没有跟进，MHT可以使用word打开，wps应该也可以打开，这样就存在可以被利用的攻击面，但是我们在狩猎的时候，并没有把这个考虑进去，就失去了发现这个0D的机会。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/04/02/Execute-Assembly攻守之道/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -446,7 +595,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/03/02/Sliver原理分析/">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2023/03/02/Sliver源码分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="HaCky">
@@ -465,7 +614,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2023/03/02/Sliver原理分析/" itemprop="url">Sliver源码分析</a></h1>
+                <a class="post-title-link" href="/2023/03/02/Sliver源码分析/" itemprop="url">Sliver源码分析</a></h1>
         
 
         <div class="post-meta">
@@ -541,7 +690,7 @@
           <h2 id="Implant上线分析"><a href="#Implant上线分析" class="headerlink" title="Implant上线分析"></a>Implant上线分析</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sliver的Implant存在两种工作模式，一种是beacon模式，这是一种异步处理模式，Implant收到指令之后，并不会立即执行，而是等待一段时候之后进行处理。另外一种是session立即处理模式。在<code>https://github.com/BishopFox/sliver/blob/master/implant/sliver/sliver.go</code>的main函数中，分别存在<code>beaconStartup</code>和<code>sessionStartup</code>。<code>beaconStartup</code>对应的是beacon模式，<code>sessionStartup</code>对应的是session模式。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2023/03/02/Sliver原理分析/#more" rel="contents">
+            <a class="btn" href="/2023/03/02/Sliver源码分析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1617,153 +1766,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2022/11/08/ATT&CK持久化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="HaCky">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="HaCky的安全备忘录">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2022/11/08/ATT&CK持久化/" itemprop="url">ATT&CK持久化</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-11-08T15:02:11+08:00">
-                2022-11-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <ul>
-<li>Persistence学习总结
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2022/11/08/ATT&CK持久化/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1814,7 +1816,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-count">85</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1825,7 +1827,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -1873,7 +1875,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
