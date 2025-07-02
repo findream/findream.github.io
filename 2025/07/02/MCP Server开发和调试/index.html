@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="HaCky的安全备忘录" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="MCP Server 开发&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们基于python,使用官方提供的MCP库开发一个代码审计的MCP Server。MCP主要可以三种类型的功能，  1.Resources：客户端可以读取的类似文件的数据（例如 API 响应或文件内容） 2.Tools:可由 LLM 调用的函数 3.Prompts:预先编写的模板，帮助用户完成特定任">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP Server开发和调试">
+<meta property="og:url" content="https://findream.github.io/2025/07/02/MCP Server开发和调试/index.html">
+<meta property="og:site_name" content="HaCky的安全备忘录">
+<meta property="og:description" content="MCP Server 开发&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们基于python,使用官方提供的MCP库开发一个代码审计的MCP Server。MCP主要可以三种类型的功能，  1.Resources：客户端可以读取的类似文件的数据（例如 API 响应或文件内容） 2.Tools:可由 LLM 调用的函数 3.Prompts:预先编写的模板，帮助用户完成特定任">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://hacky.wang/blog/20250702/CKuOya1lWxl6.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20250702/yaUJKBJT08Vq.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20250702/1jBgHhSBoGRE.png?imageslim">
+<meta property="og:image" content="http://hacky.wang/blog/20250702/KVlX5YuFvVcm.png?imageslim">
+<meta property="og:updated_time" content="2025-07-02T12:45:11.487Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MCP Server开发和调试">
+<meta name="twitter:description" content="MCP Server 开发&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;我们基于python,使用官方提供的MCP库开发一个代码审计的MCP Server。MCP主要可以三种类型的功能，  1.Resources：客户端可以读取的类似文件的数据（例如 API 响应或文件内容） 2.Tools:可由 LLM 调用的函数 3.Prompts:预先编写的模板，帮助用户完成特定任">
+<meta name="twitter:image" content="http://hacky.wang/blog/20250702/CKuOya1lWxl6.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://findream.github.io/2025/07/02/MCP Server开发和调试/"/>
+
+
+
+
+
+  <title>MCP Server开发和调试 | HaCky的安全备忘录</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">HaCky的安全备忘录</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://findream.github.io/2025/07/02/MCP Server开发和调试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HaCky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HaCky的安全备忘录">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MCP Server开发和调试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2025-07-02T15:02:11+08:00">
+                2025-07-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI安全/" itemprop="url" rel="index">
+                    <span itemprop="name">AI安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MCP-Server-开发"><a href="#MCP-Server-开发" class="headerlink" title="MCP Server 开发"></a>MCP Server 开发</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们基于python,使用官方提供的MCP库开发一个代码审计的MCP Server。MCP主要可以三种类型的功能，</p>
+<ul>
+<li>1.Resources：客户端可以读取的类似文件的数据（例如 API 响应或文件内容）</li>
+<li>2.Tools:可由 LLM 调用的函数</li>
+<li>3.Prompts:预先编写的模板，帮助用户完成特定任务</li>
+</ul>
+<a id="more"></a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果需要做一个简单的代码审计的MCP Server，首先需要通过API函数去依次读取文件的内容，然后将文件的内容和文件路径传递给LLM，通过LLM研判这个文件是否存在高危漏洞。@tools只是实现相对应的逻辑，研判分析的任务交给LLM，不需要将研判的任务写入代码中。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将所需要的库添加到代码中<br><figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="title">from</span> fastmcp <span class="keyword">import</span> FastMCP</div><div class="line"><span class="title">from</span> typing <span class="keyword">import</span> Dict, Any</div><div class="line"><span class="keyword">import</span> requests</div><div class="line"><span class="keyword">import</span> json</div><div class="line"><span class="title">mcp</span> = <span class="type">FastMCP</span>(<span class="string">"Code Audit Server"</span>)  #初始化<span class="type">MCP</span> <span class="type">Server</span>名字</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;然后添加Tools功能函数,这个函数需要使用<code>@mcp.tool()</code>进行修饰，这个函数功能是通过传入文件夹路径，读取这个文件夹下所有的文件的内容，传出一个dict，这个字典包含文件夹路径和文件内容。主要的实现功能重新封装在另外一个函数中。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@mcp.tool()</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">audit_code</span><span class="params">(directory: str)</span> -&gt; Dict[str, Any]:</span></div><div class="line">    file_contents = read_files_from_directory(directory)</div><div class="line">    <span class="keyword">return</span> &#123;<span class="string">"directory"</span>: directory, <span class="string">"file_contents"</span>: file_contents&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接着实现文件内容的读取操作<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_files_from_directory</span><span class="params">(directory: str)</span> -&gt; Dict[str, str]:</span></div><div class="line">    file_contents = &#123;&#125;</div><div class="line">    <span class="keyword">for</span> root, _, files <span class="keyword">in</span> os.walk(directory):</div><div class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> files:</div><div class="line">            file_path = os.path.join(root, file)</div><div class="line">            <span class="keyword">try</span>:</div><div class="line">                <span class="keyword">with</span> open(file_path, <span class="string">"r"</span>, encoding=<span class="string">"utf-8"</span>) <span class="keyword">as</span> f:</div><div class="line">                    content = f.read()</div><div class="line">                    file_contents[file] = content</div><div class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</div><div class="line">                print(<span class="string">f"Error reading file <span class="subst">&#123;file_path&#125;</span>: <span class="subst">&#123;e&#125;</span>"</span>)</div><div class="line">    <span class="keyword">return</span> file_contents</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最后，初始化运行MCP Server即可。transport指定传输的方式，目前主要有两种传输方式：1）stdio传输和2）http传输<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</div><div class="line">    mcp.<span class="builtin-name">run</span>(<span class="attribute">transport</span>=<span class="string">'stdio'</span>)</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过<code>python server.py</code>即可运行MCP Server。<br>    <img src="http://hacky.wang/blog/20250702/CKuOya1lWxl6.png?imageslim" alt="mark"></p>
+<h2 id="MCP-Inspector-调试使用"><a href="#MCP-Inspector-调试使用" class="headerlink" title="MCP Inspector 调试使用"></a>MCP Inspector 调试使用</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们可以使用<code>MCP Inspector</code>调试开发好的MCP Server。<code>MCP Inspector</code>基于Node.js开发，需提前安装Node.js,然后执行<code>npm install -g @modelcontextprotocol/inspector</code>命令安装<code>MCP Inspector</code>。如果使用全局安装，只需要运行<code>mcp-inspector</code>启动<code>MCP Inspector</code>。<br>    <img src="http://hacky.wang/blog/20250702/yaUJKBJT08Vq.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行完<code>mcp-inspector</code>命令之后，会生成一个<code>Session token</code>,一个带有session token的链接，以及一个不带session token的链接。这个<code>session token</code>后续链接MCP Servcer需要用上。通过浏览器打开<code>http://127.0.0.1:6274</code>。因为上文是通过python.exe运行server.py来运行MCP Server。只需要将页面左侧的Command和Arguments分别填入python和server.py的绝对地址。内嵌的环境变量就能自动识别。<br>    <img src="http://hacky.wang/blog/20250702/1jBgHhSBoGRE.png?imageslim" alt="mark"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果通过不带session token的链接访问。在连接MCP Server的时候会出现<code>Connection Error - Did you add the proxy session token in Configuration?</code>报错，只需要在“Configuration”的“Proxy Session Token”选项中填入之前出现的<code>Session token</code>值即可。</p>
+<h2 id="cline-客户端配置"><a href="#cline-客户端配置" class="headerlink" title="cline 客户端配置"></a>cline 客户端配置</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安装好cline插件之后，在<code>cline-mcp-settings.json</code>文件中设置相对应的配置即可。<br><figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"mcpServers"</span>: &#123;</div><div class="line">    <span class="attr">"Code Audit Server"</span>: &#123;</div><div class="line">      <span class="attr">"autoApprove"</span>: [</div><div class="line">        <span class="string">"audit_code"</span></div><div class="line">      ],</div><div class="line">      <span class="attr">"disabled"</span>: <span class="literal">false</span>,</div><div class="line">      <span class="attr">"timeout"</span>: <span class="number">60</span>,</div><div class="line">      <span class="attr">"command"</span>: <span class="string">"python"</span>,</div><div class="line">      <span class="attr">"args"</span>: [</div><div class="line">        <span class="string">"C:\\Users\\zxcv\\Desktop\\audit_code\\server.py"</span></div><div class="line">      ],</div><div class="line">      <span class="attr">"transportType"</span>: <span class="string">"stdio"</span></div><div class="line">    &#125;,</div><div class="line">    <span class="attr">"Auto Arms Server"</span>: &#123;</div><div class="line">      <span class="attr">"autoApprove"</span>: [</div><div class="line">        <span class="string">"auto_arms"</span></div><div class="line">      ],</div><div class="line">      <span class="attr">"disabled"</span>: <span class="literal">false</span>,</div><div class="line">      <span class="attr">"timeout"</span>: <span class="number">60</span>,</div><div class="line">      <span class="attr">"command"</span>: <span class="string">"python"</span>,</div><div class="line">      <span class="attr">"args"</span>: [</div><div class="line">        <span class="string">"C:\\Users\\zxcv\\Desktop\\AutoArms\\server.py"</span></div><div class="line">      ],</div><div class="line">      <span class="attr">"transportType"</span>: <span class="string">"stdio"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>   <img src="http://hacky.wang/blog/20250702/KVlX5YuFvVcm.png?imageslim" alt="mark"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2025/01/25/A-dynamic-Windows-malware-detection-and-prediction-method-based-on-contextual-understanding-of-API-call-sequence/" rel="next" title="A-dynamic-Windows-malware-detection-and-prediction-method-based-on-contextual-understanding-of-API-call-sequence">
+                <i class="fa fa-chevron-left"></i> A-dynamic-Windows-malware-detection-and-prediction-method-based-on-contextual-understanding-of-API-call-sequence
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">HaCky</p>
+              <p class="site-description motion-element" itemprop="description">我是最菜的HaCky呀</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MCP-Server-开发"><span class="nav-number">1.</span> <span class="nav-text">MCP Server 开发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCP-Inspector-调试使用"><span class="nav-number">2.</span> <span class="nav-text">MCP Inspector 调试使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cline-客户端配置"><span class="nav-number">3.</span> <span class="nav-text">cline 客户端配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HaCky</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
